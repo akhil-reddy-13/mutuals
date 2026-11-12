@@ -129,7 +129,10 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
         push({ role: "muse", text: out.followUp ?? "Tell me a bit more." });
       } else if (!ready) {
         setReady(true);
-        push({ role: "muse", text: "Here's your ask. Tap a tag to change who can see what. Public shows on your match card. Match only is used to check fit and never shown to anyone. Never shared stays on your phone." });
+        push({
+          role: "muse",
+          text: "Here's what I'll look for. Tap a tag to change who sees what: Public can show on your card, Kept private I only use to check fit, Never shared stays with me.",
+        });
         push({ role: "muse", card: "prefs" });
         // Only someone OFFERING a room or items has something to film. "Looking for a room" skips straight on.
         const wantsVideo = canShowVideo(out.ask);
@@ -201,7 +204,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
       push({
         role: "muse",
         text: selling
-          ? `Got it. I found ${n} ${n === 1 ? "thing" : "things"} you're selling. Prices are what students nearby pay; change anything before you list.`
+          ? `Got it. I found ${n} ${n === 1 ? "thing" : "things"} you're selling. Fix anything I got wrong, then I'll find who needs them.`
           : `Got it. ${out.room ? "Here's what I can see, plus" : "I found"} ${n} ${n === 1 ? "item" : "items"} the next person might want. Prices are what students nearby pay.`,
         card: "intake",
       });
@@ -307,13 +310,21 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
         const oneSided = fits.filter((m) => m.mode === "one_sided").length;
         const connected = fits.find((m) => m.connection?.suggest);
         const connectedName = connected ? candsRef.current.find((c) => c.id === connected.candidateId)?.name : undefined;
+        // Muse's voice: "I found two people who fit. Priya's the better one, but you two should talk about noise."
+        const best = fits.find((m) => m.mode === "agent_to_agent") ?? fits[0];
+        const bestName = best ? firstName(candsRef.current.find((c) => c.id === best.candidateId)?.name ?? "") : "";
+        const topic = best?.verdict.summaryForHumans.match(/one thing to talk about:\s*([^.]+)/i)?.[1]?.trim();
+        const count = (n: number) => (n === 1 ? "one person" : n === 2 ? "two people" : n === 3 ? "three people" : `${n} people`);
         push({
           role: "muse",
           text:
-            `${fits.length} ${fits.length === 1 ? "person fits" : "people fit"}${nofit ? `, ${nofit} ${nofit === 1 ? "doesn't" : "don't"}` : ""}.` +
-            (oneSided ? ` ${oneSided === 1 ? "One is" : `${oneSided} are`} from a post by someone without Muse, so I drafted a reply you can send.` : "") +
-            ` You decide who to talk to. I don't message anyone.` +
-            (connectedName ? ` One more thing on ${firstName(connectedName)}'s card.` : ""),
+            (fits.length === 0
+              ? `Nobody here fits yet${nofit ? ` (I checked ${count(nofit)})` : ""}. I'll keep an eye out.`
+              : `I found ${count(fits.length)} who ${fits.length === 1 ? "fits" : "fit"}.` +
+                (fits.length > 1 && bestName ? ` ${bestName}'s the best one${topic ? `, but you two should talk about ${topic.toLowerCase()}` : ""}.` : topic && bestName ? ` You and ${bestName} should talk about ${topic.toLowerCase()}.` : "") +
+                (oneSided ? ` ${oneSided === 1 ? "One of them" : `${oneSided} of them`} posted without Muse on, so I drafted a reply you can send.` : "") +
+                ` You decide who to message. I won't message anyone.` +
+                (connectedName ? ` One more thing on ${firstName(connectedName)}'s card.` : "")),
           card: "shortlist",
         });
         router.refresh();

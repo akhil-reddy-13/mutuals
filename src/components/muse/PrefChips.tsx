@@ -9,7 +9,7 @@ const NEXT: Record<Visibility, Visibility> = { public: "match_only", match_only:
 export function VisBadge({ v, onClick, size = "sm" }: { v: Visibility; onClick?: () => void; size?: "sm" | "xs" }) {
   const cls =
     v === "public" ? "bg-fb-blue-soft text-fb-blue" : v === "match_only" ? "bg-[#f3ecff] text-fb-purple" : "bg-fb-chip text-fb-muted";
-  const label = v === "public" ? "Public" : v === "match_only" ? "Match only" : "Never shared";
+  const label = v === "public" ? "Public" : v === "match_only" ? "Kept private" : "Never shared";
   const Icon = v === "public" ? GlobeIcon : v === "match_only" ? LockIcon : EyeOffIcon;
   const Comp = onClick ? "button" : "span";
   return (

@@ -35,7 +35,7 @@ export function DisclosedChips({ meta, light }: { meta: { id: string; topic: str
       {meta.map((m) => (
         <span
           key={m.id}
-          title={m.visibility === "match_only" ? "Match only: used to check fit, never shown to the other person" : "Public"}
+          title={m.visibility === "match_only" ? "Kept private: used to check fit, never shown to the other person" : "Public"}
           className={`inline-flex items-center gap-1 rounded-full px-1.5 py-px text-[11px] font-semibold ${
             m.visibility === "match_only" ? (light ? "bg-white/20 text-white" : "bg-[#f3ecff] text-fb-purple") : light ? "bg-white/20 text-white" : "bg-fb-blue-soft text-fb-blue"
           }`}
@@ -130,8 +130,8 @@ export default function LiveMatching({ cands, meName, defaultOpen }: { cands: Li
                 {done && (
                   <p className="px-1 pt-1 text-[11px] text-fb-muted">
                     {c.mode === "agent_to_agent"
-                      ? `Two Muse Spark agents, one Muse Wonder referee. ${meName}'s private numbers never left the comparison. ${firstName(c.name)}'s are hidden here too.`
-                      : `Muse Ember read the post against your ask. Muse Spark drafted the reply. Nothing left your side.`}
+                      ? `Your Muse and ${firstName(c.name)}'s talked it through (Muse Spark), then Muse Wonder made the call. ${meName}'s private numbers stayed private, and so did ${firstName(c.name)}'s.`
+                      : `${firstName(c.name)} doesn't have Muse on, so I read their post (Muse Ember) and drafted a reply (Muse Spark). Nothing left your side.`}
                   </p>
                 )}
               </div>

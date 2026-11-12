@@ -80,7 +80,7 @@ export default function MatchCard({
           <div className="mt-1 inline-flex items-center gap-1 rounded bg-fb-bg px-1.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-fb-muted">
             {match.mode === "agent_to_agent" ? (
               <>
-                <MuseMark size={11} /> Muse to Muse
+                <MuseMark size={11} /> Checked with their Muse
               </>
             ) : (
               "From their post in the group"
