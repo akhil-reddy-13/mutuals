@@ -89,6 +89,8 @@ MOCK_MUSE=true npm run demo -- ride
 
 ## Saved run: "June room → New in SF weekend runs" (Akhil's favorite, Nov 12)
 
+Full record (inputs, every result, the connection card text, the Muse-to-Muse transcript): **`docs/SAVED_RUN.md`**.
+
 The run where Priya gets **More than a lease → "You're both new to SF and into weekend morning runs" → New in SF:
 Weekend Runs**, Sam is "Best match" with the move-in-timing talk, Jordan stops early, and Casey's post doesn't fit.
 
