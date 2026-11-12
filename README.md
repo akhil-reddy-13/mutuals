@@ -122,7 +122,7 @@ npm test            # privacy tests
 npm run typecheck
 ```
 
-`docs/DEMO.md` has the timed script and the exact lines to type. `docs/PRD.md` is the full spec.
+`docs/DEMO.md` has the timed script and the exact lines to type. `docs/VIDEO.md` is the demo video (script, personas, how it is recorded). `docs/PRD.md` is the full spec.
 
 ## Honesty about what is live
 

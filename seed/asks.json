@@ -722,5 +722,293 @@
       }
     ],
     "createdAt": "2026-11-10T21:00:00Z"
+  },
+  {
+    "id": "ask_nora_room",
+    "userId": "nora",
+    "groupId": "g_chi_interns",
+    "type": "roommate",
+    "side": "offering",
+    "summary": "Room in my West Loop 2BR for the summer, June to August, $1,250/mo",
+    "preferences": [
+      {
+        "id": "nora_rent",
+        "topic": "rent",
+        "value": "$1,250/mo, utilities included",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "nora_rent_floor",
+        "topic": "rent_floor",
+        "value": "Would take $1,150/mo for someone tidy",
+        "importance": "high",
+        "visibility": "match_only",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "nora_dates",
+        "topic": "dates",
+        "value": "June 1 to August 31, flexible on move-in",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "nora_location",
+        "topic": "location",
+        "value": "West Loop, 12-minute walk to Fulton Market",
+        "importance": "medium",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "nora_furnished",
+        "topic": "furniture",
+        "value": "Room is furnished: bed, desk, dresser",
+        "importance": "medium",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "nora_schedule",
+        "topic": "sleep_schedule",
+        "value": "Night owl, usually up past 1am on weeknights",
+        "importance": "medium",
+        "visibility": "match_only",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "nora_pets",
+        "topic": "pets",
+        "value": "No pets in the apartment",
+        "importance": "medium",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "nora_smoking",
+        "topic": "smoking",
+        "value": "No smoking",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "nora_breakup",
+        "topic": "why_room_open",
+        "value": "Room opened up after a breakup",
+        "importance": "low",
+        "visibility": "never",
+        "source": "stated",
+        "confirmed": true
+      }
+    ],
+    "createdAt": "2026-11-09T16:00:00Z",
+    "status": "draft"
+  },
+  {
+    "id": "ask_diego_room",
+    "userId": "diego",
+    "groupId": "g_chi_interns",
+    "type": "roommate",
+    "side": "offering",
+    "summary": "Room in my Wicker Park 2BR, June to August, $1,050/mo. Miso the cat lives here.",
+    "preferences": [
+      {
+        "id": "diego_rent",
+        "topic": "rent",
+        "value": "$1,050/mo plus utilities",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "diego_dates",
+        "topic": "dates",
+        "value": "June 10 to August 25",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "diego_cat",
+        "topic": "pets",
+        "value": "My cat Miso lives here and stays",
+        "importance": "dealbreaker",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "diego_location",
+        "topic": "location",
+        "value": "Wicker Park, 25 minutes to the Loop on the Blue Line",
+        "importance": "medium",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "diego_guests",
+        "topic": "guests",
+        "value": "Partner visits most weekends",
+        "importance": "medium",
+        "visibility": "match_only",
+        "source": "stated",
+        "confirmed": true
+      }
+    ],
+    "createdAt": "2026-11-09T18:00:00Z",
+    "status": "draft"
+  },
+  {
+    "id": "ask_sofia_room",
+    "userId": "sofia",
+    "groupId": "g_chi_interns",
+    "type": "roommate",
+    "side": "offering",
+    "summary": "Third room in a Lincoln Park 3BR, June to August, $1,150/mo",
+    "preferences": [
+      {
+        "id": "sofia_rent",
+        "topic": "rent",
+        "value": "$1,150/mo, utilities split three ways",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "sofia_rent_floor",
+        "topic": "rent_floor",
+        "value": "Can go down to $1,050/mo if they sign by May",
+        "importance": "high",
+        "visibility": "match_only",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "sofia_dates",
+        "topic": "dates",
+        "value": "June 1 to August 20",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "sofia_location",
+        "topic": "location",
+        "value": "Lincoln Park, 20 minutes to the West Loop on the Brown Line",
+        "importance": "medium",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "sofia_quiet",
+        "topic": "quiet_hours",
+        "value": "Quiet after 11pm on weeknights",
+        "importance": "medium",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "sofia_pets",
+        "topic": "pets",
+        "value": "No pets",
+        "importance": "medium",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      }
+    ],
+    "createdAt": "2026-11-10T15:00:00Z",
+    "status": "draft"
+  },
+  {
+    "id": "ask_ava_swap",
+    "userId": "ava",
+    "groupId": "g_chi_interns",
+    "type": "skill_swap",
+    "side": "offering",
+    "summary": "Teach sourdough in exchange for SWE interview prep",
+    "preferences": [
+      {
+        "id": "ava_offer",
+        "topic": "offer",
+        "value": "Two sourdough lessons in my Logan Square kitchen",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "ava_want",
+        "topic": "want",
+        "value": "Mock coding interviews before recruiting season",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      }
+    ],
+    "createdAt": "2026-11-10T17:00:00Z",
+    "status": "draft"
+  },
+  {
+    "id": "ask_diego_cubs",
+    "userId": "diego",
+    "groupId": "g_chi_interns",
+    "type": "plus_one",
+    "side": "offering",
+    "summary": "Two spare Cubs tickets for Sat June 21 at Wrigley, looking for people to go with",
+    "preferences": [
+      {
+        "id": "diego_tix",
+        "topic": "tickets",
+        "value": "Two spare bleacher tickets at face value",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      }
+    ],
+    "createdAt": "2026-11-11T12:00:00Z",
+    "status": "draft"
+  },
+  {
+    "id": "ask_nora_ohare",
+    "userId": "nora",
+    "groupId": "g_chi_interns",
+    "type": "ride",
+    "side": "seeking",
+    "summary": "Landing at O'Hare June 14 around 4pm, want to split a ride to the West Loop",
+    "preferences": [
+      {
+        "id": "nora_flight",
+        "topic": "arrival",
+        "value": "June 14, lands around 4pm at O'Hare",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      }
+    ],
+    "createdAt": "2026-11-11T13:00:00Z",
+    "status": "draft"
   }
 ]

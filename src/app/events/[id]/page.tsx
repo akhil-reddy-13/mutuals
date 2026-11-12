@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import Avatar from "@/components/Avatar";
 import GoingButton from "@/components/GoingButton";
 import { BackIcon, CalendarIcon, GlobeIcon, MuseMark, PinIcon } from "@/components/icons";
-import { getEvent, getUser } from "@/lib/db";
+import { getAsk, getEvent, getUser, matchesInvolving } from "@/lib/db";
 import { currentUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
@@ -17,12 +17,16 @@ export default async function EventPage({ params, searchParams }: { params: Prom
   const me = await currentUser();
   const host = getUser(event.hostId)!;
   const going = event.goingIds.map((g) => getUser(g)!).filter(Boolean);
+  // The Muse note quotes the connection judgment that pointed here (Wonder's "You're both…"), not a fixed line.
+  const suggested = withName ? matchesInvolving(me.id).filter((m) => m.connection?.eventId === event.id && m.connection.reason).at(-1) : undefined;
+  const reason = suggested?.connection?.reason ?? `You and ${withName} have more in common than the ask.`;
+  const backGroup = (suggested && getAsk(suggested.askId)?.groupId) || me.groups[0] || "g_housing27";
 
   return (
     <div className="mx-auto max-w-[680px] pb-24 md:py-4">
       <section className="fb-card overflow-hidden rounded-none md:rounded-[8px]">
         <div className="relative flex h-[200px] items-center justify-center bg-gradient-to-br from-[#ffd36e] via-[#ff9a62] to-[#ff5c87] text-[88px] md:h-[260px]">
-          <Link href="/groups/g_housing27" className="fb-icon-btn absolute left-3 top-3 bg-white/80 md:hidden" aria-label="Back">
+          <Link href={`/groups/${backGroup}`} className="fb-icon-btn absolute left-3 top-3 bg-white/80 md:hidden" aria-label="Back">
             <BackIcon size={22} />
           </Link>
           <span className="drop-shadow">{event.coverEmoji}</span>
@@ -44,7 +48,7 @@ export default async function EventPage({ params, searchParams }: { params: Prom
               <div className="flex items-start gap-2.5 rounded-[10.5px] bg-white px-3 py-2.5">
                 <MuseMark size={20} className="mt-0.5" />
                 <p className="text-[14px] leading-5">
-                  <span className="font-semibold">Suggested by Muse.</span> You and {withName} both run weekend mornings and are both new to SF. {withName} got the same invite.
+                  <span className="font-semibold">Suggested by Muse.</span> {reason} {withName} got the same invite.
                 </p>
               </div>
             </div>
@@ -69,7 +73,7 @@ export default async function EventPage({ params, searchParams }: { params: Prom
           </div>
           <span className="text-[15px] text-fb-muted">
             <b className="text-fb-text">{going.length} going</b>
-            {going.length > 0 && ` · ${going.slice(0, 2).map((u) => u.name.split(" ")[0]).join(", ")}${going.length > 2 ? ` and ${going.length - 2} others` : ""}`}
+            {going.length > 0 && ` · ${going.slice(0, 2).map((u) => u.name.split(" ")[0]).join(", ")}${going.length > 2 ? ` and ${going.length - 2} other${going.length - 2 === 1 ? "" : "s"}` : ""}`}
           </span>
         </div>
       </section>

@@ -53,6 +53,35 @@ const SCENES: Record<string, { bg: string; svg: React.ReactNode }> = {
       </>
     ),
   },
+  // Chicago: skyline over the lake at sunrise
+  chi: {
+    bg: "linear-gradient(180deg,#ffb86b 0%,#ff7a8a 40%,#5a6fd6 78%,#1b3a7a 100%)",
+    svg: (
+      <>
+        <circle cx="960" cy="150" r="54" fill="#fff1c1" opacity="0.9" />
+        <g fill="#1d2550" opacity="0.92">
+          {/* [x, width, height] per tower; the tallest one gets two antennas */}
+          {[
+            [60, 70, 120], [140, 50, 170], [200, 80, 140], [290, 46, 220], [345, 64, 160], [420, 90, 250], [520, 56, 190],
+            [585, 74, 300], [670, 60, 210], [740, 88, 170], [840, 52, 240], [900, 70, 150], [980, 60, 200], [1050, 90, 130], [1150, 50, 170],
+          ].map(([x, w, h], i) => (
+            <rect key={i} x={x} y={330 - h} width={w} height={h} />
+          ))}
+          <rect x="603" y="0" width="5" height="32" />
+          <rect x="637" y="0" width="5" height="32" />
+        </g>
+        {Array.from({ length: 60 }).map((_, i) => (
+          <rect key={i} x={70 + ((i * 89) % 1110)} y={120 + ((i * 53) % 200)} width="6" height="8" fill="#ffe9a8" opacity={i % 4 ? 0.75 : 0.35} />
+        ))}
+        <rect x="0" y="330" width="1200" height="70" fill="#123a7a" />
+        <g stroke="#ffffff" strokeWidth="3" opacity="0.35">
+          <line x1="80" y1="350" x2="260" y2="350" />
+          <line x1="420" y1="365" x2="640" y2="365" />
+          <line x1="820" y1="352" x2="1060" y2="352" />
+        </g>
+      </>
+    ),
+  },
   // Free & For Sale: price tags
   ffs: {
     bg: "linear-gradient(135deg,#0e8a6a 0%,#31a24c 55%,#b7e4a8 100%)",

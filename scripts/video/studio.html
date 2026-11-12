@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Mutuals demo studio</title>
+<!--
+  The stage for the demo video (1920x1080). The real app runs inside the phone (an iframe of the dev server);
+  scripts/video/record.mjs drives it and calls window.studio.* to change captions and cards.
+  Open it by hand to preview: node scripts/video/record.mjs --preview
+-->
+<style>
+  :root {
+    --blue: #0866ff; --purple: #a033ff; --pink: #ff5c87; --ink: #050505; --muted: #65676b; --bg: #f0f2f5;
+    --muse: linear-gradient(135deg, #0866ff 0%, #a033ff 55%, #ff5c87 100%);
+    --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; font-family: var(--font); color: var(--ink); }
+  body { background: var(--bg); position: relative; }
+  .blob { position: absolute; border-radius: 50%; filter: blur(90px); opacity: .45; }
+  .b1 { width: 760px; height: 760px; left: -220px; top: -260px; background: #9cc3ff; }
+  .b2 { width: 640px; height: 640px; right: -160px; bottom: -260px; background: #e3c4ff; }
+  .b3 { width: 420px; height: 420px; right: 380px; top: -200px; background: #ffd0dc; opacity: .35; }
+
+  /* Phone */
+  #phone { position: absolute; left: 230px; top: 50px; width: 466px; height: 980px; border-radius: 64px; background: #111;
+    padding: 15px; box-shadow: 0 40px 90px rgba(20, 30, 70, .28), 0 4px 14px rgba(0,0,0,.18); transition: transform .7s cubic-bezier(.2,.8,.2,1), opacity .5s; }
+  #screen { width: 436px; height: 950px; border-radius: 50px; overflow: hidden; background: #fff; position: relative; }
+  #status { height: 46px; display: flex; align-items: center; justify-content: space-between; padding: 6px 34px 0 40px; font-size: 17px; font-weight: 600; background: #fff; position: relative; }
+  #status .island { position: absolute; left: 50%; top: 10px; width: 118px; height: 32px; margin-left: -59px; background: #111; border-radius: 20px; }
+  #status .icons { display: flex; gap: 7px; align-items: center; }
+  #status .bat { width: 26px; height: 13px; border: 2px solid #111; border-radius: 4px; position: relative; }
+  #status .bat::after { content: ""; position: absolute; inset: 1px; right: 5px; background: #111; border-radius: 1px; }
+  #app { width: 390px; height: 808px; border: 0; transform: scale(1.118); transform-origin: 0 0; background: #fff; display: block; }
+  .tap { position: absolute; width: 54px; height: 54px; margin: -27px 0 0 -27px; border-radius: 50%; background: rgba(8,102,255,.28);
+    border: 3px solid rgba(8,102,255,.75); pointer-events: none; z-index: 20; animation: tap .55s ease-out forwards; }
+  @keyframes tap { from { transform: scale(.4); opacity: 1; } to { transform: scale(1.35); opacity: 0; } }
+
+  /* Side panel */
+  #side { position: absolute; left: 820px; top: 0; width: 960px; height: 1080px; display: flex; flex-direction: column; justify-content: center; gap: 26px; }
+  #kicker { font-size: 22px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; background: var(--muse); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  #headline { font-size: 68px; line-height: 1.05; font-weight: 800; letter-spacing: -.02em; }
+  #sub { font-size: 31px; line-height: 1.38; color: #2b2f36; min-height: 128px; max-width: 900px; }
+  #models { display: flex; gap: 14px; margin-top: 6px; }
+  .model { display: grid; grid-template-columns: 12px auto; column-gap: 10px; align-items: center; padding: 14px 22px; border-radius: 20px; background: #fff;
+    font-size: 17px; color: var(--muted); white-space: nowrap; box-shadow: 0 1px 2px rgba(0,0,0,.12); transition: all .35s; opacity: .55; }
+  .model b { color: var(--ink); font-size: 22px; }
+  .model span:last-child { grid-column: 2; }
+  .model.on { opacity: 1; color: #fff; background: var(--muse); box-shadow: 0 10px 30px rgba(160,51,255,.35); transform: translateY(-2px); }
+  .model.on b { color: #fff; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; background: currentColor; }
+  .swap { transition: opacity .35s, transform .35s; }
+  .swap.out { opacity: 0; transform: translateY(10px); }
+
+  /* Full-screen cards */
+  #full { position: absolute; inset: 0; z-index: 30; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity .6s; }
+  #full.on { opacity: 1; }
+  #full .card { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .dark { background: radial-gradient(1200px 700px at 30% 20%, #23305e 0%, #0b1022 60%, #070a16 100%); color: #fff; }
+  .light { background: var(--bg); }
+  .ring { width: 120px; height: 120px; border-radius: 50%; background: var(--muse); display: flex; align-items: center; justify-content: center; }
+  .ring::after { content: ""; width: 78px; height: 78px; border-radius: 50%; background: #fff; }
+  .dark .ring::after { background: #0b1022; }
+  .word { font-size: 150px; font-weight: 800; letter-spacing: -.04em; margin-top: 30px; }
+  .tag { font-size: 40px; color: #c9d3ff; margin-top: 18px; max-width: 1300px; line-height: 1.3; }
+  .big { font-size: 260px; font-weight: 800; letter-spacing: -.05em; line-height: 1; background: var(--muse); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .stat { font-size: 52px; font-weight: 700; max-width: 1300px; line-height: 1.2; margin-top: 10px; }
+  .src { font-size: 22px; color: var(--muted); margin-top: 26px; }
+  .pills { display: flex; gap: 16px; margin-top: 46px; flex-wrap: wrap; justify-content: center; max-width: 1400px; }
+  .pill { font-size: 30px; padding: 14px 26px; border-radius: 999px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.12); opacity: 0; transform: translateY(16px); transition: all .45s; }
+  .pill.in { opacity: 1; transform: none; }
+  .closer { font-size: 74px; font-weight: 800; max-width: 1500px; line-height: 1.12; letter-spacing: -.02em; }
+  .closer em { font-style: normal; background: var(--muse); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .credits { font-size: 26px; color: #aab4d8; margin-top: 44px; }
+
+  /* Skit */
+  .skit { width: 1300px; display: flex; flex-direction: column; gap: 22px; }
+  .skit-head { font-size: 22px; letter-spacing: .14em; text-transform: uppercase; color: #8fa0d8; text-align: left; margin-bottom: 8px; }
+  .line { display: flex; gap: 20px; align-items: flex-end; opacity: 0; transform: translateY(18px); transition: all .4s; }
+  .line.in { opacity: 1; transform: none; }
+  .line.b { flex-direction: row-reverse; }
+  .who { width: 76px; height: 76px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 34px; font-weight: 800; flex: none; }
+  .line.a .who { background: #ffb020; color: #3a2600; }
+  .line.b .who { background: #0866ff; color: #fff; }
+  .say { font-size: 38px; line-height: 1.32; padding: 20px 28px; border-radius: 30px; max-width: 1000px; text-align: left; }
+  .line.a .say { background: #fff; color: #111; border-bottom-left-radius: 8px; }
+  .line.b .say { background: #0866ff; color: #fff; border-bottom-right-radius: 8px; }
+  .corner { position: absolute; right: 40px; bottom: 34px; font-size: 18px; color: #6f7da8; letter-spacing: .08em; text-transform: uppercase; }
+</style>
+</head>
+<body>
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+
+  <div id="phone"><div id="screen"><div id="status"><span>9:41</span><span class="island"></span><span class="icons">5G <span class="bat"></span></span></div><iframe id="app" title="Mutuals"></iframe></div></div>
+
+  <div id="side">
+    <div id="kicker" class="swap"></div>
+    <div id="headline" class="swap"></div>
+    <div id="sub" class="swap"></div>
+    <div id="models">
+      <div class="model" data-m="ember"><span class="dot"></span><b>Muse Ember</b><span>sees and listens</span></div>
+      <div class="model" data-m="spark"><span class="dot"></span><b>Muse Spark</b><span>reasons, negotiates, drafts</span></div>
+      <div class="model" data-m="wonder"><span class="dot"></span><b>Muse Wonder</b><span>referees and connects</span></div>
+    </div>
+  </div>
+
+  <div id="full"></div>
+
+<script>
+  const $ = (s) => document.querySelector(s);
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  async function swap(el, html) {
+    if (el.innerHTML === html) return;
+    el.classList.add("out");
+    await wait(300);
+    el.innerHTML = html;
+    el.classList.remove("out");
+  }
+  window.studio = {
+    load(url) {
+      return new Promise((r) => { $("#app").onload = () => r(); $("#app").src = url; });
+    },
+    side({ kicker = "", headline = "", sub } = {}) {
+      swap($("#kicker"), kicker);
+      swap($("#headline"), headline);
+      if (sub !== undefined) swap($("#sub"), sub);
+    },
+    sub(text) { swap($("#sub"), text); },
+    models(list = []) { document.querySelectorAll(".model").forEach((m) => m.classList.toggle("on", list.includes(m.dataset.m))); },
+    /** Ripple where the recorder is about to tap (x, y in page pixels). */
+    tap(x, y) {
+      const t = document.createElement("div");
+      t.className = "tap"; t.style.left = x + "px"; t.style.top = y + "px";
+      document.body.appendChild(t); setTimeout(() => t.remove(), 700);
+    },
+    /** Where the iframe sits on the page, and its scale, so the recorder can map app coordinates to the page. */
+    frameBox() { const r = $("#app").getBoundingClientRect(); return { left: r.left, top: r.top, scale: r.width / 390 }; },
+    full(html, cls = "dark") {
+      const f = $("#full");
+      f.innerHTML = `<div class="card ${cls}">${html}</div>`;
+      requestAnimationFrame(() => f.classList.add("on"));
+    },
+    hideFull() { $("#full").classList.remove("on"); },
+    skit(corner) {
+      this.full(`<div class="skit"><div class="skit-head">Cold open</div><div id="lines"></div></div><div class="corner">${corner}</div>`);
+    },
+    skitLine(who, text) {
+      const l = document.createElement("div");
+      l.className = `line ${who}`;
+      l.innerHTML = `<div class="who">${who.toUpperCase()}</div><div class="say">${text}</div>`;
+      const lines = $("#lines");
+      lines.appendChild(l);
+      while (lines.children.length > 4) lines.firstElementChild.remove();
+      requestAnimationFrame(() => l.classList.add("in"));
+    },
+    pillsIn() { document.querySelectorAll(".pill").forEach((p, i) => setTimeout(() => p.classList.add("in"), 250 * i)); },
+  };
+</script>
+</body>
+</html>

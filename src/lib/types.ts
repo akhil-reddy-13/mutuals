@@ -161,7 +161,7 @@ export interface Group {
   adminIds: string[];
   privacy: "public" | "private";
   coverEmoji: string;
-  /** Cover illustration key: housing | sf | ffs | run */
+  /** Cover illustration key: housing | sf | ffs | run | chi */
   cover: string;
   about: string;
 }
