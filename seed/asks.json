@@ -646,5 +646,81 @@
       }
     ],
     "createdAt": "2026-11-11T19:00:00Z"
+  },
+  {
+    "id": "ask_marcus_tent",
+    "userId": "marcus",
+    "groupId": "g_ffs",
+    "type": "item",
+    "side": "offering",
+    "summary": "Selling my 2-person backpacking tent + sleeping pad, used on one Yosemite trip",
+    "preferences": [
+      {
+        "id": "marcus_tent",
+        "topic": "item",
+        "value": "REI Half Dome 2 tent + sleeping pad, used once, all stakes",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "marcus_price",
+        "topic": "price",
+        "value": "$70 for both",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "marcus_floor",
+        "topic": "price_floor",
+        "value": "Would go down to $50 for someone who'll actually use it",
+        "importance": "medium",
+        "visibility": "match_only",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "marcus_car",
+        "topic": "car",
+        "value": "Driving to Yosemite Dec 6, two seats open",
+        "importance": "low",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      }
+    ],
+    "createdAt": "2026-11-11T21:00:00Z"
+  },
+  {
+    "id": "ask_nina_stove",
+    "userId": "nina",
+    "groupId": "g_ffs",
+    "type": "item",
+    "side": "offering",
+    "summary": "Camp stove + headlamp, moving and can't take them",
+    "preferences": [
+      {
+        "id": "nina_items",
+        "topic": "item",
+        "value": "Jetboil camp stove + Petzl headlamp, both work great",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "nina_price",
+        "topic": "price",
+        "value": "$25 for both",
+        "importance": "medium",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      }
+    ],
+    "createdAt": "2026-11-10T21:00:00Z"
   }
 ]

@@ -14,7 +14,7 @@
       "kai"
     ],
     "open": true,
-    "coverEmoji": "🏃"
+    "coverEmoji": "\ud83c\udfc3"
   },
   {
     "id": "evt_vintage_swap",
@@ -30,7 +30,7 @@
       "omar"
     ],
     "open": true,
-    "coverEmoji": "👕"
+    "coverEmoji": "\ud83d\udc55"
   },
   {
     "id": "evt_cs161",
@@ -44,7 +44,7 @@
       "dev"
     ],
     "open": true,
-    "coverEmoji": "📚"
+    "coverEmoji": "\ud83d\udcda"
   },
   {
     "id": "evt_bea_preshow",
@@ -59,6 +59,22 @@
       "lena"
     ],
     "open": true,
-    "coverEmoji": "🎸"
+    "coverEmoji": "\ud83c\udfb8"
+  },
+  {
+    "id": "evt_yosemite",
+    "name": "Yosemite day trip carpool",
+    "description": "Leaving the Mission 6am, Mist Trail + Vernal Fall, back by 9pm. Split gas. Beginners welcome.",
+    "city": "San Francisco",
+    "when": "Sat Dec 6, 6:00 AM",
+    "where": "Leaves from 16th St BART",
+    "hostId": "marcus",
+    "goingIds": [
+      "marcus",
+      "kai",
+      "june"
+    ],
+    "open": true,
+    "coverEmoji": "\ud83c\udfd5\ufe0f"
   }
 ]

@@ -14,6 +14,10 @@ const FLOWS: Record<string, { groupId: string; lines: string[]; userId?: string 
     groupId: "g_housing27",
     lines: ["Looking for a room in SF from early September", "Around $1,200 but I could stretch to $1,300 for the right place, keep that private. I'm up at 7 so I need quiet after 11."],
   },
+  need: {
+    groupId: "g_ffs",
+    lines: ["Need a tent for a camping trip next month", "Yosemite, Dec 6. Yeah honestly down to go with people, none of my friends camp. I'd spend like $40, could do $60 for a good one but keep that private"],
+  },
   plus_one: {
     groupId: "g_sfgrads",
     lines: [

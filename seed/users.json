@@ -34,6 +34,10 @@
       {
         "value": "anime",
         "shareForConnection": false
+      },
+      {
+        "value": "hiking",
+        "shareForConnection": true
       }
     ],
     "bio": "Stanford '26. Moving to SF in Sept for a job. Signed a 2BR lease in the Mission, second bedroom open.",
@@ -310,7 +314,9 @@
     "school": "Stanford",
     "schoolVerified": true,
     "city": "San Francisco",
-    "groups": [],
+    "groups": [
+      "g_ffs"
+    ],
     "friends": [],
     "museEnabled": true,
     "connectionSuggestionsOptIn": true,
@@ -325,7 +331,9 @@
       }
     ],
     "bio": "Housing group admin. Signed four SF leases, survived all of them.",
-    "museGroups": []
+    "museGroups": [
+      "g_ffs"
+    ]
   },
   {
     "id": "omar",
@@ -394,6 +402,14 @@
     "interests": [
       {
         "value": "road trips",
+        "shareForConnection": true
+      },
+      {
+        "value": "camping",
+        "shareForConnection": true
+      },
+      {
+        "value": "podcasts",
         "shareForConnection": true
       }
     ],

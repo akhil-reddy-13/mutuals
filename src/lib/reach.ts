@@ -10,6 +10,8 @@ export function candidateAsks(ask: Ask): { ask: Ask; user: User }[] {
   const latestPerUser = new Map<string, Ask>();
   for (const a of allAsks()) {
     if (a.id === ask.id || a.userId === ask.userId || a.type !== ask.type || a.groupId !== ask.groupId) continue;
+    // Items: someone looking meets someone offering, never another person looking (or two sellers).
+    if (ask.type === "item" && (a.side ?? "offering") === (ask.side ?? "offering")) continue;
     const prev = latestPerUser.get(a.userId);
     if (!prev || prev.createdAt < a.createdAt) latestPerUser.set(a.userId, a);
   }
