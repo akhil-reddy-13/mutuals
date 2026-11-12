@@ -10,8 +10,10 @@ export const viewport: Viewport = { width: "device-width", initialScale: 1, maxi
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className="antialiased">
+    // suppressHydrationWarning: browser extensions (Grammarly, password managers) inject attributes into <html>/<body>
+    // before React hydrates. This only ignores attribute diffs on these two tags, not on anything inside them.
+    <html lang="en" suppressHydrationWarning>
+      <body className="antialiased" suppressHydrationWarning>
         <FbShell>{children}</FbShell>
       </body>
     </html>
