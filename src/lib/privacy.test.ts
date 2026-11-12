@@ -96,3 +96,17 @@ describe("sealed comparisons", () => {
     expect(redactPrivateValues(txt, alex.preferences)).not.toMatch(/chronic/);
   });
 });
+
+describe("memory across asks", () => {
+  it("remembers only shareable facts from asks that went out to matching", async () => {
+    const { rememberedPrefs } = await import("./asks");
+    const sent: Ask = { ...alex, id: "a_sent", status: "matched", preferences: [...alex.preferences, p({ id: "guess", topic: "noise", source: "inferred", confirmed: false })] };
+    const draft: Ask = { ...alex, id: "a_draft", status: "draft", preferences: [p({ id: "draft_only", topic: "parking" })] };
+    const mem = rememberedPrefs([sent, draft]);
+    expect(mem.some((x) => x.visibility === "never" || x.id === "alex_health")).toBe(false);
+    expect(mem.some((x) => x.id === "guess")).toBe(false); // unconfirmed guess
+    expect(mem.some((x) => x.id === "draft_only")).toBe(false); // never confirmed as an ask
+    expect(mem.map((x) => x.id)).toContain("alex_sleep"); // match-only facts are the owner's own, so Muse may recall them
+    expect(rememberedPrefs([sent], "a_sent")).toEqual([]); // the ask being written is not "last time"
+  });
+});

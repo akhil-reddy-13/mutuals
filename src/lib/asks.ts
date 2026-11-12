@@ -1,8 +1,9 @@
 // Ask parsing (PRD §5.1 step 2): the chat in the Muse sheet -> Spark -> structured, visibility-tagged prefs.
 // Called after every user message. Returns Muse's next line until `ready`.
-import { getAsk, getGroup, getUser, newId, saveAsk } from "./db";
+import { asksForUser, getAsk, getGroup, getUser, newId, saveAsk } from "./db";
 import { mockAskParse } from "./mocks";
 import { modelFor, museJSON } from "./muse";
+import { agentContext } from "./privacy";
 import { askParsePrompt } from "./prompts";
 import { AskParseSchema } from "./schemas";
 import type { Ask, Preference } from "./types";
@@ -20,16 +21,40 @@ export function guessSide(convo: string): "offering" | "seeking" {
   return "offering";
 }
 
+/**
+ * What Muse remembers from the owner's earlier asks: newest first, one fact per topic. Only asks that went out to
+ * matching count (a draft was never confirmed), and only through agentContext, so never-shared facts and
+ * unconfirmed guesses are never remembered.
+ */
+export function rememberedPrefs(asks: Ask[], currentAskId?: string): Preference[] {
+  const seen = new Set<string>();
+  const out: Preference[] = [];
+  const past = asks.filter((x) => x.id !== currentAskId && x.status !== "draft").sort((x, y) => y.createdAt.localeCompare(x.createdAt));
+  for (const ask of past) {
+    const ctx = agentContext(ask.preferences);
+    for (const p of [...ctx.public, ...ctx.matchOnly]) {
+      if (seen.has(p.topic)) continue;
+      seen.add(p.topic);
+      out.push(p);
+    }
+  }
+  return out;
+}
+
 export async function parseAsk(a: { userId: string; groupId: string; askId?: string; conversation: ChatMsg[] }) {
   const user = getUser(a.userId);
   const group = getGroup(a.groupId);
   if (!user || !group) throw new Error("unknown user/group");
   const convo = a.conversation.map((m) => `${m.role === "user" ? "User" : "Muse"}: ${m.text}`).join("\n");
-  const p = askParsePrompt({ ownerName: user.name.split(" ")[0], groupName: group.name, conversation: convo });
-  // Ember: this is a structured extraction every chat turn waits on, so latency matters most. Measured Nov 12:
-  // Ember ~1.3 s vs Spark 9-23 s with comparable tags. MUSE_ASK_MODEL=spark switches back.
-  const model = modelFor("ask");
-  const out = await museJSON({ model, system: p.system, user: p.user, schema: AskParseSchema, mock: mockAskParse(user.id, convo) });
+  const memory = rememberedPrefs(asksForUser(user.id), a.askId);
+  const p = askParsePrompt({
+    ownerName: user.name.split(" ")[0],
+    groupName: group.name,
+    conversation: convo,
+    memory: memory.map((x) => `[${x.id}] ${x.topic}: ${x.value} (${x.importance}, ${x.visibility})`).join("\n"),
+  });
+  // Ember: every chat turn waits on this structured extraction. Measured Nov 12: ~1.3 s vs Spark 9-23 s, same tags.
+  const out = await museJSON({ model: modelFor("ask"), system: p.system, user: p.user, schema: AskParseSchema, mock: mockAskParse(user.id, convo) });
 
   const existing = a.askId ? getAsk(a.askId) : undefined;
   // Keep any visibility edits the user already made in the chips.
@@ -54,5 +79,8 @@ export async function parseAsk(a: { userId: string; groupId: string; askId?: str
     status: "draft",
   };
   saveAsk(ask);
-  return { ask, followUp: out.ready ? null : (out.follow_up_question ?? null), ready: !!out.ready };
+  // Carried over from memory and not yet confirmed, so the chips can say "From your last ask" instead of "I guessed this".
+  const memIds = new Set(memory.map((x) => x.id));
+  const remembered = preferences.filter((x) => memIds.has(x.id) && !x.confirmed).map((x) => x.id);
+  return { ask, followUp: out.ready ? null : (out.follow_up_question ?? null), ready: !!out.ready, remembered };
 }

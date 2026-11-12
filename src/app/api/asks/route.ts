@@ -1,5 +1,6 @@
 // POST { groupId, askId?, conversation: {role:"user"|"muse", text}[] }
-//   -> { ask, followUp: string|null, ready: boolean }          (Spark, prompts.askParsePrompt, schemas.AskParseSchema)
+//   -> { ask, followUp: string|null, ready: boolean, remembered: string[] }   (Spark, prompts.askParsePrompt, schemas.AskParseSchema)
+//      remembered = pref ids carried over from the user's earlier asks and not yet confirmed (asks.rememberedPrefs)
 // PATCH { askId, preferences?, roomDetails?, items?, summary? } -> { ask }   (chip edits, intake results)
 // GET ?askId -> { ask }
 import { NextResponse } from "next/server";

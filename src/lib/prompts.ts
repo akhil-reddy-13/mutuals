@@ -77,7 +77,7 @@ ${a.spokenAs ? `The seller called it: "${a.spokenAs}".` : "The seller didn't men
 ${a.transcript ? `Full narration: "${a.transcript}"` : ""}`,
 });
 
-export const askParsePrompt = (a: { ownerName: string; groupName: string; conversation: string }) => ({
+export const askParsePrompt = (a: { ownerName: string; groupName: string; conversation: string; memory?: string }) => ({
   system: `You are ${a.ownerName}'s personal Muse inside the Facebook Group "${a.groupName}". ${a.ownerName} is telling you
 privately what they need. Your job: turn the conversation into a structured ask with visibility-tagged preferences,
 asking at most one short follow-up at a time until you have what matters (for housing: rent or budget, move-in date,
@@ -102,7 +102,19 @@ If they're LOOKING for a THING (an item, a ride, a ticket; NOT housing), your fi
 question about the why, so you can find them people and not just stuff ("Is this for a trip? Want people to go with too?").
 Ask at most TWO follow-ups in the whole conversation. Combine essentials into one question ("What's your budget, and
 when do you need it from?"). Never ask why someone needs housing.
-After 2 follow-ups (3 user messages), set ready = true even if some topics are missing.`,
+After 2 follow-ups (3 user messages), set ready = true even if some topics are missing. Memory check-ins count toward the two follow-ups.${
+    a.memory
+      ? `
+
+You remember these facts from ${a.ownerName}'s earlier asks (built from privacy.agentContext; never-shared facts are not here):
+${a.memory}
+When one of them matters for THIS ask and the conversation hasn't covered it, check it in your follow-up the way a
+friend would: "Last time you said <fact>. Still true?" One at a time, most important first. Carry a remembered fact
+into preferences with the same id, visibility and importance, and source "inferred" until ${a.ownerName} confirms it;
+once they confirm it, mark it "stated". If they say it changed, use the new value. Skip facts that don't fit this
+kind of ask (a ride doesn't need pets). Never treat a remembered fact as confirmed on your own.`
+      : ""
+  }`,
   user: a.conversation,
 });
 
