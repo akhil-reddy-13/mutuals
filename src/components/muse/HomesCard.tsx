@@ -89,6 +89,12 @@ function HomeRow({ match, person }: { match: Match; person?: Person }) {
       {(budget || overBudget) && (
         <div className={`mt-1.5 text-[12px] font-semibold ${overBudget ? "text-[#8a6100]" : "text-[#1e7a34]"}`}>{overBudget ?? `✓ ${budget}`}</div>
       )}
+      {match.verdict.compromise && (
+        <div className="mt-2 rounded-lg bg-fb-bg px-2.5 py-1.5 text-[13px] leading-4">
+          <span className="font-semibold">Your Muses worked out: </span>
+          {match.verdict.compromise}
+        </div>
+      )}
       {match.hook && (
         <div className="mt-2 rounded-lg border border-[#e4d7fb] bg-[#f7f2ff] px-2.5 py-1.5 text-[13px] leading-4">
           <span className="font-semibold muse-text">Also: </span>

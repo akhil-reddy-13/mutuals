@@ -155,7 +155,7 @@ or clearly blocked. 2 to 4 sentences, friendly, specific. Flag a dealbreaker con
   user: `Round ${a.round} of ${a.maxRounds}. Conversation so far:\n${a.transcript || "(you speak first)"}`,
 });
 
-export const refereePrompt = (a: { aName: string; bName: string; transcript: string; dealbreakers: string; budgetOverlap: boolean | null; privateFacts: string }) => ({
+export const refereePrompt = (a: { aName: string; bName: string; transcript: string; dealbreakers: string; budgetOverlap: boolean | null; privateFacts: string; shortPlan?: boolean }) => ({
   system: `You are the referee for a pre-negotiation between ${a.aName}'s Muse and ${a.bName}'s Muse on Facebook.
 Read the transcript and conclude. Return ONLY JSON:
 { "compatible": bool, "score": 0-1, "fits": [string], "disagreements": [string],
@@ -174,7 +174,8 @@ ${a.privateFacts}
 weeknight noise.").
 "fits" and "disagreements" are short phrases (max 5 each) about terms first (rent, dates, furniture, items), then one
 line on lifestyle. NEVER print exact rent, budget, or clock times; say "budgets overlap", "wants earlier quiet hours".
-"summary_for_humans" is one or two sentences a person can read in 5 seconds, naming the one thing to talk about.`,
+"summary_for_humans" is one or two sentences a person can read in 5 seconds, naming the one thing to talk about.${a.shortPlan ? `\nBuying/selling: if one side doesn't actually have, or doesn't need, the main thing being asked about, compatible = false
+(a stove is not a tent). "compromise" is the concrete plan in ONE short sentence, max 14 words (e.g. "Meet Saturday on campus, $420, Venmo.").` : ""}`,
   user: `Transcript:\n${a.transcript}`,
 });
 

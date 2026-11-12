@@ -172,6 +172,8 @@ export async function runNegotiation(
     dealbreakers: db.join("\n") || "(none)",
     budgetOverlap,
     privateFacts: pf.join("\n") || "(none)",
+    // Buying/selling: the plan is one line on a card ("Meet Saturday on campus, $420"). Housing keeps its prompt.
+    shortPlan: askA.type === "item",
   });
   const raw = await museJSON({ model: modelFor("referee"), system: rp.system, user: rp.user, schema: RefereeSchema, mock: mockReferee(userA.id, userB.id, mockCtx) });
   const verdict = sealVerdict(raw, askA, askB);

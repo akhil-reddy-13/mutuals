@@ -6,9 +6,10 @@
 //   buyers   = open "seeking" item asks in this Group from people whose Muse is on here
 //   routing  = ONE Wonder call (judgment): which items fit whom, why (in human terms), optional real-overlap hook
 //   budgets  = compared in CODE per home (privacy.moneyRange), so no one's private max is ever shown
-import { allAsks, getUser, logAgentMessage, newId, saveAsk, saveMatch } from "./db";
+import { allAsks, getUser, newId, saveAsk, saveMatch } from "./db";
 import type { MatchEvent } from "./match";
 import { museJSON, modelFor } from "./muse";
+import { runNegotiation } from "./negotiation";
 import { homesPrompt } from "./prompts";
 import { agentContext, formatPrefs, isShareable, moneyRange, redactPrivateValues } from "./privacy";
 import { trustSignals } from "./reach";
@@ -93,7 +94,10 @@ export async function runHomes(ask: Ask, emit: (e: MatchEvent) => void): Promise
 
   // Validate: known buyers and items only, each item at most once.
   const used = new Set<string>();
-  const matches: Match[] = [];
+  // 1) Routing decided who gets what. 2) For each home, the seller's Muse and the buyer's Muse actually talk it
+  // through (price, condition, pickup), in parallel, streamed to the live view: the same pre-negotiation as roommates,
+  // with both sides' private numbers compared in code and redacted from anything a human sees.
+  const plans: { b: { ask: Ask; user: User }; routed: Item[]; why: string; hook: string | null; budgetOk: boolean | null; first: string }[] = [];
   for (const h of out.homes) {
     const b = buyers.find((x) => x.user.id === h.buyer_id);
     const routed = h.item_ids.map((id) => items.find((i) => i.id === id)).filter((i): i is Item => !!i && !used.has(i.id));
@@ -103,43 +107,69 @@ export async function runHomes(ask: Ask, emit: (e: MatchEvent) => void): Promise
     const total = routed.reduce((s, i) => s + (Number(i.suggestedPriceUsd) || 0), 0);
     // Sealed budget check: the buyer's private max is compared here and never leaves as a number.
     const range = moneyRange(b.ask.preferences.filter(isShareable));
-    const budgetOk = range ? total <= range[1] : null;
-    const first = b.user.name.split(" ")[0];
-    const why = redactPrivateValues(h.why, shield);
-    const match: Match = {
-      id: newId("match"),
-      userId: me.id,
-      candidateId: b.user.id,
-      askId: ask.id,
-      candidateAskId: b.ask.id,
-      mode: "agent_to_agent",
-      routedItems: routed,
+    plans.push({
+      b,
+      routed,
+      why: redactPrivateValues(h.why, shield),
       hook: h.hook ? redactPrivateValues(h.hook, shield) : null,
-      verdict: {
-        compatible: true,
-        score: 0.8,
-        fits: [`${joinItems(routed)} → ${first}`, budgetOk === false ? "" : budgetOk ? `Fits what ${first} wants to spend` : ""].filter(Boolean),
-        disagreements: budgetOk === false ? [`A bit over what ${first} wants to spend, so talk price`] : [],
-        compromise: null,
-        summaryForHumans: why,
-      },
-      trustSignals: trustSignals(me, b.user),
-      createdAt: new Date().toISOString(),
-    };
-    saveMatch(match);
-    matches.push(match);
-    // "What my Muse shared": exactly what the seller's Muse told this buyer's Muse.
-    logAgentMessage({
-      id: newId("log"),
-      userId: me.id,
-      negotiationId: match.id,
-      counterpartId: b.user.id,
-      message: `Told ${first}'s Muse about: ${routed.map((i) => `${i.name} ($${i.suggestedPriceUsd})`).join(", ")}.`,
-      disclosed: [],
-      at: new Date().toISOString(),
+      budgetOk: range ? total <= range[1] : null,
+      first: b.user.name.split(" ")[0],
     });
-    emit({ type: "verdict", candidateId: b.user.id, match });
   }
+
+  const matches: Match[] = [];
+  await Promise.all(
+    plans.map(async ({ b, routed, why, hook, budgetOk, first }) => {
+      // The seller's side of this talk only covers the items routed to this person.
+      const sellerSide: Ask = { ...ask, items: routed, summary: `${ask.summary}. For ${first}: ${joinItems(routed)}` };
+      let negotiationId: string | undefined;
+      let talk: { fits: string[]; disagreements: string[]; compromise: string | null } = { fits: [], disagreements: [], compromise: null };
+      try {
+        const { negotiation, verdict } = await runNegotiation(sellerSide, b.ask, (turn) =>
+          emit({
+            type: "turn",
+            candidateId: b.user.id,
+            turn:
+              turn.speaker === "B"
+                ? { ...turn, message: redactPrivateValues(turn.message, b.ask.preferences), positions: {} }
+                : turn,
+            disclosedMeta: [],
+          }),
+        );
+        negotiationId = negotiation.id;
+        talk = verdict;
+      } catch {
+        // If the talk fails, the routing still stands; the card just has no worked-out plan.
+      }
+      const budgetLine = budgetOk === false ? "" : budgetOk ? `Fits what ${first} wants to spend` : "";
+      const notBudget = (x: string) => !/budget|spend|price range|overlap/i.test(x);
+      const match: Match = {
+        id: newId("match"),
+        userId: me.id,
+        candidateId: b.user.id,
+        askId: ask.id,
+        candidateAskId: b.ask.id,
+        mode: "agent_to_agent",
+        routedItems: routed,
+        hook,
+        negotiationId,
+        verdict: {
+          compatible: true,
+          score: 0.8,
+          fits: [`${joinItems(routed)} → ${first}`, budgetLine, ...talk.fits.filter(notBudget).slice(0, 2)].filter(Boolean),
+          disagreements: [...(budgetOk === false ? [`A bit over what ${first} wants to spend, so talk price`] : []), ...talk.disagreements.filter(notBudget).slice(0, 2)],
+          // What the two Muses worked out (e.g. "Meet Saturday on campus"), for the humans to confirm.
+          compromise: talk.compromise,
+          summaryForHumans: why,
+        },
+        trustSignals: trustSignals(me, b.user),
+        createdAt: new Date().toISOString(),
+      };
+      saveMatch(match);
+      matches.push(match);
+      emit({ type: "verdict", candidateId: b.user.id, match });
+    }),
+  );
   // People Muse checked with who don't need anything here: say so quietly, no card.
   for (const { user } of buyers.filter((b) => !matches.some((m) => m.candidateId === b.user.id))) {
     emit({
