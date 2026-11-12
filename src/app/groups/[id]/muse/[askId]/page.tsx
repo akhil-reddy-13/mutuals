@@ -60,9 +60,11 @@ export default async function MatchesPage({ params }: { params: Promise<{ id: st
               <h1 className="text-[20px] font-bold leading-tight">
                 {fits.length} {fits.length === 1 ? "person fits" : "people fit"} your ask
               </h1>
-              <p className="mt-1 text-[15px] text-fb-muted">
-                &ldquo;{ask.summary}&rdquo;
-              </p>
+              {/* The ask is what every card below is measured against, so it reads as content, not a caption. */}
+              <div className="mt-3 rounded-lg border-l-4 border-fb-blue bg-fb-bg px-3.5 py-2.5">
+                <div className="text-[13px] font-semibold text-fb-muted">Your ask in {group.name}</div>
+                <p className="mt-0.5 text-[17px] font-semibold leading-[22px] text-fb-text">{ask.summary}</p>
+              </div>
               {/* What Muse did, as scannable facts instead of a paragraph. */}
               <ul className="mt-3 flex flex-wrap gap-2 text-[13px] font-semibold">
                 <li className="inline-flex items-center gap-1.5 rounded-full bg-fb-bg px-2.5 py-1">
@@ -101,7 +103,10 @@ export default async function MatchesPage({ params }: { params: Promise<{ id: st
           ) : (
             <>
               <h1 className="text-[20px] font-bold leading-tight">{firstName(asker.name)}&apos;s Muse checked with yours</h1>
-              <p className="mt-1 text-[15px] text-fb-muted">About: &ldquo;{ask.summary}&rdquo;</p>
+              <div className="mt-3 rounded-lg border-l-4 border-fb-blue bg-fb-bg px-3.5 py-2.5">
+                <div className="text-[13px] font-semibold text-fb-muted">{firstName(asker.name)}&apos;s ask in {group.name}</div>
+                <p className="mt-0.5 text-[17px] font-semibold leading-[22px] text-fb-text">{ask.summary}</p>
+              </div>
               <p className="mt-2 text-[13px] text-fb-muted">Your Muse only used what you marked public or match-only. {firstName(asker.name)} sees a summary, never your private numbers.</p>
             </>
           )}
