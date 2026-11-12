@@ -34,6 +34,12 @@ interface Msg {
 let seq = 0;
 const mid = () => `m${++seq}_${Date.now().toString(36)}`;
 
+/** The video step only makes sense when there's something to film: a room you're offering or items you're selling. */
+function canShowVideo(ask: Ask): boolean {
+  if (ask.side === "seeking") return false;
+  return ask.type === "roommate" || ask.type === "sublet" || ask.type === "item";
+}
+
 export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
   const router = useRouter();
   const first = firstName(me.name);
@@ -103,7 +109,8 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
         setReady(true);
         push({ role: "muse", text: "Here's your ask. Tap a tag to change who can see what. Public shows on your match card. Match only is used to check fit and never shown to anyone. Never shared stays on your phone." });
         push({ role: "muse", card: "prefs" });
-        const wantsVideo = out.ask.type === "roommate" || out.ask.type === "sublet" || out.ask.type === "item";
+        // Only someone OFFERING a room or items has something to film. "Looking for a room" skips straight on.
+        const wantsVideo = canShowVideo(out.ask);
         if (wantsVideo) {
           push({
             role: "muse",
@@ -389,7 +396,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
           }}
           className="flex items-center gap-2 border-t border-fb-divider px-3 py-2"
         >
-          <button type="button" className="fb-icon-btn h-9 w-9 bg-transparent text-fb-blue" aria-label="Video" onClick={() => push({ role: "muse", text: "Show me the room whenever you're ready.", card: "video" })} disabled={!ask}>
+          <button type="button" className="fb-icon-btn h-9 w-9 bg-transparent text-fb-blue" aria-label="Video" onClick={() => push({ role: "muse", text: ask?.type === "item" ? "Show me what you're selling whenever you're ready." : "Show me the room whenever you're ready.", card: "video" })} disabled={!ask || !canShowVideo(ask)}>
             <VideoCamIcon size={22} />
           </button>
           <input

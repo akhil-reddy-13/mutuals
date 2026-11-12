@@ -28,6 +28,7 @@ Return ONLY JSON:
 {
   "ask_type": "roommate|sublet|item|skill_swap|plus_one|ride|other",
   "summary": string,            // one line, written as ${a.ownerName} would post it
+  "side": "offering|seeking",   // offering = they HAVE the room/items/ticket/seat; seeking = they're looking for one
   "preferences": [ { "id": string, "topic": string, "value": string,
                      "importance": "dealbreaker|high|medium|low",
                      "visibility": "public|match_only|never",

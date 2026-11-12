@@ -1,0 +1,15 @@
+import { describe, expect, it } from "vitest";
+import { guessSide } from "./asks";
+
+describe("guessSide (fallback when the model doesn't say)", () => {
+  it("seekers skip the video step", () => {
+    expect(guessSide("Looking for a room\n800")).toBe("seeking");
+    expect(guessSide("Need a place in SF from September")).toBe("seeking");
+    expect(guessSide("ISO a desk under $50")).toBe("seeking");
+  });
+  it("offerers keep it", () => {
+    expect(guessSide("I signed a 2BR in the Mission from Sept 1 and need a roommate for the second bedroom")).toBe("offering");
+    expect(guessSide("Selling my desk and mini fridge")).toBe("offering");
+    expect(guessSide("Have a spare beabadoobee ticket")).toBe("offering");
+  });
+});
