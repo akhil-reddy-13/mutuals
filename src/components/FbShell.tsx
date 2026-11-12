@@ -33,9 +33,9 @@ export default async function FbShell({ children }: { children: React.ReactNode 
           <Link href="/" aria-label="Facebook" className="flex h-10 w-10 items-center justify-center rounded-full bg-fb-blue text-white">
             <FacebookF size={26} />
           </Link>
-          <label className="flex h-10 w-[240px] items-center gap-2 rounded-full bg-fb-bg px-3 text-fb-muted">
+          <label className="flex h-10 w-10 items-center justify-center gap-2 rounded-full bg-fb-bg text-fb-muted lg:w-[200px] lg:justify-start lg:px-3 xl:w-[240px]">
             <SearchIcon size={18} />
-            <input className="w-full bg-transparent text-[15px] outline-none placeholder:text-fb-muted" placeholder="Search Facebook" />
+            <input className="hidden w-full bg-transparent text-[15px] outline-none placeholder:text-fb-muted lg:block" placeholder="Search Facebook" />
           </label>
         </div>
         <div className="absolute left-1/2 top-0 -translate-x-1/2">
