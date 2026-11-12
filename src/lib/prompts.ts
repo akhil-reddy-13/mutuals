@@ -197,6 +197,8 @@ Return ONLY the message text.`,
 
 export const postEvalPrompt = (a: { askSummary: string; prefs: string; postText: string; authorName: string }) => ({
   system: `Evaluate whether this Facebook Group post by ${a.authorName} is a fit for the user's ask.
+Sides are complementary: someone LOOKING for what the user OFFERS (a room, a ride, an item), or OFFERING what the user
+is looking for, is the ideal fit, never a concern. Two people both looking for the same thing are not a fit.
 Return ONLY JSON: { "fit": bool, "score": 0-1, "reasons": [string], "concerns": [string] }
 reasons/concerns are short phrases (max 4 each). Never print the user's private numbers.`,
   user: `User ask: ${a.askSummary}

@@ -46,6 +46,9 @@ muse client ✅ → seed loader ✅ → intake API → ask parsing → `runNegot
 | Seed, pitch, video | `seed/*`, `README.md`, Devpost, demo script | _TBD_ |
 
 ## Status / handoff (update as you go)
+- ✅ **People-first update (Nov 12, read `docs/PRD.md` §0.5 first).** Results are people, not listings; Muse speaks first person; no jargon in user-facing copy (agents/negotiation/multiplayer/platform). Home's first screen is the roommate example. Copy (headline/subhead/tagline/footer) lives in PRD §0.5.
+- ✅ Selling routes items to people: `lib/homes.ts` (Wonder) → `HomesCard` ("2 of these already have a home"), buyers seeded in Stanford Free & For Sale (Maya, Dev, June, Theo). Buyer side sees "Alex is selling X and their Muse thought of you".
+- ✅ "I need X": item asks match the opposite side only; Muse asks one friend-like question; `npm run demo -- need` (tent → Marcus + Yosemite carpool).
 - ✅ **Live Muse API verified (Nov 12).** Base URL `https://api.meta.ai/v1`; team key in committed `.env` (private repo only; rotate before going public). Hero, plus-one and ride flows all run live; reasoning effort per model in `muse.ts` (Spark minimal) keeps a full hero match ~60 s live, instant when cached (`npm run warm`).
 - ✅ Video intake sends the video's **audio narration** to Ember with the frames (browser extracts 16 kHz WAV). What the user says decides what gets listed.
 - ✅ All demo photos are local (`public/img`, generated with Muse Image via `scripts/gen-images.ts`; avatars in `public/avatars`). No outside image hosts.
