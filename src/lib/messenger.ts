@@ -19,23 +19,28 @@ export async function openThreadForMatch(matchId: string, senderId: string): Pro
   const existing = threadBetween(senderId, recipientId);
   if (existing && (existing.draft?.for === senderId || existing.messages.some((m) => m.from === senderId))) return existing;
 
-  let draft: string;
-  if (match.mode === "one_sided" && match.draftReply) {
-    draft = match.draftReply;
-  } else {
-    const p = openerPrompt({ sender: sender.name, recipient: recipient.name, askSummary: ask.summary, summaryForHumans: match.verdict.summaryForHumans });
-    draft = await museText({ model: "spark", system: p.system, user: p.user, mock: mockOpener(sender.id, recipient.id, recipient.name.split(" ")[0]) });
-  }
   // The sender reads this draft, so hide the RECIPIENT's private values (Alex's draft must not repeat Priya's
   // match_only wake-up time). The sender's own facts are theirs to share. `never` values are stripped for both.
   const neg = match.negotiationId ? getNegotiation(match.negotiationId) : undefined;
   const otherAsk = neg ? getAsk(neg.askAId === ask.id ? neg.askBId : neg.askAId) : undefined;
   const senderAsk = ask.userId === senderId ? ask : otherAsk;
   const recipientAsk = ask.userId === senderId ? otherAsk : ask;
-  const shield = [
-    ...(recipientAsk?.preferences.filter((p) => p.visibility !== "public") ?? []),
-    ...(senderAsk?.preferences.filter((p) => p.visibility === "never") ?? []),
-  ];
+  const recipientPrivate = (recipientAsk?.preferences ?? []).filter((p) => p.visibility !== "public");
+
+  let draft: string;
+  if (match.mode === "one_sided" && match.draftReply) {
+    draft = match.draftReply;
+  } else {
+    const p = openerPrompt({
+      sender: sender.name,
+      recipient: recipient.name,
+      askSummary: ask.summary,
+      summaryForHumans: match.verdict.summaryForHumans,
+      recipientPrivate: recipientPrivate.filter((p) => p.visibility === "match_only").map((p) => p.value).join("; "),
+    });
+    draft = await museText({ model: "spark", system: p.system, user: p.user, mock: mockOpener(sender.id, recipient.id, recipient.name.split(" ")[0]) });
+  }
+  const shield = [...recipientPrivate, ...(senderAsk?.preferences.filter((p) => p.visibility === "never") ?? [])];
   draft = redactPrivateValues(draft, shield);
 
   if (existing) {

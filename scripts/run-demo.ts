@@ -32,6 +32,9 @@ async function main() {
   process.env.MOCK_DELAY_MS ??= "0";
   console.log(`muse mode: ${museMode()}`);
   const flow = process.argv[2];
+  // Reset by default so stale threads/log entries from an earlier run (e.g. a mock run) don't show up. RESET=0 keeps them.
+  if (process.env.RESET !== "0") resetRuntime();
+  else console.log("(RESET=0: keeping the runtime store from earlier runs)");
   if (flow && FLOWS[flow]) {
     const { parseAsk } = await import("../src/lib/asks");
     const convo: { role: "user" | "muse"; text: string }[] = [];
@@ -56,9 +59,6 @@ async function main() {
     }
     return;
   }
-  // Reset by default so stale threads/log entries from an earlier run (e.g. a mock run) don't show up. RESET=0 keeps them.
-  if (process.env.RESET !== "0") resetRuntime();
-  else console.log("(RESET=0: keeping the runtime store from earlier runs)");
   const ask = getAsk("ask_alex_seed")!;
   const t0 = Date.now();
   const matches = await runMatching(ask, (e) => {

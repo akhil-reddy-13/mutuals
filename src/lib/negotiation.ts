@@ -162,7 +162,17 @@ export async function runNegotiation(
   const dealbreakers = (name: string, ask: Ask) =>
     ask.preferences.filter((p) => isShareable(p) && p.importance === "dealbreaker").map((p) => `${name}: ${p.topic}: ${p.value}`);
   const db = [...dealbreakers(userA.name, askA), ...dealbreakers(userB.name, askB)];
-  const rp = refereePrompt({ aName: userA.name, bName: userB.name, transcript: transcript(), dealbreakers: db.join("\n") || "(none)", budgetOverlap });
+  const privateFacts = (name: string, ask: Ask) =>
+    ask.preferences.filter((p) => p.visibility === "match_only" && isShareable(p)).map((p) => `${name}: ${p.value}`);
+  const pf = [...privateFacts(userA.name, askA), ...privateFacts(userB.name, askB)];
+  const rp = refereePrompt({
+    aName: userA.name,
+    bName: userB.name,
+    transcript: transcript(),
+    dealbreakers: db.join("\n") || "(none)",
+    budgetOverlap,
+    privateFacts: pf.join("\n") || "(none)",
+  });
   const raw = await museJSON({ model: "wonder", system: rp.system, user: rp.user, schema: RefereeSchema, mock: mockReferee(userA.id, userB.id, mockCtx) });
   const verdict = sealVerdict(raw, askA, askB);
 

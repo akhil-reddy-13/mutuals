@@ -14,7 +14,9 @@ export async function judgeConnection(a: User, b: User, ask: Ask, verdict: Verdi
   if (!verdict.compatible) return null;
   const shared = (u: User) => u.interests.filter((i) => i.shareForConnection).map((i) => i.value).join(", ") || "(nothing shared)";
   const events = allEvents()
-    .filter((e) => e.open && (e.city === a.city || e.city === b.city))
+    // Nearby events, plus any event either person is hosting or already going to (e.g. Theo's pre-show drinks in
+    // Oakland for an SF pair going to the Fox).
+    .filter((e) => e.open && (e.city === a.city || e.city === b.city || [a.id, b.id].some((id) => e.hostId === id || e.goingIds.includes(id))))
     .map((e) => `${e.id}: ${e.name} (${e.when}, ${e.goingIds.length} going)`)
     .join("\n");
   const p = connectionPrompt({

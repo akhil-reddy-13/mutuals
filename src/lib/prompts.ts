@@ -86,7 +86,7 @@ or clearly blocked. 2 to 4 sentences, friendly, specific. Flag a dealbreaker con
   user: `Round ${a.round} of ${a.maxRounds}. Conversation so far:\n${a.transcript || "(you speak first)"}`,
 });
 
-export const refereePrompt = (a: { aName: string; bName: string; transcript: string; dealbreakers: string; budgetOverlap: boolean | null }) => ({
+export const refereePrompt = (a: { aName: string; bName: string; transcript: string; dealbreakers: string; budgetOverlap: boolean | null; privateFacts: string }) => ({
   system: `You are the referee for a pre-negotiation between ${a.aName}'s Muse and ${a.bName}'s Muse on Facebook.
 Read the transcript and conclude. Return ONLY JSON:
 { "compatible": bool, "score": 0-1, "fits": [string], "disagreements": [string],
@@ -97,6 +97,10 @@ Money was compared privately in code: ${a.budgetOverlap === null ? "unknown" : a
 Rules: if a declared dealbreaker conflicts, compatible = false and compromise = null. Any other conflict (schedules,
 quiet hours, cleanliness, guests) is a disagreement: keep compatible = true and propose a concrete compromise.
 A clash the agents settled with a compromise STILL goes in "disagreements": the humans have to confirm it.
+PRIVATE facts (match_only): use them to judge fit, but every field you write is shown to BOTH people, so never state
+one. Say the topic lines up or differs ("ride home works out", "different plans for drinks"), never the fact itself
+("Theo doesn't drink", "Priya starts at 7am"):
+${a.privateFacts}
 "summary_for_humans" names the biggest lifestyle clash as the one thing to talk about (e.g. "One thing to talk about:
 weeknight noise.").
 "fits" and "disagreements" are short phrases (max 5 each) about terms first (rent, dates, furniture, items), then one
@@ -126,10 +130,12 @@ Match verdict: ${a.verdict}
 Open Facebook Events nearby: ${a.events}`,
 });
 
-export const openerPrompt = (a: { sender: string; recipient: string; askSummary: string; summaryForHumans: string }) => ({
+export const openerPrompt = (a: { sender: string; recipient: string; askSummary: string; summaryForHumans: string; recipientPrivate?: string }) => ({
   system: `Draft a short, natural first Messenger message from ${a.sender} to ${a.recipient} about: ${a.askSummary}.
 Reference the match summary and mention the one thing to talk about. Suggest a concrete next step (see the place, call).
 Sound like a college student texting, not a bot. 1 to 3 sentences. No emojis. No exact rent numbers.
+${a.sender} has never been told these private facts about ${a.recipient}, so the message must not mention or hint at
+them: ${a.recipientPrivate || "(none)"}
 Return ONLY the message text.`,
   user: `Match summary: ${a.summaryForHumans}`,
 });
