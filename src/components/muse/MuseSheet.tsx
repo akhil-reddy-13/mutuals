@@ -8,6 +8,7 @@ import { CloseIcon, MuseMark, SendIcon, VideoCamIcon } from "../icons";
 import MatchCard from "../MatchCard";
 import type { EventInfo } from "../ConnectionCard";
 import IntakeCard from "./IntakeCard";
+import HomesCard from "./HomesCard";
 import LiveMatching, { type LiveCandidate } from "./LiveMatching";
 import PrefChips from "./PrefChips";
 import VideoCapture from "./VideoCapture";
@@ -21,7 +22,7 @@ export interface MuseSheetProps {
   onClose: () => void;
 }
 
-type Card = "prefs" | "video" | "intake" | "matching" | "shortlist";
+type Card = "prefs" | "video" | "intake" | "matching" | "shortlist" | "homes";
 interface Msg {
   id: string;
   role: "muse" | "user";
@@ -49,6 +50,11 @@ function editedFields(now: Item, sent: Item): Partial<Item> {
   return out;
 }
 
+/** Selling = an item ask from someone offering things (results are people who need them). */
+function isSelling(a: Ask | null | undefined): boolean {
+  return !!a && a.type === "item" && a.side !== "seeking";
+}
+
 export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
   const router = useRouter();
   const first = firstName(me.name);
@@ -62,6 +68,10 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
   // Items Spark is still identifying (step 2 of the seller pipeline).
   const [identifying, setIdentifying] = useState<Set<string>>(new Set());
   const framesRef = useRef<string[]>([]);
+  const intakeRef = useRef<typeof intake>(null);
+  useEffect(() => {
+    intakeRef.current = intake;
+  }, [intake]);
   const [listed, setListed] = useState<{ id: string; title: string; priceUsd: number } | null>(null);
   const [cands, setCands] = useState<LiveCandidate[]>([]);
   const [matches, setMatches] = useState<Match[] | null>(null);
@@ -154,7 +164,9 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
   function askOptIn() {
     const id = push({
       role: "muse",
-      text: `Want me to check with other Muses in ${group.name}? I'll also read the group's posts. Only public and match-only facts go out, and you'll see everything I share.`,
+      text: isSelling(askRef.current)
+        ? `Want me to ask around ${group.name} and see who's looking for these? I'll only say what's in your list, and you'll see everything I share.`
+        : `Want me to ask around ${group.name}? I'll check with people's Muses and read the posts. I only share what you said was OK, and you'll see everything I say.`,
       actions: [
         { label: "Yes, check", primary: true, onClick: () => startMatching() },
         {
@@ -240,17 +252,31 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
     push({ role: "muse", text: `Listed. "${listing.title}" is on Marketplace for $${listing.priceUsd}. I'll mention it to anyone whose Muse is looking for one.` });
   }
 
-  function startMatching() {
-    if (!ask) return;
+  async function startMatching() {
+    const cur = askRef.current ?? ask;
+    if (!cur) return;
     setCands([]);
     setMatches(null);
-    push({ role: "muse", text: `On it. Checking with the Muses in ${group.name} and reading the posts. You can watch.`, card: "matching" });
-    const es = new EventSource(`/api/match?askId=${ask.id}`);
+    const selling = isSelling(cur);
+    push({
+      role: "muse",
+      text: selling ? `On it. Asking around ${group.name} for anyone who needs these.` : `On it. Asking around ${group.name}. You can watch.`,
+      card: "matching",
+    });
+    // Selling: route exactly what the seller approved (Spark's model names, their edits), not Ember's first pass.
+    const latest = intakeRef.current;
+    if (selling && latest?.items.length) {
+      await fetch("/api/ask-items", { method: "POST", body: JSON.stringify({ askId: cur.id, items: latest.items }) }).catch(() => {});
+    }
+    const es = new EventSource(`/api/match?askId=${cur.id}`);
     esRef.current = es;
     es.onmessage = (ev) => {
       const e = JSON.parse(ev.data) as MatchEvent;
       if (e.type === "start") {
         setCands(e.candidates.map((c) => ({ ...c, turns: [] })));
+        if (e.candidates.length) {
+          push({ role: "muse", text: `Checking with ${e.candidates.length} ${e.candidates.length === 1 ? "person's Muse" : "people's Muses"} in ${group.name}…` });
+        }
       } else if (e.type === "turn") {
         setCands((cs) => cs.map((c) => (c.id === e.candidateId ? { ...c, turns: [...c.turns, { turn: e.turn, disclosedMeta: e.disclosedMeta }] } : c)));
       } else if (e.type === "verdict") {
@@ -258,6 +284,21 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
       } else if (e.type === "connection") {
         setCands((cs) => cs.map((c) => (c.id === e.candidateId && c.match ? { ...c, match: { ...c.match, connection: e.connection }, connection: e.connection } : c)));
         setEvents((m) => ({ ...m, [e.matchId]: e.event }));
+      } else if (e.type === "done" && selling) {
+        es.close();
+        setMatches(e.matches);
+        const homed = e.matches.filter((m) => m.routedItems?.length);
+        const n = homed.reduce((k, m) => k + (m.routedItems?.length ?? 0), 0);
+        const names = homed.map((m) => firstName(candsRef.current.find((c) => c.id === m.candidateId)?.name ?? ""));
+        push({
+          role: "muse",
+          text:
+            n > 0
+              ? `Good news: ${n} of your things already ${n === 1 ? "has" : "have"} a home with ${names.join(" and ")}. I told them nothing beyond your list. You decide who to message.`
+              : `Nobody in ${group.name} is looking for these right now. I can offer them to everyone nearby.`,
+          card: "homes",
+        });
+        router.refresh();
       } else if (e.type === "done") {
         es.close();
         setMatches(e.matches);
@@ -283,7 +324,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
     };
     es.onerror = () => {
       es.close();
-      recoverByPolling(ask.id);
+      recoverByPolling(cur.id);
     };
   }
 
@@ -302,7 +343,12 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
         setCands((cs) => cs.map((c) => ({ ...c, match: ms.find((x) => x.candidateId === c.id) ?? c.match })));
         if (a.ask?.status === "matched") {
           setMatches(ms);
-          push({ role: "muse", text: `${ms.filter((x) => x.verdict.compatible).length} people fit. Here's the shortlist.`, card: "shortlist" });
+          if (isSelling(askRef.current)) {
+            const n = ms.reduce((k, x) => k + (x.routedItems?.length ?? 0), 0);
+            push({ role: "muse", text: n ? `${n} of your things already have a home.` : "Nobody here is looking for these yet.", card: "homes" });
+          } else {
+            push({ role: "muse", text: `${ms.filter((x) => x.verdict.compatible).length} people fit. Here's the shortlist.`, card: "shortlist" });
+          }
           router.refresh();
           return;
         }
@@ -418,7 +464,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
                           onEditItems(intake.items.map((i) => (i.id === x.id ? on : i)));
                           void identify(on, intake.transcript ?? undefined);
                         }}
-                        onList={onList}
+                        onList={ask?.type === "item" ? undefined : onList}
                         listed={listed}
                       />
                     </div>
@@ -426,6 +472,17 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
                   {m.card === "matching" && (
                     <div className="ml-8">
                       {cands.length === 0 ? <div className="h-14 rounded-xl shimmer" /> : <LiveMatching cands={cands} meName={first} defaultOpen={firstAgent} />}
+                    </div>
+                  )}
+                  {m.card === "homes" && matches && (
+                    <div className="ml-8">
+                      <HomesCard
+                        matches={matches}
+                        people={candById}
+                        rest={(intake?.items ?? []).filter((i) => i.mentioned !== false && !matches.some((mt) => mt.routedItems?.some((r) => r.id === i.id)))}
+                        onOfferRest={onList}
+                        listed={listed}
+                      />
                     </div>
                   )}
                   {m.card === "shortlist" && matches && (

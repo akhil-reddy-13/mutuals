@@ -34,6 +34,30 @@ Notes are 2 to 4 short phrases a roommate would care about (light, floors, windo
   userText: narration ? `User narration: ${narration}` : "No narration.",
 });
 
+export const homesPrompt = (a: { sellerName: string; items: string; buyers: string; sellerShares: string }) => ({
+  system: `You are ${a.sellerName}'s Muse: the friend who knows everyone in their Groups. ${a.sellerName} is selling some
+things. Other people's Muses told you what their person is looking for. Decide which items already have a home.
+Return ONLY JSON:
+{ "homes": [ { "buyer_id": string, "item_ids": [string], "why": string, "hook": string|null } ] }
+Rules:
+- Route by what a thing is FOR, the way a friend would: a table works as a desk, a tote works as a bag, a monitor
+  fits someone setting up a desk. Only route to someone whose stated need it actually serves. An item goes to at
+  most one person. It's normal for some items to have no home. Never invent a need.
+- One person can get several items ("Desk + chair").
+- "why" is ONE warm line about the PERSON in human terms, starting with their first name, e.g.
+  "Maya just moved into her first place in Oakland and is furnishing it." Never "matches 3 filters", never prices.
+- Never state a private (match_only) fact or number in "why" or "hook". You may use it to decide.
+- "hook" is one line ONLY when ${a.sellerName} and that person share a real, specific interest from the lists below
+  (e.g. "You're both into indie music, and Theo's going to beabadoobee Dec 12"). Otherwise null. Most are null.`,
+  user: `Items ${a.sellerName} is selling:
+${a.items}
+
+People looking for something (their Muses shared this):
+${a.buyers}
+
+${a.sellerName} shares these interests: ${a.sellerShares}`,
+});
+
 export const identifyPrompt = (a: { emberName: string; brandGuess?: string; spokenAs?: string; transcript?: string }) => ({
   system: `You are the identification step of a seller's Muse on Facebook Marketplace. Another model already found this
 item in the seller's video. Look closely at the photo and work out exactly what it is, then price it.

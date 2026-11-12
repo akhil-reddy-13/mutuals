@@ -16,6 +16,18 @@ export const IdentifySchema = z.object({
 });
 export type IdentifyOutput = z.infer<typeof IdentifySchema>;
 
+export const HomesSchema = z.object({
+  homes: z.array(
+    z.object({
+      buyer_id: z.string(),
+      item_ids: z.array(z.string()),
+      why: z.string(),
+      hook: z.string().nullable(),
+    }),
+  ),
+});
+export type HomesOutput = z.infer<typeof HomesSchema>;
+
 export const IntakeSchema = z.object({
   /** Word-for-word narration, when audio was attached. */
   transcript: z.string().nullable().optional(),

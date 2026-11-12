@@ -36,6 +36,11 @@ export async function runMatching(askInput: Ask, emitRaw: (e: MatchEvent) => voi
   const me = getUser(ask.userId);
   if (!me) throw new Error("unknown user");
   saveAsk({ ...ask, status: "matching" });
+  // Selling: route each item to a person who needs it ("3 of these already have a home"), not a negotiation.
+  if (ask.type === "item" && ask.side !== "seeking" && (ask.items?.length ?? 0) > 0) {
+    const { runHomes } = await import("./homes");
+    return runHomes(ask, emit);
+  }
 
   const agentCands = candidateAsks(ask);
   const posts = candidatePosts(ask);

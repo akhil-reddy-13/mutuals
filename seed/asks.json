@@ -485,5 +485,166 @@
     ],
     "createdAt": "2026-11-09T20:00:00Z",
     "status": "matching"
+  },
+  {
+    "id": "ask_maya_desk",
+    "userId": "maya",
+    "groupId": "g_ffs",
+    "type": "item",
+    "side": "seeking",
+    "summary": "Just moved into my first place in Oakland. Looking for a desk and a chair, used is great",
+    "preferences": [
+      {
+        "id": "maya_need",
+        "topic": "need",
+        "value": "A desk and a chair for a small bedroom",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "maya_budget",
+        "topic": "budget",
+        "value": "Hoping to spend around $60 total",
+        "importance": "medium",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "maya_budget_max",
+        "topic": "budget_max",
+        "value": "Could go up to $100 for both if they are decent",
+        "importance": "medium",
+        "visibility": "match_only",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "maya_pickup",
+        "topic": "pickup",
+        "value": "Can borrow a car Saturday, Oakland",
+        "importance": "low",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      }
+    ],
+    "createdAt": "2026-11-11T19:00:00Z"
+  },
+  {
+    "id": "ask_dev_laptop",
+    "userId": "dev",
+    "groupId": "g_ffs",
+    "type": "item",
+    "side": "seeking",
+    "summary": "Laptop died a week before finals. Need a used MacBook that can run VS Code",
+    "preferences": [
+      {
+        "id": "dev_need",
+        "topic": "need",
+        "value": "Any MacBook from the last ~5 years that runs VS Code",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "dev_budget_max",
+        "topic": "budget_max",
+        "value": "Up to $500, finals are next week",
+        "importance": "high",
+        "visibility": "match_only",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "dev_when",
+        "topic": "timing",
+        "value": "Needs it this week",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      }
+    ],
+    "createdAt": "2026-11-11T19:00:00Z"
+  },
+  {
+    "id": "ask_june_camera",
+    "userId": "june",
+    "groupId": "g_ffs",
+    "type": "item",
+    "side": "seeking",
+    "summary": "Going to Japan over winter break, want a compact camera that beats my phone",
+    "preferences": [
+      {
+        "id": "june_need",
+        "topic": "need",
+        "value": "Compact camera, small enough for a jacket pocket, better than a phone in low light",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "june_budget",
+        "topic": "budget",
+        "value": "Around $350",
+        "importance": "medium",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "june_budget_max",
+        "topic": "budget_max",
+        "value": "Would stretch to $480 for a really good one",
+        "importance": "medium",
+        "visibility": "match_only",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "june_when",
+        "topic": "timing",
+        "value": "Leaves Dec 18",
+        "importance": "medium",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      }
+    ],
+    "createdAt": "2026-11-11T19:00:00Z"
+  },
+  {
+    "id": "ask_theo_earbuds",
+    "userId": "theo",
+    "groupId": "g_ffs",
+    "type": "item",
+    "side": "seeking",
+    "summary": "Want wireless earbuds for the BART commute",
+    "preferences": [
+      {
+        "id": "theo_need",
+        "topic": "need",
+        "value": "Wireless earbuds with a case, decent noise blocking",
+        "importance": "medium",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "theo_budget_max",
+        "topic": "budget_max",
+        "value": "Up to $70",
+        "importance": "medium",
+        "visibility": "match_only",
+        "source": "stated",
+        "confirmed": true
+      }
+    ],
+    "createdAt": "2026-11-11T19:00:00Z"
   }
 ]
