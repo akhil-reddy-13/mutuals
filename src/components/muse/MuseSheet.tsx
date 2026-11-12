@@ -10,7 +10,7 @@ import type { EventInfo } from "../ConnectionCard";
 import IntakeCard from "./IntakeCard";
 import HomesCard from "./HomesCard";
 import ReachCard from "./ReachCard";
-import LiveMatching, { type LiveCandidate } from "./LiveMatching";
+import LiveMatching, { type LiveCandidate, type MatchModelLabels } from "./LiveMatching";
 import PrefChips from "./PrefChips";
 import VideoCapture from "./VideoCapture";
 import { firstName } from "@/lib/format";
@@ -109,6 +109,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
   }, [intake]);
   const [listed, setListed] = useState<{ id: string; title: string; priceUsd: number } | null>(null);
   const [cands, setCands] = useState<LiveCandidate[]>([]);
+  const [matchModels, setMatchModels] = useState<MatchModelLabels | undefined>(undefined);
   const [matches, setMatches] = useState<Match[] | null>(null);
   const [events, setEvents] = useState<Record<string, EventInfo | null>>({});
   const [remembered, setRemembered] = useState<string[]>([]);
@@ -373,6 +374,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
     es.onmessage = (ev) => {
       const e = JSON.parse(ev.data) as MatchEvent;
       if (e.type === "start") {
+        if (e.models) setMatchModels(e.models);
         setCands(e.candidates.map((c) => ({ ...c, turns: [] })));
         if (e.candidates.length) {
           push({ role: "muse", text: `Checking with ${e.candidates.length} ${e.candidates.length === 1 ? "person's Muse" : "people's Muses"} in ${groupNameNow.current}…` });
@@ -621,7 +623,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
                   )}
                   {m.card === "matching" && (
                     <div className="ml-8">
-                      {cands.length === 0 ? (matches ? null : <div className="h-14 rounded-xl shimmer" />) : <LiveMatching cands={cands} meName={first} defaultOpen={firstAgent} />}
+                      {cands.length === 0 ? (matches ? null : <div className="h-14 rounded-xl shimmer" />) : <LiveMatching cands={cands} meName={first} defaultOpen={firstAgent} models={matchModels} />}
                     </div>
                   )}
                   {m.card === "reach" && ask && (

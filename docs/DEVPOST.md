@@ -32,9 +32,9 @@ The same engine runs every Group ask. In SF New Grads, "going to beabadoobee, no
 
 Next.js 15 (App Router, TypeScript, Tailwind) on the Meta Model API through the OpenAI-compatible endpoint.
 
-- Muse Spark parses the ask into tagged preferences, plays each person's negotiating agent, drafts openers and Marketplace copy.
-- Muse Wonder is the referee (one call per candidate at the end of two rounds) and makes the connection judgment.
-- Muse Ember reads video frames sampled on the phone, scores human Group posts, and writes the daily digest.
+- Muse Ember does everything you wait on: parses the ask into tagged preferences, plays each person's Muse in the back-and-forth, writes the referee verdict (one call per candidate after two rounds), makes the connection judgment, routes items to people, drafts openers and Marketplace copy, reads human Group posts, and watches and listens to the video (frames plus narration, extracted server-side with ffmpeg).
+- Muse Spark identifies each item from its clearest frame and your words: exact make and model, condition, a used price range and a confidence. One call per item, in parallel.
+- Muse Image generated the demo photos. Every role is one setting in a role map, so Wonder or Spark can take over any step; we measured Ember giving the same verdicts about 10 to 30 times faster, which is what keeps the live view watchable.
 - Every model output is validated with zod. Every response is cached by input hash. A mock mode replays scripted responses with no network, and the UI shows which mode is running.
 
 ## Privacy, in code not in prompts

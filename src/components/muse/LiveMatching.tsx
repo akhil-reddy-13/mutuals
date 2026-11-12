@@ -7,6 +7,20 @@ import { CheckIcon, ChevronDown, GlobeIcon, LockIcon, MuseMark, XSmallIcon } fro
 import { firstName, topicLabel } from "@/lib/format";
 import type { ConnectionSuggestion, Match, NegotiationTurn } from "@/lib/types";
 
+/** Which Muse model did each job, as labels ("Muse Ember"). Comes from the match stream so it follows `modelFor`. */
+export type MatchModelLabels = { agent: string; referee: string; posteval: string; opener: string };
+const DEFAULT_MODELS: MatchModelLabels = { agent: "Muse Ember", referee: "Muse Ember", posteval: "Muse Ember", opener: "Muse Ember" };
+
+function creditLine(c: { mode: Match["mode"]; name: string }, meName: string, m: MatchModelLabels): string {
+  const them = firstName(c.name);
+  if (c.mode === "agent_to_agent") {
+    const talked = m.agent === m.referee ? `talked it through and settled it (${m.agent})` : `talked it through (${m.agent}), then ${m.referee} made the call`;
+    return `Your Muse and ${them}'s ${talked}. ${meName}'s private numbers stayed private, and so did ${them}'s.`;
+  }
+  const read = m.posteval === m.opener ? `I read their post and drafted a reply (${m.posteval})` : `I read their post (${m.posteval}) and drafted a reply (${m.opener})`;
+  return `${them} doesn't have Muse on, so ${read}. Nothing left your side.`;
+}
+
 export interface LiveCandidate {
   id: string;
   name: string;
@@ -48,7 +62,7 @@ export function DisclosedChips({ meta, light }: { meta: { id: string; topic: str
   );
 }
 
-export default function LiveMatching({ cands, meName, defaultOpen }: { cands: LiveCandidate[]; meName: string; defaultOpen?: string }) {
+export default function LiveMatching({ cands, meName, defaultOpen, models }: { cands: LiveCandidate[]; meName: string; defaultOpen?: string; models?: MatchModelLabels }) {
   const [open, setOpen] = useState<Record<string, boolean>>(defaultOpen ? { [defaultOpen]: true } : {});
   return (
     <div className="flex flex-col gap-2">
@@ -129,9 +143,7 @@ export default function LiveMatching({ cands, meName, defaultOpen }: { cands: Li
                 )}
                 {done && (
                   <p className="px-1 pt-1 text-[11px] text-fb-muted">
-                    {c.mode === "agent_to_agent"
-                      ? `Your Muse and ${firstName(c.name)}'s talked it through, then made the call. ${meName}'s private numbers stayed private, and so did ${firstName(c.name)}'s.`
-                      : `${firstName(c.name)} doesn't have Muse on, so I read their post and drafted a reply. Nothing left your side.`}
+                    {creditLine(c, meName, models ?? DEFAULT_MODELS)}
                   </p>
                 )}
               </div>

@@ -51,12 +51,12 @@ Both phones start on **Home** (a normal-looking feed). Phone A goes **Groups →
 
 - If the negotiation you showed was served from cache or mock, say so: "pre-run on Muse this morning, replayed because of venue wifi."
 - The numbers comparison (budgets overlap) is computed in code, not by the model. Say that proudly: it is the privacy guarantee.
-- Models: Spark for the two agents, openers and ask parsing; Wonder once per candidate as referee and once for the connection judgment; Ember for video frames, post reading and the digest.
+- Models: Ember for the chat, both sides of the back-and-forth, the referee verdict, the connection judgment, item routing, openers, post reading and the video (frames and narration); Spark for naming the exact make and model of each item. One role map in `src/lib/muse.ts`; Wonder can take any role with one setting.
 
 ## Other live flows (same engine, 20 to 40 seconds each)
 
 - **Selling (Stanford Free & For Sale):** "Selling some stuff before I move out" → upload a video where you talk over
-  your stuff. Run the exact demo video once beforehand so Ember/Spark/Wonder are cached (about 15 s cold).
+  your stuff. Run the exact demo video once beforehand so the Ember and Spark calls are cached (about 15 s cold).
   Result is people, not listings: "2 of these already have a home." `IMG_6396.MOV` → G7 X to June, Poly earbuds to Theo.
 - **"I need X" (Stanford Free & For Sale):** "Need a tent for a camping trip next month" → Muse asks "Is this for a
   trip? Want people to go with too?" → "Yosemite, Dec 6, down to go with people" → Marcus (tent, driving there) + the

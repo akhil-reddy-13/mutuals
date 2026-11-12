@@ -35,10 +35,10 @@ Meta has described a Muse network where your Muse works with your friends' and f
 2. **Ask Muse privately.** Three lines of chat. Every preference comes back tagged **Public**, **Kept private** or **Never shared**. Tap a badge to change it.
 3. **Film the room.** Ten seconds. Muse Ember returns room facts and the leftover items the next person might want.
 4. **"Want me to check with other Muses in this group?"** That question is the opt-in. It is scoped to the Group.
-5. **Watch the negotiation.** Every candidate runs in parallel. Alex's Muse and Priya's Muse settle rent, dates, furniture and quiet hours in two rounds. A Wonder referee writes the verdict. Jordan's Muse brings a dog; Alex's Muse stops early. Casey has no Muse; Ember reads her post and Spark drafts a reply.
+5. **Watch the negotiation.** Every candidate runs in parallel. Alex's Muse and Priya's Muse settle rent, dates, furniture and quiet hours in two rounds. A referee call writes the verdict. Jordan's Muse brings a dog; Alex's Muse stops early. Casey has no Muse; Ember reads her post and drafts a reply.
 6. **Shortlist.** Why it fits, where you'd disagree, the proposed compromise, trust signals (verified school, shared Groups, mutual friends), and **What my Muse shared**.
 7. **Message Priya.** The opener is drafted. Alex edits and sends. Priya replies from her own phone.
-8. **More than a lease.** Both new to SF, both run weekend mornings. Wonder suggests an existing Event: New in SF: Weekend Runs. Sam, who also fit, gets no suggestion. Most exchanges stay exchanges.
+8. **More than a lease.** Both new to SF, both run weekend mornings. Muse suggests an existing Event: New in SF: Weekend Runs. Sam, who also fit, gets no suggestion. Most exchanges stay exchanges.
 
 ## Screenshots
 
@@ -66,32 +66,34 @@ Every outgoing message your Muse sends is logged and visible to you under **What
 
 | Step | Model | What it does |
 |---|---|---|
-| Ask parsing | **Muse Spark** | Chat turns → structured, visibility-tagged preferences; asks one follow-up at a time |
+| Ask parsing | **Muse Ember** | Chat turns → structured, visibility-tagged preferences; asks one follow-up at a time |
 | Video intake | **Muse Ember** | ~10 frames + your narration (server-side ffmpeg reads any phone video, incl. iPhone .MOV) → transcript, room details, the items you said you're selling |
 | Item identification | **Muse Spark** | Per item, in parallel: clearest frame + neighbors + your words → exact model ("this Canon camera" → Canon PowerShot G7 X Mark II), confidence, used price range |
-| Finding homes | **Muse Wonder** | Routes each item to a person in the Group whose Muse says they need it, with a one-line human reason. Budgets compared in code. |
-| Negotiation | **Muse Spark** × 2 | One agent per person, each seeing only what its owner allows. Two rounds, candidates in parallel. |
-| Referee | **Muse Wonder** | One call per candidate at the end: fits, disagreements, compromise, a 5-second summary |
-| One-sided mode | **Ember** + **Spark** | Scores a human Group post against your ask, then drafts the reply |
-| Connection judgment | **Muse Wonder** | One call per compatible match, only if both opted in. Usually says no. |
-| Openers, listings, digest | **Spark** / **Ember** | Messenger opener (always names the item/room and their reason), Marketplace copy, the daily digest |
+| Finding homes | **Muse Ember** | Routes each item to a person in the Group whose Muse says they need it, with a one-line human reason. Budgets compared in code. |
+| Negotiation | **Muse Ember** × 2 | One Muse per person, each seeing only what its owner allows. Two rounds, candidates in parallel. |
+| Referee | **Muse Ember** | One call per candidate at the end: fits, disagreements, compromise, a 5-second summary |
+| One-sided mode | **Muse Ember** | Scores a human Group post against your ask, then drafts the reply |
+| Connection judgment | **Muse Ember** | One call per compatible match, only if both opted in. Usually says no. |
+| Openers, listings, digest | **Muse Ember** | Messenger opener (always names the item/room and their reason), Marketplace copy, the daily digest |
 | Demo photos | **Muse Image** | Every photo in the seeded feed and Marketplace (`scripts/gen-images.ts`), stored locally |
 
 Code does only two things the model does not: sealed comparisons of private numbers, and leak checks on every string shown to a human.
 
+**Why mostly Ember.** One role map in `src/lib/muse.ts` (`modelFor`) decides which model does each job. Measured on Nov 12 with the same inputs side by side, Ember matched Spark and Wonder on verdicts, connection picks and item routing at about 1 s per call, against 10 to 14 s for Spark and about 30 s for Wonder. Checking one candidate is six calls in sequence, so per-call latency decides whether the live view is watchable. Spark keeps the one job where it was clearly better, reading an exact make and model off a photo. Any role moves with `MUSE_ROLE_<ROLE>=spark|wonder`, and Wonder calls are time-boxed at 20 s with a fallback, so the heavier models are a setting, not a rewrite.
+
 ```
-Group composer ─► Muse sheet ─► POST /api/asks (Spark)  ─► POST /api/intake (Ember)
+Group composer ─► Muse sheet ─► POST /api/asks (Ember)  ─► POST /api/intake (Ember) ─► /api/identify (Spark, per item)
                                        │
                                        ▼  "Want me to check with other Muses here?"
                               GET /api/match?askId  (SSE)
                  ┌─────────────────────┼─────────────────────┐
          agent-to-agent         agent-to-agent          one-sided
-   Spark A ⇄ Spark B ×2    Spark A ⇄ Spark B ×2     Ember reads post
-        Wonder referee          Wonder referee       Spark drafts reply
+   Ember A ⇄ Ember B ×2    Ember A ⇄ Ember B ×2     Ember reads post
+         Ember referee           Ember referee       Ember drafts reply
                  └─────────────────────┼─────────────────────┘
-                          Wonder connection judgment (compatible + both opted in)
+                           Ember connection judgment (compatible + both opted in)
                                        ▼
-          Notification ─► Match cards ─► POST /api/messenger (Spark opener) ─► Messenger thread
+          Notification ─► Match cards ─► POST /api/messenger (Ember opener) ─► Messenger thread
                                                  └─► Facebook Event  ·  Marketplace listing
 ```
 
