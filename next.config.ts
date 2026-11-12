@@ -4,6 +4,8 @@ const nextConfig: NextConfig = {
   // `npm run demo:build` / `demo:start` use a separate build folder so a production demo build never clobbers a
   // running `npm run dev` (both would otherwise write .next/).
   distDir: process.env.NEXT_DIST_DIR || ".next",
+  // ffmpeg-static ships a binary; keep it out of the bundle so its path resolves at runtime (api/media).
+  serverExternalPackages: ["ffmpeg-static"],
   // Let phones on the same wifi load the dev server (npm run dev:lan).
   allowedDevOrigins: ["192.168.*.*", "10.*.*.*", "172.*.*.*", "100.*.*.*", "*.local"],
 };

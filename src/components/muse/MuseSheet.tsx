@@ -170,7 +170,14 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
       setIntake(out);
       setAsk((a) => (a ? { ...a, roomDetails: out.room ?? a.roomDetails, items: out.items } : a));
       const n = out.items.length;
-      push({ role: "muse", text: `Got it. ${out.room ? "Here's what I can see, plus" : "I found"} ${n} ${n === 1 ? "item" : "items"} the next person might want. Prices are what students nearby pay.`, card: "intake" });
+      const selling = ask.type === "item";
+      push({
+        role: "muse",
+        text: selling
+          ? `Got it. I found ${n} ${n === 1 ? "thing" : "things"} you're selling. Prices are what students nearby pay; change anything before you list.`
+          : `Got it. ${out.room ? "Here's what I can see, plus" : "I found"} ${n} ${n === 1 ? "item" : "items"} the next person might want. Prices are what students nearby pay.`,
+        card: "intake",
+      });
     } catch (e) {
       push({ role: "muse", text: `I couldn't read that video (${e instanceof Error ? e.message : String(e)}). Want to try photos instead?`, card: "video" });
       setThinking(false);
@@ -339,6 +346,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
                     <div className="ml-8">
                       <VideoCapture
                         disabled={thinking}
+                        subject={ask?.type === "item" ? "items" : "room"}
                         onFrames={(f, n, a) => {
                           setUsed((s) => new Set(s).add(m.id));
                           onFrames(f, n, a);

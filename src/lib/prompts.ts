@@ -19,7 +19,12 @@ AUDIO: the user talked while filming. Their words are authoritative:
 - If they say which items they are selling or giving away, list ONLY those. Leave out anything they say is not for sale.
 - Use the exact brand, model or edition they state as brand_guess (e.g. "Fujifilm X100V, silver").
 - If they say a price or condition, use it. Match spoken references ("this table", "that one") to what is on screen
-  at that point in the video, using frame order as the timeline.` : ""}
+  at that point in the video, using frame order as the timeline.
+- People talk casually. "these two desks" = two separate items. "this camera with the bag" = ONE bundle item named
+  like "Camera with bag". Ignore everything they don't mention (snacks, cables, clutter, the room itself).
+- If they name a product generically ("this macbook"), add what you can see (size, color, model year guess) to
+  brand_guess, and price it as a used one between students.
+- frame_index is the frame where the item is clearest, so it can be the listing photo.` : ""}
 Notes are 2 to 4 short phrases a roommate would care about (light, floors, windows, lock, noise).`,
   userText: narration ? `User narration: ${narration}` : "No narration.",
 });

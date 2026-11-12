@@ -46,6 +46,22 @@ async function audioFromVideo(file: File, maxSeconds = 30): Promise<string | nul
   }
 }
 
+/** Upload the raw video to /api/media for ffmpeg extraction. Returns null on any failure (caller falls back). */
+async function prepOnServer(file: File): Promise<{ frames: string[]; audio: string | null } | null> {
+  try {
+    const res = await fetch("/api/media", {
+      method: "POST",
+      headers: { "content-type": file.type || "video/quicktime", "x-filename": file.name },
+      body: file,
+    });
+    if (!res.ok) return null;
+    const out = (await res.json()) as { frames?: string[]; audio?: string | null };
+    return out.frames?.length ? { frames: out.frames, audio: out.audio ?? null } : null;
+  } catch {
+    return null;
+  }
+}
+
 async function framesFromVideo(file: File, max = 10): Promise<string[]> {
   const url = URL.createObjectURL(file);
   const video = document.createElement("video");
@@ -122,7 +138,18 @@ async function framesFromImages(files: File[], max = 10): Promise<string[]> {
   return out;
 }
 
-export default function VideoCapture({ onFrames, onSkip, disabled }: { onFrames: (frames: string[], narration: string, audio: string | null) => void; onSkip: () => void; disabled?: boolean }) {
+export default function VideoCapture({
+  onFrames,
+  onSkip,
+  disabled,
+  subject = "room",
+}: {
+  onFrames: (frames: string[], narration: string, audio: string | null) => void;
+  onSkip: () => void;
+  disabled?: boolean;
+  /** What's being filmed: a room (roommate/sublet) or items for sale. Only changes the wording. */
+  subject?: "room" | "items";
+}) {
   const [frames, setFrames] = useState<string[]>([]);
   const [audio, setAudio] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -137,9 +164,17 @@ export default function VideoCapture({ onFrames, onSkip, disabled }: { onFrames:
     setErr(null);
     try {
       if (kind === "video") {
-        const [f, a] = await Promise.all([framesFromVideo(files[0]), audioFromVideo(files[0])]);
-        setFrames(f);
-        setAudio(a);
+        // Server first (bundled ffmpeg reads any phone video, incl. iPhone HEVC .MOV whose audio Chrome can't
+        // decode). If that fails, fall back to in-browser extraction.
+        const server = await prepOnServer(files[0]);
+        if (server) {
+          setFrames(server.frames);
+          setAudio(server.audio);
+        } else {
+          const [f, a] = await Promise.all([framesFromVideo(files[0]), audioFromVideo(files[0])]);
+          setFrames(f);
+          setAudio(a);
+        }
       } else {
         setFrames(await framesFromImages(Array.from(files)));
         setAudio(null);
@@ -160,7 +195,7 @@ export default function VideoCapture({ onFrames, onSkip, disabled }: { onFrames:
               <span className="flex h-10 w-10 items-center justify-center rounded-full bg-fb-red text-white">
                 <VideoCamIcon size={22} />
               </span>
-              {busy ? "Reading…" : "Video of the room"}
+              {busy ? "Reading…" : subject === "items" ? "Video of your stuff" : "Video of the room"}
             </button>
             <button disabled={busy || disabled} onClick={() => imgRef.current?.click()} className="flex flex-col items-center gap-1.5 rounded-lg bg-fb-bg px-2 py-3 text-[13px] font-semibold hover:bg-[#e4e6e9] disabled:opacity-50">
               <span className="flex h-10 w-10 items-center justify-center rounded-full bg-fb-green text-white">
@@ -185,13 +220,13 @@ export default function VideoCapture({ onFrames, onSkip, disabled }: { onFrames:
             ))}
           </div>
           <p className="mt-1.5 text-[12px] text-fb-muted">
-            {frames.length} frames{audio ? " + your narration" : ""} sampled on your device. Only these go to Muse.
+            {frames.length} frames{audio ? " + your narration" : " (no narration heard)"}. Only these go to Muse.
           </p>
           <input
             key="narration"
             value={narration}
             onChange={(e) => setNarration(e.target.value)}
-            placeholder="Anything to add? e.g. the desk can stay"
+            placeholder={subject === "items" ? "Anything to add? e.g. the lamp isn't for sale" : "Anything to add? e.g. the desk can stay"}
             className="mt-2 h-9 w-full rounded-full bg-fb-bg px-3 text-[14px] outline-none"
           />
           <div className="mt-2 flex gap-2">
@@ -199,7 +234,7 @@ export default function VideoCapture({ onFrames, onSkip, disabled }: { onFrames:
               Retake
             </button>
             <button onClick={() => onFrames(frames, narration, audio)} disabled={disabled} className="fb-btn-primary h-9 flex-1">
-              Analyze room
+              {subject === "items" ? "Catalog items" : "Analyze room"}
             </button>
           </div>
         </>
