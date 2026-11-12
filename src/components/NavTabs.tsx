@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { BellIcon, FriendsIcon, GroupsIcon, HomeIcon, MarketplaceIcon, MenuIcon, VideoIcon } from "./icons";
 
 const TABS = [
-  { key: "home", href: "/", match: (p: string) => p === "/" || p.startsWith("/digest"), Icon: HomeIcon, label: "Home" },
+  { key: "home", href: "/", match: (p: string) => p === "/", Icon: HomeIcon, label: "Home" },
   { key: "friends", href: "#", match: () => false, Icon: FriendsIcon, label: "Friends" },
   { key: "video", href: "#", match: () => false, Icon: VideoIcon, label: "Video" },
   { key: "market", href: "/marketplace", match: (p: string) => p.startsWith("/marketplace"), Icon: MarketplaceIcon, label: "Marketplace" },

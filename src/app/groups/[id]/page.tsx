@@ -6,7 +6,8 @@ import GroupCover from "@/components/GroupCover";
 import { CameraIcon, ChevronDown, GlobeIcon, LockIcon, MoreIcon, MuseMark, PhotoIcon, PlusIcon, SearchIcon, SparkleIcon } from "@/components/icons";
 import MuseLauncher from "@/components/MuseLauncher";
 import PostCard from "@/components/PostCard";
-import { asksForUser, getGroup, getUser, matchesForAsk, postsInGroup } from "@/lib/db";
+import { asksForUser, getAsk, getGroup, getUser, matchesForAsk, matchesInvolving, postsInGroup } from "@/lib/db";
+import { firstName } from "@/lib/format";
 import { compactCount } from "@/lib/format";
 import { sortMatches } from "@/lib/match";
 import { currentUser } from "@/lib/session";
@@ -29,6 +30,11 @@ export default async function GroupPage({ params }: { params: Promise<{ id: stri
   const matchByAuthor = new Map(matches.map((m) => [m.candidateId, m]));
   const fits = matches.filter((m) => m.verdict.compatible);
   const media = posts.filter((p) => p.imageUrl).slice(0, 6);
+  // The other side of a match: someone else's Muse checked with mine in this Group.
+  const talkedToMe = matchesInvolving(me.id)
+    .filter((m) => m.candidateId === me.id && m.mode === "agent_to_agent" && m.verdict.compatible && getAsk(m.askId)?.groupId === id)
+    .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
+    .slice(0, 1);
   const tabs = ["Discussion", "Featured", "Members", "Events", "Media", "Files"];
 
   return (
@@ -129,6 +135,24 @@ export default async function GroupPage({ params }: { params: Promise<{ id: stri
               </span>
             </Link>
           )}
+
+          {talkedToMe.map((m) => {
+            const asker = getUser(m.userId)!;
+            return (
+              <Link key={m.id} href={`/groups/${group.id}/muse/${m.askId}`} className="fb-card flex items-center gap-3 rounded-none p-3 hover:bg-fb-hover md:rounded-[8px] md:p-4">
+                <span className="relative">
+                  <Avatar src={asker.avatarUrl} name={asker.name} size={40} />
+                  <span className="absolute -bottom-1 -right-1 rounded-full bg-white p-px">
+                    <MuseMark size={16} />
+                  </span>
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-[15px] font-semibold">{firstName(asker.name)}&apos;s Muse checked with yours</span>
+                  <span className="block truncate text-[13px] text-fb-muted">{m.verdict.summaryForHumans}</span>
+                </span>
+              </Link>
+            );
+          })}
 
           {posts.map((p) => {
             const author = getUser(p.authorId)!;

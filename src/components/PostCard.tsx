@@ -1,6 +1,8 @@
 // A Facebook Group post: author, pinned/admin labels, text, photo, reactions, actions, first comments.
 // Muse annotations (chips) appear only when the viewer's Muse has evaluated the author.
+import Link from "next/link";
 import Avatar from "./Avatar";
+import GroupCover from "./GroupCover";
 import { CommentIcon, GroupsIcon, LikeIcon, MoreIcon, MuseMark, PinIcon, ShareIcon, SmileIcon } from "./icons";
 import PostMuseChip from "./PostMuseChip";
 import { firstName, timeAgo } from "@/lib/format";
@@ -14,6 +16,7 @@ export default function PostCard({
   match,
   viewer,
   resolve,
+  group,
 }: {
   post: GroupPost;
   author: User;
@@ -22,6 +25,8 @@ export default function PostCard({
   match?: Match;
   viewer: User;
   resolve: (id: string) => User | undefined;
+  /** When shown in the home feed: the Group this post belongs to. */
+  group?: { id: string; name: string; cover: string };
 }) {
   const likes = post.reactions;
   const comments = post.comments;
@@ -33,10 +38,24 @@ export default function PostCard({
         </div>
       )}
       <header className={`flex items-start gap-2 px-4 ${post.pinned ? "pt-2" : "pt-3"}`}>
-        <Avatar src={author.avatarUrl} name={author.name} size={40} />
+        {group ? (
+          <span className="relative">
+            <GroupCover kind={group.cover} className="h-10 w-10 rounded-lg" />
+            <span className="absolute -bottom-1 -right-1 rounded-full ring-2 ring-white">
+              <Avatar src={author.avatarUrl} name={author.name} size={22} />
+            </span>
+          </span>
+        ) : (
+          <Avatar src={author.avatarUrl} name={author.name} size={40} />
+        )}
         <div className="min-w-0 flex-1">
+          {group && (
+            <Link href={`/groups/${group.id}`} className="block truncate text-[15px] font-semibold hover:underline">
+              {group.name}
+            </Link>
+          )}
           <div className="flex flex-wrap items-center gap-1.5">
-            <span className="truncate text-[15px] font-semibold">{author.name}</span>
+            <span className={`truncate ${group ? "text-[13px] font-semibold text-fb-muted" : "text-[15px] font-semibold"}`}>{author.name}</span>
             {isAdmin && <span className="rounded bg-fb-chip px-1.5 py-px text-[11px] font-semibold text-fb-muted">Admin</span>}
             {museOn && (
               <span title="Lets their Muse talk to other Muses in this group" className="inline-flex">

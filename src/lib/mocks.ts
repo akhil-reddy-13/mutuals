@@ -64,6 +64,29 @@ export function mockAskParse(ownerId: string, conversation: string): AskParseOut
       ready: true,
     };
   }
+  if (ownerId === "priya") {
+    const base = { ask_type: "roommate" as const, summary: "Looking for a room in SF from early September" };
+    if (userTurns <= 1)
+      return {
+        ...base,
+        preferences: [{ id: "priya_movein", topic: "move_in", value: "Early September", importance: "high", visibility: "public", source: "stated" }],
+        follow_up_question: "On it. What's your budget, and is there a real ceiling you'd rather I keep between us? Anything about schedule or noise?",
+        ready: false,
+      };
+    return {
+      ...base,
+      preferences: [
+        { id: "priya_budget", topic: "budget", value: "Around $1,200/mo", importance: "high", visibility: "public", source: "stated" },
+        { id: "priya_budget_max", topic: "budget_max", value: "Can stretch to $1,300/mo for the right place", importance: "high", visibility: "match_only", source: "stated" },
+        { id: "priya_movein", topic: "move_in", value: "Early September", importance: "high", visibility: "public", source: "stated" },
+        { id: "priya_quiet", topic: "quiet_hours", value: "Needs quiet after 11pm on weeknights, starts work at 7am", importance: "high", visibility: "match_only", source: "stated" },
+        { id: "priya_clean", topic: "cleanliness", value: "Clean common areas", importance: "medium", visibility: "public", source: "stated" },
+        { id: "priya_pets", topic: "pets", value: "No pets of my own, fine either way", importance: "low", visibility: "public", source: "stated" },
+      ],
+      follow_up_question: null,
+      ready: true,
+    };
+  }
   // Generic persona: one follow-up, then ready.
   if (userTurns <= 1)
     return {

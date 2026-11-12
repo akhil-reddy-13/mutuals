@@ -12,7 +12,7 @@ MOCK_MUSE=true npm run dev
 ```
 
 Then on Phone A: avatar menu → **Reset demo**. That clears asks, matches, threads and the opt-in.
-Open **Groups → Stanford Housing '27** on both phones. Phone B goes to Notifications later.
+Both phones start on **Home** (a normal-looking feed). Phone A goes **Groups → Stanford Housing '27** when the problem beat ends. Phone B goes to Notifications later.
 
 ## The lines Alex types (keep them exactly, the offline mock is scripted to them)
 
@@ -24,7 +24,7 @@ Open **Groups → Stanford Housing '27** on both phones. Phone B goes to Notific
 
 | Time | Say | Do (Phone A unless noted) |
 |---|---|---|
-| 0:00 | Problem. Young adults need roommates, rides, sublets. Public posts make you overshare or hide what matters. Most of us barely have a Facebook network. | Show the Group feed: Casey's ISO post, Jordan's dog post. Scroll. |
+| 0:00 | Problem. Young adults need roommates, rides, sublets. Public posts make you overshare or hide what matters. Most of us barely have a Facebook network. | Start on Home. Tap Groups → Stanford Housing '27. Show Casey's ISO post, Jordan's dog post. Scroll. |
 | 0:45 | "Meta described a Muse network for friends and family. We built the part for people you haven't met yet, inside the Groups you're already in." | Tap **Ask Muse privately** in the composer. |
 | 1:00 | "You tell your Muse the stuff you'd never post." | Type line 1, 2, 3. Point at the badges: **Public**, **Match only**, **Never shared**. Tap one badge to show it cycles. |
 | 1:45 | "Film the room. Ten seconds." | Record video (or Use photos). Room facts + leftover items appear. Tap **List on Marketplace**. |
