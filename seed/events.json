@@ -1,0 +1,49 @@
+[
+  {
+    "id": "evt_weekend_runs",
+    "name": "New in SF: Weekend Runs",
+    "description": "Easy 5k along the Embarcadero for people new to the city. All paces. Coffee after.",
+    "city": "San Francisco",
+    "when": "Saturdays, 8:00 AM",
+    "where": "Ferry Building, San Francisco",
+    "hostId": "maya",
+    "goingIds": [
+      "maya",
+      "theo",
+      "june",
+      "kai"
+    ],
+    "open": true,
+    "coverEmoji": "🏃"
+  },
+  {
+    "id": "evt_vintage_swap",
+    "name": "Vintage Swap at Dolores Park",
+    "description": "Bring 5 pieces, leave with 5 pieces. Monthly.",
+    "city": "San Francisco",
+    "when": "Sunday Dec 6, 1:00 PM",
+    "where": "Dolores Park, San Francisco",
+    "hostId": "rosa",
+    "goingIds": [
+      "rosa",
+      "kai",
+      "omar"
+    ],
+    "open": true,
+    "coverEmoji": "👕"
+  },
+  {
+    "id": "evt_cs161",
+    "name": "CS 161 Final Study Session",
+    "description": "Tues/Thurs nights in Huang before the final.",
+    "city": "Stanford",
+    "when": "Tue Dec 1, 7:00 PM",
+    "where": "Huang Engineering Center",
+    "hostId": "dev",
+    "goingIds": [
+      "dev"
+    ],
+    "open": true,
+    "coverEmoji": "📚"
+  }
+]

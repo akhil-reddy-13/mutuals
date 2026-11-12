@@ -1,7 +1,7 @@
-// Shared domain types. Source of truth: docs/PRD.md §8.
-// Change these deliberately — every part of the app imports them.
+// Shared domain types. Source of truth: docs/PRD.md §8, amended by the Nov 12 handoff note:
+// asks are scoped to a Facebook Group (no reach setting), Events replace circles, Marketplace listings
+// hold leftover items. Change these deliberately. Every part of the app imports them.
 
-export type Reach = "school" | "network" | "nearby" | "anyone";
 export type Visibility = "public" | "match_only" | "never";
 export type Importance = "dealbreaker" | "high" | "medium" | "low";
 export type AskType = "roommate" | "sublet" | "item" | "skill_swap" | "plus_one" | "ride" | "other";
@@ -15,8 +15,10 @@ export interface User {
   city: string;
   groups: string[];
   friends: string[];
+  /** Has Muse at all. false = one-sided mode only (we read their human posts). */
   museEnabled: boolean;
-  defaultReach: Reach;
+  /** Groups where this user told Muse "yes, check with other Muses here". The opt-in is per Group. */
+  museGroups: string[];
   connectionSuggestionsOptIn: boolean;
   interests: { value: string; shareForConnection: boolean }[];
   bio?: string;
@@ -54,13 +56,15 @@ export interface Item {
 export interface Ask {
   id: string;
   userId: string;
+  /** The Facebook Group this ask lives in. Candidates and posts come from this Group only. */
+  groupId: string;
   type: AskType;
   summary: string;
-  reach: Reach;
   preferences: Preference[];
   roomDetails?: RoomDetails;
   items?: Item[];
   createdAt: string;
+  status?: "draft" | "matching" | "matched";
 }
 
 export interface NegotiationTurn {
@@ -72,6 +76,7 @@ export interface NegotiationTurn {
 
 export interface Verdict {
   compatible: boolean;
+  /** Kept for ordering only. Never shown in the UI (handoff note, fix 8). */
   score: number;
   fits: string[];
   disagreements: string[];
@@ -93,7 +98,7 @@ export interface ConnectionSuggestion {
   confidence: number;
   reason: string | null;
   activity: string | null;
-  circleId: string | null;
+  eventId: string | null;
 }
 
 export interface Match {
@@ -108,22 +113,31 @@ export interface Match {
   negotiationId?: string;
   sourcePostId?: string; // one_sided mode
   draftReply?: string; // one_sided mode
+  threadId?: string; // set once the human opened Messenger
+  createdAt: string;
 }
 
-export interface Circle {
+/** A Facebook Event. Replaces "circles" (handoff note, decision 5). */
+export interface FbEvent {
   id: string;
   name: string;
   description: string;
   city: string;
-  memberIds: string[];
+  when: string;
+  where: string;
+  hostId: string;
+  goingIds: string[];
   open: boolean;
-  lastActiveAt: string;
+  coverEmoji: string;
 }
 
 export interface Group {
   id: string;
   name: string;
   memberIds: string[];
+  privacy: "public" | "private";
+  coverEmoji: string;
+  about: string;
 }
 
 export interface GroupPost {
@@ -138,6 +152,7 @@ export interface AgentLogEntry {
   id: string;
   userId: string;
   negotiationId: string;
+  counterpartId: string;
   message: string;
   disclosed: string[];
   at: string;
@@ -156,5 +171,20 @@ export interface MessengerThread {
   id: string;
   participantIds: string[];
   matchId?: string;
+  /** Opener drafted by Muse, shown as editable until sent. */
+  draft?: { for: string; text: string };
   messages: { from: string; text: string; at: string }[];
+}
+
+export interface MarketplaceListing {
+  id: string;
+  sellerId: string;
+  askId?: string;
+  title: string;
+  priceUsd: number;
+  condition: string;
+  description: string;
+  items: Item[];
+  imageDataUrl?: string;
+  createdAt: string;
 }

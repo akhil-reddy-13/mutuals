@@ -1,5 +1,7 @@
-// All prompts (PRD §7). Each returns { system, user } for museJSON/museText.
+// All prompts (PRD §7, amended by the handoff note). Each returns { system, user } for museJSON/museText.
 // Tune wording here; keep output shapes in sync with schemas.ts.
+// Rule for every prompt that produces human-facing text: never print exact private numbers or times. Code
+// compares them (privacy.budgetsOverlap) and redacts them (privacy.redactPrivateValues) anyway.
 
 export const intakePrompt = (narration?: string) => ({
   system: `You are analyzing frames from a short phone video of a room or a storage area.
@@ -11,108 +13,136 @@ Return ONLY JSON, no prose, matching this schema:
                "flaws": [string], "suggested_price_usd": number, "frame_index": number } ]
 }
 Rules: list each distinct physical item once (dedupe across frames). Do not invent items you cannot see.
-If the user narrated, prefer their stated facts. Prices are for a used-item sale between students nearby.`,
+Items are things the next tenant might want to buy or take (desk, fridge, lamp, shelf). Skip fixtures.
+If the user narrated, prefer their stated facts. Prices are for a used-item sale between students nearby.
+Notes are 2 to 4 short phrases a roommate would care about (light, floors, windows, lock, noise).`,
   userText: narration ? `User narration: ${narration}` : "No narration.",
 });
 
-export const askParsePrompt = (conversation: string) => ({
-  system: `You are the user's personal Muse helping them create an ask on Facebook Mutuals.
-Given the conversation, extract a structured ask and preferences. Return ONLY JSON:
+export const askParsePrompt = (a: { ownerName: string; groupName: string; conversation: string }) => ({
+  system: `You are ${a.ownerName}'s personal Muse inside the Facebook Group "${a.groupName}". ${a.ownerName} is telling you
+privately what they need. Your job: turn the conversation into a structured ask with visibility-tagged preferences,
+asking at most one short follow-up at a time until you have what matters (for housing: rent or budget, move-in date,
+schedule, guests, cleanliness, pets, dealbreakers).
+Return ONLY JSON:
 {
   "ask_type": "roommate|sublet|item|skill_swap|plus_one|ride|other",
-  "summary": string,
-  "suggested_reach": "school|network|nearby|anyone",
+  "summary": string,            // one line, written as ${a.ownerName} would post it
   "preferences": [ { "id": string, "topic": string, "value": string,
                      "importance": "dealbreaker|high|medium|low",
                      "visibility": "public|match_only|never",
-                     "source": "stated|inferred" } ]
+                     "source": "stated|inferred" } ],
+  "follow_up_question": string|null,   // your next line in the chat. null when ready.
+  "ready": bool                        // true when you have enough to check with other Muses
 }
-Default visibility: anything sensitive (real budget ceiling, habits, relationships, health) → match_only.
-Anything the user says to keep private → never. Mark inferred facts as "inferred".
-If key info is missing, include a "follow_up_question" string field instead of guessing.`,
-  user: conversation,
+Visibility rules: posted numbers and plain facts → public. Real ceilings/floors, habits, relationships, health,
+anything they say to keep private → match_only. Anything they say to NEVER share → never.
+Mark inferred facts as "inferred". Ids are short snake_case, stable across turns (keep earlier ids).
+Follow-ups sound like a friend texting, one sentence, and say what you'll keep private.
+After 3 user messages, set ready = true even if some topics are missing.`,
+  user: a.conversation,
 });
 
 export const agentPrompt = (a: {
   ownerName: string;
+  otherName: string;
   askSummary: string;
   publicPrefs: string;
   matchOnlyPrefs: string;
   context: string;
   topics: string[];
   transcript: string;
+  round: number;
+  maxRounds: number;
 }) => ({
-  system: `You are ${a.ownerName}'s Muse, negotiating with another person's Muse about: ${a.askSummary}.
+  system: `You are ${a.ownerName}'s Muse, pre-negotiating with ${a.otherName}'s Muse about: ${a.askSummary}.
 You represent ${a.ownerName}'s interests honestly. You may ONLY use the facts below.
-Never claim something not listed. Never reveal preferences beyond what is needed to check compatibility.
-Never agree to a final commitment — you are pre-negotiating so the humans can decide.
+Never claim something not listed. Share a match_only fact only when it is needed to settle a topic.
+Never agree to a final commitment. You are pre-negotiating so the humans can decide.
+Focus on terms: ${a.topics.join(", ")}. Keep personality and lifestyle to one line.
 
 Owner facts (public):
 ${a.publicPrefs}
-Owner facts (match_only, use to check compatibility, do not quote verbatim if not needed):
+Owner facts (match_only, use to check compatibility, share only if needed):
 ${a.matchOnlyPrefs}
 Context: ${a.context}
 
-Topics to resolve: ${a.topics.join(", ")}
-
 Return ONLY JSON:
 { "message": string, "disclosed": [pref_id], "positions": {topic: string}, "satisfied": bool }
-Be concise and friendly. Look for compromises on non-dealbreakers. Flag dealbreakers clearly.`,
-  user: `Conversation so far:\n${a.transcript || "(you speak first)"}`,
+"disclosed" lists every pref id whose content your message reveals. "satisfied" = true when every topic is settled
+or clearly blocked. 2 to 4 sentences, friendly, specific. Flag a dealbreaker conflict plainly and stop pushing.`,
+  user: `Round ${a.round} of ${a.maxRounds}. Conversation so far:\n${a.transcript || "(you speak first)"}`,
 });
 
-export const refereePrompt = (a: { maxRounds: number; round: number; transcript: string; forceConclude: boolean }) => ({
-  system: `You are the referee for a pre-negotiation between two people's Muses on Facebook Mutuals.
-Given both agents' latest positions and the transcript, decide whether to continue (max ${a.maxRounds} rounds)
-or conclude.
-To continue, return ONLY JSON: { "action": "continue", "note": string }
-When concluding, return ONLY JSON:
-{ "action": "conclude", "compatible": bool, "score": 0-1, "fits": [string], "disagreements": [string],
+export const refereePrompt = (a: { aName: string; bName: string; transcript: string }) => ({
+  system: `You are the referee for a pre-negotiation between ${a.aName}'s Muse and ${a.bName}'s Muse on Facebook.
+Read the transcript and conclude. Return ONLY JSON:
+{ "compatible": bool, "score": 0-1, "fits": [string], "disagreements": [string],
   "compromise": string|null, "summary_for_humans": string }
-Be honest: if a dealbreaker conflicts, compatible = false. Write summaries a human can read in 5 seconds.`,
-  user: `Round ${a.round} of ${a.maxRounds}.${a.forceConclude ? " This is the final round: you MUST conclude." : ""}\nTranscript:\n${a.transcript}`,
+Rules: if a dealbreaker conflicts, compatible = false and compromise = null.
+"fits" and "disagreements" are short phrases (max 5 each) about terms first (rent, dates, furniture, items), then one
+line on lifestyle. NEVER print exact rent, budget, or clock times; say "budgets overlap", "wants earlier quiet hours".
+"summary_for_humans" is one or two sentences a person can read in 5 seconds, naming the one thing to talk about.`,
+  user: `Transcript:\n${a.transcript}`,
 });
 
 export const connectionPrompt = (a: {
   askSummary: string;
+  aName: string;
+  bName: string;
   aInterests: string;
   bInterests: string;
   verdict: string;
-  circles: string;
+  events: string;
 }) => ({
-  system: `Two people just matched on Facebook Mutuals for a practical reason: ${a.askSummary}.
-Most exchanges should stay exchanges. Only suggest a further connection if there is real,
-specific overlap that would make doing something together natural, not forced.
+  system: `${a.aName} and ${a.bName} just matched on Facebook for a practical reason: ${a.askSummary}.
+Most exchanges should stay exchanges. Only suggest doing something together if there is real, specific overlap in the
+interests both people chose to share, something that would feel natural, not forced. Prefer an existing Facebook Event.
 Return ONLY JSON:
-{ "suggest": bool, "confidence": 0-1, "reason": string|null, "activity": string|null, "circle_id": string|null }
-Suggest an activity (never "be friends"). Prefer an existing open circle when it fits.`,
-  user: `Person A shared interests: ${a.aInterests}
-Person B shared interests: ${a.bInterests}
+{ "suggest": bool, "confidence": 0-1, "reason": string|null, "activity": string|null, "event_id": string|null }
+Suggest an activity (never "be friends"). reason is one sentence addressed to both of them ("You're both…").`,
+  user: `${a.aName} shares: ${a.aInterests}
+${a.bName} shares: ${a.bInterests}
 Match verdict: ${a.verdict}
-Open circles in reach: ${a.circles}`,
+Open Facebook Events nearby: ${a.events}`,
 });
 
 export const openerPrompt = (a: { sender: string; recipient: string; askSummary: string; summaryForHumans: string }) => ({
-  system: `Draft a short, natural first message from ${a.sender} to ${a.recipient} on Messenger about ${a.askSummary}.
-Reference the match summary. Mention the one thing to talk about.
-Sound like a college student, not a bot. 1–3 sentences. No emojis unless the sender uses them.
+  system: `Draft a short, natural first Messenger message from ${a.sender} to ${a.recipient} about: ${a.askSummary}.
+Reference the match summary and mention the one thing to talk about. Suggest a concrete next step (see the place, call).
+Sound like a college student texting, not a bot. 1 to 3 sentences. No emojis. No exact rent numbers.
 Return ONLY the message text.`,
   user: `Match summary: ${a.summaryForHumans}`,
 });
 
-export const postEvalPrompt = (a: { askSummary: string; prefs: string; postText: string }) => ({
-  system: `Evaluate whether this Facebook Group post is a fit for the user's ask.
-Return ONLY JSON: { "fit": bool, "score": 0-1, "reasons": [string], "concerns": [string] }`,
+export const postEvalPrompt = (a: { askSummary: string; prefs: string; postText: string; authorName: string }) => ({
+  system: `Evaluate whether this Facebook Group post by ${a.authorName} is a fit for the user's ask.
+Return ONLY JSON: { "fit": bool, "score": 0-1, "reasons": [string], "concerns": [string] }
+reasons/concerns are short phrases (max 4 each). Never print the user's private numbers.`,
   user: `User ask: ${a.askSummary}
 User preferences (public + match_only):
 ${a.prefs}
 Post: ${a.postText}`,
 });
 
+export const replyDraftPrompt = (a: { sender: string; recipient: string; askSummary: string; postText: string; reasons: string }) => ({
+  system: `Draft a short reply from ${a.sender} to ${a.recipient}'s Facebook Group post, about ${a.sender}'s ask: ${a.askSummary}.
+Mention why it fits (${a.reasons}) and suggest a next step. Sound like a college student. 1 to 3 sentences. No emojis.
+Only state facts from the ask summary. Return ONLY the message text.`,
+  user: `Their post: ${a.postText}`,
+});
+
+export const listingPrompt = (a: { items: string; neighborhood: string }) => ({
+  system: `Write a Facebook Marketplace listing for these leftover items a student is selling before a roommate moves in.
+Return ONLY JSON: { "title": string, "price_usd": number, "condition": "new|good|fair|worn", "description": string }
+Title under 60 chars. Price is for the bundle. Description 2 sentences, honest about flaws, pickup in ${a.neighborhood}.`,
+  user: a.items,
+});
+
 export const digestPrompt = (a: { userProfile: string; asks: string }) => ({
-  system: `You generate a short daily digest for a Facebook Mutuals user: people nearby who need something the user
-can help with, or who share a plan/interest. 3 cards max. Kinds: skill_swap, plus_one, taste_circle, small_ask.
+  system: `You generate a short daily digest for a Facebook user: people in their Groups who need something the user
+can help with, or who share a plan or interest. 3 cards max. Kinds: skill_swap, plus_one, small_ask.
 Return ONLY JSON: { "cards": [ { "type": string, "title": string, "body": string, "related_user_ids": [string] } ] }
 Titles under 60 chars. Bodies one sentence. Only use people and facts from the input.`,
-  user: `User: ${a.userProfile}\nOpen asks in reach:\n${a.asks}`,
+  user: `User: ${a.userProfile}\nOpen asks in their Groups:\n${a.asks}`,
 });

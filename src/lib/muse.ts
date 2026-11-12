@@ -22,7 +22,14 @@ const MODEL_IDS: Record<MuseModel, string> = {
 };
 
 const MOCK = process.env.MOCK_MUSE === "true";
+/** Small pause per mocked call so streamed negotiations read as live during offline dev/demo. */
+const MOCK_DELAY_MS = Number(process.env.MOCK_DELAY_MS ?? 600);
 const CACHE_DIR = path.join(process.cwd(), ".cache", "muse");
+
+/** "mock" = never hits the network. "live" = real key configured. Shown as a small badge in the UI (handoff fix 9). */
+export function museMode(): "mock" | "live" {
+  return MOCK || !process.env.MUSE_API_KEY ? "mock" : "live";
+}
 
 let _client: OpenAI | null = null;
 function client() {
@@ -72,7 +79,10 @@ async function rawCall(model: MuseModel, messages: ChatMessage[], temperature: n
     if (hit !== null) return hit;
   }
   if (MOCK) {
-    if (mock !== undefined) return mock;
+    if (mock !== undefined) {
+      if (MOCK_DELAY_MS > 0) await new Promise((r) => setTimeout(r, MOCK_DELAY_MS));
+      return mock;
+    }
     throw new Error(`MOCK_MUSE=true and no cache for ${model} call ${key}`);
   }
   let lastErr: unknown;
@@ -93,7 +103,8 @@ async function rawCall(model: MuseModel, messages: ChatMessage[], temperature: n
 function buildMessages(c: MuseCall): ChatMessage[] {
   return [
     { role: "system", content: c.system },
-    { role: "user", content: c.user as string },
+    // ContentPart[] is structurally compatible with the SDK's multimodal user content.
+    { role: "user", content: c.user as unknown as OpenAI.Chat.Completions.ChatCompletionUserMessageParam["content"] },
   ];
 }
 

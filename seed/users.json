@@ -17,7 +17,6 @@
       "dev"
     ],
     "museEnabled": true,
-    "defaultReach": "school",
     "connectionSuggestionsOptIn": true,
     "interests": [
       {
@@ -37,7 +36,8 @@
         "shareForConnection": false
       }
     ],
-    "bio": "Stanford '26 → moving to SF in Sept for a job. Night owl."
+    "bio": "Stanford '26. Moving to SF in Sept for a job. Signed a 2BR lease in the Mission, second bedroom open.",
+    "museGroups": []
   },
   {
     "id": "priya",
@@ -55,7 +55,6 @@
       "maya"
     ],
     "museEnabled": true,
-    "defaultReach": "school",
     "connectionSuggestionsOptIn": true,
     "interests": [
       {
@@ -75,7 +74,10 @@
         "shareForConnection": true
       }
     ],
-    "bio": "Stanford '26, starting at a startup in SoMa this fall."
+    "bio": "Stanford '26, starting at a startup in SoMa this fall. Early riser.",
+    "museGroups": [
+      "g_housing27"
+    ]
   },
   {
     "id": "jordan",
@@ -90,7 +92,6 @@
     ],
     "friends": [],
     "museEnabled": true,
-    "defaultReach": "school",
     "connectionSuggestionsOptIn": true,
     "interests": [
       {
@@ -102,7 +103,10 @@
         "shareForConnection": true
       }
     ],
-    "bio": "Moving to SF with my golden retriever, Biscuit."
+    "bio": "Moving to SF with my golden retriever, Biscuit.",
+    "museGroups": [
+      "g_housing27"
+    ]
   },
   {
     "id": "sam",
@@ -116,7 +120,6 @@
     ],
     "friends": [],
     "museEnabled": true,
-    "defaultReach": "school",
     "connectionSuggestionsOptIn": false,
     "interests": [
       {
@@ -128,7 +131,10 @@
         "shareForConnection": true
       }
     ],
-    "bio": "Quiet, clean, works hybrid."
+    "bio": "Quiet, clean, works hybrid.",
+    "museGroups": [
+      "g_housing27"
+    ]
   },
   {
     "id": "casey",
@@ -143,10 +149,15 @@
     ],
     "friends": [],
     "museEnabled": false,
-    "defaultReach": "school",
     "connectionSuggestionsOptIn": true,
-    "interests": [],
-    "bio": ""
+    "interests": [
+      {
+        "value": "photography",
+        "shareForConnection": true
+      }
+    ],
+    "bio": "Stanford '26. Looking for a place in SF.",
+    "museGroups": []
   },
   {
     "id": "maya",
@@ -163,7 +174,6 @@
       "priya"
     ],
     "museEnabled": true,
-    "defaultReach": "school",
     "connectionSuggestionsOptIn": true,
     "interests": [
       {
@@ -175,7 +185,10 @@
         "shareForConnection": true
       }
     ],
-    "bio": "Teaches guitar. Applying to internships."
+    "bio": "Teaches guitar. Applying to internships.",
+    "museGroups": [
+      "g_ffs"
+    ]
   },
   {
     "id": "theo",
@@ -189,7 +202,6 @@
     ],
     "friends": [],
     "museEnabled": true,
-    "defaultReach": "school",
     "connectionSuggestionsOptIn": true,
     "interests": [
       {
@@ -205,7 +217,10 @@
         "shareForConnection": true
       }
     ],
-    "bio": ""
+    "bio": "",
+    "museGroups": [
+      "g_ffs"
+    ]
   },
   {
     "id": "lena",
@@ -216,7 +231,6 @@
     "groups": [],
     "friends": [],
     "museEnabled": true,
-    "defaultReach": "school",
     "connectionSuggestionsOptIn": true,
     "interests": [
       {
@@ -228,7 +242,8 @@
         "shareForConnection": true
       }
     ],
-    "bio": ""
+    "bio": "",
+    "museGroups": []
   },
   {
     "id": "rosa",
@@ -239,7 +254,6 @@
     "groups": [],
     "friends": [],
     "museEnabled": true,
-    "defaultReach": "school",
     "connectionSuggestionsOptIn": true,
     "interests": [
       {
@@ -251,7 +265,8 @@
         "shareForConnection": true
       }
     ],
-    "bio": ""
+    "bio": "",
+    "museGroups": []
   },
   {
     "id": "kai",
@@ -262,7 +277,6 @@
     "groups": [],
     "friends": [],
     "museEnabled": true,
-    "defaultReach": "school",
     "connectionSuggestionsOptIn": true,
     "interests": [
       {
@@ -274,7 +288,8 @@
         "shareForConnection": true
       }
     ],
-    "bio": ""
+    "bio": "",
+    "museGroups": []
   },
   {
     "id": "nina",
@@ -286,7 +301,6 @@
     "groups": [],
     "friends": [],
     "museEnabled": true,
-    "defaultReach": "school",
     "connectionSuggestionsOptIn": true,
     "interests": [
       {
@@ -298,7 +312,8 @@
         "shareForConnection": true
       }
     ],
-    "bio": ""
+    "bio": "",
+    "museGroups": []
   },
   {
     "id": "omar",
@@ -309,7 +324,6 @@
     "groups": [],
     "friends": [],
     "museEnabled": true,
-    "defaultReach": "school",
     "connectionSuggestionsOptIn": true,
     "interests": [
       {
@@ -321,7 +335,8 @@
         "shareForConnection": true
       }
     ],
-    "bio": ""
+    "bio": "",
+    "museGroups": []
   },
   {
     "id": "june",
@@ -333,7 +348,6 @@
     "groups": [],
     "friends": [],
     "museEnabled": true,
-    "defaultReach": "school",
     "connectionSuggestionsOptIn": true,
     "interests": [
       {
@@ -345,7 +359,8 @@
         "shareForConnection": true
       }
     ],
-    "bio": ""
+    "bio": "",
+    "museGroups": []
   },
   {
     "id": "marcus",
@@ -359,7 +374,6 @@
     ],
     "friends": [],
     "museEnabled": true,
-    "defaultReach": "school",
     "connectionSuggestionsOptIn": true,
     "interests": [
       {
@@ -367,7 +381,10 @@
         "shareForConnection": true
       }
     ],
-    "bio": ""
+    "bio": "",
+    "museGroups": [
+      "g_ffs"
+    ]
   },
   {
     "id": "dev",
@@ -383,7 +400,6 @@
       "alex"
     ],
     "museEnabled": true,
-    "defaultReach": "school",
     "connectionSuggestionsOptIn": true,
     "interests": [
       {
@@ -395,6 +411,9 @@
         "shareForConnection": true
       }
     ],
-    "bio": ""
+    "bio": "",
+    "museGroups": [
+      "g_ffs"
+    ]
   }
 ]

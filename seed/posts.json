@@ -3,70 +3,91 @@
     "id": "post_casey_room",
     "groupId": "g_housing27",
     "authorId": "casey",
-    "text": "Have a room opening in a 2BR in the Mission starting Sept 1! $1,300/mo, furnished, 10 min walk to BART. I work from home some days and go to bed pretty late. Looking for someone chill and tidy-ish. DM me",
-    "createdAt": "2026-11-08T18:00:00Z"
+    "createdAt": "2026-11-10T18:00:00Z",
+    "text": "ISO a room in SF from Sept 1, budget around $1,300. I'm quiet, tidy, no pets, work from home a couple days a week. Mission or anywhere near BART. DM me!"
   },
   {
-    "id": "post_room_2",
-    "groupId": "g_sfgrads",
-    "authorId": "casey",
-    "text": "Also open to someone taking over my lease in Inner Sunset if the Mission place fills — just ask.",
-    "createdAt": "2026-11-09T18:00:00Z"
-  },
-  {
-    "id": "post_iso_desk",
-    "groupId": "g_ffs",
-    "authorId": "theo",
-    "text": "ISO a desk + chair before move-out, under $50 ideally. Can pick up on campus.",
-    "createdAt": "2026-11-09T18:00:00Z"
-  },
-  {
-    "id": "post_guitar",
-    "groupId": "g_ffs",
-    "authorId": "maya",
-    "text": "Offering guitar lessons (beginner/intermediate)! Would love to trade for resume help — applying to PM internships.",
-    "createdAt": "2026-11-07T18:00:00Z"
-  },
-  {
-    "id": "post_sfo",
-    "groupId": "g_ffs",
-    "authorId": "marcus",
-    "text": "Driving to SFO Friday ~2pm, have 2 seats. Split gas?",
-    "createdAt": "2026-11-10T18:00:00Z"
-  },
-  {
-    "id": "post_cs161",
-    "groupId": "g_ffs",
-    "authorId": "dev",
-    "text": "Anyone want to form a CS 161 study group for the final? Thinking Tues/Thurs nights in Huang.",
-    "createdAt": "2026-11-10T18:00:00Z"
-  },
-  {
-    "id": "post_fridge",
-    "groupId": "g_ffs",
-    "authorId": "theo",
-    "text": "Looking for a mini fridge for winter quarter. Will pay cash.",
-    "createdAt": "2026-11-06T18:00:00Z"
+    "id": "post_priya_room",
+    "groupId": "g_housing27",
+    "authorId": "priya",
+    "createdAt": "2026-11-09T18:00:00Z",
+    "text": "Looking for a room in SF from early September. Clean common areas is a must. Early riser, so I'm a pretty low-key roommate. Open to Mission, SoMa, Hayes."
   },
   {
     "id": "post_sublet",
     "groupId": "g_housing27",
     "authorId": "jordan",
-    "text": "Moving to SF in Sept with my dog — looking for a dog-friendly 2BR, roughly $1,300/person.",
-    "createdAt": "2026-11-05T18:00:00Z"
+    "createdAt": "2026-11-08T18:00:00Z",
+    "text": "Moving to SF in Sept with my dog Biscuit (golden, very chill). Looking for a dog-friendly 2BR, roughly $1,300/person."
   },
   {
-    "id": "post_runs",
-    "groupId": "g_runners",
-    "authorId": "priya",
-    "text": "Anyone doing Saturday morning runs along the Embarcadero once we're in SF?",
-    "createdAt": "2026-11-04T18:00:00Z"
+    "id": "post_sam_room",
+    "groupId": "g_housing27",
+    "authorId": "sam",
+    "createdAt": "2026-11-07T18:00:00Z",
+    "text": "Roommate search, fall move-in, flexible on dates. I'm very clean and mostly keep to myself. Hybrid job."
+  },
+  {
+    "id": "post_nina_lease",
+    "groupId": "g_housing27",
+    "authorId": "nina",
+    "createdAt": "2026-11-06T18:00:00Z",
+    "text": "PSA: if you're signing a lease in SF, ask about the security deposit cap. Saved me $900."
+  },
+  {
+    "id": "post_june_q",
+    "groupId": "g_housing27",
+    "authorId": "june",
+    "createdAt": "2026-11-05T18:00:00Z",
+    "text": "Anyone lived in Inner Sunset? Is the fog as bad as people say?"
+  },
+  {
+    "id": "post_iso_desk",
+    "groupId": "g_ffs",
+    "authorId": "theo",
+    "createdAt": "2026-11-09T18:00:00Z",
+    "text": "ISO a desk + chair before move-out, under $50 ideally. Can pick up on campus."
+  },
+  {
+    "id": "post_guitar",
+    "groupId": "g_ffs",
+    "authorId": "maya",
+    "createdAt": "2026-11-07T18:00:00Z",
+    "text": "Offering guitar lessons (beginner/intermediate)! Would love to trade for resume help, applying to PM internships."
+  },
+  {
+    "id": "post_sfo",
+    "groupId": "g_ffs",
+    "authorId": "marcus",
+    "createdAt": "2026-11-10T18:00:00Z",
+    "text": "Driving to SFO Friday ~2pm, have 2 seats. Split gas?"
+  },
+  {
+    "id": "post_cs161",
+    "groupId": "g_ffs",
+    "authorId": "dev",
+    "createdAt": "2026-11-10T18:00:00Z",
+    "text": "Anyone want to form a CS 161 study group for the final? Thinking Tues/Thurs nights in Huang."
+  },
+  {
+    "id": "post_fridge",
+    "groupId": "g_ffs",
+    "authorId": "theo",
+    "createdAt": "2026-11-06T18:00:00Z",
+    "text": "Looking for a mini fridge for winter quarter. Will pay cash."
   },
   {
     "id": "post_lamp",
     "groupId": "g_ffs",
     "authorId": "nina",
-    "text": "Free IKEA floor lamp, works fine, small scratch on the base. Pickup at EVGR.",
-    "createdAt": "2026-11-10T18:00:00Z"
+    "createdAt": "2026-11-10T18:00:00Z",
+    "text": "Free IKEA floor lamp, works fine, small scratch on the base. Pickup at EVGR."
+  },
+  {
+    "id": "post_runs",
+    "groupId": "g_runners",
+    "authorId": "priya",
+    "createdAt": "2026-11-04T18:00:00Z",
+    "text": "Anyone doing Saturday morning runs along the Embarcadero once we're in SF?"
   }
 ]
