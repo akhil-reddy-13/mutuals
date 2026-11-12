@@ -1,0 +1,9 @@
+{
+  "name": "mutuals-video-tools",
+  "private": true,
+  "description": "Records the demo video from the running app (scripts/video/record.mjs). Kept out of the app's dependencies.",
+  "type": "module",
+  "dependencies": {
+    "puppeteer-core": "25.16.0"
+  }
+}

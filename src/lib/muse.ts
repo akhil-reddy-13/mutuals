@@ -34,6 +34,9 @@ const effortUnsupported = new Set<MuseModel>();
 const MOCK = process.env.MOCK_MUSE === "true";
 /** Small pause per mocked call so streamed negotiations read as live during offline dev/demo. */
 const MOCK_DELAY_MS = Number(process.env.MOCK_DELAY_MS ?? 600);
+// Recording a video from cache: pause this long on a cache hit so streamed turns arrive one by one, the way they did
+// live, instead of all at once. 0 (default) = return immediately. Used by scripts/video/record.mjs.
+const REPLAY_DELAY_MS = Number(process.env.MUSE_REPLAY_DELAY_MS ?? 0);
 const CACHE_DIR = path.join(process.cwd(), ".cache", "muse");
 
 /** "mock" = never hits the network. "live" = real key configured. Shown as a small badge in the UI (handoff fix 9). */
@@ -91,7 +94,10 @@ async function rawCall(model: MuseModel, messages: ChatMessage[], temperature: n
   const key = cacheKey(id, messages);
   if (!fresh || MOCK) {
     const hit = readCache(key);
-    if (hit !== null) return hit;
+    if (hit !== null) {
+      if (REPLAY_DELAY_MS > 0) await new Promise((r) => setTimeout(r, REPLAY_DELAY_MS));
+      return hit;
+    }
   }
   if (MOCK) {
     if (mock !== undefined) {
