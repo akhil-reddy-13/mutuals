@@ -7,9 +7,12 @@ Phone A is **Alex** (presenter). Phone B is **Priya** (teammate). Switch persona
 
 ```bash
 npm run warm        # only with a real key: pre-runs every hero call so the cache is hot (also resets state)
+npm run demo:build  # production build (separate .next-demo folder, safe alongside npm run dev)
+npm run demo:start  # http://localhost:3000. ~100x faster pages than dev, and no Next.js "N" dev badge
 # or, with no key / flaky wifi:
-MOCK_MUSE=true npm run dev
+MOCK_MUSE=true npm run demo:start
 ```
+Stop any `npm run dev` on port 3000 first. Re-run `demo:build` after pulling new code.
 
 Then on Phone A: avatar menu → **Reset demo**. That clears asks, matches, threads and the opt-in.
 Both phones start on **Home** (a normal-looking feed). Phone A goes **Groups → Stanford Housing '27** when the problem beat ends. Phone B goes to Notifications later.
