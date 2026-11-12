@@ -45,8 +45,13 @@ export default async function NotificationsPage() {
       unread: true,
     });
   }
-  // As a candidate: the other person's Muse talked to mine.
+  // As a candidate: the other person's Muse talked to mine (latest per asker).
+  const latestByAsker = new Map<string, (typeof mine)[number]>();
   for (const m of mine.filter((m) => m.candidateId === me.id && m.mode === "agent_to_agent")) {
+    const prev = latestByAsker.get(m.userId);
+    if (!prev || prev.createdAt < m.createdAt) latestByAsker.set(m.userId, m);
+  }
+  for (const m of latestByAsker.values()) {
     const ask = getAsk(m.askId);
     const asker = getUser(m.userId);
     const group = ask && getGroup(ask.groupId);

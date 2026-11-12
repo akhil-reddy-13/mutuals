@@ -204,7 +204,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
     };
   }
 
-  function useAction(msgId: string, fn: () => void) {
+  function runAction(msgId: string, fn: () => void) {
     if (used.has(msgId)) return;
     setUsed((s) => new Set(s).add(msgId));
     fn();
@@ -252,7 +252,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
                   {m.chips && !used.has(m.id) && !msgs.some((x) => x.role === "user") && (
                     <div className="ml-8 flex flex-wrap gap-1.5">
                       {m.chips.map((c) => (
-                        <button key={c} onClick={() => useAction(m.id, () => send(c))} className="rounded-full border border-fb-blue px-3 py-1 text-[13px] font-semibold text-fb-blue hover:bg-fb-blue-soft">
+                        <button key={c} onClick={() => runAction(m.id, () => send(c))} className="rounded-full border border-fb-blue px-3 py-1 text-[13px] font-semibold text-fb-blue hover:bg-fb-blue-soft">
                           {c}
                         </button>
                       ))}
@@ -264,7 +264,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
                         <button
                           key={a.label}
                           disabled={used.has(m.id)}
-                          onClick={() => useAction(m.id, a.onClick)}
+                          onClick={() => runAction(m.id, a.onClick)}
                           className={`${a.primary ? "fb-btn-primary" : "fb-btn-secondary"} h-9 disabled:opacity-50`}
                         >
                           {a.label}
