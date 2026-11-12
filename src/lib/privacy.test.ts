@@ -63,6 +63,8 @@ describe("sealed comparisons", () => {
     expect(leaks(leaky, both).length).toBeGreaterThan(0);
     const clean = redactPrivateValues(leaky, both);
     expect(clean).not.toMatch(/1,300|1,200|11pm|1am/);
+    expect(clean).toContain("after a private time");
+    expect(clean).not.toMatch(/\wa private/); // whitespace before the token is preserved
     expect(leaks(clean, both)).toEqual([]);
     // Public numbers survive.
     expect(redactPrivateValues("Rent is $1,350/mo", both)).toContain("$1,350");

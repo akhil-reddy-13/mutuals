@@ -3,7 +3,7 @@
 //   candidatePosts -> one-sided: Ember scores the human post, Spark drafts a reply -> Match
 // Then one Wonder connection call per compatible match (both opted in). Events stream to the chat sheet.
 import { judgeConnection } from "./connection";
-import { getAsk, getUser, newId, saveAsk, saveMatch } from "./db";
+import { getAsk, getEvent, getUser, newId, saveAsk, saveMatch } from "./db";
 import { mockPostEval, mockReplyDraft } from "./mocks";
 import { museJSON, museText } from "./muse";
 import { runNegotiation } from "./negotiation";
@@ -15,9 +15,9 @@ import type { Ask, ConnectionSuggestion, Match, NegotiationTurn, Verdict } from 
 
 export type MatchEvent =
   | { type: "start"; askId: string; candidates: { id: string; name: string; avatarUrl: string; mode: Match["mode"]; postId?: string }[] }
-  | { type: "turn"; candidateId: string; turn: NegotiationTurn }
+  | { type: "turn"; candidateId: string; turn: NegotiationTurn; disclosedMeta: { id: string; topic: string; visibility: string }[] }
   | { type: "verdict"; candidateId: string; match: Match }
-  | { type: "connection"; candidateId: string; matchId: string; connection: ConnectionSuggestion | null }
+  | { type: "connection"; candidateId: string; matchId: string; connection: ConnectionSuggestion | null; event: { id: string; name: string; when: string; where: string; going: number; coverEmoji: string } | null }
   | { type: "done"; askId: string; matches: Match[] }
   | { type: "error"; message: string };
 
@@ -48,7 +48,20 @@ export async function runMatching(askInput: Ask, emit: (e: MatchEvent) => void =
   const matches: Match[] = [];
 
   const agentJobs = agentCands.map(async ({ ask: other, user }) => {
-    const { negotiation, verdict } = await runNegotiation(ask, other, (turn) => emit({ type: "turn", candidateId: user.id, turn }));
+    const { negotiation, verdict } = await runNegotiation(ask, other, (turn) => {
+      // What streams to the asker's screen: their own Muse's words in full, the other Muse's words with that
+      // person's private numbers redacted, plus topic-level metadata for the "disclosed" chips.
+      const src = turn.speaker === "A" ? ask : other;
+      emit({
+        type: "turn",
+        candidateId: user.id,
+        turn: turn.speaker === "B" ? { ...turn, message: redactPrivateValues(turn.message, other.preferences) } : turn,
+        disclosedMeta: turn.disclosed
+          .map((id) => src.preferences.find((p) => p.id === id))
+          .filter((p): p is NonNullable<typeof p> => !!p)
+          .map((p) => ({ id: p.id, topic: p.topic, visibility: p.visibility })),
+      });
+    });
     const match: Match = {
       id: newId("match"),
       userId: me.id,
@@ -66,11 +79,24 @@ export async function runMatching(askInput: Ask, emit: (e: MatchEvent) => void =
     const connection = await judgeConnection(me, user, ask, verdict);
     match.connection = connection;
     saveMatch(match);
-    emit({ type: "connection", candidateId: user.id, matchId: match.id, connection });
+    const ev = connection?.eventId ? getEvent(connection.eventId) : undefined;
+    emit({
+      type: "connection",
+      candidateId: user.id,
+      matchId: match.id,
+      connection,
+      event: ev ? { id: ev.id, name: ev.name, when: ev.when, where: ev.where, going: ev.goingIds.length, coverEmoji: ev.coverEmoji } : null,
+    });
   });
 
   const postJobs = posts.map(async (post) => {
     const author = getUser(post.authorId)!;
+    emit({
+      type: "turn",
+      candidateId: author.id,
+      turn: { speaker: "orchestrator", message: `${author.name.split(" ")[0]} doesn't have Muse on. Reading their post in the group instead.`, disclosed: [], positions: {} },
+      disclosedMeta: [],
+    });
     const ctx = agentContext(ask.preferences); // never prefs stripped here
     const ep = postEvalPrompt({
       askSummary: ask.summary,

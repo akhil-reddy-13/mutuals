@@ -3,10 +3,10 @@ import "./globals.css";
 import FbShell from "@/components/FbShell";
 
 export const metadata: Metadata = {
-  title: "Mutuals · Facebook",
-  description: "Your Muse handles the tedious parts of social life with other people's Muses.",
+  title: "Facebook",
+  description: "Mutuals: your Muse talks to other people's Muses inside Facebook Groups.",
 };
-export const viewport: Viewport = { width: "device-width", initialScale: 1 };
+export const viewport: Viewport = { width: "device-width", initialScale: 1, maximumScale: 1, themeColor: "#ffffff" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

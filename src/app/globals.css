@@ -1,21 +1,120 @@
 @import "tailwindcss";
 
-/* Facebook-ish tokens. Use as bg-fb-blue, text-fb-muted, bg-fb-bg, etc. */
+/* Facebook (2026) tokens. Use as bg-fb-blue, text-fb-muted, bg-fb-bg, etc. */
 @theme {
-  --color-fb-blue: #1877f2;
-  --color-fb-blue-dark: #166fe5;
+  --color-fb-blue: #0866ff;
+  --color-fb-blue-dark: #0557d6;
+  --color-fb-blue-soft: #e7f0ff;
   --color-fb-bg: #f0f2f5;
   --color-fb-card: #ffffff;
   --color-fb-text: #050505;
   --color-fb-muted: #65676b;
-  --color-fb-border: #dadde1;
+  --color-fb-border: #ced0d4;
+  --color-fb-divider: #e4e6eb;
   --color-fb-hover: #f2f2f2;
-  --color-fb-green: #42b72a;
+  --color-fb-icon: #050505;
+  --color-fb-chip: #e4e6eb;
+  --color-fb-green: #31a24c;
+  --color-fb-red: #e41e3f;
+  --color-fb-purple: #a033ff;
+  --color-fb-pink: #ff5c87;
+  --color-fb-amber: #f7b928;
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --shadow-fb: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-fb-lg: 0 12px 28px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1);
+  --radius-fb: 8px;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
 body {
   background: var(--color-fb-bg);
   color: var(--color-fb-text);
   font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.3333;
 }
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+/* Meta AI / Muse gradient */
+.muse-gradient {
+  background: linear-gradient(135deg, #0866ff 0%, #a033ff 55%, #ff5c87 100%);
+}
+.muse-ring {
+  background: conic-gradient(from 180deg, #0866ff, #a033ff, #ff5c87, #0866ff);
+}
+.muse-text {
+  background: linear-gradient(90deg, #0866ff, #a033ff 60%, #ff5c87);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Circular icon button, like Facebook's */
+.fb-icon-btn {
+  @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-fb-chip text-fb-icon hover:bg-[#d8dadf] active:scale-95 transition;
+}
+.fb-card {
+  @apply rounded-[8px] bg-fb-card shadow-fb;
+}
+.fb-btn {
+  @apply inline-flex h-9 items-center justify-center gap-2 rounded-md px-3 text-[15px] font-semibold transition active:scale-[0.98];
+}
+.fb-btn-primary {
+  @apply inline-flex h-9 items-center justify-center gap-2 rounded-md px-3 text-[15px] font-semibold transition active:scale-[0.98] bg-fb-blue text-white hover:bg-fb-blue-dark;
+}
+.fb-btn-secondary {
+  @apply inline-flex h-9 items-center justify-center gap-2 rounded-md px-3 text-[15px] font-semibold transition active:scale-[0.98] bg-fb-chip text-fb-text hover:bg-[#d8dadf];
+}
+.fb-btn-soft {
+  @apply inline-flex h-9 items-center justify-center gap-2 rounded-md px-3 text-[15px] font-semibold transition active:scale-[0.98] bg-fb-blue-soft text-fb-blue hover:bg-[#d6e5ff];
+}
+
+/* Chat bubbles */
+.bubble-in {
+  @apply max-w-[85%] rounded-2xl bg-[#f0f0f0] px-3 py-2 text-[15px] text-fb-text;
+}
+.bubble-out {
+  @apply max-w-[85%] rounded-2xl bg-fb-blue px-3 py-2 text-[15px] text-white;
+}
+
+/* typing dots */
+@keyframes blink {
+  0%, 80%, 100% { opacity: 0.25; transform: translateY(0); }
+  40% { opacity: 1; transform: translateY(-2px); }
+}
+.dot { animation: blink 1.2s infinite ease-in-out; }
+.dot:nth-child(2) { animation-delay: 0.15s; }
+.dot:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.rise { animation: rise 0.25s ease-out both; }
+
+@keyframes sheet-up {
+  from { transform: translateY(24px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.sheet-up { animation: sheet-up 0.22s ease-out both; }
+
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, #e4e6eb 25%, #f0f2f5 50%, #e4e6eb 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+/* hide scrollbars on horizontal strips */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

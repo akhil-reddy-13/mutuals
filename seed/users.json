@@ -2,7 +2,7 @@
   {
     "id": "alex",
     "name": "Alex Kim",
-    "avatarUrl": "https://i.pravatar.cc/150?u=alex",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/32.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "San Francisco",
@@ -42,7 +42,7 @@
   {
     "id": "priya",
     "name": "Priya Shah",
-    "avatarUrl": "https://i.pravatar.cc/150?u=priya",
+    "avatarUrl": "https://randomuser.me/api/portraits/women/44.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "San Francisco",
@@ -82,7 +82,7 @@
   {
     "id": "jordan",
     "name": "Jordan Lee",
-    "avatarUrl": "https://i.pravatar.cc/150?u=jordan",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/75.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "San Francisco",
@@ -111,7 +111,7 @@
   {
     "id": "sam",
     "name": "Sam Rivera",
-    "avatarUrl": "https://i.pravatar.cc/150?u=sam",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/11.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "San Francisco",
@@ -139,7 +139,7 @@
   {
     "id": "casey",
     "name": "Casey Nguyen",
-    "avatarUrl": "https://i.pravatar.cc/150?u=casey",
+    "avatarUrl": "https://randomuser.me/api/portraits/women/65.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "San Francisco",
@@ -162,7 +162,7 @@
   {
     "id": "maya",
     "name": "Maya Patel",
-    "avatarUrl": "https://i.pravatar.cc/150?u=maya",
+    "avatarUrl": "https://randomuser.me/api/portraits/women/68.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "San Francisco",
@@ -193,7 +193,7 @@
   {
     "id": "theo",
     "name": "Theo Park",
-    "avatarUrl": "https://i.pravatar.cc/150?u=theo",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/86.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "San Francisco",
@@ -225,7 +225,7 @@
   {
     "id": "lena",
     "name": "Lena Brooks",
-    "avatarUrl": "https://i.pravatar.cc/150?u=lena",
+    "avatarUrl": "https://randomuser.me/api/portraits/women/12.jpg",
     "schoolVerified": false,
     "city": "San Francisco",
     "groups": [],
@@ -248,7 +248,7 @@
   {
     "id": "rosa",
     "name": "Rosa Diaz",
-    "avatarUrl": "https://i.pravatar.cc/150?u=rosa",
+    "avatarUrl": "https://randomuser.me/api/portraits/women/90.jpg",
     "schoolVerified": false,
     "city": "San Francisco",
     "groups": [],
@@ -271,7 +271,7 @@
   {
     "id": "kai",
     "name": "Kai Tanaka",
-    "avatarUrl": "https://i.pravatar.cc/150?u=kai",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/41.jpg",
     "schoolVerified": false,
     "city": "San Francisco",
     "groups": [],
@@ -294,7 +294,7 @@
   {
     "id": "nina",
     "name": "Nina Okafor",
-    "avatarUrl": "https://i.pravatar.cc/150?u=nina",
+    "avatarUrl": "https://randomuser.me/api/portraits/women/26.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "San Francisco",
@@ -318,7 +318,7 @@
   {
     "id": "omar",
     "name": "Omar Haddad",
-    "avatarUrl": "https://i.pravatar.cc/150?u=omar",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/53.jpg",
     "schoolVerified": false,
     "city": "San Francisco",
     "groups": [],
@@ -341,7 +341,7 @@
   {
     "id": "june",
     "name": "June Liu",
-    "avatarUrl": "https://i.pravatar.cc/150?u=june",
+    "avatarUrl": "https://randomuser.me/api/portraits/women/33.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "San Francisco",
@@ -365,7 +365,7 @@
   {
     "id": "marcus",
     "name": "Marcus Bell",
-    "avatarUrl": "https://i.pravatar.cc/150?u=marcus",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/64.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "San Francisco",
@@ -389,7 +389,7 @@
   {
     "id": "dev",
     "name": "Dev Mehta",
-    "avatarUrl": "https://i.pravatar.cc/150?u=dev",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/22.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "Stanford",

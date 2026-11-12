@@ -68,13 +68,16 @@ export function budgetsOverlap(a: Preference[], b: Preference[]): boolean | null
 
 /** Every number and clock time that appears in a non-public preference value. */
 export function privateTokens(prefs: Preference[]): string[] {
-  const out = new Set<string>();
+  return privateTokenList(prefs).map((t) => t.token);
+}
+function privateTokenList(prefs: Preference[]): { token: string; kind: "money" | "time" }[] {
+  const out = new Map<string, "money" | "time">();
   for (const p of prefs) {
     if (p.visibility === "public") continue;
-    for (const m of p.value.match(MONEY) ?? []) out.add(m.trim());
-    for (const m of p.value.match(TIME) ?? []) out.add(m.trim());
+    for (const m of p.value.match(TIME) ?? []) out.set(m.trim(), "time");
+    for (const m of p.value.match(MONEY) ?? []) if (!out.has(m.trim())) out.set(m.trim(), "money");
   }
-  return [...out].sort((x, y) => y.length - x.length);
+  return [...out].map(([token, kind]) => ({ token, kind })).sort((x, y) => y.token.length - x.token.length);
 }
 
 function escapeRe(s: string) {
@@ -98,9 +101,10 @@ export function redactPrivateValues(text: string, prefs: Preference[]): string {
   for (const p of prefs) {
     if (p.visibility === "never" && p.value.length > 3) out = out.split(p.value).join("[private]");
   }
-  for (const t of privateTokens(prefs)) {
-    const bare = escapeRe(t.replace(/^\$\s?/, ""));
-    out = out.replace(new RegExp(`\\$?\\s?(?<![\\d])${bare}(?![\\d])(?:\\s?\\/\\s?mo(?:nth)?)?`, "gi"), "a private number");
+  for (const { token, kind } of privateTokenList(prefs)) {
+    const bare = escapeRe(token.replace(/^\$\s?/, ""));
+    // Match the token (with an optional leading "$" and trailing "/mo"), never the whitespace around it.
+    out = out.replace(new RegExp(`(?<![\\d$])\\$?${bare}(?![\\d])(?:\\s?\\/\\s?mo(?:nth)?)?`, "gi"), kind === "time" ? "a private time" : "a private number");
   }
-  return out.replace(/\s{2,}/g, " ");
+  return out.replace(/[ \t]{2,}/g, " ");
 }
