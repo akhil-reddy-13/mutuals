@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import Avatar from "@/components/Avatar";
 import ConnectionCard, { type EventInfo } from "@/components/ConnectionCard";
 import MatchCard from "@/components/MatchCard";
-import { BackIcon, FeedIcon, LockIcon, MuseMark } from "@/components/icons";
+import { BackIcon, FeedIcon, MuseMark } from "@/components/icons";
 import { getAsk, getEvent, getGroup, getUser, matchesForAsk, postsInGroup } from "@/lib/db";
 import { firstName } from "@/lib/format";
 import { sortMatches } from "@/lib/match";
@@ -63,7 +63,7 @@ export default async function MatchesPage({ params }: { params: Promise<{ id: st
               <p className="mt-1 text-[15px] text-fb-muted">
                 &ldquo;{ask.summary}&rdquo;
               </p>
-              {/* What Muse did, as three scannable facts instead of a paragraph. */}
+              {/* What Muse did, as scannable facts instead of a paragraph. */}
               <ul className="mt-3 flex flex-wrap gap-2 text-[13px] font-semibold">
                 <li className="inline-flex items-center gap-1.5 rounded-full bg-fb-bg px-2.5 py-1">
                   <MuseMark size={14} /> {agentCount} {agentCount === 1 ? "Muse" : "Muses"} checked
@@ -71,13 +71,7 @@ export default async function MatchesPage({ params }: { params: Promise<{ id: st
                 <li className="inline-flex items-center gap-1.5 rounded-full bg-fb-bg px-2.5 py-1">
                   <FeedIcon size={14} /> {postsInGroup(group.id).length} posts read
                 </li>
-                <li className="inline-flex items-center gap-1.5 rounded-full bg-fb-bg px-2.5 py-1">
-                  <LockIcon size={14} /> Nothing private shown
-                </li>
               </ul>
-              <p className="mt-2 text-[12px] text-fb-muted">
-                Spark negotiated · Wonder refereed · Ember read the posts{ask.roomDetails ? " and your video" : ""}
-              </p>
               </div>
               {/* Ranked overview, like Facebook's people lists: compare at a glance, tap to jump to the card. */}
               {matches.length > 1 && (
