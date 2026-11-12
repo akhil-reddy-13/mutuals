@@ -3,9 +3,9 @@
 //   candidatePosts -> one-sided: Ember scores the human post, Spark drafts a reply -> Match
 // Then one Wonder connection call per compatible match (both opted in). Events stream to the chat sheet.
 import { judgeConnection } from "./connection";
-import { getAsk, getEvent, getUser, newId, saveAsk, saveMatch } from "./db";
+import { getAsk, getEvent, getGroup, getUser, newId, saveAsk, saveMatch } from "./db";
 import { mockPostEval, mockReplyDraft } from "./mocks";
-import { museJSON, museText } from "./muse";
+import { museJSON, museText, modelFor } from "./muse";
 import { runNegotiation } from "./negotiation";
 import { agentContext, formatPrefs, redactPrivateValues } from "./privacy";
 import { candidateAsks, candidatePosts, trustSignals } from "./reach";
@@ -19,8 +19,22 @@ export type MatchEvent =
   | { type: "verdict"; candidateId: string; match: Match }
   | { type: "connection"; candidateId: string; matchId: string; connection: ConnectionSuggestion | null; event: { id: string; name: string; when: string; where: string; going: number; coverEmoji: string } | null }
   | { type: "failed"; candidateId: string; message: string }
-  | { type: "done"; askId: string; matches: Match[]; failed: string[] }
+  | { type: "done"; askId: string; matches: Match[]; failed?: string[]; elsewhere?: { groupId: string; name: string; people: number }[] }
   | { type: "error"; message: string };
+
+/** Other Groups I'm in where someone could fit this ask (people with Muse + posts from people without). */
+export function elsewhereFor(ask: Ask): { groupId: string; name: string; people: number }[] {
+  const me = getUser(ask.userId);
+  if (!me) return [];
+  return me.groups
+    .filter((g) => g !== ask.groupId)
+    .map((g) => {
+      const there = { ...ask, groupId: g };
+      return { groupId: g, name: getGroup(g)?.name ?? g, people: candidateAsks(there).length + candidatePosts(there).length };
+    })
+    .filter((x) => x.people > 0)
+    .sort((a, b) => b.people - a.people);
+}
 
 export function sortMatches(ms: Match[]): Match[] {
   return [...ms].sort((a, b) => Number(b.verdict.compatible) - Number(a.verdict.compatible) || b.verdict.score - a.verdict.score);
@@ -38,6 +52,11 @@ export async function runMatching(askInput: Ask, emitRaw: (e: MatchEvent) => voi
   if (!me) throw new Error("unknown user");
   saveAsk({ ...ask, status: "matching" });
   try {
+    // Selling: route each item to a person who needs it ("3 of these already have a home"), not a negotiation.
+    if (ask.type === "item" && ask.side !== "seeking" && (ask.items?.length ?? 0) > 0) {
+      const { runHomes } = await import("./homes");
+      return await runHomes(ask, emit);
+    }
     return await matchAll(ask, me, emit);
   } catch (e) {
     // Never leave the ask stuck in "matching": the Group page and the sheet would wait forever.
@@ -49,6 +68,13 @@ export async function runMatching(askInput: Ask, emitRaw: (e: MatchEvent) => voi
 async function matchAll(ask: Ask, me: User, emit: (e: MatchEvent) => void): Promise<Match[]> {
   const agentCands = candidateAsks(ask);
   const posts = candidatePosts(ask);
+  // Nobody to check with here: don't run anything, point to the Group where people could actually fit.
+  if (agentCands.length === 0 && posts.filter((p) => p.groupId === ask.groupId).length === 0) {
+    emit({ type: "start", askId: ask.id, candidates: [] });
+    saveAsk({ ...ask, status: "matched" });
+    emit({ type: "done", askId: ask.id, matches: [], elsewhere: elsewhereFor(ask) });
+    return [];
+  }
   emit({
     type: "start",
     askId: ask.id,
@@ -140,7 +166,7 @@ async function matchAll(ask: Ask, me: User, emit: (e: MatchEvent) => void): Prom
       postText: post.text,
       authorName: author.name,
     });
-    const ev = await museJSON({ model: "ember", system: ep.system, user: ep.user, schema: PostEvalSchema, mock: mockPostEval(post.id, me.id) });
+    const ev = await museJSON({ model: modelFor("posteval"), effort: "low", system: ep.system, user: ep.user, schema: PostEvalSchema, mock: mockPostEval(post.id, me.id) });
     const red = (s: string) => redactPrivateValues(s, ask.preferences);
     const verdict: Verdict = {
       compatible: ev.fit,
@@ -161,7 +187,7 @@ async function matchAll(ask: Ask, me: User, emit: (e: MatchEvent) => void): Prom
         postText: post.text,
         reasons: ev.reasons.join("; "),
       });
-      draftReply = red(await museText({ model: "spark", system: rp.system, user: rp.user, mock: mockReplyDraft(author.name.split(" ")[0], post.id) }));
+      draftReply = red(await museText({ model: modelFor("opener"), system: rp.system, user: rp.user, mock: mockReplyDraft(author.name.split(" ")[0], post.id) }));
     }
     const match: Match = {
       id: newId("match"),

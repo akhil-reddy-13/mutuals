@@ -8,10 +8,12 @@ export const sheetCopy = {
     `Hey ${first}. What do you need in ${groupName}? Tell me the stuff you wouldn't post, too. I keep that between us.`,
   moreDetail: "Tell me a bit more.",
   prefsIntro:
-    "Here's your ask. Tap a tag to change who can see what. Public shows on your match card. Match only is used to check fit and never shown to anyone. Never shared stays on your phone.",
+    "Here's what I'll look for. Tap a tag to change who sees what: Public can show on your card, Kept private I only use to check fit, Never shared stays with me.",
   updated: "Updated.",
-  optIn: (groupName: string) =>
-    `Want me to check with other Muses in ${groupName}? I'll also read the group's posts. Only public and match-only facts go out, and you'll see everything I share.`,
+  optIn: (groupName: string, selling: boolean) =>
+    selling
+      ? `Want me to ask around ${groupName} and see who's looking for these? I'll only say what's in your list, and you'll see everything I share.`
+      : `Want me to ask around ${groupName}? I'll check with people's Muses and read the posts. I only share what you said was OK, and you'll see everything I say.`,
 };
 
 /** The video step only makes sense when there's something to film: a room you're offering or items you're selling. */

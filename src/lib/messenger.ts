@@ -2,7 +2,7 @@
 // Agents never send anything. The draft sits in the composer until the human edits/sends it.
 import { getMatch, getNegotiation, getPost, getThread, getUser, newId, saveMatch, saveThread, threadBetween } from "./db";
 import { mockOpener } from "./mocks";
-import { museText } from "./muse";
+import { museText, modelFor } from "./muse";
 import { openerPrompt } from "./prompts";
 import { leakedPrivateFacts, redactPrivateValues } from "./privacy";
 import { getAsk } from "./db";
@@ -22,7 +22,7 @@ export async function openThreadForMatch(matchId: string, senderId: string): Pro
   // The sender reads this draft, so hide the RECIPIENT's private values (Alex's draft must not repeat Priya's
   // match_only wake-up time). The sender's own facts are theirs to share. `never` values are stripped for both.
   const neg = match.negotiationId ? getNegotiation(match.negotiationId) : undefined;
-  const otherAsk = neg ? getAsk(neg.askAId === ask.id ? neg.askBId : neg.askAId) : undefined;
+  const otherAsk = neg ? getAsk(neg.askAId === ask.id ? neg.askBId : neg.askAId) : match.candidateAskId ? getAsk(match.candidateAskId) : undefined;
   const senderAsk = ask.userId === senderId ? ask : otherAsk;
   const recipientAsk = ask.userId === senderId ? otherAsk : ask;
   const recipientPrivate = (recipientAsk?.preferences ?? []).filter((p) => p.visibility !== "public");
@@ -34,11 +34,14 @@ export async function openThreadForMatch(matchId: string, senderId: string): Pro
     const p = openerPrompt({
       sender: sender.name,
       recipient: recipient.name,
-      askSummary: ask.summary,
+      // Selling: name the exact items so the opener carries context, never "is this still available?".
+      askSummary: match.routedItems?.length
+        ? `${ask.userId === senderId ? "selling" : "buying"} ${match.routedItems.map((i) => i.model || i.name).join(" and ")} (${match.routedItems.map((i) => `$${i.suggestedPriceUsd}`).join(", ")})`
+        : ask.summary,
       summaryForHumans: match.verdict.summaryForHumans,
       recipientPrivate: recipientPrivate.filter((p) => p.visibility === "match_only").map((p) => p.value).join("; "),
     });
-    draft = await museText({ model: "spark", system: p.system, user: p.user, mock: mockOpener(sender.id, recipient.id, recipient.name.split(" ")[0]) });
+    draft = await museText({ model: modelFor("opener"), system: p.system, user: p.user, mock: mockOpener(sender.id, recipient.id, recipient.name.split(" ")[0]) });
   }
   const shield = [...recipientPrivate, ...(senderAsk?.preferences.filter((p) => p.visibility === "never") ?? [])];
   draft = redactPrivateValues(draft, shield);

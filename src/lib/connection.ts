@@ -2,7 +2,7 @@
 // Threshold: suggest && confidence >= 0.7. Most matches should come back `suggest: false`.
 import { allEvents } from "./db";
 import { mockConnection } from "./mocks";
-import { museJSON } from "./muse";
+import { museJSON, modelFor } from "./muse";
 import { connectionPrompt } from "./prompts";
 import { ConnectionSchema } from "./schemas";
 import type { Ask, ConnectionSuggestion, User, Verdict } from "./types";
@@ -28,7 +28,7 @@ export async function judgeConnection(a: User, b: User, ask: Ask, verdict: Verdi
     verdict: verdict.summaryForHumans,
     events,
   });
-  const out = await museJSON({ model: "wonder", system: p.system, user: p.user, schema: ConnectionSchema, mock: mockConnection(a.id, b.id) });
+  const out = await museJSON({ model: modelFor("connection"), system: p.system, user: p.user, schema: ConnectionSchema, mock: mockConnection(a.id, b.id) });
   const knownEvent = out.event_id && allEvents().some((e) => e.id === out.event_id) ? out.event_id : null;
   return {
     suggest: out.suggest && out.confidence >= CONNECTION_THRESHOLD,

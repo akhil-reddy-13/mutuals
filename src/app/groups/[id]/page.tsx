@@ -120,12 +120,26 @@ export default async function GroupPage({ params }: { params: Promise<{ id: stri
             <Link href={`/groups/${group.id}/muse/${myAsk.id}`} className="fb-card flex items-center gap-3 rounded-none p-3 hover:bg-fb-hover md:rounded-[8px] md:p-4">
               <MuseMark size={40} />
               <span className="min-w-0 flex-1">
-                <span className="block text-[15px] font-semibold">
-                  {fits.length} {fits.length === 1 ? "person fits" : "people fit"} your ask
-                </span>
-                <span className="block truncate text-[13px] text-fb-muted">
-                  Your Muse checked with {matches.filter((m) => m.mode === "agent_to_agent").length} Muses and read {posts.length} posts here.
-                </span>
+                {myAsk.type === "item" && myAsk.side !== "seeking" ? (
+                  <>
+                    <span className="block text-[15px] font-semibold">
+                      {(() => {
+                        const n = matches.reduce((k, m) => k + (m.routedItems?.length ?? 0), 0);
+                        return n ? `${n} of your things already ${n === 1 ? "has" : "have"} a home` : "Nobody here needs these yet";
+                      })()}
+                    </span>
+                    <span className="block truncate text-[13px] text-fb-muted">{myAsk.summary}</span>
+                  </>
+                ) : (
+                  <>
+                    <span className="block text-[15px] font-semibold">
+                      {fits.length} {fits.length === 1 ? "person fits" : "people fit"} your ask
+                    </span>
+                    <span className="block truncate text-[13px] text-fb-muted">
+                      I checked with {matches.filter((m) => m.mode === "agent_to_agent").length} people&apos;s Muses and read {posts.length} posts here.
+                    </span>
+                  </>
+                )}
               </span>
               <span className="flex -space-x-2">
                 {fits.slice(0, 3).map((m) => {

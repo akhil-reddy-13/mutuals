@@ -63,7 +63,15 @@ export default async function NotificationsPage() {
       badge: "muse",
       text: (
         <>
-          <b>{asker.name}</b>&apos;s Muse checked with your Muse in <b>{group.name}</b>. {m.verdict.compatible ? <>Looks like a fit: {m.verdict.summaryForHumans}</> : "Not a fit, so nothing to do."}
+          {m.routedItems?.length ? (
+            <>
+              <b>{asker.name}</b> is selling <b>{m.routedItems.map((i) => i.name).join(" + ")}</b> in {group.name}, and their Muse thought of you.
+            </>
+          ) : (
+            <>
+              <b>{asker.name}</b>&apos;s Muse checked with yours in <b>{group.name}</b>. {m.verdict.compatible ? <>Looks like a fit: {m.verdict.summaryForHumans}</> : "Not a fit, so nothing to do."}
+            </>
+          )}
         </>
       ),
       at: m.createdAt,

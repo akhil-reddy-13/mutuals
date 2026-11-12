@@ -9,7 +9,7 @@ const NEXT: Record<Visibility, Visibility> = { public: "match_only", match_only:
 export function VisBadge({ v, onClick, size = "sm" }: { v: Visibility; onClick?: () => void; size?: "sm" | "xs" }) {
   const cls =
     v === "public" ? "bg-fb-blue-soft text-fb-blue" : v === "match_only" ? "bg-[#f3ecff] text-fb-purple" : "bg-fb-chip text-fb-muted";
-  const label = v === "public" ? "Public" : v === "match_only" ? "Match only" : "Never shared";
+  const label = v === "public" ? "Public" : v === "match_only" ? "Kept private" : "Never shared";
   const Icon = v === "public" ? GlobeIcon : v === "match_only" ? LockIcon : EyeOffIcon;
   const Comp = onClick ? "button" : "span";
   return (
@@ -24,7 +24,7 @@ export function VisBadge({ v, onClick, size = "sm" }: { v: Visibility; onClick?:
   );
 }
 
-export default function PrefChips({ prefs, onChange }: { prefs: Preference[]; onChange?: (next: Preference[]) => void }) {
+export default function PrefChips({ prefs, onChange, remembered = [] }: { prefs: Preference[]; onChange?: (next: Preference[]) => void; remembered?: string[] }) {
   function cycle(id: string) {
     if (!onChange) return;
     onChange(prefs.map((p) => (p.id === id ? { ...p, visibility: NEXT[p.visibility] } : p)));
@@ -44,7 +44,7 @@ export default function PrefChips({ prefs, onChange }: { prefs: Preference[]; on
             <div className="text-[14px] leading-5">{p.value}</div>
             {p.source === "inferred" && !p.confirmed && (
               <button onClick={() => confirm(p.id)} className="mt-0.5 text-[12px] font-semibold text-fb-blue hover:underline">
-                I guessed this. Confirm?
+                {remembered.includes(p.id) ? "From your last ask. Still true?" : "I guessed this. Confirm?"}
               </button>
             )}
           </div>

@@ -60,5 +60,52 @@
     ],
     "open": true,
     "coverEmoji": "🎸"
+  },
+  {
+    "id": "evt_yosemite",
+    "name": "Yosemite day trip carpool",
+    "description": "Leaving the Mission 6am, Mist Trail + Vernal Fall, back by 9pm. Split gas. Beginners welcome.",
+    "city": "San Francisco",
+    "when": "Sat Dec 6, 6:00 AM",
+    "where": "Leaves from 16th St BART",
+    "hostId": "marcus",
+    "goingIds": [
+      "marcus",
+      "kai",
+      "june"
+    ],
+    "open": true,
+    "coverEmoji": "🏕️"
+  },
+  {
+    "id": "evt_lakefront_run",
+    "name": "Lakefront Run Club",
+    "description": "Easy 5k on the Lakefront Trail for interns new to Chicago. All paces. Coffee and somebody's sourdough after.",
+    "city": "Chicago",
+    "when": "Saturdays, 7:00 AM",
+    "where": "Ohio Street Beach, Chicago",
+    "hostId": "ava",
+    "goingIds": [
+      "ava",
+      "sofia",
+      "dana"
+    ],
+    "open": true,
+    "coverEmoji": "🏃"
+  },
+  {
+    "id": "evt_sourdough_swap",
+    "name": "Sourdough Starter Swap",
+    "description": "Bring a jar, leave with a starter. Bread tasting after. Beginners welcome.",
+    "city": "Chicago",
+    "when": "Sunday Jun 22, 10:00 AM",
+    "where": "Logan Square Farmers Market, Chicago",
+    "hostId": "ava",
+    "goingIds": [
+      "ava",
+      "diego"
+    ],
+    "open": true,
+    "coverEmoji": "🍞"
   }
 ]

@@ -8,6 +8,7 @@ import { CloseIcon, MuseMark, SendIcon, VideoCamIcon } from "../icons";
 import MatchCard from "../MatchCard";
 import type { EventInfo } from "../ConnectionCard";
 import IntakeCard from "./IntakeCard";
+import HomesCard from "./HomesCard";
 import LiveMatching, { type LiveCandidate } from "./LiveMatching";
 import PrefChips from "./PrefChips";
 import VideoCapture from "./VideoCapture";
@@ -22,14 +23,31 @@ export interface MuseSheetProps {
   onClose: () => void;
 }
 
-type Card = "prefs" | "video" | "intake" | "matching" | "shortlist";
+type Card = "prefs" | "video" | "intake" | "matching" | "shortlist" | "homes";
 interface Msg {
   id: string;
   role: "muse" | "user";
   text?: string;
   card?: Card;
-  actions?: { label: string; primary?: boolean; onClick: () => void }[];
+  // A name, not a callback, so the chat can be saved and resumed.
+  // Serializable so the chat survives a reload (chat memory). "move" re-asks in another Group.
+  actions?: { label: string; primary?: boolean; act: "check" | "notnow" | "move"; groupId?: string; groupName?: string }[];
   chips?: string[];
+}
+
+// What "resume the chat" keeps in localStorage. The ask itself is re-fetched from the server on open, so
+// never-shared prefs don't sit in browser storage, and a demo reset (ask gone) starts a fresh chat.
+interface SavedChat {
+  askId: string;
+  msgs: Msg[];
+  used: string[];
+  ready: boolean;
+  intake: { room: RoomDetails | null; items: Item[] } | null;
+  listed: { id: string; title: string; priceUsd: number } | null;
+  cands: LiveCandidate[];
+  matches: Match[] | null;
+  events: Record<string, EventInfo | null>;
+  remembered?: string[];
 }
 
 let seq = 0;
@@ -44,6 +62,20 @@ function editedFields(now: Item, sent: Item): Partial<Item> {
   return out;
 }
 
+/** Selling = an item ask from someone offering things (results are people who need them). */
+function isSelling(a: Ask | null | undefined): boolean {
+  return !!a && a.type === "item" && a.side !== "seeking";
+}
+
+/** Starter chips that make sense in each Group (and that the seeded people there can actually answer). */
+const GROUP_CHIPS: Record<string, string[]> = {
+  g_housing27: ["I have a room to fill", "Looking for a room", "Need a summer sublet"],
+  g_ffs: ["Selling some stuff before I move out", "Need a tent for a camping trip", "Need a ride to SFO Friday"],
+  g_sfgrads: ["Going to beabadoobee, nobody to go with", "New in SF, want to meet people", "Looking for a room in SF"],
+  g_runners: ["Looking for a weekend running buddy", "New in SF, want a run crew"],
+};
+const DEFAULT_CHIPS = ["I need something", "I'm selling something", "Looking for people to do something with"];
+
 export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
   const router = useRouter();
   const first = firstName(me.name);
@@ -57,10 +89,16 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
   // Items Spark is still identifying (step 2 of the seller pipeline).
   const [identifying, setIdentifying] = useState<Set<string>>(new Set());
   const framesRef = useRef<string[]>([]);
+  const groupNameNow = useRef<string>(group.name);
+  const intakeRef = useRef<typeof intake>(null);
+  useEffect(() => {
+    intakeRef.current = intake;
+  }, [intake]);
   const [listed, setListed] = useState<{ id: string; title: string; priceUsd: number } | null>(null);
   const [cands, setCands] = useState<LiveCandidate[]>([]);
   const [matches, setMatches] = useState<Match[] | null>(null);
   const [events, setEvents] = useState<Record<string, EventInfo | null>>({});
+  const [remembered, setRemembered] = useState<string[]>([]);
   const bodyRef = useRef<HTMLDivElement>(null);
   const esRef = useRef<EventSource | null>(null);
   const askRef = useRef<Ask | null>(null);
@@ -74,19 +112,81 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
     return id;
   }, []);
 
-  // Opening line (guarded: React strict mode runs effects twice in dev)
+  const storeKey = `muse-chat:${me.id}:${group.id}`;
+  const greet = () =>
+    push({
+      role: "muse",
+      text: sheetCopy.greeting(first, group.name),
+      chips: GROUP_CHIPS[group.id] ?? DEFAULT_CHIPS,
+    });
+
+  // Resume the saved chat for this persona + Group, else the opening line (guarded: strict mode runs effects twice in dev)
   const started = useRef(false);
   useEffect(() => {
     if (started.current) return;
     started.current = true;
-    push({
-      role: "muse",
-      text: sheetCopy.greeting(first, group.name),
-      chips: ["I have a room to fill", "Looking for a room", "Selling furniture before I move"],
-    });
-    return () => esRef.current?.close();
+    (async () => {
+      let saved: SavedChat | null = null;
+      try {
+        saved = JSON.parse(localStorage.getItem(storeKey) ?? "null");
+      } catch {}
+      if (saved) {
+        const [a, m] = await Promise.all([
+          fetch(`/api/asks?askId=${saved.askId}`, { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)),
+          fetch(`/api/matches?askId=${saved.askId}`, { cache: "no-store" }).then((r) => r.json()),
+        ]).catch(() => [null, null]);
+        if (a?.ask) {
+          setAsk(a.ask);
+          setReady(saved.ready);
+          setUsed(new Set(saved.used));
+          setIntake(saved.intake);
+          setListed(saved.listed);
+          setCands(saved.cands);
+          setEvents(saved.events);
+          setRemembered(saved.remembered ?? []);
+          setMatches(m?.matches?.length ? m.matches : saved.matches); // server copy has threadId once Messenger opened
+          setMsgs(saved.msgs);
+          const lastMatching = saved.msgs.findLastIndex((x) => x.card === "matching");
+          if (lastMatching >= 0 && !saved.msgs.slice(lastMatching).some((x) => x.card === "shortlist")) {
+            recoverByPolling(a.ask.id, "Welcome back. Still checking in the background, I'll show results as soon as they're in.");
+          }
+          return;
+        }
+        try {
+          localStorage.removeItem(storeKey);
+        } catch {}
+      }
+      greet();
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  useEffect(() => () => esRef.current?.close(), []);
+
+  useEffect(() => {
+    if (!ask) return;
+    const saved: SavedChat = { askId: ask.id, msgs, used: [...used], ready, intake, listed, cands, matches, events, remembered };
+    try {
+      localStorage.setItem(storeKey, JSON.stringify(saved));
+    } catch {}
+  }, [storeKey, ask, msgs, used, ready, intake, listed, cands, matches, events, remembered]);
+
+  function startOver() {
+    esRef.current?.close();
+    try {
+      localStorage.removeItem(storeKey);
+    } catch {}
+    setAsk(null);
+    setReady(false);
+    setUsed(new Set());
+    setIntake(null);
+    setListed(null);
+    setCands([]);
+    setMatches(null);
+    setEvents({});
+    setRemembered([]);
+    setMsgs([]);
+    greet();
+  }
 
   useEffect(() => {
     const el = bodyRef.current;
@@ -107,9 +207,10 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
         method: "POST",
         body: JSON.stringify({ groupId: group.id, askId: askRef.current?.id, conversation: conversation(t) }),
       });
-      const out = (await res.json()) as { ask: Ask; followUp: string | null; ready: boolean; error?: string };
+      const out = (await res.json()) as { ask: Ask; followUp: string | null; ready: boolean; remembered?: string[]; error?: string };
       if (out.error) throw new Error(out.error);
       setAsk(out.ask);
+      setRemembered(out.remembered ?? []);
       if (!out.ready) {
         push({ role: "muse", text: out.followUp ?? sheetCopy.moreDetail });
       } else if (!ready) {
@@ -149,21 +250,21 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
   function askOptIn() {
     const id = push({
       role: "muse",
-      text: sheetCopy.optIn(group.name),
+      text: sheetCopy.optIn(group.name, isSelling(askRef.current)),
       actions: [
-        { label: "Yes, check", primary: true, onClick: () => startMatching() },
-        {
-          label: "Not now",
-          onClick: () =>
-            push({
-              role: "muse",
-              text: "No problem. Your ask is saved. Whenever you're ready, I can check.",
-              actions: [{ label: "Check now", primary: true, onClick: () => startMatching() }],
-            }),
-        },
+        { label: "Yes, check", primary: true, act: "check" },
+        { label: "Not now", act: "notnow" },
       ],
     });
     return id;
+  }
+
+  function notNow() {
+    push({
+      role: "muse",
+      text: "No problem. Your ask is saved. Whenever you're ready, I can check.",
+      actions: [{ label: "Check now", primary: true, act: "check" }],
+    });
   }
 
   async function onFrames(frames: string[], narration: string, audio: string | null = null) {
@@ -184,7 +285,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
       push({
         role: "muse",
         text: selling
-          ? `Got it. I found ${n} ${n === 1 ? "thing" : "things"} you're selling. Prices are what students nearby pay; change anything before you list.`
+          ? `Got it. I found ${n} ${n === 1 ? "thing" : "things"} you're selling. Fix anything I got wrong, then I'll find who needs them.`
           : `Got it. ${out.room ? "Here's what I can see, plus" : "I found"} ${n} ${n === 1 ? "item" : "items"} the next person might want. Prices are what students nearby pay.`,
         card: "intake",
       });
@@ -235,17 +336,31 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
     push({ role: "muse", text: `Listed. "${listing.title}" is on Marketplace for $${listing.priceUsd}. I'll mention it to anyone whose Muse is looking for one.` });
   }
 
-  function startMatching() {
-    if (!ask) return;
+  async function startMatching() {
+    const cur = askRef.current ?? ask;
+    if (!cur) return;
     setCands([]);
     setMatches(null);
-    push({ role: "muse", text: `On it. Checking with the Muses in ${group.name} and reading the posts. You can watch.`, card: "matching" });
-    const es = new EventSource(`/api/match?askId=${ask.id}`);
+    const selling = isSelling(cur);
+    push({
+      role: "muse",
+      text: selling ? `On it. Asking around ${groupNameNow.current} for anyone who needs these.` : `On it. Asking around ${groupNameNow.current}. You can watch.`,
+      card: "matching",
+    });
+    // Selling: route exactly what the seller approved (Spark's model names, their edits), not Ember's first pass.
+    const latest = intakeRef.current;
+    if (selling && latest?.items.length) {
+      await fetch("/api/ask-items", { method: "POST", body: JSON.stringify({ askId: cur.id, items: latest.items }) }).catch(() => {});
+    }
+    const es = new EventSource(`/api/match?askId=${cur.id}`);
     esRef.current = es;
     es.onmessage = (ev) => {
       const e = JSON.parse(ev.data) as MatchEvent;
       if (e.type === "start") {
         setCands(e.candidates.map((c) => ({ ...c, turns: [] })));
+        if (e.candidates.length) {
+          push({ role: "muse", text: `Checking with ${e.candidates.length} ${e.candidates.length === 1 ? "person's Muse" : "people's Muses"} in ${groupNameNow.current}…` });
+        }
       } else if (e.type === "turn") {
         setCands((cs) => cs.map((c) => (c.id === e.candidateId ? { ...c, turns: [...c.turns, { turn: e.turn, disclosedMeta: e.disclosedMeta }] } : c)));
       } else if (e.type === "verdict") {
@@ -255,6 +370,37 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
       } else if (e.type === "connection") {
         setCands((cs) => cs.map((c) => (c.id === e.candidateId && c.match ? { ...c, match: { ...c.match, connection: e.connection }, connection: e.connection } : c)));
         setEvents((m) => ({ ...m, [e.matchId]: e.event }));
+      } else if (e.type === "done" && e.matches.length === 0) {
+        es.close();
+        setMatches([]);
+        const best = e.elsewhere?.[0];
+        const what = cur.type === "roommate" || cur.type === "sublet" ? "a room" : "this";
+        push({
+          role: "muse",
+          text: best
+            ? `Nobody in ${groupNameNow.current} is looking for ${what} right now. ${best.people === 1 ? "One person" : `${best.people} people`} in ${best.name} might fit. Want me to ask there?`
+            : `Nobody in ${groupNameNow.current} fits yet. I'll keep an eye out and tell you when someone does.`,
+          actions: best
+            ? [
+                { label: `Ask in ${best.name}`, primary: true, act: "move" as const, groupId: best.groupId, groupName: best.name },
+              ]
+            : undefined,
+        });
+      } else if (e.type === "done" && selling) {
+        es.close();
+        setMatches(e.matches);
+        const homed = e.matches.filter((m) => m.routedItems?.length);
+        const n = homed.reduce((k, m) => k + (m.routedItems?.length ?? 0), 0);
+        const names = homed.map((m) => firstName(candsRef.current.find((c) => c.id === m.candidateId)?.name ?? ""));
+        push({
+          role: "muse",
+          text:
+            n > 0
+              ? `Good news: ${n} of your things already ${n === 1 ? "has" : "have"} a home with ${names.join(" and ")}. I told them nothing beyond your list. You decide who to message.`
+              : `Nobody in ${group.name} is looking for these right now. I can offer them to everyone nearby.`,
+          card: "homes",
+        });
+        router.refresh();
       } else if (e.type === "done") {
         es.close();
         setMatches(e.matches);
@@ -264,14 +410,22 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
         const connected = fits.find((m) => m.connection?.suggest);
         const connectedName = connected ? candsRef.current.find((c) => c.id === connected.candidateId)?.name : undefined;
         const skipped = (e.failed ?? []).map((id) => candsRef.current.find((c) => c.id === id)?.name).filter((n): n is string => !!n);
+        // Muse's voice: "I found two people who fit. Priya's the better one, but you two should talk about noise."
+        const best = fits.find((m) => m.mode === "agent_to_agent") ?? fits[0];
+        const bestName = best ? firstName(candsRef.current.find((c) => c.id === best.candidateId)?.name ?? "") : "";
+        const topic = best?.verdict.summaryForHumans.match(/one thing to talk about:\s*([^.]+)/i)?.[1]?.trim();
+        const count = (n: number) => (n === 1 ? "one person" : n === 2 ? "two people" : n === 3 ? "three people" : `${n} people`);
         push({
           role: "muse",
           text:
-            `${fits.length} ${fits.length === 1 ? "person fits" : "people fit"}${nofit ? `, ${nofit} ${nofit === 1 ? "doesn't" : "don't"}` : ""}.` +
-            (oneSided ? ` ${oneSided === 1 ? "One is" : `${oneSided} are`} from a post by someone without Muse, so I drafted a reply you can send.` : "") +
-            (skipped.length ? ` I couldn't reach ${skipped.map(firstName).join(" and ")} this time.` : "") +
-            ` You decide who to talk to. I don't message anyone.` +
-            (connectedName ? ` One more thing on ${firstName(connectedName)}'s card.` : ""),
+            (fits.length === 0
+              ? `Nobody here fits yet${nofit ? ` (I checked ${count(nofit)})` : ""}. I'll keep an eye out.`
+              : `I found ${count(fits.length)} who ${fits.length === 1 ? "fits" : "fit"}.` +
+                (fits.length > 1 && bestName ? ` ${bestName}'s the ${fits.length === 2 ? "better" : "best"} one${topic ? `, but you two should talk about ${topic.toLowerCase()}` : ""}.` : topic && bestName ? ` You and ${bestName} should talk about ${topic.toLowerCase()}.` : "") +
+                (oneSided ? ` ${oneSided === 1 ? "One of them" : `${oneSided} of them`} posted without Muse on, so I drafted a reply you can send.` : "") +
+                (skipped.length ? ` I couldn't reach ${skipped.map(firstName).join(" and ")} this time.` : "") +
+                ` You decide who to message. I won't message anyone.` +
+                (connectedName ? ` One more thing on ${firstName(connectedName)}'s card.` : "")),
           card: "shortlist",
         });
         router.refresh();
@@ -282,14 +436,14 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
     };
     es.onerror = () => {
       es.close();
-      recoverByPolling(ask.id);
+      recoverByPolling(cur.id);
     };
   }
 
   // The stream dropped (phone locked, Safari backgrounded). Matching keeps running on the server, so poll for
   // the saved matches and show the shortlist when the ask is marked matched.
-  function recoverByPolling(askId: string) {
-    push({ role: "muse", text: "Lost the connection for a second. Still checking in the background, I'll show results as soon as they're in." });
+  function recoverByPolling(askId: string, note = "Lost the connection for a second. Still checking in the background, I'll show results as soon as they're in.") {
+    push({ role: "muse", text: note });
     const started = Date.now();
     const tick = async () => {
       try {
@@ -301,7 +455,12 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
         setCands((cs) => cs.map((c) => ({ ...c, match: ms.find((x) => x.candidateId === c.id) ?? c.match })));
         if (a.ask?.status === "matched") {
           setMatches(ms);
-          push({ role: "muse", text: `${ms.filter((x) => x.verdict.compatible).length} people fit. Here's the shortlist.`, card: "shortlist" });
+          if (isSelling(askRef.current)) {
+            const n = ms.reduce((k, x) => k + (x.routedItems?.length ?? 0), 0);
+            push({ role: "muse", text: n ? `${n} of your things already have a home.` : "Nobody here is looking for these yet.", card: "homes" });
+          } else {
+            push({ role: "muse", text: `${ms.filter((x) => x.verdict.compatible).length} people fit. Here's the shortlist.`, card: "shortlist" });
+          }
           router.refresh();
           return;
         }
@@ -310,6 +469,19 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
       else push({ role: "muse", text: "Still nothing back. Check Notifications in a minute, results land there too." });
     };
     setTimeout(tick, 1500);
+  }
+
+  /** "Nobody here, want me to ask there?" -> move the ask to that Group and match there. */
+  async function moveTo(groupId: string, groupName: string) {
+    const cur = askRef.current;
+    if (!cur) return;
+    const r = await fetch("/api/ask-move", { method: "POST", body: JSON.stringify({ askId: cur.id, groupId }) });
+    const { ask: moved } = (await r.json()) as { ask?: Ask };
+    if (!moved) return;
+    setAsk(moved);
+    askRef.current = moved;
+    groupNameNow.current = groupName;
+    void startMatching();
   }
 
   function runAction(msgId: string, fn: () => void) {
@@ -336,6 +508,11 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
             <div className="text-[15px] font-bold leading-tight">Muse</div>
             <div className="truncate text-[12px] text-fb-muted">Private · {group.name}</div>
           </div>
+          {ask && (
+            <button onClick={startOver} className="rounded-full px-3 py-1.5 text-[13px] font-semibold text-fb-blue hover:bg-fb-blue-soft">
+              New ask
+            </button>
+          )}
           <button onClick={onClose} className="fb-icon-btn h-9 w-9" aria-label="Close">
             <CloseIcon size={20} />
           </button>
@@ -372,7 +549,9 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
                         <button
                           key={a.label}
                           disabled={used.has(m.id)}
-                          onClick={() => runAction(m.id, a.onClick)}
+                          onClick={() =>
+                            runAction(m.id, a.act === "check" ? startMatching : a.act === "move" ? () => void moveTo(a.groupId!, a.groupName!) : notNow)
+                          }
                           className={`${a.primary ? "fb-btn-primary" : "fb-btn-secondary"} h-9 disabled:opacity-50`}
                         >
                           {a.label}
@@ -383,7 +562,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
                   {m.card === "prefs" && ask && (
                     <div className="ml-8 rounded-xl border border-fb-divider bg-fb-bg p-2.5">
                       <div className="mb-2 text-[14px] font-semibold">{ask.summary}</div>
-                      <PrefChips prefs={ask.preferences} onChange={updatePrefs} />
+                      <PrefChips prefs={ask.preferences} onChange={updatePrefs} remembered={remembered} />
                     </div>
                   )}
                   {m.card === "video" && !intake && !used.has(m.id) && (
@@ -417,21 +596,32 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
                           onEditItems(intake.items.map((i) => (i.id === x.id ? on : i)));
                           void identify(on, intake.transcript ?? undefined);
                         }}
-                        onList={onList}
+                        onList={ask?.type === "item" ? undefined : onList}
                         listed={listed}
                       />
                     </div>
                   )}
                   {m.card === "matching" && (
                     <div className="ml-8">
-                      {cands.length === 0 ? <div className="h-14 rounded-xl shimmer" /> : <LiveMatching cands={cands} meName={first} defaultOpen={firstAgent} />}
+                      {cands.length === 0 ? (matches ? null : <div className="h-14 rounded-xl shimmer" />) : <LiveMatching cands={cands} meName={first} defaultOpen={firstAgent} />}
+                    </div>
+                  )}
+                  {m.card === "homes" && matches && (
+                    <div className="ml-8">
+                      <HomesCard
+                        matches={matches}
+                        people={candById}
+                        rest={(intake?.items ?? []).filter((i) => i.mentioned !== false && !matches.some((mt) => mt.routedItems?.some((r) => r.id === i.id)))}
+                        onOfferRest={onList}
+                        listed={listed}
+                      />
                     </div>
                   )}
                   {m.card === "shortlist" && matches && (
-                    <div className="ml-8 flex flex-col gap-2.5">
+                    <div className="flex flex-col gap-2.5">
                       {matches.map((mt) => {
                         const c = candById[mt.candidateId];
-                        return c ? <MatchCard key={mt.id} match={mt} candidate={c} viewerId={me.id} groupId={group.id} event={events[mt.id] ?? null} compact /> : null;
+                        return c ? <MatchCard key={mt.id} match={mt} candidate={c} viewerId={me.id} event={events[mt.id] ?? null} compact label={mt === matches.find((x) => x.verdict.compatible) ? "Best match" : undefined} /> : null;
                       })}
                       <a href={`/groups/${group.id}/muse/${ask?.id}`} className="text-center text-[13px] font-semibold text-fb-blue hover:underline">
                         Open the full shortlist

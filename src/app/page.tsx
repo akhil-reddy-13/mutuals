@@ -4,7 +4,7 @@ import Link from "next/link";
 import Avatar from "@/components/Avatar";
 import { MuseMark, PhotoIcon, PlusIcon, SmileIcon, VideoCamIcon } from "@/components/icons";
 import PostCard from "@/components/PostCard";
-import { asksForUser, getGroup, getUser, matchesForAsk, seed } from "@/lib/db";
+import { allUsers, asksForUser, getGroup, getUser, matchesForAsk, seed } from "@/lib/db";
 import { firstName } from "@/lib/format";
 import { currentUser } from "@/lib/session";
 
@@ -68,6 +68,9 @@ export default async function Home() {
         ))}
       </section>
 
+      {/* First screen: the roommate example, in Muse's voice. Breadth lives in the Muse digest, not here. */}
+      {!(latestMatched && fits.length > 0) && <MutualsIntro schoolMuses={allUsers().filter((u) => u.museEnabled && u.school === me.school && u.schoolVerified && u.id !== me.id).length} school={me.school ?? "school"} />}
+
       {/* Muse card: only once Muse has something to show */}
       {latestMatched && matchedGroup && fits.length > 0 && (
         <Link href={`/groups/${matchedGroup.id}/muse/${latestMatched.id}`} className="fb-card flex items-center gap-3 rounded-none p-3 hover:bg-fb-hover md:rounded-[8px] md:p-4">
@@ -104,5 +107,64 @@ export default async function Home() {
         );
       })}
     </div>
+  );
+}
+
+function MutualsIntro({ schoolMuses, school }: { schoolMuses: number; school: string }) {
+  const priya = getUser("priya");
+  const sam = getUser("sam");
+  return (
+    <section className="fb-card overflow-hidden rounded-none md:rounded-[8px]">
+      <div className="p-4 pb-3">
+        <div className="flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-wide muse-text">
+          <MuseMark size={16} /> Mutuals
+        </div>
+        <h2 className="mt-1.5 text-[24px] font-bold leading-7">Skip the fifty awkward messages.</h2>
+        <p className="mt-1.5 text-[15px] leading-5 text-fb-muted">
+          Your Muse checks with other people&apos;s Muses to find who actually fits what you need, so you only talk to the right people.
+        </p>
+      </div>
+
+      {/* The roommate example, as a tiny chat */}
+      <div className="mx-4 flex flex-col gap-1.5 rounded-xl bg-fb-bg p-3">
+        <div className="self-end rounded-2xl rounded-br-md bg-fb-blue px-3 py-1.5 text-[14px] leading-5 text-white">
+          Need a roommate for my Mission 2BR from Sept. Real max is $1,350, keep that private.
+        </div>
+        <div className="flex items-end gap-1.5">
+          <MuseMark size={22} />
+          <div className="rounded-2xl rounded-bl-md bg-white px-3 py-1.5 text-[14px] leading-5 text-fb-muted">
+            Checking with {schoolMuses} people&apos;s Muses at {school}…
+          </div>
+        </div>
+        <div className="flex items-end gap-1.5">
+          <MuseMark size={22} />
+          <div className="rounded-2xl rounded-bl-md bg-white px-3 py-2 text-[14px] leading-5">
+            I found two people who fit. Priya&apos;s the better one, but you two should talk about noise.
+            <div className="mt-1.5 flex items-center gap-1.5">
+              {[priya, sam].filter(Boolean).map((u) => (
+                <span key={u!.id} className="flex items-center gap-1 rounded-full bg-fb-bg py-0.5 pl-0.5 pr-2 text-[12px] font-semibold">
+                  <Avatar src={u!.avatarUrl} name={u!.name} size={20} /> {u!.name.split(" ")[0]}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="p-4 pt-3">
+        <Link href="/groups/g_housing27" className="fb-btn-primary h-10 w-full">
+          Try it: find a roommate in Stanford Housing &apos;27
+        </Link>
+        <p className="mt-2.5 text-center text-[13px] leading-4 text-fb-muted">
+          A marketplace finds you stuff. Your Muse finds you people, and the stuff is just the reason to meet.
+        </p>
+        <p className="mt-2 border-t border-fb-divider pt-2 text-center text-[12px] text-fb-muted">
+          You might have zero mutuals on Facebook today. Mutuals builds them for you.{" "}
+          <Link href="/digest" className="font-semibold text-fb-blue hover:underline">
+            More you can do
+          </Link>
+        </p>
+      </div>
+    </section>
   );
 }

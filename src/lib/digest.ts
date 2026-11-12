@@ -2,7 +2,7 @@
 // Shared by the /digest page, GET /api/digest and scripts/warm-cache.ts, so the warm run sends the exact prompt the page does.
 import { allAsks, getUser } from "./db";
 import { mockDigest } from "./mocks";
-import { museJSON } from "./muse";
+import { modelFor, museJSON } from "./muse";
 import { digestPrompt } from "./prompts";
 import { DigestSchema } from "./schemas";
 import type { DigestCard, User } from "./types";
@@ -14,7 +14,7 @@ export async function digestCards(me: User) {
     userProfile: `${me.name}, ${me.school ?? ""}, ${me.city}. Interests: ${me.interests.map((i) => i.value).join(", ")}. ${me.bio ?? ""}`,
     asks: asks.map((a) => `${a.userId} (${getUser(a.userId)?.name}): [${a.type}] ${a.summary}`).join("\n"),
   });
-  return (await museJSON({ model: "ember", system: p.system, user: p.user, schema: DigestSchema, mock: mockDigest })).cards;
+  return (await museJSON({ model: modelFor("digest"), system: p.system, user: p.user, schema: DigestSchema, mock: mockDigest })).cards;
 }
 
 export async function buildDigest(me: User): Promise<DigestCard[]> {

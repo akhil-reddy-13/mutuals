@@ -28,16 +28,17 @@ Both phones start on **Home** (a normal-looking feed). Phone A goes **Groups →
 
 | Time | Say | Do (Phone A unless noted) |
 |---|---|---|
-| 0:00 | Problem. Young adults need roommates, rides, sublets. Public posts make you overshare or hide what matters. Most of us barely have a Facebook network. | Start on Home. Tap Groups → Stanford Housing '27. Show Casey's ISO post, Jordan's dog post. Scroll. |
+| 0:00 | "Instagram is for people you already know. Facebook is for people you need to meet." Young adults end up in Groups and Marketplace for roommates, rides, sublets, and it's miserable: public posts make you overshare or hide what matters, and it's fifty awkward messages. | Start on Home. The first card is Mutuals: **"Skip the fifty awkward messages."** with the roommate example. Tap **Try it** → Stanford Housing '27. Show Casey's ISO post, Jordan's dog post. |
 | 0:45 | "Meta described a Muse network for friends and family. We built the part for people you haven't met yet, inside the Groups you're already in." | Tap **Ask Muse privately** in the composer. |
-| 1:00 | "You tell your Muse the stuff you'd never post." | Type line 1, 2, 3. Point at the badges: **Public**, **Match only**, **Never shared**. Tap one badge to show it cycles, then tap it back (a changed badge re-runs matching live). |
-| 1:45 | "Film the room. Ten seconds." | Record video (or Use photos). Room facts + leftover items appear. Tap **List on Marketplace**. |
-| 2:15 | "Now the part no search box can do." | Tap **Yes, check**. Watch Priya's negotiation stream. Point at the lock chips: match-only facts are used, never shown. Point at Priya's Muse saying "a private number". |
-| 2:50 | "Jordan: dealbreaker, the Muses stopped early. Casey has no Muse, so mine read her post and drafted a reply. Sam fits, nothing more." | Scroll the shortlist. Open **What my Muse shared with Priya**. |
-| 3:15 | "Then you talk. The agents never message anyone." | Tap **Message Priya**. The opener is pre-drafted. Send. |
+| 1:00 | "You tell your Muse the stuff you'd never post." | Type line 1, 2, 3. Point at the badges: **Public**, **Kept private**, **Never shared**. Tap one badge to show it cycles, then tap it back (a changed badge re-runs matching live). |
+| 1:45 | "Film the room. Ten seconds." | Record video (or Use photos). Room facts + leftover items appear. |
+| 2:15 | "Now the part no search box can do. Muse is the friend who knows everyone." | Tap **Yes, check**. "Checking with N people's Muses…" Watch Priya's stream. Point at the lock chips: kept-private facts are used, never shown. Point at Priya's Muse saying "a private number". |
+| 2:50 | Read Muse's line: "I found three people who fit. Priya's the best one, but you two should talk about weeknight noise." "Jordan: dealbreaker. Casey has no Muse, so mine read her post and drafted a reply." | Scroll the shortlist: every card leads with the person. Open **What my Muse shared with Priya**. |
+| 3:15 | "Then you talk. Muse never messages anyone for you." | Tap **Message Priya**. The opener already carries the context (the room, the noise question). Send. |
 | 3:30 | **Phone B:** "Priya got a notification. Her view shows the same summary, never Alex's numbers." | Phone B: Notifications → the match → Messenger. Reply by hand. Phone A sees it (2s poll). |
 | 4:00 | "Most exchanges stay exchanges. Sam got no suggestion. Priya did." | Back on A: Priya's card → **More than a lease** → **Go together** → the Event. Tap **Going**. |
-| 4:30 | "Same engine, every small ask." | Open **Muse** (left rail or home tab) → digest: skill swap, plus one, SFO ride. |
+| 4:20 | "A marketplace finds you stuff. Your Muse finds you people, and the stuff is just the reason to meet." | Stanford Free & For Sale → Ask Muse → "Selling some stuff before I move out" → upload the pre-run video (you talking over your stuff). Ember heard you, Spark named each model (Canon G7 X Mark II). **Yes** → "2 of these already have a home": June (Japan trip) and Theo (BART commute). |
+| 4:45 | "Same engine, every small ask." | Open **Muse** (left rail) → digest: skill swap, plus one, SFO ride. |
 | 4:50 | "You might have zero mutuals on Facebook today. Mutuals builds them for you." | Closing slide. |
 
 ## If something breaks
@@ -54,6 +55,13 @@ Both phones start on **Home** (a normal-looking feed). Phone A goes **Groups →
 - Models: Spark for the two agents, openers and ask parsing; Wonder once per candidate as referee and once for the connection judgment; Ember for video frames, post reading and the digest.
 
 ## Other live flows (same engine, 20 to 40 seconds each)
+
+- **Selling (Stanford Free & For Sale):** "Selling some stuff before I move out" → upload a video where you talk over
+  your stuff. Run the exact demo video once beforehand so Ember/Spark/Wonder are cached (about 15 s cold).
+  Result is people, not listings: "2 of these already have a home." `IMG_6396.MOV` → G7 X to June, Poly earbuds to Theo.
+- **"I need X" (Stanford Free & For Sale):** "Need a tent for a camping trip next month" → Muse asks "Is this for a
+  trip? Want people to go with too?" → "Yosemite, Dec 6, down to go with people" → Marcus (tent, driving there) + the
+  Yosemite carpool Event. `npm run demo -- need` to pre-run it.
 
 Use these as the "and it's not just housing" beat, or as a backup if the room video misbehaves. Reset first or they stack up in Notifications.
 

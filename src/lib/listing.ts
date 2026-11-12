@@ -1,7 +1,7 @@
 // Leftover items -> a Facebook Marketplace listing (handoff decision 5). Spark writes the copy.
 import { getUser, newId, saveListing } from "./db";
 import { mockListing } from "./mocks";
-import { museJSON } from "./muse";
+import { museJSON, modelFor } from "./muse";
 import { listingPrompt } from "./prompts";
 import { ListingSchema } from "./schemas";
 import type { Item, MarketplaceListing } from "./types";
@@ -12,7 +12,7 @@ export async function createListing(sellerId: string, items: Item[], askId?: str
     items: items.map((i) => `${i.name}${i.model && i.model !== i.name ? ` (${i.model})` : i.brandGuess ? ` (${i.brandGuess})` : ""}, ${i.condition}, flaws: ${i.flaws.join("; ") || "none"}, ~$${i.suggestedPriceUsd}`).join("\n"),
     neighborhood: seller.city === "San Francisco" ? "the Mission" : seller.city,
   });
-  const out = await museJSON({ model: "spark", system: p.system, user: p.user, schema: ListingSchema, mock: mockListing(items) });
+  const out = await museJSON({ model: modelFor("listing"), system: p.system, user: p.user, schema: ListingSchema, mock: mockListing(items) });
   const listing: MarketplaceListing = {
     id: newId("listing"),
     sellerId,

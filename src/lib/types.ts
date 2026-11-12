@@ -130,6 +130,11 @@ export interface Match {
   sourcePostId?: string; // one_sided mode
   draftReply?: string; // one_sided mode
   threadId?: string; // set once the human opened Messenger
+  /** Selling: the buyer's ask this match came from, and which of the seller's items were routed to them. */
+  candidateAskId?: string;
+  routedItems?: Item[];
+  /** One human hook, only when there's real shared overlap. Usually null. */
+  hook?: string | null;
   createdAt: string;
 }
 
@@ -156,7 +161,7 @@ export interface Group {
   adminIds: string[];
   privacy: "public" | "private";
   coverEmoji: string;
-  /** Cover illustration key: housing | sf | ffs | run */
+  /** Cover illustration key: housing | sf | ffs | run | chi */
   cover: string;
   about: string;
 }

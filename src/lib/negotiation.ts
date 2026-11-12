@@ -9,7 +9,7 @@
 //   - Every outgoing agent message is logged for its owner ("What my Muse shared").
 import { getUser, logAgentMessage, newId, saveNegotiation } from "./db";
 import { mockAgentTurn, mockReferee } from "./mocks";
-import { museJSON } from "./muse";
+import { museJSON, modelFor } from "./muse";
 import { agentPrompt, refereePrompt } from "./prompts";
 import { agentContext, budgetsOverlap, formatPrefs, isShareable, leakedPrivateFacts, redactPrivateValues } from "./privacy";
 import { AgentTurnSchema, RefereeSchema } from "./schemas";
@@ -138,7 +138,7 @@ export async function runNegotiation(
         budgetOverlap,
       });
       const out = await museJSON({
-        model: "spark",
+        model: modelFor("agent"),
         system: p.system,
         user: p.user,
         schema: AgentTurnSchema,
@@ -192,7 +192,7 @@ export async function runNegotiation(
     budgetOverlap,
     privateFacts: pf.join("\n") || "(none)",
   });
-  const raw = await museJSON({ model: "wonder", system: rp.system, user: rp.user, schema: RefereeSchema, mock: mockReferee(userA.id, userB.id, mockCtx) });
+  const raw = await museJSON({ model: modelFor("referee"), system: rp.system, user: rp.user, schema: RefereeSchema, mock: mockReferee(userA.id, userB.id, mockCtx) });
   const verdict = sealVerdict(raw, askA, askB);
 
   const refereeTurn: NegotiationTurn = { speaker: "orchestrator", message: verdict.summaryForHumans, disclosed: [], positions: {} };

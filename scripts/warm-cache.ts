@@ -5,7 +5,7 @@
 //   chat     the 3 DEMO_LINES through parseAsk, with the same Muse lines the sheet keeps in its history (sheetCopy)
 //   path A   skip the video -> Yes, check (matching) -> Alex opens Messenger -> Priya opens Messenger
 //   path B   (--video <file>) the same file the presenter uploads on stage: ffmpeg frames + narration (lib/media)
-//            -> Ember intake -> Spark identifies each item -> List on Marketplace -> matching -> openers
+//            -> Ember intake -> Spark identifies each item -> matching -> openers -> List on Marketplace
 //   seed     ask_alex_seed, for the offline fallback
 //   digest   Alex's Muse page
 // The runtime store is reset before each path (an existing Messenger thread would skip the opener call) and at
@@ -75,7 +75,7 @@ async function chat(): Promise<Ask> {
       ready = true;
       convo.push({ role: "muse", text: sheetCopy.prefsIntro });
       // With a video step the sheet shows the video card (not sent); without one it asks the opt-in right away.
-      if (!canShowVideo(out.ask)) convo.push({ role: "muse", text: sheetCopy.optIn(group.name) });
+      if (!canShowVideo(out.ask)) convo.push({ role: "muse", text: sheetCopy.optIn(group.name, out.ask.type === "item" && out.ask.side !== "seeking") });
     } else {
       convo.push({ role: "muse", text: out.followUp ?? sheetCopy.updated });
     }
@@ -99,8 +99,9 @@ async function matchAndOpen(ask: Ask) {
   }
 }
 
-/** The video step, as VideoCapture -> /api/media -> /api/intake -> /api/identify -> /api/listing do it. */
-async function video(ask: Ask, file: string, narration: string): Promise<Ask> {
+/** The video step, as VideoCapture -> /api/media -> /api/intake -> /api/identify do it. Returns the ask as matching
+ *  will see it (Ember's items, saved by /api/intake) and Spark's identified items (kept in the sheet, used to list). */
+async function video(ask: Ask, file: string, narration: string): Promise<{ ask: Ask; identified: Item[] }> {
   const ext = file.split(".").pop() ?? "mov";
   const { frames, audio } = await step("ffmpeg frames + narration", () => prepVideo(fs.readFileSync(file), ext));
   // /api/intake drops audio over 4,000,000 base64 chars
@@ -119,12 +120,7 @@ async function video(ask: Ask, file: string, narration: string): Promise<Ask> {
     ),
   );
   console.log(`  items: ${identified.map((i) => `${i.name} $${i.suggestedPriceUsd}`).join(", ") || "(none)"}`);
-  if (identified.length) {
-    // List on Marketplace: the edited items are saved back onto the ask, so matching sees them.
-    saveAsk({ ...getAsk(ask.id)!, items: identified });
-    await step("Marketplace listing", () => createListing(USER, identified, ask.id));
-  }
-  return getAsk(ask.id)!;
+  return { ask: getAsk(ask.id)!, identified };
 }
 
 async function main() {
@@ -147,7 +143,13 @@ async function main() {
   };
 
   await run("A. chat, skip the video, match, Messenger", async () => matchAndOpen(await chat()));
-  if (file) await run(`B. chat, video (${path.basename(file)}), list, match, Messenger`, async () => matchAndOpen(await video(await chat(), file, narration)));
+  if (file)
+    await run(`B. chat, video (${path.basename(file)}), match, Messenger, list`, async () => {
+      const { ask, identified } = await video(await chat(), file, narration);
+      await matchAndOpen(ask);
+      // DEMO.md lists after matching (if at all), so the listing call is warmed last and can't change the ask first.
+      if (identified.length) await step("Marketplace listing", () => createListing(USER, identified, ask.id));
+    });
   else console.log("\nB. video path skipped (pass --video <file> with the clip you'll upload on stage)");
   await run("Seed ask (offline fallback)", async () => matchAndOpen(getAsk("ask_alex_seed")!));
   await run("Digest (Alex's Muse page)", async () => {

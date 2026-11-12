@@ -69,6 +69,11 @@ export default async function DigestPage() {
           );
         })}
       </div>
+      <p className="px-4 pt-5 text-center text-[13px] text-fb-muted md:px-0">
+        A marketplace finds you stuff. Your Muse finds you people, and the stuff is just the reason to meet.
+        <br />
+        You might have zero mutuals on Facebook today. Mutuals builds them for you.
+      </p>
     </div>
   );
 }
