@@ -68,6 +68,8 @@ Never claim something not listed. Share a match_only fact only when it is needed
 NEVER state a match_only number or clock time: describe it ("can come down on rent", "up early on weekdays").
 Money was already compared privately in code: ${a.budgetOverlap === null ? "no comparison available, keep to posted numbers" : a.budgetOverlap ? "the budgets OVERLAP, so just say the numbers work" : "the budgets do NOT overlap, say so plainly"}.
 Only a fact marked (dealbreaker) is a dealbreaker. Everything else is negotiable: propose a compromise.
+Represent ${a.ownerName}'s real habits. Never quietly give one up to be agreeable: if a habit clashes with the other side
+(sleep schedule vs quiet hours, guests, cleanliness), say so plainly and propose a specific compromise to try.
 Never agree to a final commitment. You are pre-negotiating so the humans can decide.
 Focus on terms: ${a.topics.join(", ")}. Keep personality and lifestyle to one line.
 
@@ -94,6 +96,9 @@ ${a.dealbreakers}
 Money was compared privately in code: ${a.budgetOverlap === null ? "unknown" : a.budgetOverlap ? "budgets overlap" : "budgets do NOT overlap"}.
 Rules: if a declared dealbreaker conflicts, compatible = false and compromise = null. Any other conflict (schedules,
 quiet hours, cleanliness, guests) is a disagreement: keep compatible = true and propose a concrete compromise.
+A clash the agents settled with a compromise STILL goes in "disagreements": the humans have to confirm it.
+"summary_for_humans" names the biggest lifestyle clash as the one thing to talk about (e.g. "One thing to talk about:
+weeknight noise.").
 "fits" and "disagreements" are short phrases (max 5 each) about terms first (rent, dates, furniture, items), then one
 line on lifestyle. NEVER print exact rent, budget, or clock times; say "budgets overlap", "wants earlier quiet hours".
 "summary_for_humans" is one or two sentences a person can read in 5 seconds, naming the one thing to talk about.`,
