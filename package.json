@@ -9,11 +9,12 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "smoke": "tsx --env-file=.env.local scripts/muse-smoke.ts",
-    "warm": "tsx --env-file=.env.local scripts/warm-cache.ts",
+    "smoke": "tsx scripts/muse-smoke.ts",
+    "warm": "tsx scripts/warm-cache.ts",
     "dev:lan": "next dev -H 0.0.0.0"
   },
   "dependencies": {
+    "@next/env": "^15.5.29",
     "next": "15.5.29",
     "openai": "^7.55.0",
     "react": "19.1.0",

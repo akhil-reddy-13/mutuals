@@ -44,3 +44,8 @@ muse client ✅ → seed loader ✅ → intake API → ask parsing → `runNegot
 | Intake + matching | `frames.ts`, `reach.ts`, `api/intake`, `api/asks`, `api/match`, `api/digest`, `VideoCapture` | _TBD_ |
 | Frontend | `components/*`, `app/mutuals/**`, `app/messenger/**`, `api/messenger` | _TBD_ |
 | Seed, pitch, video | `seed/*`, `README.md`, Devpost, demo script | _TBD_ |
+
+## Status / handoff (update as you go)
+- ✅ Scaffold, Muse client, schemas, prompts, privacy (+tests), reach/trust, runtime store, seed v1, FB shell, persona switcher, SSE wrapper, `npm run smoke` (loads `.env.local` like Next; `MOCK_MUSE=true npm run smoke` works offline).
+- ⏭️ Next, in order: (1) get `npm run smoke` green with the real key; confirm `MUSE_BASE_URL` and whether Ember accepts `image_url` parts. (2) `/api/intake` + `/api/asks`. (3) `runNegotiation` in `src/lib/negotiation.ts`, test from a script on `ask_alex_seed` vs `ask_priya`, then the SSE page. (4) `/api/match` + shortlist. (5) messenger, connection, log, digest. (6) `warm-cache`.
+- Not yet verified against the real Muse API: nothing has made a live call yet.
