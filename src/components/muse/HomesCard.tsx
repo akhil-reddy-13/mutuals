@@ -17,7 +17,10 @@ export default function HomesCard({
   rest,
   onOfferRest,
   listed,
+  viewer = "seller",
 }: {
+  /** The buyer sees the same card from their side: who's selling, and why their Muse thought of them. */
+  viewer?: "seller" | "buyer";
   matches: Match[];
   people: Record<string, Person>;
   /** Items nobody claimed yet. */
@@ -30,7 +33,7 @@ export default function HomesCard({
   return (
     <div className="flex flex-col gap-2.5">
       <div className="px-1 text-[17px] font-bold leading-tight">
-        {count > 0 ? `${count} of these already ${count === 1 ? "has" : "have"} a home` : "Nobody's looking for these yet"}
+        {viewer === "buyer" ? "Thought of you" : count > 0 ? `${count} of these already ${count === 1 ? "has" : "have"} a home` : "Nobody's looking for these yet"}
       </div>
       {homed.map((m) => (
         <HomeRow key={m.id} match={m} person={people[m.candidateId]} />
