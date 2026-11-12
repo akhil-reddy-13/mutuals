@@ -56,8 +56,9 @@ async function main() {
     }
     return;
   }
-  if (process.env.RESET === "1") resetRuntime();
-  else console.log("(not resetting the runtime store; RESET=1 to wipe it. Matches dedupe by latest run.)");
+  // Reset by default so stale threads/log entries from an earlier run (e.g. a mock run) don't show up. RESET=0 keeps them.
+  if (process.env.RESET !== "0") resetRuntime();
+  else console.log("(RESET=0: keeping the runtime store from earlier runs)");
   const ask = getAsk("ask_alex_seed")!;
   const t0 = Date.now();
   const matches = await runMatching(ask, (e) => {

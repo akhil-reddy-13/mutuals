@@ -160,7 +160,16 @@
       {
         "id": "priya_quiet",
         "topic": "quiet_hours",
-        "value": "Needs quiet after 11pm on weeknights, starts work at 7am",
+        "value": "Quiet after 11pm on weeknights",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "priya_wake",
+        "topic": "schedule",
+        "value": "Starts work at 7am, up early on weekdays",
         "importance": "high",
         "visibility": "match_only",
         "source": "stated",

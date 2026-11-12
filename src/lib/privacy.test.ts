@@ -65,25 +65,30 @@ describe("sealed comparisons", () => {
 
   it("redacts private numbers and times from any string shown to a human", () => {
     const both = [...alex.preferences, ...priya.preferences];
-    const leaky = "Budgets overlap ($1,200 to $1,300). Priya wants quiet after 11pm; Alex is up until 1am.";
+    const leaky = "Budgets overlap ($1,200 to $1,300). Priya starts work at 7am; Alex is up until 1am.";
     expect(leaks(leaky, both).length).toBeGreaterThan(0);
     const clean = redactPrivateValues(leaky, both);
-    expect(clean).not.toMatch(/1,300|1,200|11pm|1am/);
-    expect(clean).toContain("after a private time");
+    expect(clean).not.toMatch(/1,300|1,200|7am|1am/);
+    expect(clean).toContain("at a private time");
     expect(clean).not.toMatch(/\wa private/); // whitespace before the token is preserved
     expect(leaks(clean, both)).toEqual([]);
     // Public numbers survive.
     expect(redactPrivateValues("Rent is $1,350/mo", both)).toContain("$1,350");
+    // Priya's quiet hours are public (the compromise needs them), so they survive.
+    expect(redactPrivateValues("Quiet after 11pm on weeknights", both)).toBe("Quiet after 11pm on weeknights");
   });
 
   it("catches the ways a model rewrites a number or time", () => {
     const both = [...alex.preferences, ...priya.preferences];
-    for (const t of ["$1300", "1300", "1,300", "$1.3k", "1.3k", "$1,300/mo", "11 pm", "11:00pm", "11 p.m.", "11PM", "7 am", "1:00am"]) {
+    for (const t of ["$1300", "1300", "1,300", "$1.3k", "1.3k", "$1,300/mo", "1 am", "1:00am", "1 a.m.", "1AM", "7 am", "7:00am"]) {
       expect(leaks(`x ${t} y`, both), t).not.toEqual([]);
       expect(redactPrivateValues(`x ${t} y`, both), t).toMatch(/x a private (number|time) y/);
     }
+    // Bare hours after a time word are caught too ("you're up at 7", "up until 1").
+    expect(redactPrivateValues("you're up at 7 for work", both)).toBe("you're up at a private time for work");
+    expect(redactPrivateValues("I'm up until 1 most nights", both)).toBe("I'm up until a private time most nights");
     // Unrelated numbers survive.
-    expect(redactPrivateValues("CS 161 at 5pm, lease 12 months, $40 desk", both)).toBe("CS 161 at 5pm, lease 12 months, $40 desk");
+    expect(redactPrivateValues("CS 161 at 5pm, lease 12 months, $40 desk, after 7 months", both)).toBe("CS 161 at 5pm, lease 12 months, $40 desk, after 7 months");
   });
 
   it("never values are stripped even if a model echoed them", () => {

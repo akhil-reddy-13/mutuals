@@ -112,7 +112,11 @@ function tokenPattern(token: string, kind: "money" | "time"): RegExp {
     const m = token.match(/(\d{1,2})(?::(\d{2}))?\s?(am|pm)/i)!;
     const h = m[1];
     const ap = m[3][0].toLowerCase();
-    return new RegExp(`(?<![\\d:])${h}(?::\\d{2})?\\s?${ap}\\.?m\\.?(?![a-z])`, "gi");
+    // "11pm", "11 p.m.", "11:00pm" anywhere; bare "11" / "11:00" only right after a time word ("up at 7",
+    // "quiet after 11"), so unrelated numbers like "11 months" or "CS 161" survive.
+    const withSuffix = `(?<![\\d:])${h}(?::\\d{2})?\\s?${ap}\\.?m\\.?(?![a-z])`;
+    const bare = `(?<=\\b(?:at|after|before|until|till|til|by|past|around|from)\\s)${h}(?::\\d{2})?(?![\\d:%/-])(?!\\s?(?:months?|weeks?|days?|years?|people|minutes?|min|hours?|hrs?)\\b)`;
+    return new RegExp(`${withSuffix}|${bare}`, "gi");
   }
   const digits = token.replace(/[^\d.]/g, "");
   const n = Number(digits);

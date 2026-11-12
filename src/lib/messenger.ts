@@ -1,6 +1,6 @@
 // Messenger handoff (PRD §5.1 step 6): the human picks a match, a thread opens with a Spark-drafted opener.
 // Agents never send anything. The draft sits in the composer until the human edits/sends it.
-import { getMatch, getPost, getThread, getUser, newId, saveMatch, saveThread, threadBetween } from "./db";
+import { getMatch, getNegotiation, getPost, getThread, getUser, newId, saveMatch, saveThread, threadBetween } from "./db";
 import { mockOpener } from "./mocks";
 import { museText } from "./muse";
 import { openerPrompt } from "./prompts";
@@ -26,7 +26,17 @@ export async function openThreadForMatch(matchId: string, senderId: string): Pro
     const p = openerPrompt({ sender: sender.name, recipient: recipient.name, askSummary: ask.summary, summaryForHumans: match.verdict.summaryForHumans });
     draft = await museText({ model: "spark", system: p.system, user: p.user, mock: mockOpener(sender.id, recipient.id, recipient.name.split(" ")[0]) });
   }
-  draft = redactPrivateValues(draft, ask.preferences);
+  // The sender reads this draft, so hide the RECIPIENT's private values (Alex's draft must not repeat Priya's
+  // match_only wake-up time). The sender's own facts are theirs to share. `never` values are stripped for both.
+  const neg = match.negotiationId ? getNegotiation(match.negotiationId) : undefined;
+  const otherAsk = neg ? getAsk(neg.askAId === ask.id ? neg.askBId : neg.askAId) : undefined;
+  const senderAsk = ask.userId === senderId ? ask : otherAsk;
+  const recipientAsk = ask.userId === senderId ? otherAsk : ask;
+  const shield = [
+    ...(recipientAsk?.preferences.filter((p) => p.visibility !== "public") ?? []),
+    ...(senderAsk?.preferences.filter((p) => p.visibility === "never") ?? []),
+  ];
+  draft = redactPrivateValues(draft, shield);
 
   if (existing) {
     // The other person opened the thread first. Give this person their own opener.

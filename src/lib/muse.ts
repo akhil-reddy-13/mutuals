@@ -21,6 +21,16 @@ const MODEL_IDS: Record<MuseModel, string> = {
   ember: process.env.MODEL_EMBER ?? "muse-ember-1.0",
 };
 
+// Reasoning effort per model. Muse models reason before answering; "minimal" is ~3x faster than the default for
+// Spark (measured: ~4s vs ~12s per negotiation turn), which keeps the live demo watchable. The referee keeps more.
+// Override with MUSE_EFFORT_SPARK / _EMBER / _WONDER (minimal|low|medium|high), or "default" to send nothing.
+const EFFORT: Record<MuseModel, string> = {
+  wonder: process.env.MUSE_EFFORT_WONDER ?? "low",
+  spark: process.env.MUSE_EFFORT_SPARK ?? "minimal",
+  ember: process.env.MUSE_EFFORT_EMBER ?? "minimal",
+};
+const effortUnsupported = new Set<MuseModel>();
+
 const MOCK = process.env.MOCK_MUSE === "true";
 /** Small pause per mocked call so streamed negotiations read as live during offline dev/demo. */
 const MOCK_DELAY_MS = Number(process.env.MOCK_DELAY_MS ?? 600);
@@ -88,12 +98,24 @@ async function rawCall(model: MuseModel, messages: ChatMessage[], temperature: n
   let lastErr: unknown;
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
-      const res = await client().chat.completions.create({ model: id, messages, temperature });
+      const effort = EFFORT[model];
+      const extra = effort !== "default" && !effortUnsupported.has(model) ? { reasoning_effort: effort } : {};
+      const res = await client().chat.completions.create({
+        model: id,
+        messages,
+        temperature,
+        ...(extra as object),
+      } as OpenAI.Chat.Completions.ChatCompletionCreateParamsNonStreaming);
       const text = res.choices[0]?.message?.content ?? "";
       writeCache(key, id, text);
       return text;
     } catch (e) {
       lastErr = e;
+      // A model that rejects the effort value: stop sending it and retry immediately.
+      if (/reasoning_effort/i.test(String((e as Error)?.message)) && !effortUnsupported.has(model)) {
+        effortUnsupported.add(model);
+        continue;
+      }
       await new Promise((r) => setTimeout(r, 500 * 2 ** attempt));
     }
   }

@@ -97,6 +97,8 @@ export async function runNegotiation(
     B: askA.preferences.filter((p) => p.visibility !== "public"),
   };
 
+  // Sealed comparison, computed once and handed to every model as a boolean (never the numbers).
+  const budgetOverlap = budgetsOverlap(askA.preferences, askB.preferences);
   const satisfied = { A: false, B: false };
   for (let round = 1; round <= MAX_ROUNDS; round++) {
     for (const side of ["A", "B"] as const) {
@@ -114,6 +116,7 @@ export async function runNegotiation(
         transcript: transcript(),
         round,
         maxRounds: MAX_ROUNDS,
+        budgetOverlap,
       });
       const out = await museJSON({
         model: "spark",
@@ -156,7 +159,10 @@ export async function runNegotiation(
   }
 
   // One referee call, at the end (Wonder).
-  const rp = refereePrompt({ aName: userA.name, bName: userB.name, transcript: transcript() });
+  const dealbreakers = (name: string, ask: Ask) =>
+    ask.preferences.filter((p) => isShareable(p) && p.importance === "dealbreaker").map((p) => `${name}: ${p.topic}: ${p.value}`);
+  const db = [...dealbreakers(userA.name, askA), ...dealbreakers(userB.name, askB)];
+  const rp = refereePrompt({ aName: userA.name, bName: userB.name, transcript: transcript(), dealbreakers: db.join("\n") || "(none)", budgetOverlap });
   const raw = await museJSON({ model: "wonder", system: rp.system, user: rp.user, schema: RefereeSchema, mock: mockReferee(userA.id, userB.id, mockCtx) });
   const verdict = sealVerdict(raw, askA, askB);
 

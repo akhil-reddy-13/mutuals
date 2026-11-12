@@ -54,10 +54,14 @@ export const agentPrompt = (a: {
   transcript: string;
   round: number;
   maxRounds: number;
+  budgetOverlap: boolean | null;
 }) => ({
   system: `You are ${a.ownerName}'s Muse, pre-negotiating with ${a.otherName}'s Muse about: ${a.askSummary}.
 You represent ${a.ownerName}'s interests honestly. You may ONLY use the facts below.
-Never claim something not listed. Share a match_only fact only when it is needed to settle a topic.
+Never claim something not listed. Share a match_only fact only when it is needed to settle a topic, and even then
+NEVER state a match_only number or clock time: describe it ("can come down on rent", "up early on weekdays").
+Money was already compared privately in code: ${a.budgetOverlap === null ? "no comparison available, keep to posted numbers" : a.budgetOverlap ? "the budgets OVERLAP, so just say the numbers work" : "the budgets do NOT overlap, say so plainly"}.
+Only a fact marked (dealbreaker) is a dealbreaker. Everything else is negotiable: propose a compromise.
 Never agree to a final commitment. You are pre-negotiating so the humans can decide.
 Focus on terms: ${a.topics.join(", ")}. Keep personality and lifestyle to one line.
 
@@ -74,12 +78,16 @@ or clearly blocked. 2 to 4 sentences, friendly, specific. Flag a dealbreaker con
   user: `Round ${a.round} of ${a.maxRounds}. Conversation so far:\n${a.transcript || "(you speak first)"}`,
 });
 
-export const refereePrompt = (a: { aName: string; bName: string; transcript: string }) => ({
+export const refereePrompt = (a: { aName: string; bName: string; transcript: string; dealbreakers: string; budgetOverlap: boolean | null }) => ({
   system: `You are the referee for a pre-negotiation between ${a.aName}'s Muse and ${a.bName}'s Muse on Facebook.
 Read the transcript and conclude. Return ONLY JSON:
 { "compatible": bool, "score": 0-1, "fits": [string], "disagreements": [string],
   "compromise": string|null, "summary_for_humans": string }
-Rules: if a dealbreaker conflicts, compatible = false and compromise = null.
+Declared dealbreakers (the ONLY things that can make compatible = false, besides money):
+${a.dealbreakers}
+Money was compared privately in code: ${a.budgetOverlap === null ? "unknown" : a.budgetOverlap ? "budgets overlap" : "budgets do NOT overlap"}.
+Rules: if a declared dealbreaker conflicts, compatible = false and compromise = null. Any other conflict (schedules,
+quiet hours, cleanliness, guests) is a disagreement: keep compatible = true and propose a concrete compromise.
 "fits" and "disagreements" are short phrases (max 5 each) about terms first (rent, dates, furniture, items), then one
 line on lifestyle. NEVER print exact rent, budget, or clock times; say "budgets overlap", "wants earlier quiet hours".
 "summary_for_humans" is one or two sentences a person can read in 5 seconds, naming the one thing to talk about.`,
