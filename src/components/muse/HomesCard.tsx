@@ -101,6 +101,11 @@ function HomeRow({ match, person }: { match: Match; person?: Person }) {
           {match.hook}
         </div>
       )}
+      {match.negotiationId && (
+        <a href={`/muse/talk/${match.negotiationId}`} className="mt-2 block text-[13px] font-semibold text-fb-blue hover:underline">
+          See the conversation between your Muses →
+        </a>
+      )}
       <button onClick={message} disabled={busy} className="fb-btn-primary mt-2.5 h-9 w-full">
         {busy ? "Opening Messenger…" : match.threadId ? `Open chat with ${first}` : `Message ${first}`}
       </button>

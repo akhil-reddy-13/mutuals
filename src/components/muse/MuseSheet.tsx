@@ -259,7 +259,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
     const id = push({
       role: "muse",
       text: isSelling(askRef.current)
-        ? `Want me to ask around ${group.name} and see who's looking for these? I'll only say what's in your list, and you'll see everything I share.`
+        ? `Want me to check with people's Muses in ${group.name} and see who'd want these? I'll work out price and pickup with theirs, only say what's in your list, and you'll see everything I share.`
         : `Want me to ask around ${group.name}? I'll check with people's Muses and read the posts. I only share what you said was OK, and you'll see everything I say.`,
       actions: [
         { label: "Yes, check", primary: true, act: "check" },
