@@ -18,7 +18,7 @@ export default function ThreadView({
 }: {
   thread: MessengerThread;
   me: Person;
-  other: Person & { museOn: boolean };
+  other: Person & { museOn: boolean; subtitle?: string };
   context?: { summary: string; askSummary: string; mode: "agent_to_agent" | "one_sided"; groupId: string; askId: string };
 }) {
   const router = useRouter();
@@ -97,7 +97,7 @@ export default function ThreadView({
         <div className="flex flex-col items-center gap-1 pb-4 pt-2">
           <Avatar src={other.avatarUrl} name={other.name} size={80} />
           <div className="text-[17px] font-semibold">{other.name}</div>
-          <div className="text-[13px] text-fb-muted">{other.museOn ? "Stanford · You're both in Stanford Housing '27" : "Stanford · Stanford Housing '27"}</div>
+          <div className="text-[13px] text-fb-muted">{other.subtitle}</div>
           {context && (
             <Link href={`/groups/${context.groupId}/muse/${context.askId}`} className="mt-2 flex max-w-[320px] items-start gap-2 rounded-xl border border-fb-divider bg-fb-bg px-3 py-2 text-left hover:bg-[#e4e6e9]">
               <MuseMark size={18} className="mt-0.5 shrink-0" />

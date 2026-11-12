@@ -24,21 +24,35 @@ export const IMAGES: Record<string, string> = {
   mp_bookshelf: "A white five-tier bookshelf against a wall, mostly empty with a few books, for sale listing photo.",
   mp_yoga: "A rolled purple yoga mat and two foam yoga blocks on a hardwood floor, for sale listing photo.",
   mp_monitor: "A 24 inch computer monitor on its stand on a desk, screen off, cable coiled next to it, for sale listing photo.",
+  // Chicago Summer Interns 2027 (demo video storyline)
+  post_chi_lakefront: "Chicago's Lakefront Trail at sunrise with the downtown skyline behind it, a small group of young runners in the distance, Lake Michigan calm on the right.",
+  post_chi_sublet: "A bright furnished one-bedroom apartment living room in Chicago: exposed brick wall, a grey sofa, plants, a window with a colorful mural visible across the street.",
 };
 
-async function gen(name: string, prompt: string, outDir: string) {
+// Portraits for personas whose avatar file doesn't exist yet (fictional people). Saved as public/avatars/<id>.jpg.
+const PORTRAIT_STYLE = "Head-and-shoulders portrait, candid smartphone photo, natural light, realistic, friendly expression, no text, no logos.";
+export const PORTRAITS: Record<string, string> = {
+  jamie: "A 20-year-old Latino college student with short curly dark hair and a warm smile, plain grey hoodie, sunny university campus behind him.",
+  nora: "A 21-year-old woman with long red hair and freckles, smiling, navy running jacket, city park in the morning.",
+  diego: "A 21-year-old Latino man with a short beard and round glasses holding a grey tabby cat, cozy apartment behind him.",
+  sofia: "A 21-year-old woman with dark wavy shoulder-length hair, smiling, indoor climbing gym wall behind her.",
+  dana: "A 22-year-old woman with short platinum blonde hair holding a film camera, red brick wall behind her.",
+  ava: "A 23-year-old Black woman with braids in a high ponytail, running gear, lakefront path at sunrise behind her.",
+};
+
+async function gen(name: string, prompt: string, outDir: string, style = STYLE, maxPx = 900) {
   const out = path.join(outDir, `${name}.jpg`);
   if (fs.existsSync(out)) return `skip ${name}`;
   const res = await fetch(`${process.env.MUSE_BASE_URL}/images/generations`, {
     method: "POST",
     headers: { Authorization: `Bearer ${process.env.MUSE_API_KEY}`, "content-type": "application/json" },
-    body: JSON.stringify({ model: "muse-image-1.0", prompt: `${prompt} ${STYLE}`, size: "1024x1024", n: 1 }),
+    body: JSON.stringify({ model: "muse-image-1.0", prompt: `${prompt} ${style}`, size: "1024x1024", n: 1 }),
   });
   const j = await res.json();
   if (!j.data?.[0]?.b64_json) throw new Error(`${name}: ${JSON.stringify(j).slice(0, 200)}`);
   const png = out.replace(/\.jpg$/, ".png");
   fs.writeFileSync(png, Buffer.from(j.data[0].b64_json, "base64"));
-  execFileSync("sips", ["-s", "format", "jpeg", "-s", "formatOptions", "78", "-Z", "900", png, "--out", out], { stdio: "ignore" });
+  execFileSync("sips", ["-s", "format", "jpeg", "-s", "formatOptions", "78", "-Z", String(maxPx), png, "--out", out], { stdio: "ignore" });
   fs.unlinkSync(png);
   return `made ${name}`;
 }
@@ -57,6 +71,7 @@ async function avatars() {
     }
   }
   fs.writeFileSync(usersFile, JSON.stringify(users, null, 2) + "\n");
+  for (const [id, prompt] of Object.entries(PORTRAITS)) console.log(await gen(id, prompt, dir, PORTRAIT_STYLE, 128));
   return `avatars: ${users.length}`;
 }
 

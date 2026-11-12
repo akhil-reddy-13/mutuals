@@ -427,5 +427,191 @@
     "museGroups": [
       "g_ffs"
     ]
+  },
+  {
+    "id": "jamie",
+    "name": "Jamie Reyes",
+    "avatarUrl": "/avatars/jamie.jpg",
+    "school": "Stanford",
+    "schoolVerified": true,
+    "city": "Stanford",
+    "groups": [
+      "g_chi_interns",
+      "g_ffs"
+    ],
+    "friends": [
+      "maya",
+      "dev"
+    ],
+    "museEnabled": true,
+    "connectionSuggestionsOptIn": true,
+    "interests": [
+      {
+        "value": "Saturday morning runs",
+        "shareForConnection": true
+      },
+      {
+        "value": "sourdough baking",
+        "shareForConnection": true
+      },
+      {
+        "value": "new to Chicago",
+        "shareForConnection": true
+      },
+      {
+        "value": "League of Legends",
+        "shareForConnection": false
+      }
+    ],
+    "bio": "Stanford '27. SWE intern in Chicago this summer (yes, at McDonald's HQ). Moving out of my dorm in June.",
+    "museGroups": []
+  },
+  {
+    "id": "nora",
+    "name": "Nora Whitfield",
+    "avatarUrl": "/avatars/nora.jpg",
+    "school": "UIUC",
+    "schoolVerified": true,
+    "city": "Chicago",
+    "groups": [
+      "g_chi_interns"
+    ],
+    "friends": [
+      "maya"
+    ],
+    "museEnabled": true,
+    "connectionSuggestionsOptIn": true,
+    "interests": [
+      {
+        "value": "Saturday morning runs",
+        "shareForConnection": true
+      },
+      {
+        "value": "sourdough baking",
+        "shareForConnection": true
+      },
+      {
+        "value": "new to Chicago",
+        "shareForConnection": true
+      },
+      {
+        "value": "true crime podcasts",
+        "shareForConnection": false
+      }
+    ],
+    "bio": "UIUC '27. Data science intern this summer (Burger King, don't ask). Room open in my West Loop 2BR.",
+    "museGroups": [
+      "g_chi_interns"
+    ]
+  },
+  {
+    "id": "diego",
+    "name": "Diego Alvarez",
+    "avatarUrl": "/avatars/diego.jpg",
+    "school": "Northwestern",
+    "schoolVerified": true,
+    "city": "Chicago",
+    "groups": [
+      "g_chi_interns"
+    ],
+    "friends": [],
+    "museEnabled": true,
+    "connectionSuggestionsOptIn": true,
+    "interests": [
+      {
+        "value": "cats",
+        "shareForConnection": true
+      },
+      {
+        "value": "Cubs games",
+        "shareForConnection": true
+      },
+      {
+        "value": "cooking",
+        "shareForConnection": true
+      }
+    ],
+    "bio": "Northwestern '27. Product intern at KFC this summer. Room in my Wicker Park 2BR. Miso the cat comes with it.",
+    "museGroups": [
+      "g_chi_interns"
+    ]
+  },
+  {
+    "id": "sofia",
+    "name": "Sofia Marino",
+    "avatarUrl": "/avatars/sofia.jpg",
+    "school": "Michigan",
+    "schoolVerified": true,
+    "city": "Chicago",
+    "groups": [
+      "g_chi_interns"
+    ],
+    "friends": [],
+    "museEnabled": true,
+    "connectionSuggestionsOptIn": false,
+    "interests": [
+      {
+        "value": "climbing",
+        "shareForConnection": true
+      },
+      {
+        "value": "board games",
+        "shareForConnection": true
+      }
+    ],
+    "bio": "Michigan '27. Consulting intern in the Loop. Third room open in Lincoln Park.",
+    "museGroups": [
+      "g_chi_interns"
+    ]
+  },
+  {
+    "id": "dana",
+    "name": "Dana Kowalski",
+    "avatarUrl": "/avatars/dana.jpg",
+    "school": "DePaul",
+    "schoolVerified": true,
+    "city": "Chicago",
+    "groups": [
+      "g_chi_interns"
+    ],
+    "friends": [],
+    "museEnabled": false,
+    "connectionSuggestionsOptIn": true,
+    "interests": [
+      {
+        "value": "film photography",
+        "shareForConnection": true
+      }
+    ],
+    "bio": "DePaul '26. Chicago native. Subletting my West Loop place while I'm in Lisbon for the summer.",
+    "museGroups": []
+  },
+  {
+    "id": "ava",
+    "name": "Ava Thompson",
+    "avatarUrl": "/avatars/ava.jpg",
+    "school": "Loyola",
+    "schoolVerified": true,
+    "city": "Chicago",
+    "groups": [
+      "g_chi_interns"
+    ],
+    "friends": [],
+    "museEnabled": true,
+    "connectionSuggestionsOptIn": true,
+    "interests": [
+      {
+        "value": "Saturday morning runs",
+        "shareForConnection": true
+      },
+      {
+        "value": "sourdough baking",
+        "shareForConnection": true
+      }
+    ],
+    "bio": "Runs the Lakefront Run Club. Bakes too much bread.",
+    "museGroups": [
+      "g_chi_interns"
+    ]
   }
 ]

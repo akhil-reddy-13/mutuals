@@ -2,14 +2,19 @@
 import { allAsks, getGroup, getUser, postsInGroup } from "./db";
 import type { Ask, GroupPost, User } from "./types";
 
-/** Other members of the ask's Group who have Muse AND opted in for that Group, with an open ask of the same type. */
+// "roommate" and "sublet" are the same market: Spark files "need a room for the summer" as either one, and someone
+// offering a room in their place should meet both kinds of seeker.
+const HOUSING = new Set(["roommate", "sublet"]);
+const sameKind = (a: string, b: string) => a === b || (HOUSING.has(a) && HOUSING.has(b));
+
+/** Other members of the ask's Group who have Muse AND opted in for that Group, with an open ask of the same kind. */
 export function candidateAsks(ask: Ask): { ask: Ask; user: User }[] {
   const me = getUser(ask.userId);
   const group = getGroup(ask.groupId);
   if (!me || !group) return [];
   const latestPerUser = new Map<string, Ask>();
   for (const a of allAsks()) {
-    if (a.id === ask.id || a.userId === ask.userId || a.type !== ask.type || a.groupId !== ask.groupId) continue;
+    if (a.id === ask.id || a.userId === ask.userId || !sameKind(a.type, ask.type) || a.groupId !== ask.groupId) continue;
     const prev = latestPerUser.get(a.userId);
     if (!prev || prev.createdAt < a.createdAt) latestPerUser.set(a.userId, a);
   }

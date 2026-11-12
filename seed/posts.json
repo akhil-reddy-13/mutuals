@@ -309,5 +309,62 @@
     "imageUrl": "/img/post_dev_sold.jpg",
     "comments": [],
     "text": "SOLD: 27in monitor. Thanks all. Still have the monitor arm, $15."
+  },
+  {
+    "id": "post_chi_welcome",
+    "groupId": "g_chi_interns",
+    "authorId": "ava",
+    "createdAt": "2026-11-08T15:00:00Z",
+    "pinned": true,
+    "text": "Welcome to Chicago Summer Interns 2027! Housing spreadsheet is in Featured. Never send a deposit before a viewing or a video tour. Lakefront Run Club meets Saturdays at 7 at Ohio Street Beach, all paces.",
+    "imageUrl": "/img/post_chi_lakefront.jpg",
+    "reactions": 241,
+    "comments": [
+      {
+        "authorId": "sofia",
+        "text": "Coming this Saturday!",
+        "createdAt": "2026-11-08T16:20:00Z"
+      }
+    ]
+  },
+  {
+    "id": "post_dana_sublet",
+    "groupId": "g_chi_interns",
+    "authorId": "dana",
+    "createdAt": "2026-11-11T19:00:00Z",
+    "text": "Subletting my West Loop 1BR June 10 to Aug 15, $1,250/mo, fully furnished, in-unit laundry, no pets ever lived here. 10 min walk to Fulton Market. Tidy non-smokers only. DM me!",
+    "imageUrl": "/img/post_chi_sublet.jpg",
+    "reactions": 38,
+    "comments": [
+      {
+        "authorId": "ava",
+        "text": "Randolph Street in the summer is unreal, someone take this",
+        "createdAt": "2026-11-11T20:05:00Z"
+      }
+    ]
+  },
+  {
+    "id": "post_diego_cubs",
+    "groupId": "g_chi_interns",
+    "authorId": "diego",
+    "createdAt": "2026-11-11T12:30:00Z",
+    "text": "Two extra Cubs tickets for Sat June 21 at Wrigley. Face value, or free if you bring snacks.",
+    "reactions": 57,
+    "comments": []
+  },
+  {
+    "id": "post_nora_room",
+    "groupId": "g_chi_interns",
+    "authorId": "nora",
+    "createdAt": "2026-11-09T16:30:00Z",
+    "text": "Room open in my West Loop 2BR for the summer. Furnished, 12 min walk to Fulton Market. My Muse is on if you want to skip the small talk.",
+    "reactions": 22,
+    "comments": [
+      {
+        "authorId": "diego",
+        "text": "West Loop in the summer is unreal",
+        "createdAt": "2026-11-09T17:00:00Z"
+      }
+    ]
   }
 ]
