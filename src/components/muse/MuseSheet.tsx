@@ -103,7 +103,19 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
         setReady(true);
         push({ role: "muse", text: "Here's your ask. Tap a tag to change who can see what. Public shows on your match card. Match only is used to check fit and never shown to anyone. Never shared stays on your phone." });
         push({ role: "muse", card: "prefs" });
-        push({ role: "muse", text: "Want to show me the room? A 10-second video is enough. I'll pull out the details and anything the next person might want to buy.", card: "video" });
+        const wantsVideo = out.ask.type === "roommate" || out.ask.type === "sublet" || out.ask.type === "item";
+        if (wantsVideo) {
+          push({
+            role: "muse",
+            text:
+              out.ask.type === "item"
+                ? "Show me what you're selling. A 10-second video of the shelf or corner is enough, I'll catalog it and price it."
+                : "Want to show me the room? A 10-second video is enough. I'll pull out the details and anything the next person might want to buy.",
+            card: "video",
+          });
+        } else {
+          askOptIn();
+        }
       } else {
         push({ role: "muse", text: out.followUp ?? "Updated." });
       }
