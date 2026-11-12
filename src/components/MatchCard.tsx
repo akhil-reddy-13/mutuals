@@ -1,12 +1,12 @@
 "use client";
-// A match card: why it fits, where you'd disagree, the proposed compromise, trust signals, "What my Muse shared",
-// and the handoff button. No numeric score (handoff fix 8). Connection card rides along when Wonder suggested one.
-import Link from "next/link";
+// A match card: who, the verdict in one line, what lines up / what to talk about, Muse's suggested compromise,
+// the handoff button, and "What my Muse shared" as the footer. No numeric score (handoff fix 8). A connection
+// suggestion rides along as a slim row when Wonder made one.
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Avatar from "./Avatar";
 import ConnectionCard, { type EventInfo } from "./ConnectionCard";
-import { CheckIcon, ChevronDown, LockIcon, MessengerIcon, MuseMark, XSmallIcon } from "./icons";
+import { CheckIcon, ChevronDown, LockIcon, MessengerIcon, MuseMark } from "./icons";
 import { DisclosedChips } from "./muse/LiveMatching";
 import { firstName } from "@/lib/format";
 import type { AgentLogEntry, Match } from "@/lib/types";
@@ -18,29 +18,40 @@ export interface CardCandidate {
   school?: string;
 }
 
+const SHOWN = 3; // list items before "Show N more": keeps cards in a row close in height
+const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
 export default function MatchCard({
   match,
   candidate,
   viewerId,
-  groupId,
   event,
   compact = false,
+  label,
+  showConnection = true,
 }: {
   match: Match;
   candidate: CardCandidate;
   viewerId: string;
-  groupId: string;
   event?: EventInfo | null;
   compact?: boolean;
+  /** Replaces the "Fits" chip, e.g. "Best match". */
+  label?: string;
+  /** false when the page shows the connection suggestion as its own banner (keeps grid rows even). */
+  showConnection?: boolean;
 }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
+  const [more, setMore] = useState(false);
   const [logOpen, setLogOpen] = useState(false);
   const [log, setLog] = useState<{ entries: AgentLogEntry[]; prefs: Record<string, { topic: string; visibility: string }> } | null>(null);
   const v = match.verdict;
   const fit = v.compatible;
   const first = firstName(candidate.name);
   const iAmAsker = match.userId === viewerId;
+  const hidden = Math.max(0, v.fits.length - SHOWN) + Math.max(0, v.disagreements.length - SHOWN);
+  const fits = more ? v.fits : v.fits.slice(0, SHOWN);
+  const talks = more ? v.disagreements : v.disagreements.slice(0, SHOWN);
 
   async function openThread() {
     setBusy(true);
@@ -56,10 +67,16 @@ export default function MatchCard({
     }
   }
 
+  const chip = label
+    ? { text: label, cls: "bg-fb-blue-soft text-fb-blue" }
+    : fit
+      ? { text: "Fits", cls: "bg-[#e6f4ea] text-fb-green" }
+      : { text: "Not a fit", cls: "bg-fb-chip text-fb-muted" };
+
   // "What my Muse shared" is the card's footer: always there, out of the way of the decision.
   const sharedLog = (
     <div className="mx-4 border-t border-fb-divider">
-      <button onClick={toggleLog} className="flex w-full items-center gap-2 py-2.5 text-left text-[13px] font-semibold text-fb-muted hover:text-fb-text">
+      <button onClick={toggleLog} aria-expanded={logOpen} className="flex w-full items-center gap-2 py-2.5 text-left text-[13px] font-semibold text-fb-muted hover:text-fb-text">
         <LockIcon size={13} />
         What my Muse shared with {first}
         <ChevronDown size={16} className={`ml-auto transition ${logOpen ? "rotate-180" : ""}`} />
@@ -87,114 +104,109 @@ export default function MatchCard({
   );
 
   return (
-    <article id={match.id} className={`fb-card scroll-mt-[72px] overflow-hidden ${compact ? "rounded-xl border border-fb-divider shadow-none" : ""} ${fit ? "" : "opacity-90"}`}>
-      <header className="flex items-start gap-3 px-4 pt-3.5">
-        <Avatar src={candidate.avatarUrl} name={candidate.name} size={!fit ? 40 : compact ? 44 : 56} />
+    // @container + flex column: in a grid row every card is one height, the body grows and the button row sits level.
+    <article
+      id={match.id}
+      className={`@container fb-card flex h-full scroll-mt-[72px] flex-col overflow-hidden ${compact ? "rounded-xl border border-fb-divider shadow-none" : ""}`}
+    >
+      <header className="flex items-center gap-3 px-4 pt-4">
+        <Avatar src={candidate.avatarUrl} name={candidate.name} size={fit ? 48 : 40} className={fit ? "" : "grayscale-[40%]"} />
         <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <h3 className={`${fit ? "text-[17px]" : "text-[15px]"} font-bold leading-tight`}>{candidate.name}</h3>
-            <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[12px] font-semibold ${fit ? "bg-[#e6f4ea] text-fb-green" : "bg-fb-chip text-fb-muted"}`}>
-              {fit ? <CheckIcon size={12} /> : <XSmallIcon size={12} />}
-              {fit ? "Fits" : "Not a fit"}
-            </span>
-            <span className="inline-flex items-center gap-1 rounded bg-fb-bg px-1.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-fb-muted">
-              {match.mode === "agent_to_agent" ? (
-                <>
-                  <MuseMark size={11} /> Muse to Muse
-                </>
-              ) : (
-                "From their post"
-              )}
-            </span>
+          <div className="flex items-center gap-2">
+            <h3 className={`truncate font-bold leading-tight ${fit ? "text-[17px]" : "text-[15px]"}`}>{candidate.name}</h3>
+            <span className={`shrink-0 rounded-full px-2 py-0.5 text-[12px] font-semibold ${chip.cls}`}>{chip.text}</span>
           </div>
-          {/* Inline spans, not flex items, so a wrapped line never starts with a dangling "·". */}
-          <p className="mt-0.5 text-[13px] leading-[18px] text-fb-muted">
-            {match.trustSignals.slice(0, 3).map((t, i) => (
-              <span key={t}>
-                {i > 0 && " · "}
-                {t.startsWith("Verified") && <CheckIcon size={12} className="mr-0.5 inline align-[-1px] text-fb-blue" />}
-                {t}
-              </span>
-            ))}
+          <p className="mt-0.5 flex min-w-0 items-center gap-1 text-[13px] text-fb-muted">
+            {match.mode === "agent_to_agent" ? <MuseMark size={12} className="shrink-0" /> : null}
+            <span className="truncate">
+              {[match.mode === "agent_to_agent" ? "Muse to Muse" : "From their post", ...match.trustSignals.slice(0, 2)].join(" · ")}
+            </span>
           </p>
         </div>
       </header>
 
-      <p className={`px-4 pt-3 leading-5 ${fit ? "text-[15px] font-semibold" : "text-[14px]"}`}>{v.summaryForHumans}</p>
+      <p className={`px-4 pt-3 ${fit ? "text-[15px] font-semibold leading-5" : "text-[15px] leading-5 text-fb-text"}`}>{v.summaryForHumans}</p>
 
       {!fit ? (
         <>
-          {iAmAsker && match.mode === "agent_to_agent" && <p className="px-4 pb-1 pt-1 text-[13px] text-fb-muted">Your Muse stopped early so neither of you spent time on it.</p>}
-          <div className="pt-2">{sharedLog}</div>
+          {iAmAsker && match.mode === "agent_to_agent" && <p className="px-4 pt-1 text-[13px] text-fb-muted">Your Muse stopped early, so neither of you spent time on it.</p>}
+          <div className="mt-auto pt-3">{sharedLog}</div>
         </>
       ) : (
-      <>
-      <div className={`grid gap-3 px-4 pt-3 ${compact ? "" : "sm:grid-cols-2"}`}>
-        {v.fits.length > 0 && (
-          <section>
-            <h4 className="text-[12px] font-semibold uppercase tracking-wide text-fb-muted">Why it fits</h4>
-            <ul className="mt-1 flex flex-col gap-1">
-              {v.fits.map((f) => (
-                <li key={f} className="flex gap-2 text-[14px] leading-5">
-                  <CheckIcon size={16} className="mt-0.5 shrink-0 text-fb-green" />
-                  {f}
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
-        {v.disagreements.length > 0 && (
-          <section>
-            <h4 className="text-[12px] font-semibold uppercase tracking-wide text-fb-muted">{fit ? "Where you'd disagree" : "Why not"}</h4>
-            <ul className="mt-1 flex flex-col gap-1">
-              {v.disagreements.map((d) => (
-                <li key={d} className="flex gap-2 text-[14px] leading-5">
-                  <span className={`mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full ${fit ? "bg-fb-amber" : "bg-fb-red"}`} />
-                  {d}
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
-      </div>
-
-      {v.compromise && (
-        <div className="mx-4 mt-3 flex gap-2.5 rounded-lg bg-fb-bg px-3 py-2.5">
-          <MuseMark size={20} className="mt-0.5" />
-          <div>
-            <div className="text-[12px] font-semibold uppercase tracking-wide text-fb-muted">Proposed compromise</div>
-            <div className="text-[14px] leading-5">{v.compromise}</div>
+        <>
+          {/* Facts on top; spare row height collects under them, so the proposal and the button stay together at the bottom. */}
+          <div className="flex-1">
+            {(fits.length > 0 || talks.length > 0) && (
+              <div className={`grid gap-x-6 gap-y-3 px-4 pt-3 ${compact ? "" : "@lg:grid-cols-2"}`}>
+                {fits.length > 0 && (
+                  <section>
+                    <h4 className="text-[13px] font-semibold text-fb-muted">What lines up</h4>
+                    <ul className="mt-1 flex flex-col gap-1">
+                      {fits.map((f) => (
+                        <li key={f} className="flex gap-2 text-[15px] leading-5">
+                          <CheckIcon size={16} className="mt-0.5 shrink-0 text-fb-green" />
+                          {cap(f)}
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                )}
+                {talks.length > 0 && (
+                  <section>
+                    <h4 className="text-[13px] font-semibold text-fb-muted">To talk about</h4>
+                    <ul className="mt-1 flex flex-col gap-1">
+                      {talks.map((d) => (
+                        <li key={d} className="flex gap-2 text-[15px] leading-5">
+                          <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-fb-amber" />
+                          {cap(d)}
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                )}
+              </div>
+            )}
+            {hidden > 0 && (
+              <button onClick={() => setMore((m) => !m)} className="mx-4 mt-1.5 text-[13px] font-semibold text-fb-muted hover:underline">
+                {more ? "Show less" : `Show ${hidden} more`}
+              </button>
+            )}
           </div>
-        </div>
-      )}
 
-      {match.mode === "one_sided" && match.draftReply && fit && (
-        <div className="mx-4 mt-3 rounded-lg border border-dashed border-fb-border px-3 py-2.5">
-          <div className="text-[12px] font-semibold uppercase tracking-wide text-fb-muted">Drafted reply</div>
-          <p className="mt-0.5 text-[14px] leading-5 text-fb-text">{match.draftReply}</p>
-        </div>
-      )}
+          <div>
+            {v.compromise && (
+              <div className="mx-4 mt-3 flex gap-2.5 rounded-lg bg-fb-bg px-3 py-2.5">
+                <MuseMark size={20} className="mt-0.5 shrink-0" />
+                <div>
+                  <div className="text-[13px] font-semibold text-fb-muted">Muse&apos;s suggestion</div>
+                  <div className="text-[15px] leading-5">{v.compromise}</div>
+                </div>
+              </div>
+            )}
 
-      <div className="flex gap-2 px-4 pb-3 pt-3">
-        <button onClick={openThread} disabled={busy} className="fb-btn-primary h-10 flex-1">
-          <MessengerIcon size={18} />
-          {busy ? "Opening Messenger…" : match.threadId ? `Open chat with ${first}` : match.mode === "one_sided" ? `Reply to ${first}` : `Message ${first}`}
-        </button>
-        {!compact && (
-          <Link href={`/groups/${groupId}`} className="fb-btn-secondary h-10">
-            Not now
-          </Link>
-        )}
-      </div>
+            {match.mode === "one_sided" && match.draftReply && (
+              <div className="mx-4 mt-3 rounded-lg border border-dashed border-fb-border px-3 py-2.5">
+                <div className="text-[13px] font-semibold text-fb-muted">Drafted reply</div>
+                <p className="mt-0.5 text-[15px] leading-5 text-fb-text">{match.draftReply}</p>
+              </div>
+            )}
 
-      {match.connection?.suggest && (
-        <div className="px-4 pb-3">
-          <ConnectionCard connection={match.connection} event={event ?? null} otherFirst={first} />
-        </div>
-      )}
+            {showConnection && match.connection?.suggest && (
+              <div className="px-4 pt-3">
+                <ConnectionCard connection={match.connection} event={event ?? null} otherFirst={first} />
+              </div>
+            )}
+          </div>
 
-      {sharedLog}
-      </>
+          <div className="px-4 pb-3 pt-4">
+            <button onClick={openThread} disabled={busy} className="fb-btn-primary h-10 w-full">
+              <MessengerIcon size={18} />
+              {busy ? "Opening Messenger…" : match.threadId ? `Open chat with ${first}` : match.mode === "one_sided" ? `Reply to ${first}` : `Message ${first}`}
+            </button>
+          </div>
+
+          {sharedLog}
+        </>
       )}
     </article>
   );

@@ -517,7 +517,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
                     <div className="flex flex-col gap-2.5">
                       {matches.map((mt) => {
                         const c = candById[mt.candidateId];
-                        return c ? <MatchCard key={mt.id} match={mt} candidate={c} viewerId={me.id} groupId={group.id} event={events[mt.id] ?? null} compact /> : null;
+                        return c ? <MatchCard key={mt.id} match={mt} candidate={c} viewerId={me.id} event={events[mt.id] ?? null} compact label={mt === matches.find((x) => x.verdict.compatible) ? "Best match" : undefined} /> : null;
                       })}
                       <a href={`/groups/${group.id}/muse/${ask?.id}`} className="text-center text-[13px] font-semibold text-fb-blue hover:underline">
                         Open the full shortlist
