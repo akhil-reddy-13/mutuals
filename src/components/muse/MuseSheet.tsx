@@ -52,6 +52,8 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
   const esRef = useRef<EventSource | null>(null);
   const askRef = useRef<Ask | null>(null);
   askRef.current = ask;
+  const candsRef = useRef<LiveCandidate[]>([]);
+  candsRef.current = cands;
 
   const push = useCallback((m: Omit<Msg, "id">) => {
     const id = mid();
@@ -184,13 +186,14 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
         const nofit = e.matches.length - fits.length;
         const oneSided = fits.filter((m) => m.mode === "one_sided").length;
         const connected = fits.find((m) => m.connection?.suggest);
+        const connectedName = connected ? candsRef.current.find((c) => c.id === connected.candidateId)?.name : undefined;
         push({
           role: "muse",
           text:
             `${fits.length} ${fits.length === 1 ? "person fits" : "people fit"}${nofit ? `, ${nofit} ${nofit === 1 ? "doesn't" : "don't"}` : ""}.` +
             (oneSided ? ` ${oneSided === 1 ? "One is" : `${oneSided} are`} from a post by someone without Muse, so I drafted a reply you can send.` : "") +
             ` You decide who to talk to. I don't message anyone.` +
-            (connected ? ` One more thing on ${firstName(e.matches.find((m) => m.id === connected.id) ? cands.find((c) => c.id === connected.candidateId)?.name ?? "their" : "their")}'s card.` : ""),
+            (connectedName ? ` One more thing on ${firstName(connectedName)}'s card.` : ""),
           card: "shortlist",
         });
         router.refresh();
