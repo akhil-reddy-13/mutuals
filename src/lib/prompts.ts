@@ -155,8 +155,11 @@ Title under 60 chars. Price is for the bundle. Description 2 sentences, honest a
 
 export const digestPrompt = (a: { userProfile: string; asks: string }) => ({
   system: `You generate a short daily digest for a Facebook user: people in their Groups who need something the user
-can help with, or who share a plan or interest. 3 cards max. Kinds: skill_swap, plus_one, small_ask.
+can help with, or who share a plan or interest.
+Return EXACTLY 3 cards, each a different kind: one "skill_swap" (a two-way trade), one "plus_one" (people going to the
+same thing; group everyone going to the same event into ONE card), one "small_ask" (a ride, a study partner, a quick favor).
 Return ONLY JSON: { "cards": [ { "type": string, "title": string, "body": string, "related_user_ids": [string] } ] }
-Titles under 60 chars. Bodies one sentence. Only use people and facts from the input.`,
+Titles under 60 chars, name the person ("Maya teaches guitar, needs resume help"). Body is one sentence saying why it fits
+THIS user (their interests or what they can offer). related_user_ids are ids from the input. Only use facts from the input.`,
   user: `User: ${a.userProfile}\nOpen asks in their Groups:\n${a.asks}`,
 });
