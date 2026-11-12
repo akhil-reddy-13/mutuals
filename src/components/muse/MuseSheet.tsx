@@ -15,6 +15,7 @@ import PrefChips from "./PrefChips";
 import VideoCapture from "./VideoCapture";
 import { firstName } from "@/lib/format";
 import type { MatchEvent } from "@/lib/match";
+import { canShowVideo, sheetCopy } from "@/lib/sheetCopy";
 import type { Ask, Group, Item, Match, MuseReach, Preference, RoomDetails, User } from "@/lib/types";
 
 export interface MuseSheetProps {
@@ -52,12 +53,6 @@ interface SavedChat {
 
 let seq = 0;
 const mid = () => `m${++seq}_${Date.now().toString(36)}`;
-
-/** The video step only makes sense when there's something to film: a room you're offering or items you're selling. */
-function canShowVideo(ask: Ask): boolean {
-  if (ask.side === "seeking") return false;
-  return ask.type === "roommate" || ask.type === "sublet" || ask.type === "item";
-}
 
 /** Fields the seller changed in a row since it was sent to Spark (so Spark's answer doesn't overwrite them). */
 function editedFields(now: Item, sent: Item): Partial<Item> {
@@ -130,7 +125,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
   const greet = () =>
     push({
       role: "muse",
-      text: `Hey ${first}. What do you need in ${group.name}? Tell me the stuff you wouldn't post, too. I keep that between us.`,
+      text: sheetCopy.greeting(first, group.name),
       chips: GROUP_CHIPS[group.id] ?? DEFAULT_CHIPS,
     });
 
@@ -226,13 +221,10 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
       setAsk(out.ask);
       setRemembered(out.remembered ?? []);
       if (!out.ready) {
-        push({ role: "muse", text: out.followUp ?? "Tell me a bit more." });
+        push({ role: "muse", text: out.followUp ?? sheetCopy.moreDetail });
       } else if (!ready) {
         setReady(true);
-        push({
-          role: "muse",
-          text: "Here's what I'll look for. Tap a tag to change who sees what: Public can show on your card, Kept private I only use to check fit, Never shared stays with me.",
-        });
+        push({ role: "muse", text: sheetCopy.prefsIntro });
         push({ role: "muse", card: "prefs" });
         // Only someone OFFERING a room or items has something to film. "Looking for a room" skips straight on.
         const wantsVideo = canShowVideo(out.ask);
@@ -249,7 +241,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
           askOptIn();
         }
       } else {
-        push({ role: "muse", text: out.followUp ?? "Updated." });
+        push({ role: "muse", text: out.followUp ?? sheetCopy.updated });
       }
     } catch (e) {
       push({ role: "muse", text: `Something went wrong on my end (${e instanceof Error ? e.message : String(e)}). Try again?` });
@@ -267,9 +259,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
   function askOptIn() {
     const id = push({
       role: "muse",
-      text: isSelling(askRef.current)
-        ? `Want me to check with other people's Muses and see who'd want these? I'll work out price and pickup with theirs, only say what's in your list, and you'll see everything I share. Who should I check with?`
-        : `Want me to check with other people's Muses? I only share what you said was OK, and you'll see everything I say. Who should I check with?`,
+      text: sheetCopy.optIn(group.name, isSelling(askRef.current)),
       card: "reach",
       actions: [{ label: "Not now", act: "notnow" }],
     });
@@ -383,6 +373,8 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
         setCands((cs) => cs.map((c) => (c.id === e.candidateId ? { ...c, turns: [...c.turns, { turn: e.turn, disclosedMeta: e.disclosedMeta }] } : c)));
       } else if (e.type === "verdict") {
         setCands((cs) => cs.map((c) => (c.id === e.candidateId ? { ...c, match: e.match } : c)));
+      } else if (e.type === "failed") {
+        setCands((cs) => cs.map((c) => (c.id === e.candidateId ? { ...c, failed: e.message } : c)));
       } else if (e.type === "connection") {
         setCands((cs) => cs.map((c) => (c.id === e.candidateId && c.match ? { ...c, match: { ...c.match, connection: e.connection }, connection: e.connection } : c)));
         setEvents((m) => ({ ...m, [e.matchId]: e.event }));
@@ -422,6 +414,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
         const oneSided = fits.filter((m) => m.mode === "one_sided").length;
         const connected = fits.find((m) => m.connection?.suggest);
         const connectedName = connected ? candsRef.current.find((c) => c.id === connected.candidateId)?.name : undefined;
+        const skipped = (e.failed ?? []).map((id) => candsRef.current.find((c) => c.id === id)?.name).filter((n): n is string => !!n);
         // Muse's voice: "I found two people who fit. Priya's the better one, but you two should talk about noise."
         const best = fits.find((m) => m.mode === "agent_to_agent") ?? fits[0];
         const bestName = best ? firstName(candsRef.current.find((c) => c.id === best.candidateId)?.name ?? "") : "";
@@ -435,6 +428,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
               : `I found ${count(fits.length)} who ${fits.length === 1 ? "fits" : "fit"}.` +
                 (fits.length > 1 && bestName ? ` ${bestName}'s the ${fits.length === 2 ? "better" : "best"} one${topic ? `, but you two should talk about ${topic.toLowerCase()}` : ""}.` : topic && bestName ? ` You and ${bestName} should talk about ${topic.toLowerCase()}.` : "") +
                 (oneSided ? ` ${oneSided === 1 ? "One of them" : `${oneSided} of them`} posted without Muse on, so I drafted a reply you can send.` : "") +
+                (skipped.length ? ` I couldn't reach ${skipped.map(firstName).join(" and ")} this time.` : "") +
                 ` You decide who to message. I won't message anyone.` +
                 (connectedName ? ` One more thing on ${firstName(connectedName)}'s card.` : "")),
           card: "shortlist",

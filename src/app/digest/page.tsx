@@ -1,14 +1,11 @@
 // Muse page: today's digest of people in your Groups who need something you can help with (breadth beat, PRD §5.3).
 // Ember writes the cards from seeded asks; served from the mock offline.
-import { publicSummary } from "@/lib/privacy";
 import Link from "next/link";
 import Avatar from "@/components/Avatar";
 import { MuseMark } from "@/components/icons";
 import { allAsks, getGroup, getUser } from "@/lib/db";
+import { digestCards } from "@/lib/digest";
 import { mockDigest } from "@/lib/mocks";
-import { modelFor, museJSON } from "@/lib/muse";
-import { digestPrompt } from "@/lib/prompts";
-import { DigestSchema } from "@/lib/schemas";
 import { currentUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
@@ -17,14 +14,9 @@ const LABEL: Record<string, string> = { skill_swap: "Skill swap", plus_one: "Plu
 
 export default async function DigestPage() {
   const me = await currentUser();
-  const asks = allAsks().filter((a) => a.userId !== me.id && me.groups.includes(a.groupId) && a.type !== "roommate");
-  const p = digestPrompt({
-    userProfile: `${me.name}, ${me.school ?? ""}, ${me.city}. Interests: ${me.interests.map((i) => i.value).join(", ")}. ${me.bio ?? ""}`,
-    asks: asks.map((a) => `${a.userId} (${getUser(a.userId)?.name}): [${a.type}] ${publicSummary(a)}`).join("\n"),
-  });
   let cards = mockDigest.cards;
   try {
-    cards = (await museJSON({ model: modelFor("digest"), system: p.system, user: p.user, schema: DigestSchema, mock: mockDigest })).cards;
+    cards = await digestCards(me);
   } catch {}
   const groupsWithMuse = me.groups.map((g) => getGroup(g)!).filter(Boolean);
 

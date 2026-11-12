@@ -1,4 +1,4 @@
-// GET ?askId=... -> text/event-stream of MatchEvent (start, turn, verdict, connection, done).
+// GET ?askId=... -> text/event-stream of MatchEvent (start, turn, verdict, failed, connection, done, error).
 // POST { askId }  -> { matches: Match[] } (same work, no stream; used by scripts).
 // Candidates run in parallel; see lib/match.ts.
 import { NextResponse } from "next/server";

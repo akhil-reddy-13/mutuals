@@ -52,7 +52,13 @@ export async function parseAsk(a: { userId: string; groupId: string; askId?: str
   const user = getUser(a.userId);
   const group = getGroup(a.groupId);
   if (!user || !group) throw new Error("unknown user/group");
-  const convo = a.conversation.map((m) => `${m.role === "user" ? "User" : "Muse"}: ${m.text}`).join("\n");
+  // Drop Muse lines before the user's first message: that's the sheet's fixed greeting, which the system prompt
+  // already covers. Without this, the live sheet and `npm run warm` hash differently and the warm cache never hits.
+  const firstUser = a.conversation.findIndex((m) => m.role === "user");
+  const convo = a.conversation
+    .slice(Math.max(0, firstUser))
+    .map((m) => `${m.role === "user" ? "User" : "Muse"}: ${m.text}`)
+    .join("\n");
   const memory = rememberedPrefs(asksForUser(user.id), a.askId);
   const p = askParsePrompt({
     ownerName: user.name.split(" ")[0],

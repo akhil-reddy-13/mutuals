@@ -157,3 +157,56 @@ export function redactPrivateValues(text: string, prefs: Preference[]): string {
 export function publicSummary(ask: { summary: string; preferences: Preference[] }): string {
   return redactPrivateValues(ask.summary, ask.preferences.filter((p) => p.visibility !== "public"));
 }
+
+// ---------- private phrases (qualitative match_only facts) ----------
+// Numbers and times are caught above. This catches the words of a private fact ("night owl", "partner stays over
+// some weekends", "doesn't drink") echoed into a string BOTH people see (the match card, a drafted opener). The
+// prompts already say "describe the topic, never the fact"; this is the code-level check behind them.
+
+const STOP = new Set(
+  ("a an the to of for and or but on in at by with from up down over out off about into than then so as is are was were be been " +
+    "am i im me my mine we us our you your they them their he she his her it its this that these those some any usually just " +
+    "really pretty very also can could would will should may might have has had do does did get gets got go going want wants " +
+    "like likes person people right fine ok okay sometimes often most more less all both each other others only until till " +
+    "after before when while if there here what which who how much many per lot bit kind")
+    .split(" "),
+);
+const NEGATION = /^(no|not|never|cannot|cant|dont|doesnt|didnt|wont|isnt|arent|aint|nope)$/;
+
+function stem(raw: string): string | null {
+  const w = raw.replace(/'/g, "");
+  if (!w || /\d/.test(w)) return null; // numbers and times have their own redaction
+  if (NEGATION.test(w)) return "not";
+  if (STOP.has(w)) return null;
+  let s = w;
+  if (s.length > 4 && s.endsWith("ies")) s = `${s.slice(0, -3)}y`;
+  else if (s.length > 5 && s.endsWith("ing")) s = s.slice(0, -3);
+  else if (s.length > 4 && s.endsWith("ed")) s = s.slice(0, -2);
+  else if (s.length > 4 && /(s|x|ch|sh)es$/.test(s)) s = s.slice(0, -2);
+  else if (s.length > 3 && s.endsWith("s") && !s.endsWith("ss")) s = s.slice(0, -1);
+  if (s.length > 3 && s.endsWith("e")) s = s.slice(0, -1); // "drive" / "driving" -> "driv"
+  return s;
+}
+
+function stems(text: string): string[] {
+  const words = text.toLowerCase().replace(/[’‘]/g, "'").replace(/'s\b/g, "").match(/[a-z0-9']+/g) ?? [];
+  return words.map(stem).filter((s): s is string => !!s);
+}
+
+/**
+ * Non-public prefs whose wording shows up in `text`. Each value is split into clauses; a clause with n >= 2
+ * content words counts as leaked when at least max(2, ceil(2n/3)) of them appear. One-word clauses are skipped
+ * (too many false positives), and negations count as content ("doesn't drink" vs "drinks").
+ */
+export function leakedPrivateFacts(text: string, prefs: Preference[]): Preference[] {
+  const seen = new Set(stems(text));
+  return prefs.filter((p) => {
+    if (p.visibility === "public") return false;
+    return p.value.split(/[,;.!?()]|\band\b|\bbut\b/i).some((clause) => {
+      const words = [...new Set(stems(clause))];
+      if (words.length < 2) return false;
+      const need = Math.max(2, Math.ceil((2 * words.length) / 3));
+      return words.filter((w) => seen.has(w)).length >= need;
+    });
+  });
+}

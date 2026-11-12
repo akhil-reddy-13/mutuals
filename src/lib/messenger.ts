@@ -4,7 +4,7 @@ import { getMatch, getNegotiation, getPost, getThread, getUser, newId, saveMatch
 import { mockOpener } from "./mocks";
 import { museText, modelFor } from "./muse";
 import { openerPrompt } from "./prompts";
-import { redactPrivateValues } from "./privacy";
+import { leakedPrivateFacts, redactPrivateValues } from "./privacy";
 import { getAsk } from "./db";
 import type { MessengerThread } from "./types";
 
@@ -45,6 +45,11 @@ export async function openThreadForMatch(matchId: string, senderId: string): Pro
   }
   const shield = [...recipientPrivate, ...(senderAsk?.preferences.filter((p) => p.visibility === "never") ?? [])];
   draft = redactPrivateValues(draft, shield);
+  // The sender has never been told the recipient's match_only facts. If the draft echoes one anyway, fall back to
+  // a plain opener built from the (already guarded) match summary.
+  if (leakedPrivateFacts(draft, recipientPrivate).length) {
+    draft = `Hey ${recipient.name.split(" ")[0]}! Our Muses think we could be a good fit. ${match.verdict.summaryForHumans} Want to hop on a quick call this week to sort out the details?`;
+  }
 
   if (existing) {
     // The other person opened the thread first. Give this person their own opener.
