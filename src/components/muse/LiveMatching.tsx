@@ -70,7 +70,7 @@ export default function LiveMatching({ cands, meName, defaultOpen }: { cands: Li
               <span className="min-w-0 flex-1">
                 <span className="flex items-center gap-1.5 text-[14px] font-semibold">
                   {c.name}
-                  <span className="rounded bg-fb-bg px-1 py-px text-[10px] font-semibold uppercase tracking-wide text-fb-muted">{c.mode === "agent_to_agent" ? "Muse to Muse" : "From their post"}</span>
+                  <span className="rounded bg-fb-bg px-1 py-px text-[10px] font-semibold uppercase tracking-wide text-fb-muted">{c.mode === "agent_to_agent" ? "Their Muse" : "From their post"}</span>
                 </span>
                 <span className="block truncate text-[12px] text-fb-muted">
                   {done ? (
@@ -100,7 +100,7 @@ export default function LiveMatching({ cands, meName, defaultOpen }: { cands: Li
                     <div key={i} className="rise flex items-start gap-1.5 self-center rounded-lg bg-white px-2.5 py-1.5 text-center text-[12px] text-fb-muted">
                       <MuseMark size={14} className="mt-0.5" />
                       <span>
-                        <span className="font-semibold text-fb-text">{c.mode === "agent_to_agent" && c.match ? "Referee: " : ""}</span>
+                        <span className="font-semibold text-fb-text">{c.mode === "agent_to_agent" && c.match ? "The call: " : ""}</span>
                         {turn.message}
                       </span>
                     </div>
@@ -130,8 +130,8 @@ export default function LiveMatching({ cands, meName, defaultOpen }: { cands: Li
                 {done && (
                   <p className="px-1 pt-1 text-[11px] text-fb-muted">
                     {c.mode === "agent_to_agent"
-                      ? `Your Muse and ${firstName(c.name)}'s talked it through (Muse Spark), then Muse Wonder made the call. ${meName}'s private numbers stayed private, and so did ${firstName(c.name)}'s.`
-                      : `${firstName(c.name)} doesn't have Muse on, so I read their post (Muse Ember) and drafted a reply (Muse Spark). Nothing left your side.`}
+                      ? `Your Muse and ${firstName(c.name)}'s talked it through, then made the call. ${meName}'s private numbers stayed private, and so did ${firstName(c.name)}'s.`
+                      : `${firstName(c.name)} doesn't have Muse on, so I read their post and drafted a reply. Nothing left your side.`}
                   </p>
                 )}
               </div>
