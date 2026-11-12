@@ -1,10 +1,16 @@
 # Mutuals
 
-**Your Muse talks to other people's Muses inside Facebook Groups, so you only have the conversations worth having.**
+### Skip the fifty awkward messages.
+
+Your Muse checks with other people's Muses to find who actually fits what you need, so you only talk to the right people.
+
+> A marketplace finds you stuff. Your Muse finds you people, and the stuff is just the reason to meet.
 
 Built at the Facebook Closer Together AI Hackathon 2026 (Meta HQ) by Akhil, Kyle, Luke and Eddy.
 
-Inside a Facebook Group, you tap **Ask Muse privately** and tell your Muse what you need, including the things you would never post: your real budget, your habits, your dealbreakers. Your Muse pre-negotiates with other members' Muses and reads the Group's human posts, then hands you a shortlist of two or three people with what fits, what conflicts, and a proposed compromise. You pick one and a Messenger thread opens with a drafted opener. Agents only propose. Humans decide and send the first message.
+Instagram is for people you already know. Facebook is for people you need to meet. Young adults already end up in Facebook Groups and Marketplace for a roommate, a sublet, a ride, a buyer for the desk, a study partner, someone to go to a show with, and it's miserable. Mutuals turns that into one ask. Inside a Group you tap **Ask Muse privately** and say what you need, including what you'd never post (your real budget, your habits, your dealbreakers). Muse, the friend who knows everyone, quietly checks with other people's Muses and comes back with **people**, not listings: who fits, why, and the one thing you two should talk about. You decide who to message, and you send it. Muse never talks to anyone for you.
+
+No posting required. No Facebook friends required: your school or city is enough.
 
 ## Why this, why now
 
@@ -15,11 +21,19 @@ Meta has described a Muse network where your Muse works with your friends' and f
 - **It works from day one.** If the other person has no Muse, yours reads their Group post, judges the fit, and drafts a reply you can send.
 - **Every output is a Facebook object.** A Messenger thread. A Marketplace listing for the leftover desk. A Facebook Event when two people have more in common than a lease.
 
+## Three flows, one idea: results are people
+
+| You say | Muse comes back with |
+|---|---|
+| "Need a roommate for my Mission 2BR from Sept" (+ a room video) | "I found two people who fit. Priya's the better one, but you two should talk about weeknight noise." Fits, disagreements, a compromise, then Messenger. |
+| "Selling some stuff before I move out" (+ a video where you talk over your stuff) | "2 of these already have a home": the Canon G7 X → June (Japan trip in December), the Poly earbuds → Theo (BART commute). The rest is offered to everyone nearby. |
+| "Need a tent for a camping trip" | One friend-like question ("Is this for a trip? Want people to go with too?"), then Marcus (has a tent, driving to Yosemite Dec 6) and a carpool to join. |
+
 ## The hero flow (what the demo shows)
 
 1. **Group page.** Stanford Housing '27. Casey's ISO post, Jordan's dog post, the usual.
-2. **Ask Muse privately.** Three lines of chat. Every preference comes back tagged **Public**, **Match only** or **Never shared**. Tap a badge to change it.
-3. **Film the room.** Ten seconds. Muse Ember returns room facts and the leftover items with prices. One tap lists them on Marketplace.
+2. **Ask Muse privately.** Three lines of chat. Every preference comes back tagged **Public**, **Kept private** or **Never shared**. Tap a badge to change it.
+3. **Film the room.** Ten seconds. Muse Ember returns room facts and the leftover items the next person might want.
 4. **"Want me to check with other Muses in this group?"** That question is the opt-in. It is scoped to the Group.
 5. **Watch the negotiation.** Every candidate runs in parallel. Alex's Muse and Priya's Muse settle rent, dates, furniture and quiet hours in two rounds. A Wonder referee writes the verdict. Jordan's Muse brings a dog; Alex's Muse stops early. Casey has no Muse; Ember reads her post and Spark drafts a reply.
 6. **Shortlist.** Why it fits, where you'd disagree, the proposed compromise, trust signals (verified school, shared Groups, mutual friends), and **What my Muse shared**.
@@ -43,7 +57,7 @@ Meta has described a Muse network where your Muse works with your friends' and f
 | Level | Meaning | Where it is enforced |
 |---|---|---|
 | **Public** | Can appear on your match card | |
-| **Match only** | Your Muse uses it to check fit. Never shown to the other person. | Prompts are built only from `privacy.agentContext()`. Money is compared in code (`budgetsOverlap`) and every string a human sees goes through `redactPrivateValues()`, so no private number or time can be printed. The live view shows disclosed facts as locked chips. |
+| **Kept private** | Your Muse uses it to check fit. Never shown to the other person. | Prompts are built only from `privacy.agentContext()`. Money is compared in code (`budgetsOverlap`) and every string a human sees goes through `redactPrivateValues()`, so no private number or time can be printed. The live view shows disclosed facts as locked chips. |
 | **Never shared** | Never enters any Muse's context | `agentContext()` drops it before the prompt exists. The model cannot leak what it was never given. |
 
 Every outgoing message your Muse sends is logged and visible to you under **What my Muse shared**. `src/lib/privacy.test.ts` covers all of this and must stay green.
@@ -53,12 +67,15 @@ Every outgoing message your Muse sends is logged and visible to you under **What
 | Step | Model | What it does |
 |---|---|---|
 | Ask parsing | **Muse Spark** | Chat turns → structured, visibility-tagged preferences; asks one follow-up at a time |
-| Video intake | **Muse Ember** | Phone video frames (sampled on device) → room details + item catalog with condition, flaws, price |
+| Video intake | **Muse Ember** | ~10 frames + your narration (server-side ffmpeg reads any phone video, incl. iPhone .MOV) → transcript, room details, the items you said you're selling |
+| Item identification | **Muse Spark** | Per item, in parallel: clearest frame + neighbors + your words → exact model ("this Canon camera" → Canon PowerShot G7 X Mark II), confidence, used price range |
+| Finding homes | **Muse Wonder** | Routes each item to a person in the Group whose Muse says they need it, with a one-line human reason. Budgets compared in code. |
 | Negotiation | **Muse Spark** × 2 | One agent per person, each seeing only what its owner allows. Two rounds, candidates in parallel. |
 | Referee | **Muse Wonder** | One call per candidate at the end: fits, disagreements, compromise, a 5-second summary |
 | One-sided mode | **Ember** + **Spark** | Scores a human Group post against your ask, then drafts the reply |
 | Connection judgment | **Muse Wonder** | One call per compatible match, only if both opted in. Usually says no. |
-| Openers, listings, digest | **Spark** / **Ember** | Messenger opener, Marketplace copy, the daily digest |
+| Openers, listings, digest | **Spark** / **Ember** | Messenger opener (always names the item/room and their reason), Marketplace copy, the daily digest |
+| Demo photos | **Muse Image** | Every photo in the seeded feed and Marketplace (`scripts/gen-images.ts`), stored locally |
 
 Code does only two things the model does not: sealed comparisons of private numbers, and leak checks on every string shown to a human.
 
@@ -98,6 +115,8 @@ Other commands:
 
 ```bash
 npm run demo        # hero matching from the terminal, with a leak check on every string shown to a human
+npm run demo -- need        # "I need a tent": friend-like question, people + a plan (also: plus_one, ride)
+npm run demo:build && npm run demo:start   # production build for the demo Mac (~100x faster pages)
 npm run warm        # pre-run every hero call so the response cache is hot before going on stage
 npm test            # privacy tests
 npm run typecheck
@@ -125,3 +144,7 @@ scripts/        muse-smoke.ts · run-demo.ts · warm-cache.ts
 ## Team
 
 Akhil, Kyle, Luke, Eddy. Stanford.
+
+---
+
+*You might have zero mutuals on Facebook today. Mutuals builds them for you.*

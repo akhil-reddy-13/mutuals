@@ -321,7 +321,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
             (fits.length === 0
               ? `Nobody here fits yet${nofit ? ` (I checked ${count(nofit)})` : ""}. I'll keep an eye out.`
               : `I found ${count(fits.length)} who ${fits.length === 1 ? "fits" : "fit"}.` +
-                (fits.length > 1 && bestName ? ` ${bestName}'s the best one${topic ? `, but you two should talk about ${topic.toLowerCase()}` : ""}.` : topic && bestName ? ` You and ${bestName} should talk about ${topic.toLowerCase()}.` : "") +
+                (fits.length > 1 && bestName ? ` ${bestName}'s the ${fits.length === 2 ? "better" : "best"} one${topic ? `, but you two should talk about ${topic.toLowerCase()}` : ""}.` : topic && bestName ? ` You and ${bestName} should talk about ${topic.toLowerCase()}.` : "") +
                 (oneSided ? ` ${oneSided === 1 ? "One of them" : `${oneSided} of them`} posted without Muse on, so I drafted a reply you can send.` : "") +
                 ` You decide who to message. I won't message anyone.` +
                 (connectedName ? ` One more thing on ${firstName(connectedName)}'s card.` : "")),

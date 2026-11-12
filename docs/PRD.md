@@ -41,10 +41,61 @@ This document is the single source of truth for the project: the idea, the produ
 
 ---
 
+## 0.5 Positioning & design rules (Nov 12 update; supersedes anything below that conflicts)
+
+### What Mutuals is
+A Facebook feature where your Muse talks to other people's Muses to find the people nearby who actually fit what you
+need (roommate, sublet, ride, buyer for your desk, study partner, someone to go to a show with). It handles the
+tedious screening and logistics so you only have the conversations worth having. It does **not** automate
+conversation: the humans always send the real messages.
+
+### Why young people would use it
+Instagram is for people you already know. Facebook is for people you need to meet. Young adults already end up in
+Facebook Groups and Marketplace for housing and practical needs, and it's miserable. Mutuals makes that one ask
+instead of fifty awkward messages. No posting required, no existing Facebook friends required (your school or city
+is enough).
+
+### How Muse is portrayed
+Muse is **the friend who knows everyone**, not a search engine or a marketplace scraper. First person, warm, brief:
+"I found two people who fit. Priya's the better one, but you two should talk about noise." It shows its work lightly:
+"Checking with 14 people's Muses at Stanford…"
+
+### Design rules (apply everywhere)
+1. **Results are PEOPLE, not listings.** Every result card leads with the person (name, photo, verified school,
+   mutuals, shared Groups), then the thing. Never a grid of items or posts as the main output.
+2. Every result has a one-line **"why this person"** in human terms, not "matches 4 filters."
+3. Every Messenger opener carries **shared context**, so it's never "is this still available?"
+4. **One human hook per card, only when real overlap exists.** Otherwise nothing. Most exchanges stay exchanges.
+5. Connection suggestions are **activity-based** ("join the New in SF weekend runs"), never "you two should be friends."
+6. **Agents never commit.** They return a shortlist; the user decides.
+
+### Key flows
+- **Video → items (selling):** output is "3 of these already have a home," each item routed to a specific person and
+  why ("Desk + chair → Maya, just moved into her first place in Oakland"), plus what's offered more broadly.
+  NOT "posted 8 listings." (Built: §5.2.)
+- **"I need X":** Muse may ask one friend-like question ("Is this for a trip? Want people to go with too?") and returns
+  people plus a possible plan, not a list of items for sale. (Built: §5.4.)
+- **Roommate (hero demo):** ask + room video → Muses talk it through with real conflicts → shortlist with fits,
+  disagreements, compromise → Messenger handoff → occasional connection card + open Event invite. (Built: §5.1.)
+
+### Copy
+- **Headline:** "Skip the fifty awkward messages."
+- **Subhead:** "Your Muse checks with other people's Muses to find who actually fits what you need, so you only talk to the right people."
+- **Tagline:** "A marketplace finds you stuff. Your Muse finds you people, and the stuff is just the reason to meet."
+- **Footer:** "You might have zero mutuals on Facebook today. Mutuals builds them for you."
+- Don't lead user-facing copy with jargon: "multiplayer," "agents," "negotiation," "platform." (Fine in the technical
+  sections and in Q&A.)
+- The **first screen shows the roommate example**, not a dashboard of every entry point. Breadth (skill swap,
+  plus-one, taste circles) shows up later, e.g. in the digest.
+
+---
+
 ## 1. The Idea
 
 ### One-liner
-**Muse is single-player today. Mutuals makes it multiplayer.** Your Muse talks to other people's Muses to handle life's practical stuff, matches you on the things you'd never post publicly, and helps the rare great matches turn into real connections.
+**Skip the fifty awkward messages.** Your Muse checks with other people's Muses to find who actually fits what you
+need, matches you on the things you'd never post publicly, and helps the rare great matches turn into real
+connections. (Internal shorthand, not user-facing copy: Muse is single-player today; Mutuals makes it multiplayer.)
 
 ### The framing (lead with this, not the architecture)
 **It does not automate conversation.** It offloads the tedious, boring parts of social interaction — scrolling 200 posts, the same awkward screening questions with 15 strangers, back-and-forth on logistics — so you can talk about what you actually want to talk about, with the people who are actually right for you.
@@ -83,7 +134,8 @@ This document is the single source of truth for the project: the idea, the produ
 | Entry point | Example ask | What Muse does | Why it can become a connection |
 |---|---|---|---|
 | **Roommates & sublets (HERO)** | "Need a roommate near campus from Sept, real budget up to $1,350" + video of the room | Extracts room details from video; negotiates budget, move-in, sleep schedule, guests, cleanliness with other agents | You're new to the same city, same schedule, shared interests |
-| **Items (buy/sell/give)** | Video of a shelf or desk area | Catalogs every item, condition, price; matches to people who need them | Shared taste (e.g. both own beabadoobee merch) |
+| **Items (sell/give)** | Video of your stuff, talking over it | Hears what you're selling, identifies each exact model, routes each item to a person who needs it ("3 of these already have a home") | Shared taste (e.g. both into indie music) |
+| **"I need X"** | "Need a tent for a camping trip" | One friend-like question ("Is this for a trip? Want people to go with too?"), then people who have it + a plan to join | The trip itself |
 | **Skill swap** | "I want to learn guitar, I can help with resumes" | Finds two-way matches, sets a recurring time | Weekly sessions = repeated contact |
 | **Plus-one** | "Going to the beabadoobee show, nobody to go with" | Finds people with the same plan or interest based on what they've shared | Shared activity beats chatting |
 | **Taste circles** | (passive) people nearby selling/listing vintage clothes, plants, records | Proposes a small local swap meetup | One-time purchase → recurring community |
@@ -95,7 +147,12 @@ Big asks (roommates) bring people in. Small weekly asks (rides, study partners, 
 
 ## 3. Key Design Decisions
 
-### 3.1 One toggle, one reach setting (no per-Group opt-in)
+### 3.1 Opt-in and reach
+
+> **As built (Nov 12 handoff):** there is no settings page or reach selector. Muse lives inside a Facebook Group; the
+> opt-in is one question in the chat ("Want me to ask around Stanford Housing '27?"), scoped to that Group
+> (`User.museGroups`). Candidates come from that Group only. The original design is kept below for reference.
+
 - **One toggle:** "Let my Muse talk to other Muses."
 - **One reach setting**, with a sensible default:
   - `school` — verified .edu only
@@ -127,7 +184,9 @@ Big asks (roommates) bring people in. Small weekly asks (rides, study partners, 
   1. there is real overlap (judged by the model, above a threshold), **and**
   2. both people have opted in to connection suggestions.
 - Suggestions are **activity-based**, not "you two should be friends."
-- **Default to small, open circles** (e.g. "New in SF — weekend runs") rather than 1:1. Circles are visible to anyone within reach who fits; inactive circles quietly dissolve.
+- **Default to small, open groups** (e.g. "New in SF — weekend runs") rather than 1:1. As built, these are Facebook
+  **Events** (open, anyone in reach who fits can join); inactive ones quietly dissolve. Copy is always "join the …",
+  never "you two should be friends."
 
 ### 3.6 Safety & trust
 - Real identity, verified school, mutual friends, and shared Groups shown on match cards.
@@ -155,8 +214,11 @@ Big asks (roommates) bring people in. Small weekly asks (rides, study partners, 
 | Negotiating agents (one per persona) | **Muse Spark** (`muse-spark-1.3`) |
 | Orchestrator / referee: run rounds, final verdict, connection-potential judgment | **Muse Wonder** (`muse-wonder-1.0`) |
 | Opener drafts in Messenger | **Muse Spark** |
-| (Stretch) Item crop-outs | **SAM** (Segment Anything) |
-| (Stretch) Clean item photos | **Muse Image** |
+| Seller pipeline step 1: watch + listen (frames + narration → transcript + items you mentioned) | **Muse Ember** |
+| Seller pipeline step 2: identify each item's exact model + used price range (best frame + neighbors + your words) | **Muse Spark** |
+| Seller pipeline step 3: route items to the people who need them ("already has a home") | **Muse Wonder** |
+| Demo photos for seeded posts and Marketplace (scripts/gen-images.ts) | **Muse Image** |
+| (Stretch) Item crop-outs | **SAM** (Segment Anything, `sam-3.1` is on our key) |
 
 ### Why Facebook
 - Real identity, verified schools, mutual friends, Groups, Events, Messenger, Marketplace — all in one place. Instagram has none of this structure.
@@ -183,12 +245,25 @@ Big asks (roommates) bring people in. Small weekly asks (rides, study partners, 
 6. **Pick one →** Messenger thread opens with a drafted opener. User edits/sends.
 7. **Connection potential** (only if threshold met + both opted in): "You're both new to SF and both run weekends." → invite to open circle **"New in SF — Weekend Runs"** (4 others from reach).
 
-### 5.2 Items flow
-1. Film a shelf/desk/closet area (10–15 sec).
-2. Ember catalogs items: name, brand guess, condition, flaws, suggested price.
-3. Matching against people's asks within reach + Group/Marketplace ISO posts.
-4. Shortlist per item with match reasons → Messenger drafts.
-5. Possible plus-one / taste-circle suggestion from overlap (e.g. both have beabadoobee merch → "she's playing nearby next month").
+### 5.2 Items flow (selling) — as built
+1. In a Group (e.g. Stanford Free & For Sale): "Selling some stuff before I move out." Film your stuff and **talk over
+   it** ("I want to sell this Canon camera, these Poly earbuds…").
+2. **Ember** (server-side ffmpeg pulls ~10 frames + the narration from any phone video, incl. iPhone .MOV) returns a
+   word-for-word transcript and the items you mentioned; things it saw but you didn't mention are offered, off by default.
+3. **Spark** identifies each item in parallel from its clearest frame + neighbors + your words: exact model
+   ("this Canon camera" → Canon PowerShot G7 X Mark II), confidence, used price range. Every field is editable.
+4. **Wonder** checks with the Muses of people in the Group who are looking for something and routes each item to a
+   person with a one-line human reason. Budgets are compared in code, never shown.
+5. Result: **"2 of these already have a home"**: person-first cards (June, Japan trip in December → G7 X; Theo, BART
+   commute → earbuds, plus a hook only because you share indie music). Whatever has no home is "offered to everyone
+   nearby" (Marketplace). Message buttons open Messenger with an opener that names the item and their reason.
+
+### 5.4 "I need X" — as built
+1. "Need a tent for a camping trip next month."
+2. Muse asks ONE friend-like question: "Is this for a trip? Want people to go with too?"
+3. Muse checks with people offering that kind of thing (seekers only meet offerers), runs the same private
+   pre-negotiation as roommates (price, pickup), and returns people + a possible plan: "Marcus has a tent and is
+   driving to Yosemite Dec 6" → join the Yosemite carpool Event.
 
 ### 5.3 Daily digest
 - "3 people near you need something you can help with."
@@ -574,9 +649,10 @@ mutuals/
 
 ## 11. Screens (MVP)
 
-1. **Facebook shell** with Mutuals in the left nav.
-2. **Settings:** "Let my Muse talk to other Muses" toggle + reach selector + connection-suggestions opt-in.
-3. **New Ask:** chat with Muse + "Show me" video capture. Preferences appear as chips with visibility badges (public / match only / never), editable.
+1. **Facebook shell.** Home's first screen is the Mutuals card with the roommate example (headline, subhead, a tiny
+   chat in Muse's voice, CTA into Stanford Housing '27). Muse lives inside Groups ("Ask Muse privately").
+2. ~~Settings~~ (removed: the opt-in is a chat question per Group).
+3. **New Ask:** chat with Muse + "Show me" video capture. Preferences appear as chips with visibility badges (Public / Kept private / Never shared), editable.
 4. **Intake result:** room details + item catalog extracted from the video.
 5. **Shortlist:** 2–3 match cards with fits, disagreements, compromise, trust signals, mode badge (agent-to-agent / from a Group post).
 6. **Behind the scenes:** live streamed negotiation between two agents with the referee.
@@ -593,7 +669,7 @@ mutuals/
 | Time | Beat | What's on screen |
 |---|---|---|
 | 0:00–0:45 | **Problem.** Before/after roommate story. "Our generation barely has a Facebook network. Public posts make you overshare or hide what matters. And every connection ends at the exchange." | Title slide → a real-looking cluttered Group feed |
-| 0:45–1:15 | **The idea.** "Muse is single-player. We made it multiplayer. It offloads the tedious parts of social life so you only have the conversations worth having." Toggle + reach. | Settings screen |
+| 0:45–1:15 | **The idea.** "Skip the fifty awkward messages. Your Muse checks with other people's Muses to find who actually fits, so you only talk to the right people." | Home: the Mutuals card with the roommate example |
 | 1:15–2:00 | **Ask + video.** Alex asks for a roommate, Muse asks follow-ups, preferences get visibility badges. Film/upload the hotel room video live → room details + leftover items appear. | New Ask → intake result |
 | 2:00–3:00 | **Behind the scenes.** Agents negotiate with real conflicts (night owl vs quiet after 11, $100 budget overlap) → compromise. Show Jordan rejected for a dealbreaker. Show one match from a human Group post (one-sided mode). | Negotiation stream → shortlist |
 | 3:00–3:30 | **Handoff.** Match card lands on both phones. "What my agent shared" log. Alex sends the drafted opener; Priya (teammate, live) replies. | Two phones / two windows |
