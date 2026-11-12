@@ -2,7 +2,7 @@
 // GET  ?threadId=...         -> { thread }  (polled every 2s so two phones see each other)
 // PUT  { threadId, text }    -> { thread }  the human sends a message
 import { NextResponse } from "next/server";
-import { getThread } from "@/lib/db";
+import { getThread, markThreadRead } from "@/lib/db";
 import { openThreadForMatch, sendMessage } from "@/lib/messenger";
 import { currentUserId } from "@/lib/session";
 
@@ -22,7 +22,9 @@ export async function GET(req: Request) {
   const id = new URL(req.url).searchParams.get("threadId") ?? "";
   const thread = getThread(id);
   if (!thread) return NextResponse.json({ error: "unknown thread" }, { status: 404 });
-  return NextResponse.json({ thread });
+  // Polled every 2 s while the chat is open: whatever the viewer can see now counts as read.
+  markThreadRead(id, await currentUserId());
+  return NextResponse.json({ thread: getThread(id) });
 }
 
 export async function PUT(req: Request) {

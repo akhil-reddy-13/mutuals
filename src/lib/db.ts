@@ -196,6 +196,16 @@ export function threadsForUser(userId: string) {
 export function threadBetween(a: string, b: string) {
   return rt().threads.find((t) => t.participantIds.includes(a) && t.participantIds.includes(b));
 }
+/** Messages from other people this person hasn't seen yet. */
+export function unreadIn(t: MessengerThread, userId: string): number {
+  const seen = t.readAt?.[userId] ?? "";
+  return t.messages.filter((m) => m.from !== userId && !m.text.startsWith("(from their post") && m.at > seen).length;
+}
+export function markThreadRead(threadId: string, userId: string) {
+  const t = getThread(threadId);
+  if (!t || !t.participantIds.includes(userId)) return;
+  saveThread({ ...t, readAt: { ...(t.readAt ?? {}), [userId]: new Date().toISOString() } });
+}
 export function saveThread(t: MessengerThread) {
   const r = rt();
   r.threads = [...r.threads.filter((x) => x.id !== t.id), t];

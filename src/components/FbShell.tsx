@@ -1,6 +1,6 @@
 // Facebook chrome: desktop top bar (logo, search, center tabs, right icons) + left rail; phone header + tab row.
 import Link from "next/link";
-import { allUsers, getUser, matchesInvolving, threadsForUser } from "@/lib/db";
+import { allUsers, getUser, matchesInvolving, threadsForUser, unreadIn } from "@/lib/db";
 import { museMode } from "@/lib/muse";
 import { currentUserId } from "@/lib/session";
 import { BellIcon, FacebookF, GridIcon, MessengerIcon, PlusIcon, SearchIcon } from "./icons";
@@ -23,11 +23,14 @@ export default async function FbShell({ children }: { children: React.ReactNode 
   const personas = allUsers().map((u) => ({ id: u.id, name: u.name, avatarUrl: u.avatarUrl }));
   // One notification per ask I made that found fits, plus one per other person whose Muse matched with mine.
   const involving = matchesInvolving(me.id).filter((m) => m.verdict.compatible);
+  // Only what arrived since this person last opened Notifications / each chat.
+  const seenAt = me.notificationsSeenAt ?? "";
+  const fresh = involving.filter((m) => m.createdAt > seenAt);
   const notifCount = new Set([
-    ...involving.filter((m) => m.userId === me.id).map((m) => `ask:${m.askId}`),
-    ...involving.filter((m) => m.candidateId === me.id && m.mode === "agent_to_agent").map((m) => `from:${m.userId}`),
+    ...fresh.filter((m) => m.userId === me.id).map((m) => `ask:${m.askId}`),
+    ...fresh.filter((m) => m.candidateId === me.id && m.mode === "agent_to_agent").map((m) => `from:${m.userId}`),
   ]).size;
-  const msgCount = threadsForUser(me.id).filter((t) => t.messages.some((m) => m.from !== me.id && !m.text.startsWith("(from their post"))).length;
+  const msgCount = threadsForUser(me.id).filter((t) => unreadIn(t, me.id) > 0).length;
   const mode = museMode();
 
   return (

@@ -1,4 +1,5 @@
 // Facebook notifications. Muse results arrive here like any other notification (handoff 4c), on both phones.
+import MarkSeen from "@/components/MarkSeen";
 import Link from "next/link";
 import Avatar from "@/components/Avatar";
 import { CalendarIcon, FriendsIcon, GroupsIcon, MuseMark } from "@/components/icons";
@@ -20,6 +21,8 @@ interface Notif {
 
 export default async function NotificationsPage() {
   const me = await currentUser();
+  // Unread = arrived since I last opened this page (MarkSeen below updates it after render).
+  const seenAt = me.notificationsSeenAt ?? "";
   const mine = matchesInvolving(me.id);
   const items: Notif[] = [];
 
@@ -99,8 +102,11 @@ export default async function NotificationsPage() {
     return <span className={`${common} bg-fb-blue`}><FriendsIcon size={13} /></span>;
   };
 
+  for (const it of items) if (it.unread) it.unread = it.at > seenAt;
+
   return (
     <div className="mx-auto max-w-[680px] pb-24 md:py-4">
+      <MarkSeen kind="notifications" />
       <section className="fb-card rounded-none md:rounded-[8px]">
         <div className="flex items-center justify-between px-4 pt-4">
           <h1 className="text-[24px] font-bold">Notifications</h1>

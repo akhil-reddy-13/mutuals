@@ -19,6 +19,8 @@ export interface User {
   museEnabled: boolean;
   /** Groups where this user told Muse "yes, check with other Muses here". The opt-in is per Group. */
   museGroups: string[];
+  /** When this person last opened Notifications (badge = notifications after this). */
+  notificationsSeenAt?: string;
   /** Last reach this person picked; the default next time. */
   museReach?: MuseReach;
   connectionSuggestionsOptIn: boolean;
@@ -222,6 +224,8 @@ export interface MessengerThread {
   /** Opener drafted by Muse, shown as editable until sent. */
   draft?: { for: string; text: string };
   messages: { from: string; text: string; at: string }[];
+  /** When each participant last opened the thread (badge = messages from others after this). */
+  readAt?: Record<string, string>;
 }
 
 export interface MarketplaceListing {
