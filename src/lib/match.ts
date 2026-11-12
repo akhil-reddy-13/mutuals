@@ -3,7 +3,7 @@
 //   candidatePosts -> one-sided: Ember scores the human post, Spark drafts a reply -> Match
 // Then one Wonder connection call per compatible match (both opted in). Events stream to the chat sheet.
 import { judgeConnection } from "./connection";
-import { getAsk, getEvent, getUser, newId, saveAsk, saveMatch } from "./db";
+import { getAsk, getEvent, getGroup, getUser, newId, saveAsk, saveMatch } from "./db";
 import { mockPostEval, mockReplyDraft } from "./mocks";
 import { museJSON, museText } from "./muse";
 import { runNegotiation } from "./negotiation";
@@ -18,8 +18,22 @@ export type MatchEvent =
   | { type: "turn"; candidateId: string; turn: NegotiationTurn; disclosedMeta: { id: string; topic: string; visibility: string }[] }
   | { type: "verdict"; candidateId: string; match: Match }
   | { type: "connection"; candidateId: string; matchId: string; connection: ConnectionSuggestion | null; event: { id: string; name: string; when: string; where: string; going: number; coverEmoji: string } | null }
-  | { type: "done"; askId: string; matches: Match[] }
+  | { type: "done"; askId: string; matches: Match[]; elsewhere?: { groupId: string; name: string; people: number }[] }
   | { type: "error"; message: string };
+
+/** Other Groups I'm in where someone could fit this ask (people with Muse + posts from people without). */
+export function elsewhereFor(ask: Ask): { groupId: string; name: string; people: number }[] {
+  const me = getUser(ask.userId);
+  if (!me) return [];
+  return me.groups
+    .filter((g) => g !== ask.groupId)
+    .map((g) => {
+      const there = { ...ask, groupId: g };
+      return { groupId: g, name: getGroup(g)?.name ?? g, people: candidateAsks(there).length + candidatePosts(there).length };
+    })
+    .filter((x) => x.people > 0)
+    .sort((a, b) => b.people - a.people);
+}
 
 export function sortMatches(ms: Match[]): Match[] {
   return [...ms].sort((a, b) => Number(b.verdict.compatible) - Number(a.verdict.compatible) || b.verdict.score - a.verdict.score);
@@ -44,6 +58,13 @@ export async function runMatching(askInput: Ask, emitRaw: (e: MatchEvent) => voi
 
   const agentCands = candidateAsks(ask);
   const posts = candidatePosts(ask);
+  // Nobody to check with here: don't run anything, point to the Group where people could actually fit.
+  if (agentCands.length === 0 && posts.filter((p) => p.groupId === ask.groupId).length === 0) {
+    emit({ type: "start", askId: ask.id, candidates: [] });
+    saveAsk({ ...ask, status: "matched" });
+    emit({ type: "done", askId: ask.id, matches: [], elsewhere: elsewhereFor(ask) });
+    return [];
+  }
   emit({
     type: "start",
     askId: ask.id,

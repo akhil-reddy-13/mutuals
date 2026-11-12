@@ -68,6 +68,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
   // Items Spark is still identifying (step 2 of the seller pipeline).
   const [identifying, setIdentifying] = useState<Set<string>>(new Set());
   const framesRef = useRef<string[]>([]);
+  const groupNameNow = useRef<string>(group.name);
   const intakeRef = useRef<typeof intake>(null);
   useEffect(() => {
     intakeRef.current = intake;
@@ -263,7 +264,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
     const selling = isSelling(cur);
     push({
       role: "muse",
-      text: selling ? `On it. Asking around ${group.name} for anyone who needs these.` : `On it. Asking around ${group.name}. You can watch.`,
+      text: selling ? `On it. Asking around ${groupNameNow.current} for anyone who needs these.` : `On it. Asking around ${groupNameNow.current}. You can watch.`,
       card: "matching",
     });
     // Selling: route exactly what the seller approved (Spark's model names, their edits), not Ember's first pass.
@@ -278,7 +279,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
       if (e.type === "start") {
         setCands(e.candidates.map((c) => ({ ...c, turns: [] })));
         if (e.candidates.length) {
-          push({ role: "muse", text: `Checking with ${e.candidates.length} ${e.candidates.length === 1 ? "person's Muse" : "people's Muses"} in ${group.name}…` });
+          push({ role: "muse", text: `Checking with ${e.candidates.length} ${e.candidates.length === 1 ? "person's Muse" : "people's Muses"} in ${groupNameNow.current}…` });
         }
       } else if (e.type === "turn") {
         setCands((cs) => cs.map((c) => (c.id === e.candidateId ? { ...c, turns: [...c.turns, { turn: e.turn, disclosedMeta: e.disclosedMeta }] } : c)));
@@ -287,6 +288,35 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
       } else if (e.type === "connection") {
         setCands((cs) => cs.map((c) => (c.id === e.candidateId && c.match ? { ...c, match: { ...c.match, connection: e.connection }, connection: e.connection } : c)));
         setEvents((m) => ({ ...m, [e.matchId]: e.event }));
+      } else if (e.type === "done" && e.matches.length === 0) {
+        es.close();
+        setMatches([]);
+        const best = e.elsewhere?.[0];
+        const what = cur.type === "roommate" || cur.type === "sublet" ? "a room" : "this";
+        push({
+          role: "muse",
+          text: best
+            ? `Nobody in ${groupNameNow.current} is looking for ${what} right now. ${best.people === 1 ? "One person" : `${best.people} people`} in ${best.name} might fit. Want me to ask there?`
+            : `Nobody in ${groupNameNow.current} fits yet. I'll keep an eye out and tell you when someone does.`,
+          actions: best
+            ? [
+                {
+                  label: `Ask in ${best.name}`,
+                  primary: true,
+                  onClick: async () => {
+                    const r = await fetch("/api/ask-move", { method: "POST", body: JSON.stringify({ askId: cur.id, groupId: best.groupId }) });
+                    const { ask: moved } = (await r.json()) as { ask: Ask };
+                    if (moved) {
+                      setAsk(moved);
+                      askRef.current = moved;
+                      groupNameNow.current = best.name;
+                      startMatching();
+                    }
+                  },
+                },
+              ]
+            : undefined,
+        });
       } else if (e.type === "done" && selling) {
         es.close();
         setMatches(e.matches);
@@ -482,7 +512,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
                   )}
                   {m.card === "matching" && (
                     <div className="ml-8">
-                      {cands.length === 0 ? <div className="h-14 rounded-xl shimmer" /> : <LiveMatching cands={cands} meName={first} defaultOpen={firstAgent} />}
+                      {cands.length === 0 ? (matches ? null : <div className="h-14 rounded-xl shimmer" />) : <LiveMatching cands={cands} meName={first} defaultOpen={firstAgent} />}
                     </div>
                   )}
                   {m.card === "homes" && matches && (
