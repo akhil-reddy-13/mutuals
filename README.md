@@ -26,6 +26,18 @@ Meta has described a Muse network where your Muse works with your friends' and f
 7. **Message Priya.** The opener is drafted. Alex edits and sends. Priya replies from her own phone.
 8. **More than a lease.** Both new to SF, both run weekend mornings. Wonder suggests an existing Event: New in SF: Weekend Runs. Sam, who also fit, gets no suggestion. Most exchanges stay exchanges.
 
+## Screenshots
+
+| Group feed | Tagged preferences | Live negotiation |
+|---|---|---|
+| ![Group feed](docs/screenshots/group-feed-phone.jpg) | ![Preferences](docs/screenshots/muse-prefs-phone.jpg) | ![Negotiation](docs/screenshots/live-negotiation-phone.jpg) |
+
+| Shortlist | More than a lease | Messenger handoff |
+|---|---|---|
+| ![Shortlist](docs/screenshots/shortlist-phone.jpg) | ![Connection](docs/screenshots/connection-card-phone.jpg) | ![Messenger](docs/screenshots/messenger-draft-phone.jpg) |
+
+![Desktop](docs/screenshots/group-desktop-sheet.jpg)
+
 ## Privacy, enforced in code
 
 | Level | Meaning | Where it is enforced |
