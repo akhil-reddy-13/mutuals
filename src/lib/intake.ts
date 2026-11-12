@@ -2,7 +2,7 @@
 import { newId } from "./db";
 import { capFrames } from "./frames";
 import { mockIntake } from "./mocks";
-import { museJSON, type ContentPart } from "./muse";
+import { museJSON, type ContentPart, modelFor } from "./muse";
 import { intakePrompt } from "./prompts";
 import { IntakeSchema } from "./schemas";
 import type { Item, RoomDetails } from "./types";
@@ -21,7 +21,7 @@ export async function runIntake(
     ...use.map((url) => ({ type: "image_url" as const, image_url: { url } })),
     ...(audioWavB64 ? [{ type: "input_audio" as const, input_audio: { data: audioWavB64, format: "wav" as const } }] : []),
   ];
-  const out = await museJSON({ model: "ember", system: p.system, user: parts, schema: IntakeSchema, mock: mockIntake });
+  const out = await museJSON({ model: modelFor("intake"), system: p.system, user: parts, schema: IntakeSchema, mock: mockIntake });
   const room: RoomDetails | null = out.room
     ? {
         furnished: out.room.furnished,

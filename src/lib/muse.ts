@@ -15,6 +15,34 @@ import type { z } from "zod";
 
 export type MuseModel = "wonder" | "spark" | "ember";
 
+/**
+ * Which Muse model does each job. One place to trade speed vs depth. Override any role with MUSE_ROLE_<ROLE>
+ * (e.g. MUSE_ROLE_REFEREE=wonder). Defaults are tuned for a fast live demo: each matching candidate is ~6 sequential
+ * calls, so per-call latency dominates (Nov 12 under load: Ember ~1 s, Spark ~10 s, Wonder ~30 s).
+ */
+export type MuseRole = "ask" | "agent" | "referee" | "connection" | "homes" | "opener" | "identify" | "intake" | "posteval" | "listing" | "digest";
+// Measured Nov 12 (same inputs, side by side): Ember matched Spark/Wonder on verdicts, connection picks and item
+// routing at ~1 s vs ~14 s (Spark) / ~30 s (Wonder). Spark keeps the one job where it was clearly better: reading an
+// exact make/model off a photo (it read "G7X" off the camera; Ember misnamed a MacBook). That step runs in parallel
+// and fills rows in as it lands, so nobody waits on it. Wonder is available per role when the API is healthy.
+const ROLE_DEFAULTS: Record<MuseRole, MuseModel> = {
+  ask: "ember", // chat turns: structured extraction
+  agent: "ember", // negotiation turns, 4 per candidate in sequence
+  referee: "ember", // the verdict (dealbreakers are also enforced in code via budgetsOverlap)
+  connection: "ember", // "more than a lease" judgment
+  homes: "ember", // routing items to people
+  opener: "ember", // Messenger first message
+  identify: "spark", // exact make/model from a frame
+  intake: "ember", // video frames + narration
+  posteval: "ember", // reading a human post
+  listing: "ember", // Marketplace copy
+  digest: "ember",
+};
+export function modelFor(role: MuseRole): MuseModel {
+  const v = process.env[`MUSE_ROLE_${role.toUpperCase()}`];
+  return v === "ember" || v === "spark" || v === "wonder" ? v : ROLE_DEFAULTS[role];
+}
+
 const MODEL_IDS: Record<MuseModel, string> = {
   wonder: process.env.MODEL_WONDER ?? "muse-wonder-1.0",
   spark: process.env.MODEL_SPARK ?? "muse-spark-1.3",
@@ -121,10 +149,10 @@ async function rawCall(model: MuseModel, messages: ChatMessage[], temperature: n
       return text;
     } catch (e) {
       lastErr = e;
-      // Wonder stalled: answer with Spark instead of hanging the chat (cached under Spark's key).
+      // Wonder stalled: answer with Ember instead of hanging the chat.
       if (model === "wonder" && /timed? ?out|timeout/i.test(String((e as Error)?.message ?? e))) {
-        console.warn(`[muse] wonder timed out after ${WONDER_TIMEOUT_MS} ms, falling back to spark`);
-        return rawCall("spark", messages, temperature, fresh, mock, "low");
+        console.warn(`[muse] wonder timed out after ${WONDER_TIMEOUT_MS} ms, falling back to ember`);
+        return rawCall("ember", messages, temperature, fresh, mock);
       }
       // A model that rejects the effort value: stop sending it and retry immediately.
       if (/reasoning_effort/i.test(String((e as Error)?.message)) && !effortUnsupported.has(model)) {

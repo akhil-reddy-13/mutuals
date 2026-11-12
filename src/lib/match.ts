@@ -5,7 +5,7 @@
 import { judgeConnection } from "./connection";
 import { getAsk, getEvent, getGroup, getUser, newId, saveAsk, saveMatch } from "./db";
 import { mockPostEval, mockReplyDraft } from "./mocks";
-import { museJSON, museText } from "./muse";
+import { museJSON, museText, modelFor } from "./muse";
 import { runNegotiation } from "./negotiation";
 import { agentContext, formatPrefs, redactPrivateValues } from "./privacy";
 import { candidateAsks, candidatePosts, trustSignals } from "./reach";
@@ -143,7 +143,7 @@ export async function runMatching(askInput: Ask, emitRaw: (e: MatchEvent) => voi
       postText: post.text,
       authorName: author.name,
     });
-    const ev = await museJSON({ model: "ember", effort: "low", system: ep.system, user: ep.user, schema: PostEvalSchema, mock: mockPostEval(post.id, me.id) });
+    const ev = await museJSON({ model: modelFor("posteval"), effort: "low", system: ep.system, user: ep.user, schema: PostEvalSchema, mock: mockPostEval(post.id, me.id) });
     const red = (s: string) => redactPrivateValues(s, ask.preferences);
     const verdict: Verdict = {
       compatible: ev.fit,
@@ -164,7 +164,7 @@ export async function runMatching(askInput: Ask, emitRaw: (e: MatchEvent) => voi
         postText: post.text,
         reasons: ev.reasons.join("; "),
       });
-      draftReply = red(await museText({ model: "spark", system: rp.system, user: rp.user, mock: mockReplyDraft(author.name.split(" ")[0], post.id) }));
+      draftReply = red(await museText({ model: modelFor("opener"), system: rp.system, user: rp.user, mock: mockReplyDraft(author.name.split(" ")[0], post.id) }));
     }
     const match: Match = {
       id: newId("match"),

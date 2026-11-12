@@ -2,7 +2,7 @@
 // Agents never send anything. The draft sits in the composer until the human edits/sends it.
 import { getMatch, getNegotiation, getPost, getThread, getUser, newId, saveMatch, saveThread, threadBetween } from "./db";
 import { mockOpener } from "./mocks";
-import { museText } from "./muse";
+import { museText, modelFor } from "./muse";
 import { openerPrompt } from "./prompts";
 import { redactPrivateValues } from "./privacy";
 import { getAsk } from "./db";
@@ -41,7 +41,7 @@ export async function openThreadForMatch(matchId: string, senderId: string): Pro
       summaryForHumans: match.verdict.summaryForHumans,
       recipientPrivate: recipientPrivate.filter((p) => p.visibility === "match_only").map((p) => p.value).join("; "),
     });
-    draft = await museText({ model: "spark", system: p.system, user: p.user, mock: mockOpener(sender.id, recipient.id, recipient.name.split(" ")[0]) });
+    draft = await museText({ model: modelFor("opener"), system: p.system, user: p.user, mock: mockOpener(sender.id, recipient.id, recipient.name.split(" ")[0]) });
   }
   const shield = [...recipientPrivate, ...(senderAsk?.preferences.filter((p) => p.visibility === "never") ?? [])];
   draft = redactPrivateValues(draft, shield);

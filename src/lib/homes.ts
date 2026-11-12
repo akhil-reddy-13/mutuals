@@ -8,7 +8,7 @@
 //   budgets  = compared in CODE per home (privacy.moneyRange), so no one's private max is ever shown
 import { allAsks, getUser, logAgentMessage, newId, saveAsk, saveMatch } from "./db";
 import type { MatchEvent } from "./match";
-import { museJSON } from "./muse";
+import { museJSON, modelFor } from "./muse";
 import { homesPrompt } from "./prompts";
 import { agentContext, formatPrefs, isShareable, moneyRange, redactPrivateValues } from "./privacy";
 import { trustSignals } from "./reach";
@@ -88,7 +88,7 @@ export async function runHomes(ask: Ask, emit: (e: MatchEvent) => void): Promise
   });
   const out =
     items.length && buyers.length
-      ? await museJSON({ model: "wonder", system: p.system, user: p.user, schema: HomesSchema, mock: mockHomes(items, buyers) })
+      ? await museJSON({ model: modelFor("homes"), system: p.system, user: p.user, schema: HomesSchema, mock: mockHomes(items, buyers) })
       : { homes: [] };
 
   // Validate: known buyers and items only, each item at most once.

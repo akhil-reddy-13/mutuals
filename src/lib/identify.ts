@@ -2,7 +2,7 @@
 //   Ember  (perception)     video frames + narration -> transcript + rough items        [lib/intake.ts]
 //   Spark  (identification) one item's best frame + what the seller said -> exact model + used price range  [here]
 // One Spark call per item, run in parallel by the client so each row updates as it lands.
-import { museJSON, type ContentPart } from "./muse";
+import { museJSON, type ContentPart, modelFor } from "./muse";
 import { identifyPrompt } from "./prompts";
 import { IdentifySchema } from "./schemas";
 import type { Item } from "./types";
@@ -16,7 +16,7 @@ export async function identifyItem(item: Item, transcript?: string, nearby: stri
     ...imgs.map((url) => ({ type: "image_url" as const, image_url: { url } })),
   ];
   const out = await museJSON({
-    model: "spark",
+    model: modelFor("identify"),
     effort: "low", // identification benefits from a little more thinking than chat turns
     system: p.system,
     user: parts,

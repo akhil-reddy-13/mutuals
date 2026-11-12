@@ -2,6 +2,9 @@
 import { allAsks, getGroup, getUser, postsInGroup } from "./db";
 import type { Ask, GroupPost, User } from "./types";
 
+/** Ask types that should meet each other. Models label housing as "roommate" or "sublet" interchangeably. */
+const family = (t: string) => (t === "sublet" ? "roommate" : t);
+
 /** Other members of the ask's Group who have Muse AND opted in for that Group, with an open ask of the same type. */
 export function candidateAsks(ask: Ask): { ask: Ask; user: User }[] {
   const me = getUser(ask.userId);
@@ -9,7 +12,7 @@ export function candidateAsks(ask: Ask): { ask: Ask; user: User }[] {
   if (!me || !group) return [];
   const latestPerUser = new Map<string, Ask>();
   for (const a of allAsks()) {
-    if (a.id === ask.id || a.userId === ask.userId || a.type !== ask.type || a.groupId !== ask.groupId) continue;
+    if (a.id === ask.id || a.userId === ask.userId || family(a.type) !== family(ask.type) || a.groupId !== ask.groupId) continue;
     // Items: someone looking meets someone offering, never another person looking (or two sellers).
     if (ask.type === "item" && (a.side ?? "offering") === (ask.side ?? "offering")) continue;
     const prev = latestPerUser.get(a.userId);

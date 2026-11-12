@@ -2,7 +2,7 @@
 // Called after every user message. Returns Muse's next line until `ready`.
 import { getAsk, getGroup, getUser, newId, saveAsk } from "./db";
 import { mockAskParse } from "./mocks";
-import { museJSON } from "./muse";
+import { modelFor, museJSON } from "./muse";
 import { askParsePrompt } from "./prompts";
 import { AskParseSchema } from "./schemas";
 import type { Ask, Preference } from "./types";
@@ -28,7 +28,7 @@ export async function parseAsk(a: { userId: string; groupId: string; askId?: str
   const p = askParsePrompt({ ownerName: user.name.split(" ")[0], groupName: group.name, conversation: convo });
   // Ember: this is a structured extraction every chat turn waits on, so latency matters most. Measured Nov 12:
   // Ember ~1.3 s vs Spark 9-23 s with comparable tags. MUSE_ASK_MODEL=spark switches back.
-  const model = process.env.MUSE_ASK_MODEL === "spark" ? "spark" : "ember";
+  const model = modelFor("ask");
   const out = await museJSON({ model, system: p.system, user: p.user, schema: AskParseSchema, mock: mockAskParse(user.id, convo) });
 
   const existing = a.askId ? getAsk(a.askId) : undefined;

@@ -5,7 +5,7 @@ import Avatar from "@/components/Avatar";
 import { MuseMark } from "@/components/icons";
 import { allAsks, getGroup, getUser } from "@/lib/db";
 import { mockDigest } from "@/lib/mocks";
-import { museJSON } from "@/lib/muse";
+import { modelFor, museJSON } from "@/lib/muse";
 import { digestPrompt } from "@/lib/prompts";
 import { DigestSchema } from "@/lib/schemas";
 import { currentUser } from "@/lib/session";
@@ -23,7 +23,7 @@ export default async function DigestPage() {
   });
   let cards = mockDigest.cards;
   try {
-    cards = (await museJSON({ model: "ember", system: p.system, user: p.user, schema: DigestSchema, mock: mockDigest })).cards;
+    cards = (await museJSON({ model: modelFor("digest"), system: p.system, user: p.user, schema: DigestSchema, mock: mockDigest })).cards;
   } catch {}
   const groupsWithMuse = me.groups.map((g) => getGroup(g)!).filter(Boolean);
 
