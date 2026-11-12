@@ -1,0 +1,313 @@
+Title: MUTUALS
+Credit: Demo video
+Author: Team Mutuals
+Source: Facebook Closer Together AI Hackathon
+Draft date: November 12, 2026
+Contact: docs/VIDEO.md
+
+/*
+  THIS SCREENPLAY IS THE VIDEO.
+  Edit it, then run:  node scripts/video/make.mjs   (re-records the video and re-renders the PDF)
+
+  Scene headings pick the kind of shot:
+    INT./EXT. <a real place> - <time>        live action. A storyboard frame until we film it.
+    INT. PHONE SCREEN - <screen>             the real app on the phone.
+    INT. MOTION GRAPHICS - <name>            type, numbers and bubbles. No phone.
+
+  Dialogue:
+    NARRATOR (V.O.)                          voiceover, captioned at the bottom.
+    JAMIE / RILEY / anyone                   in live action: spoken lines (placeholder voices until we film).
+    JAMIE  + (typing)  in a PHONE SCREEN     Jamie types that line into Muse. Muse's reply is real.
+
+  Action lines in PHONE SCREEN scenes. Anything in "quotes" after these words happens on the phone, in order:
+    opens "..."        a Group by name, "the full shortlist", or a path like "/digest"
+    taps "..."         the button or link with that text
+    scrolls to "..."   brings that text into view
+    "..." pops out     that piece of the app lifts out of the phone, enlarged
+    zooms in on "..."  the camera pushes in on it
+    uploads "..."      a video from scripts/video/assets/ into Muse's video step
+    waits for "..."    holds until that text appears
+  Other words are just for us. They don't do anything.
+
+  On-screen text (any scene):  SUPER: big statement   CAPTION: smaller line under it.
+  Words wrapped in ~tildes~ get the Muse gradient.
+
+  Notes in [[double brackets]]:
+    [[steps Tell | Match | Meet]]   the "How it works" stepper; [[step 2]] lights up step 2
+    [[network]]                     the Muse network: Jamie's Muse and everyone it's talking to, live
+    [[stat 23% | text | source]]    a big number that counts up, with a bubble chart
+    [[bubbles a | b | c]]           chat bubbles pop in all over the screen
+    [[secrets a | b | c]]           bubbles that blur behind a lock
+    [[logo]]                        the Mutuals mark
+    [[models]]                      the three Muse model cards
+    [[hold 1.5]]                    let the current line finish, then hold 1.5 seconds more
+    [[voice NAME: Voice]]           which macOS voice reads a character (say -v '?' lists them)
+    [[rate NAME: 215]]              how fast that character talks (words per minute)
+    [[music path/to/track.mp3]]     background music, ducked under the voices
+    [[captions off]]                no narration captions
+
+  Transitions: CUT TO:  DISSOLVE TO:  SMASH CUT TO:  MATCH CUT TO:  BUBBLE WIPE TO:  FADE OUT.
+  Scene numbers (#4#) are optional. Sections (# ACT ONE) are just structure.
+
+  Timing is script order: narration plays over whatever comes after it, and the next narration line waits for the one
+  before. Put a scene's SUPER and narration ahead of the actions they should play over.
+*/
+
+[[voice NARRATOR: Samantha]]
+[[voice RILEY: Reed (English (US))]]
+[[voice JAMIE: Eddy (English (US))]]
+[[rate RILEY: 215]]
+[[rate JAMIE: 215]]
+
+FADE IN:
+
+# ACT ONE: JAMIE
+
+INT. JAMIE'S DORM ROOM, STANFORD - NIGHT #1#
+
+Half-packed boxes. A laptop open to an offer letter: SWE Intern, Chicago, starts June 15. JAMIE (20) scrolls their phone. RILEY (20), their roommate, flops onto the other bed.
+
+RILEY
+Yo, there's a new feature on Facebook. Check it out.
+
+JAMIE
+(not looking up)
+Bro, nobody uses Facebook anymore. I'm on Insta, Snap, Beli, Hinge. Not tryna use another app.
+
+RILEY
+Aren't you tryna get housing this summer? For that McDonald's SWE internship?
+
+JAMIE
+I don't know anyone in Chicago. I was just gonna post on Marketplace and pray someone saves me.
+
+RILEY
+That's so chopped. Everyone who DMs me ghosts, or has no posts and no profile picture.
+(tosses Jamie the phone)
+Just set your Muse on it. Look.
+
+SMASH CUT TO:
+
+# ACT TWO: THE PROBLEM
+
+INT. MOTION GRAPHICS - THE NUMBERS #2#
+
+[[stat 23% | of Facebook users aged 18 to 34 use Marketplace every day. More than any other age group. | Capital One Shopping Research, Facebook Marketplace statistics]]
+
+NARRATOR (V.O.)
+Young people already come to Facebook to get real things done. Almost a quarter of us are on Marketplace every day.
+
+DISSOLVE TO:
+
+INT. MOTION GRAPHICS - THE FIRST CONVERSATION #3#
+
+[[bubbles is this still available? | what's your budget? | when can you move in? | any pets?? | are you even real | seen 3 days ago | sorry, it's taken | hello?]]
+
+NARRATOR (V.O.)
+But the first conversation is the worst part. The same questions, with strangers, over and over.
+
+DISSOLVE TO:
+
+INT. MOTION GRAPHICS - THE THINGS YOU'D NEVER POST #4#
+
+[[secrets my real max is $1,300 | I'm up at 5:30 every day | I'm allergic to cats]]
+
+NARRATOR (V.O.)
+And the things that decide it are the things nobody wants to post.
+
+[[hold 1.2]]
+
+BUBBLE WIPE TO:
+
+# ACT THREE: MUTUALS
+
+INT. MOTION GRAPHICS - TITLE #5#
+
+[[logo]]
+
+CAPTION: Your Muse talks to their Muse. You only have the conversations worth having.
+
+NARRATOR (V.O.)
+So we built Mutuals. Your Muse talks to their Muse, so you only have the conversations worth having.
+
+DISSOLVE TO:
+
+# ACT FOUR: HOW IT WORKS
+
+INT. PHONE SCREEN - CHICAGO SUMMER INTERNS 2027 #6#
+
+[[steps Tell | Match | Meet]]
+[[step 1]]
+
+SUPER: Tell your Muse what you'd ~never post~.
+
+Jamie opens "Chicago Summer Interns 2027" and taps "Ask Muse privately".
+
+NARRATOR (V.O.)
+Inside a Facebook Group, Jamie tells their Muse what they need. Even the stuff they'd never post.
+
+JAMIE
+(typing)
+I got a summer internship in Chicago and need a room near the West Loop from June 15 to Aug 21
+
+JAMIE
+(typing)
+I can do $1,100 a month, honestly up to $1,300 if I can walk to work, keep that private
+
+JAMIE
+(typing)
+I'm up at 5:30 for the gym before work, I'm allergic to cats so that's a dealbreaker, no smoking. Never share anything about my visa status.
+
+CUT TO:
+
+INT. PHONE SCREEN - JAMIE'S INTRO CARD - CONTINUOUS #7#
+
+[[step 1]]
+
+SUPER: Public. Match only. ~Never shared.~
+
+NARRATOR (V.O.)
+Every fact gets a tag. Public goes on the card. Match only is used to check fit, and never shown. Never shared never even reaches the model.
+
+Muse turns the chat into an intro card. "Budget ceiling" pops out, then "Visa status" pops out.
+
+CUT TO:
+
+INT. PHONE SCREEN - THE MUSE NETWORK - CONTINUOUS #8#
+
+[[step 2]]
+[[network]]
+
+SUPER: Your Muse has the ~awkward first conversation~.
+
+NARRATOR (V.O.)
+Jamie's Muse takes that card to every Muse in the Group. All at once.
+
+Jamie taps "Yes, check".
+
+NARRATOR (V.O.)
+Two Muse Spark agents talk it through, and Muse Wonder referees. Jamie's real ceiling never leaves the comparison.
+
+The Muses talk. Jamie waits for "people fit".
+
+CUT TO:
+
+INT. PHONE SCREEN - THE SHORTLIST - CONTINUOUS #9#
+
+[[step 2]]
+
+SUPER: Only the conversations ~worth having~.
+
+Jamie scrolls to "Why it fits". "One thing to talk about" pops out.
+
+NARRATOR (V.O.)
+Nora fits, with one thing to talk about. Dana isn't on Muse, so Jamie's Muse read her post. Diego has a cat, so the Muses stopped early.
+
+Jamie scrolls to "From their post in the Group", then scrolls to "Your Muse stopped early".
+
+MATCH CUT TO:
+
+INT. PHONE SCREEN - MORE THAN A LEASE - CONTINUOUS #10#
+
+[[step 3]]
+
+SUPER: More than a ~lease~.
+
+Jamie scrolls to "More than a lease". "More than a lease" pops out.
+
+NARRATOR (V.O.)
+When there's real overlap, Muse nudges them closer. They both run on Saturdays, and both bake sourdough.
+
+Jamie taps "Go together", then taps "Going".
+
+NARRATOR (V.O.)
+There's already a run club. Now they're both going.
+
+CUT TO:
+
+INT. PHONE SCREEN - MESSENGER #11#
+
+[[step 3]]
+
+SUPER: The agents ~never~ message anyone.
+
+Jamie opens "the full shortlist" and taps "Message Nora".
+
+NARRATOR (V.O.)
+The agents never message anyone. Jamie gets a draft, makes it theirs, and sends it.
+
+Muse has drafted the opener. Jamie taps "Send".
+
+DISSOLVE TO:
+
+# ACT FIVE: MOVING OUT
+
+INT. PHONE SCREEN - STANFORD FREE & FOR SALE #12#
+
+SUPER: Film it. Say ~what's for sale~.
+
+Jamie opens "Stanford Free & For Sale" and taps "Ask Muse privately".
+
+NARRATOR (V.O.)
+Moving out works the same way. Jamie films the desk and just talks.
+
+JAMIE
+(typing)
+Moving out of my dorm before Chicago, I want to sell my camera, my desk lamp and my mini fridge
+
+Jamie taps "Video", uploads "room.mp4", and taps "Catalog items".
+
+NARRATOR (V.O.)
+Muse Ember watches and listens. Muse Spark names each item, down to the model, with a fair price.
+
+Jamie waits for "identified each item" and scrolls to "Canon PowerShot". "Canon PowerShot" pops out.
+
+Jamie taps "on Marketplace".
+
+NARRATOR (V.O.)
+One tap, and it's listed.
+
+DISSOLVE TO:
+
+# ACT SIX: UNDER THE HOOD
+
+INT. MOTION GRAPHICS - HOW IT'S BUILT #13#
+
+[[models]]
+
+CAPTION: Never-shared facts never reach a prompt. Private numbers are compared in code, not by a model.
+
+NARRATOR (V.O.)
+Spark negotiates. Wonder referees. Ember sees and listens. And privacy lives in code.
+
+CUT TO:
+
+# ACT SEVEN: SATURDAY
+
+EXT. LAKEFRONT TRAIL, CHICAGO - SATURDAY, 7 A.M. #14#
+
+Sunrise over Lake Michigan. Jamie and Nora jog past Ohio Street Beach with the Lakefront Run Club. Nora is carrying a loaf of sourdough, for some reason.
+
+NARRATOR (V.O.)
+Jamie found a room. And on Saturdays, a running buddy.
+
+DISSOLVE TO:
+
+INT. MOTION GRAPHICS - END CARD #15#
+
+SUPER: You might have zero mutuals on Facebook today.
+
+NARRATOR (V.O.)
+You might have zero mutuals on Facebook today.
+
+[[hold 0.3]]
+
+[[logo]]
+
+CAPTION: Mutuals builds them for you.
+
+NARRATOR (V.O.)
+Mutuals builds them for you.
+
+[[hold 1.2]]
+
+FADE OUT.
