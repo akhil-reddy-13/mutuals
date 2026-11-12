@@ -26,6 +26,8 @@ You pick one. A Messenger thread opens with a drafted opener. From there humans 
 
 When two people have more in common than a lease, and both opted in, Muse suggests an existing Facebook Event. Most matches get no suggestion. That is the point.
 
+The same engine runs every Group ask. In SF New Grads, "going to beabadoobee, nobody to go with" gets Theo (has a ticket, driving back) and Lena (spare ticket) in one pass, with the private part being a ticket budget. In Free & For Sale, "need a ride to SFO Friday" is settled with Marcus in two turns. Big asks bring people in. Small weekly asks bring them back.
+
 ## How we built it
 
 Next.js 15 (App Router, TypeScript, Tailwind) on the Meta Model API through the OpenAI-compatible endpoint.

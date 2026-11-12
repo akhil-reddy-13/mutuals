@@ -8,7 +8,12 @@ import { leaks } from "../src/lib/privacy";
 import { museMode } from "../src/lib/muse";
 
 // `npm run demo -- plus_one` or `npm run demo -- ride` runs the other live flows through ask parsing first.
-const FLOWS: Record<string, { groupId: string; lines: string[] }> = {
+const FLOWS: Record<string, { groupId: string; lines: string[]; userId?: string }> = {
+  reverse: {
+    userId: "priya",
+    groupId: "g_housing27",
+    lines: ["Looking for a room in SF from early September", "Around $1,200 but I could stretch to $1,300 for the right place, keep that private. I'm up at 7 so I need quiet after 11."],
+  },
   plus_one: {
     groupId: "g_sfgrads",
     lines: [
@@ -33,7 +38,7 @@ async function main() {
     let askId: string | undefined;
     for (const line of FLOWS[flow].lines) {
       convo.push({ role: "user", text: line });
-      const out = await parseAsk({ userId: "alex", groupId: FLOWS[flow].groupId, askId, conversation: convo });
+      const out = await parseAsk({ userId: FLOWS[flow].userId ?? "alex", groupId: FLOWS[flow].groupId, askId, conversation: convo });
       askId = out.ask.id;
       console.log(`Muse: ${out.followUp ?? "(ready)"}  [${out.ask.type}, ${out.ask.preferences.length} prefs]`);
       if (out.followUp) convo.push({ role: "muse", text: out.followUp });
@@ -46,7 +51,7 @@ async function main() {
       if (e.type === "connection") console.log(`  [${e.candidateId}] connection: ${e.connection?.suggest ? `✨ ${e.connection.reason} → ${e.connection.eventId}` : "none"}`);
     });
     for (const m of matches.filter((m) => m.verdict.compatible)) {
-      const t = await openThreadForMatch(m.id, "alex");
+      const t = await openThreadForMatch(m.id, FLOWS[flow].userId ?? "alex");
       console.log(`  opener → ${m.candidateId}: ${t.draft?.text}`);
     }
     return;

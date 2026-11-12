@@ -127,9 +127,11 @@ export default function LiveMatching({ cands, meName, defaultOpen }: { cands: Li
                     <Typing />
                   </div>
                 )}
-                {done && c.mode === "agent_to_agent" && (
+                {done && (
                   <p className="px-1 pt-1 text-[11px] text-fb-muted">
-                    {meName}&apos;s private numbers never left the comparison. {firstName(c.name)}&apos;s are hidden here too.
+                    {c.mode === "agent_to_agent"
+                      ? `Two Muse Spark agents, one Muse Wonder referee. ${meName}'s private numbers never left the comparison. ${firstName(c.name)}'s are hidden here too.`
+                      : `Muse Ember read the post against your ask. Muse Spark drafted the reply. Nothing left your side.`}
                   </p>
                 )}
               </div>

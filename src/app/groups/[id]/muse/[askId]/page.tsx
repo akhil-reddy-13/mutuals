@@ -49,6 +49,9 @@ export default async function MatchesPage({ params }: { params: Promise<{ id: st
               <p className="mt-2 text-[13px] text-fb-muted">
                 Your Muse checked with {agentCount} {agentCount === 1 ? "Muse" : "Muses"} and read {postsInGroup(group.id).length} posts in this group. Nothing you marked private was shown to anyone.
               </p>
+              <p className="mt-1 text-[12px] text-fb-muted">
+                Muse Spark negotiated, Muse Wonder refereed and judged the connection, Muse Ember read the posts{ask.roomDetails ? " and your video" : ""}.
+              </p>
             </>
           ) : (
             <>

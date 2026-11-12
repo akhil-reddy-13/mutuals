@@ -11,6 +11,7 @@ import type {
   PostEvalOutput,
   RefereeOutput,
 } from "./schemas";
+import { getUser } from "./db";
 import type { Item } from "./types";
 
 const pair = (a: string, b: string) => [a, b].sort().join("|");
@@ -408,7 +409,7 @@ const GENERIC_TURN = (name: string, round: number, satisfied: boolean): AgentTur
   satisfied,
 });
 
-export function mockAgentTurn(ownerId: string, otherId: string, speaker: "A" | "B", round: number, askerId: string): AgentTurnOutput {
+export function mockAgentTurn(ownerId: string, otherId: string, speaker: "A" | "B", round: number, askerId: string, ctx?: { bothSeeking?: boolean }): AgentTurnOutput {
   const s = SCRIPTS[pair(ownerId, otherId)];
   if (s) {
     // Scripts are written with Alex as A. If Alex is B in this negotiation, swap.
@@ -417,20 +418,40 @@ export function mockAgentTurn(ownerId: string, otherId: string, speaker: "A" | "
     const turns = s[side];
     return turns[Math.min(round - 1, turns.length - 1)];
   }
-  return GENERIC_TURN(ownerId, round, round >= 2);
+  const name = getUser(ownerId)?.name.split(" ")[0] ?? ownerId;
+  if (ctx?.bothSeeking)
+    return {
+      message:
+        round === 1
+          ? `${name} is also looking for a room from September, not offering one. Unless either of us has a lead on a 2BR, this isn't a match on its own.`
+          : `${name} will keep looking. If a 2BR comes up, their Muse can check back.`,
+      disclosed: [],
+      positions: { rent: "n/a, both seeking" },
+      satisfied: round >= 2,
+    };
+  return GENERIC_TURN(name, round, round >= 2);
 }
 
-export function mockReferee(aId: string, bId: string): RefereeOutput {
-  return (
-    SCRIPTS[pair(aId, bId)]?.verdict ?? {
-      compatible: true,
-      score: 0.6,
-      fits: ["Dates line up", "Budgets overlap"],
-      disagreements: ["Not much discussed beyond terms"],
+export function mockReferee(aId: string, bId: string, ctx?: { bothSeeking?: boolean }): RefereeOutput {
+  const scripted = SCRIPTS[pair(aId, bId)]?.verdict;
+  if (scripted) return scripted;
+  if (ctx?.bothSeeking)
+    return {
+      compatible: false,
+      score: 0.2,
+      fits: ["Same move-in month"],
+      disagreements: ["Both are looking for a room. Neither has one to offer."],
       compromise: null,
-      summary_for_humans: "Looks workable. Worth a conversation.",
-    }
-  );
+      summary_for_humans: "Not a match on its own. Both of you are looking.",
+    };
+  return {
+    compatible: true,
+    score: 0.6,
+    fits: ["Dates line up", "Budgets overlap"],
+    disagreements: ["Not much discussed beyond terms"],
+    compromise: null,
+    summary_for_humans: "Looks workable. Worth a conversation.",
+  };
 }
 
 // ---------- connection judgment ----------
@@ -469,7 +490,10 @@ export function mockOpener(senderId: string, recipientId: string, recipientFirst
   return lines[k] ?? `hey ${recipientFirst}! my Muse thinks we might be a good fit on the room. want to talk this week?`;
 }
 
-export function mockPostEval(postId: string): PostEvalOutput {
+export function mockPostEval(postId: string, askerId = "alex"): PostEvalOutput {
+  // Casey is looking for a room. Her post fits someone OFFERING one (Alex), not another seeker.
+  if (postId === "post_casey_room" && askerId !== "alex")
+    return { fit: false, score: 0.15, reasons: [], concerns: ["Casey is also looking for a room"] };
   if (postId === "post_casey_show")
     return {
       fit: true,

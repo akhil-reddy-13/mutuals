@@ -117,7 +117,7 @@ export async function runMatching(askInput: Ask, emitRaw: (e: MatchEvent) => voi
       postText: post.text,
       authorName: author.name,
     });
-    const ev = await museJSON({ model: "ember", system: ep.system, user: ep.user, schema: PostEvalSchema, mock: mockPostEval(post.id) });
+    const ev = await museJSON({ model: "ember", system: ep.system, user: ep.user, schema: PostEvalSchema, mock: mockPostEval(post.id, me.id) });
     const red = (s: string) => redactPrivateValues(s, ask.preferences);
     const verdict: Verdict = {
       compatible: ev.fit,

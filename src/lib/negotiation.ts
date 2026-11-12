@@ -81,6 +81,8 @@ export async function runNegotiation(
     B: new Set(askB.preferences.filter(isShareable).map((p) => p.id)),
   };
 
+  // For the offline fallback only: two room-seekers are not a match on their own.
+  const mockCtx = { bothSeeking: askA.type === "roommate" && !askA.roomDetails && !askB.roomDetails };
   const negotiation: Negotiation = { id: newId("neg"), askAId: askA.id, askBId: askB.id, rounds: [], status: "running" };
   saveNegotiation(negotiation);
 
@@ -118,7 +120,7 @@ export async function runNegotiation(
         system: p.system,
         user: p.user,
         schema: AgentTurnSchema,
-        mock: mockAgentTurn(owner.id, other.id, side, round, userA.id),
+        mock: mockAgentTurn(owner.id, other.id, side, round, userA.id, mockCtx),
       });
       // Defense in depth: an agent can only "disclose" ids it was actually given, and a `never` value can never
       // be echoed (it was not in the context, but strip it anyway).
@@ -155,7 +157,7 @@ export async function runNegotiation(
 
   // One referee call, at the end (Wonder).
   const rp = refereePrompt({ aName: userA.name, bName: userB.name, transcript: transcript() });
-  const raw = await museJSON({ model: "wonder", system: rp.system, user: rp.user, schema: RefereeSchema, mock: mockReferee(userA.id, userB.id) });
+  const raw = await museJSON({ model: "wonder", system: rp.system, user: rp.user, schema: RefereeSchema, mock: mockReferee(userA.id, userB.id, mockCtx) });
   const verdict = sealVerdict(raw, askA, askB);
 
   const refereeTurn: NegotiationTurn = { speaker: "orchestrator", message: verdict.summaryForHumans, disclosed: [], positions: {} };
