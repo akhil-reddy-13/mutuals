@@ -26,7 +26,10 @@ export async function parseAsk(a: { userId: string; groupId: string; askId?: str
   if (!user || !group) throw new Error("unknown user/group");
   const convo = a.conversation.map((m) => `${m.role === "user" ? "User" : "Muse"}: ${m.text}`).join("\n");
   const p = askParsePrompt({ ownerName: user.name.split(" ")[0], groupName: group.name, conversation: convo });
-  const out = await museJSON({ model: "spark", system: p.system, user: p.user, schema: AskParseSchema, mock: mockAskParse(user.id, convo) });
+  // Ember: this is a structured extraction every chat turn waits on, so latency matters most. Measured Nov 12:
+  // Ember ~1.3 s vs Spark 9-23 s with comparable tags. MUSE_ASK_MODEL=spark switches back.
+  const model = process.env.MUSE_ASK_MODEL === "spark" ? "spark" : "ember";
+  const out = await museJSON({ model, system: p.system, user: p.user, schema: AskParseSchema, mock: mockAskParse(user.id, convo) });
 
   const existing = a.askId ? getAsk(a.askId) : undefined;
   // Keep any visibility edits the user already made in the chips.

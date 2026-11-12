@@ -30,6 +30,8 @@ const EFFORT: Record<MuseModel, string> = {
   ember: process.env.MUSE_EFFORT_EMBER ?? "minimal",
 };
 const effortUnsupported = new Set<MuseModel>();
+/** Wonder (referee, homes, connection) is time-boxed; past this it falls back to Spark. */
+const WONDER_TIMEOUT_MS = Number(process.env.MUSE_WONDER_TIMEOUT_MS ?? 20000);
 
 const MOCK = process.env.MOCK_MUSE === "true";
 /** Small pause per mocked call so streamed negotiations read as live during offline dev/demo. */
@@ -105,17 +107,25 @@ async function rawCall(model: MuseModel, messages: ChatMessage[], temperature: n
     try {
       const effort = effortOverride ?? EFFORT[model];
       const extra = effort !== "default" && !effortUnsupported.has(model) ? { reasoning_effort: effort } : {};
-      const res = await client().chat.completions.create({
-        model: id,
-        messages,
-        temperature,
-        ...(extra as object),
-      } as OpenAI.Chat.Completions.ChatCompletionCreateParamsNonStreaming);
+      const res = await client().chat.completions.create(
+        {
+          model: id,
+          messages,
+          temperature,
+          ...(extra as object),
+        } as OpenAI.Chat.Completions.ChatCompletionCreateParamsNonStreaming,
+        model === "wonder" ? { timeout: WONDER_TIMEOUT_MS, maxRetries: 0 } : undefined,
+      );
       const text = res.choices[0]?.message?.content ?? "";
       writeCache(key, id, text);
       return text;
     } catch (e) {
       lastErr = e;
+      // Wonder stalled: answer with Spark instead of hanging the chat (cached under Spark's key).
+      if (model === "wonder" && /timed? ?out|timeout/i.test(String((e as Error)?.message ?? e))) {
+        console.warn(`[muse] wonder timed out after ${WONDER_TIMEOUT_MS} ms, falling back to spark`);
+        return rawCall("spark", messages, temperature, fresh, mock, "low");
+      }
       // A model that rejects the effort value: stop sending it and retry immediately.
       if (/reasoning_effort/i.test(String((e as Error)?.message)) && !effortUnsupported.has(model)) {
         effortUnsupported.add(model);

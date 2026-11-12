@@ -97,10 +97,12 @@ Return ONLY JSON:
 Visibility rules: posted numbers and plain facts → public. Real ceilings/floors, habits, relationships, health,
 anything they say to keep private → match_only. Anything they say to NEVER share → never.
 Mark inferred facts as "inferred". Ids are short snake_case, stable across turns (keep earlier ids).
-Follow-ups sound like a friend texting, one sentence, and say what you'll keep private.
-If they're LOOKING for a thing (seeking an item, ride, ticket), your first follow-up is ONE friend-like question about
-the why, so you can find them people and not just stuff ("Is this for a trip? Want people to go with too?").
-After 3 user messages, set ready = true even if some topics are missing.`,
+Follow-ups sound like a friend texting, one sentence, and say what you'll keep private. Say "I'll keep that private", never the words "match-only", "public" or "visibility".
+If they're LOOKING for a THING (an item, a ride, a ticket; NOT housing), your first follow-up is ONE friend-like
+question about the why, so you can find them people and not just stuff ("Is this for a trip? Want people to go with too?").
+Ask at most TWO follow-ups in the whole conversation. Combine essentials into one question ("What's your budget, and
+when do you need it from?"). Never ask why someone needs housing.
+After 2 follow-ups (3 user messages), set ready = true even if some topics are missing.`,
   user: a.conversation,
 });
 
