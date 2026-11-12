@@ -86,3 +86,21 @@ MOCK_MUSE=true npm run demo              # roommate
 MOCK_MUSE=true npm run demo -- plus_one
 MOCK_MUSE=true npm run demo -- ride
 ```
+
+## Saved run: "June room → New in SF weekend runs" (Akhil's favorite, Nov 12)
+
+The run where Priya gets **More than a lease → "You're both new to SF and into weekend morning runs" → New in SF:
+Weekend Runs**, Sam is "Best match" with the move-in-timing talk, Jordan stops early, and Casey's post doesn't fit.
+
+Recreate it exactly:
+1. `npm run snapshot -- restore june-room-weekend-runs` (restores the cached Muse responses + the demo state). Code
+   at snapshot time: main `857ce27` + `fix/extension-hydration`. If prompts change later, check that commit out to
+   replay it word for word.
+2. To record it live from a clean slate instead: avatar menu → **Reset demo**, persona **Alex Kim**, open
+   **Stanford Housing '27 → Ask Muse privately**, then type exactly:
+   - tap the chip **Looking for a room**
+   - `$1200; first two weeks of June.`
+   - `I'm pretty clean and don't want a messy roomate; otherwise idc`  (keep the typo: inputs must match exactly)
+   - tap **Yes, check**
+3. On Priya's card: **More than a lease** → **Go together** → the Event → **Going**.
+

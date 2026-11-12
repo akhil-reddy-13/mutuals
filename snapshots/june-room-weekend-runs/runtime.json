@@ -1,0 +1,562 @@
+{
+  "asks": [
+    {
+      "id": "ask_bbhlghjt",
+      "userId": "alex",
+      "groupId": "g_housing27",
+      "type": "roommate",
+      "summary": "Looking for a room starting first two weeks of June, budget around $1200, clean and looking for a tidy roommate.",
+      "side": "seeking",
+      "preferences": [
+        {
+          "id": "budget",
+          "topic": "rent or budget",
+          "value": "$1200",
+          "importance": "high",
+          "visibility": "match_only",
+          "source": "stated",
+          "confirmed": true
+        },
+        {
+          "id": "move_in_date",
+          "topic": "move-in date",
+          "value": "first two weeks of June",
+          "importance": "high",
+          "visibility": "public",
+          "source": "stated",
+          "confirmed": true
+        },
+        {
+          "id": "cleanliness",
+          "topic": "cleanliness",
+          "value": "pretty clean, does not want a messy roommate",
+          "importance": "dealbreaker",
+          "visibility": "match_only",
+          "source": "stated",
+          "confirmed": true
+        }
+      ],
+      "createdAt": "2026-11-12T22:18:36.912Z",
+      "status": "matched"
+    }
+  ],
+  "matches": [
+    {
+      "id": "match_v1hso8qh",
+      "userId": "alex",
+      "candidateId": "casey",
+      "askId": "ask_bbhlghjt",
+      "mode": "one_sided",
+      "verdict": {
+        "compatible": false,
+        "score": 0.15,
+        "fits": [
+          "poster tidy matches cleanliness preference",
+          "budget close to user's"
+        ],
+        "disagreements": [
+          "both seeking a room, neither offering",
+          "Sept move-in vs June move-in"
+        ],
+        "compromise": null,
+        "summaryForHumans": "Casey's post doesn't fit."
+      },
+      "trustSignals": [
+        "Verified Stanford",
+        "Both in Stanford Housing '27",
+        "Both in SF New Grads 2026"
+      ],
+      "sourcePostId": "post_casey_room",
+      "createdAt": "2026-11-12T22:19:52.382Z"
+    },
+    {
+      "id": "match_ddsq59nv",
+      "userId": "alex",
+      "candidateId": "jordan",
+      "askId": "ask_bbhlghjt",
+      "mode": "agent_to_agent",
+      "verdict": {
+        "compatible": false,
+        "score": 0.2,
+        "fits": [
+          "cleanliness aligns, both tidy"
+        ],
+        "disagreements": [
+          "Budgets don't overlap",
+          "move-in timing differs",
+          "bringing a dog is non-negotiable"
+        ],
+        "compromise": null,
+        "summaryForHumans": "One thing to talk about: move-in timing differs, and budgets do not overlap. Cleanliness aligns, but rent and timing look blocked."
+      },
+      "trustSignals": [
+        "Verified Stanford",
+        "Both in Stanford Housing '27",
+        "Both in SF New Grads 2026"
+      ],
+      "negotiationId": "neg_fmrhvy0u",
+      "createdAt": "2026-11-12T22:19:55.253Z",
+      "connection": null
+    },
+    {
+      "id": "match_0iwn1oww",
+      "userId": "alex",
+      "candidateId": "sam",
+      "askId": "ask_bbhlghjt",
+      "mode": "agent_to_agent",
+      "verdict": {
+        "compatible": true,
+        "score": 0.85,
+        "fits": [
+          "budgets overlap",
+          "both clean and tidy",
+          "no pets",
+          "late gaming with headphones can work"
+        ],
+        "disagreements": [
+          "move-in timing: early summer vs mid-September",
+          "quiet hours: night owl gaming late"
+        ],
+        "compromise": "Start in June on a shorter initial term to test the fit, and agree on a quiet-hours cutoff for late gaming with headphones to test for a few weeks.",
+        "summaryForHumans": "One thing to talk about: move-in timing. Budgets and cleanliness line up, but the start date and late-night quiet hours need confirming."
+      },
+      "trustSignals": [
+        "Verified Stanford",
+        "Both in Stanford Housing '27"
+      ],
+      "negotiationId": "neg_btkp7jl7",
+      "createdAt": "2026-11-12T22:19:57.870Z",
+      "connection": null
+    },
+    {
+      "id": "match_dj4tqv07",
+      "userId": "alex",
+      "candidateId": "priya",
+      "askId": "ask_bbhlghjt",
+      "mode": "agent_to_agent",
+      "verdict": {
+        "compatible": true,
+        "score": 0.7,
+        "fits": [
+          "budgets overlap",
+          "cleanliness expectations align",
+          "quiet hours may work"
+        ],
+        "disagreements": [
+          "move-in timing: June vs September",
+          "cleanliness specifics to confirm",
+          "weeknight quiet hours to confirm"
+        ],
+        "compromise": "Humans decide if June-September gap can be bridged by one adjusting start date or finding interim cover, and confirm day-to-day cleanliness and earlier weeknight quiet hours.",
+        "summaryForHumans": "One thing to talk about: move-in timing. Budgets and cleanliness line up, but June vs September needs a human decision."
+      },
+      "trustSignals": [
+        "Verified Stanford",
+        "Both in Stanford Housing '27",
+        "Both in SF New Grads 2026",
+        "Both in Bay Area Runners",
+        "1 mutual friend"
+      ],
+      "negotiationId": "neg_l90p2fp7",
+      "createdAt": "2026-11-12T22:19:59.007Z",
+      "connection": {
+        "suggest": true,
+        "confidence": 0.92,
+        "reason": "You're both new to SF and into weekend morning runs, so this Saturday run could be a natural low-pressure way to meet.",
+        "activity": "New in SF: Weekend Runs",
+        "eventId": "evt_weekend_runs"
+      }
+    }
+  ],
+  "negotiations": [
+    {
+      "id": "neg_fmrhvy0u",
+      "askAId": "ask_bbhlghjt",
+      "askBId": "ask_jordan",
+      "rounds": [
+        {
+          "speaker": "A",
+          "message": "Hi Jordan, I'm Alex — I'm looking for a room starting in the first two weeks of June, and I'm pretty clean and don't want a messy roommate, which is a dealbreaker for me. I understand our budgets were compared privately and they do not overlap, so rent looks blocked on my side. Happy to let our humans decide if they want to explore any compromise, but I can't commit to a final agreement here.",
+          "disclosed": [
+            "move_in_date",
+            "budget",
+            "cleanliness"
+          ],
+          "positions": {
+            "rent": "budgets do not overlap",
+            "move_in_date": "first two weeks of June",
+            "cleanliness": "pretty clean, does not want a messy roommate (dealbreaker)"
+          }
+        },
+        {
+          "speaker": "B",
+          "message": "Hi Alex, thanks for sharing — I'm Jordan, pretty tidy myself so cleanliness sounds aligned. Our budgets were compared privately and do not overlap, so rent is blocked on my side too. I also need to flag plainly that I'm bringing my golden retriever and that's non-negotiable, and my move-in is September 1 rather than early June, so timing and pets may be blocked as well — happy for our humans to decide if they want to explore any compromise, but I can't commit to a final agreement here.",
+          "disclosed": [
+            "jordan_movein",
+            "jordan_dog",
+            "jordan_clean"
+          ],
+          "positions": {
+            "rent": "blocked - budgets do not overlap",
+            "move_in_date": "September 1, not early June",
+            "furniture_and_leftover_items": "not discussed",
+            "quiet_hours": "not discussed",
+            "guests": "not discussed",
+            "pets_and_dealbreakers": "bringing golden retriever, non-negotiable"
+          }
+        },
+        {
+          "speaker": "orchestrator",
+          "message": "One thing to talk about: move-in timing differs, and budgets do not overlap. Cleanliness aligns, but rent and timing look blocked.",
+          "disclosed": [],
+          "positions": {}
+        }
+      ],
+      "status": "done",
+      "verdict": {
+        "compatible": false,
+        "score": 0.2,
+        "fits": [
+          "cleanliness aligns, both tidy"
+        ],
+        "disagreements": [
+          "Budgets don't overlap",
+          "move-in timing differs",
+          "bringing a dog is non-negotiable"
+        ],
+        "compromise": null,
+        "summaryForHumans": "One thing to talk about: move-in timing differs, and budgets do not overlap. Cleanliness aligns, but rent and timing look blocked."
+      }
+    },
+    {
+      "id": "neg_btkp7jl7",
+      "askAId": "ask_bbhlghjt",
+      "askBId": "ask_sam",
+      "rounds": [
+        {
+          "speaker": "A",
+          "message": "Hi Sam, I'm Alex Kim and I'm looking for a room starting in the first two weeks of June. My budget numbers work with what you're looking for, and I'm pretty clean and looking for a tidy roommate. Could you share your thoughts on rent, quiet hours, and guests so we can see if we're a good fit?",
+          "disclosed": [
+            "move_in_date",
+            "budget",
+            "cleanliness"
+          ],
+          "positions": {
+            "move_in_date": "first two weeks of June",
+            "rent": "budget numbers work",
+            "cleanliness": "pretty clean, tidy roommate needed"
+          }
+        },
+        {
+          "speaker": "B",
+          "message": "Hi Alex, thanks for reaching out — the numbers work on rent, and I'm very clean so that part sounds like a good fit. One thing to flag: I'm looking to move in mid-September, though I'm flexible, so June would be early for me — could we discuss a compromise or timeline that works for both? I'm a night owl who games late with headphones, so I'd want to agree on quiet hours that let me stay up without disturbing you, and I have no pets.",
+          "disclosed": [
+            "sam_movein",
+            "sam_sleep",
+            "sam_clean",
+            "sam_pets"
+          ],
+          "positions": {
+            "rent": "Numbers work, no final commitment yet",
+            "move_in_date": "Mid-September, flexible — June is early, needs compromise discussion",
+            "quiet_hours": "Night owl, games late with headphones — propose specific quiet hours to agree",
+            "pets_and_dealbreakers": "No pets",
+            "guests": "Not yet discussed",
+            "furniture_and_leftover_items": "Not yet discussed"
+          }
+        },
+        {
+          "speaker": "A",
+          "message": "Thanks for sharing that — clean and tidy is a dealbreaker for me, so I'm glad that part aligns. June is important for me, so mid-September would be too late; could we try a compromise like starting in June and you could sublet or do a shorter initial term if needed, or would an earlier start be possible for you? For quiet hours, I'm happy to try a specific compromise where late gaming with headphones is fine as long as we agree on a cutoff time to test for a few weeks.",
+          "disclosed": [
+            "move_in_date",
+            "budget",
+            "cleanliness"
+          ],
+          "positions": {
+            "rent": "numbers work",
+            "move_in_date": "June needed, September too late, proposing compromise",
+            "quiet_hours": "proposing trial cutoff for late gaming",
+            "cleanliness": "tidy roommate required"
+          }
+        },
+        {
+          "speaker": "B",
+          "message": "Thanks for clarifying — I'm glad the clean and tidy fit works, and I have no pets. On timing, mid-September is my preference but I'm flexible, so I could try a June start on a shorter initial term to test it, though I can't commit to that yet for Sam to decide. For quiet hours, I'm happy to try late gaming with headphones with a cutoff we test for a few weeks, and we still need to discuss guests and any furniture or leftover items.",
+          "disclosed": [
+            "sam_movein",
+            "sam_sleep",
+            "sam_clean",
+            "sam_pets"
+          ],
+          "positions": {
+            "rent": "numbers work",
+            "move_in_date": "prefers mid-September, flexible to try June short term",
+            "furniture_and_leftover_items": "not discussed",
+            "quiet_hours": "night owl, late gaming with headphones, propose test cutoff",
+            "guests": "not discussed",
+            "pets_and_dealbreakers": "no pets, clean fit"
+          }
+        },
+        {
+          "speaker": "orchestrator",
+          "message": "One thing to talk about: move-in timing. Budgets and cleanliness line up, but the start date and late-night quiet hours need confirming.",
+          "disclosed": [],
+          "positions": {}
+        }
+      ],
+      "status": "done",
+      "verdict": {
+        "compatible": true,
+        "score": 0.85,
+        "fits": [
+          "budgets overlap",
+          "both clean and tidy",
+          "no pets",
+          "late gaming with headphones can work"
+        ],
+        "disagreements": [
+          "move-in timing: early summer vs mid-September",
+          "quiet hours: night owl gaming late"
+        ],
+        "compromise": "Start in June on a shorter initial term to test the fit, and agree on a quiet-hours cutoff for late gaming with headphones to test for a few weeks.",
+        "summaryForHumans": "One thing to talk about: move-in timing. Budgets and cleanliness line up, but the start date and late-night quiet hours need confirming."
+      }
+    },
+    {
+      "id": "neg_l90p2fp7",
+      "askAId": "ask_bbhlghjt",
+      "askBId": "ask_priya",
+      "rounds": [
+        {
+          "speaker": "A",
+          "message": "Hi Priya, I'm pre-negotiating for Alex Kim, who is looking for a room starting in the first two weeks of June. Alex's budget is around $1200 and the numbers work on our side, and Alex is pretty clean and does not want a messy roommate — that cleanliness point is a dealbreaker, so we'd need to confirm we're on the same page there. Could you share your thoughts on rent, move-in timing, and cleanliness expectations so Alex can decide?",
+          "disclosed": [
+            "move_in_date",
+            "budget",
+            "cleanliness"
+          ],
+          "positions": {
+            "rent": "budget around $1200, numbers work",
+            "move_in_date": "first two weeks of June",
+            "cleanliness": "pretty clean, does not want a messy roommate (dealbreaker)"
+          }
+        },
+        {
+          "speaker": "B",
+          "message": "Thanks for reaching out for Alex. On rent, Priya's budget is around a private number and the numbers work on our side. On cleanliness, Priya keeps common areas clean, so that should align with Alex's expectation, though Priya would want to confirm specifics. The timing is a mismatch to flag plainly: Alex is looking for June, but Priya is looking to move in early September, so we can't settle on a start date without the humans deciding if that gap works.",
+          "disclosed": [
+            "priya_budget",
+            "priya_movein",
+            "priya_clean"
+          ],
+          "positions": {
+            "rent": "Around a private number, numbers work",
+            "move_in_date": "Early September, conflicts with June start",
+            "cleanliness": "Clean common areas"
+          }
+        },
+        {
+          "speaker": "A",
+          "message": "Thanks for sharing that — glad to hear Priya keeps common areas clean, which lines up with Alex's pretty clean standard and no-messy-roommate dealbreaker, though we'd still want to confirm specifics on what clean means day-to-day. On rent, our budgets overlap so the numbers work. The move-in timing is the blocker to flag plainly: Alex is looking for the first two weeks of June and Priya is looking for early September, so we can't settle a start date here and the humans would need to decide if that gap works or not.",
+          "disclosed": [
+            "move_in_date",
+            "budget",
+            "cleanliness"
+          ],
+          "positions": {
+            "rent": "budgets overlap, numbers work",
+            "move_in_date": "June vs September mismatch, blocked pending humans deciding",
+            "cleanliness": "both clean, confirm specifics; Alex's no-messy-roommate is a dealbreaker"
+          }
+        },
+        {
+          "speaker": "B",
+          "message": "Thanks for confirming — on rent Priya's budget is around a private number and the numbers work on our side, and on cleanliness Priya keeps common areas clean, which should align with Alex's no-messy-roommate dealbreaker, though specifics would need confirming. The move-in timing remains a clear blocker to flag: Alex is looking for the first two weeks of June while Priya is looking for early September, so we can't settle a start date here. For day-to-day habits, Priya is up early on weekdays and keeps quiet after 11pm on weeknights, so we'd want to confirm that quiet-hours compromise works for Alex.",
+          "disclosed": [
+            "priya_budget",
+            "priya_clean",
+            "priya_movein",
+            "priya_quiet",
+            "priya_wake"
+          ],
+          "positions": {
+            "rent": "Around a private number, numbers work",
+            "move_in_date": "Early September vs Alex's June - blocked, humans to decide",
+            "cleanliness": "Clean common areas, aligns with dealbreaker, confirm specifics",
+            "quiet_hours": "Quiet after 11pm weeknights, up early weekdays"
+          }
+        },
+        {
+          "speaker": "orchestrator",
+          "message": "One thing to talk about: move-in timing. Budgets and cleanliness line up, but June vs September needs a human decision.",
+          "disclosed": [],
+          "positions": {}
+        }
+      ],
+      "status": "done",
+      "verdict": {
+        "compatible": true,
+        "score": 0.7,
+        "fits": [
+          "budgets overlap",
+          "cleanliness expectations align",
+          "quiet hours may work"
+        ],
+        "disagreements": [
+          "move-in timing: June vs September",
+          "cleanliness specifics to confirm",
+          "weeknight quiet hours to confirm"
+        ],
+        "compromise": "Humans decide if June-September gap can be bridged by one adjusting start date or finding interim cover, and confirm day-to-day cleanliness and earlier weeknight quiet hours.",
+        "summaryForHumans": "One thing to talk about: move-in timing. Budgets and cleanliness line up, but June vs September needs a human decision."
+      }
+    }
+  ],
+  "threads": [],
+  "listings": [],
+  "agentLog": [
+    {
+      "id": "log_zougpmmq",
+      "userId": "alex",
+      "negotiationId": "neg_l90p2fp7",
+      "counterpartId": "priya",
+      "message": "Hi Priya, I'm pre-negotiating for Alex Kim, who is looking for a room starting in the first two weeks of June. Alex's budget is around $1200 and the numbers work on our side, and Alex is pretty clean and does not want a messy roommate — that cleanliness point is a dealbreaker, so we'd need to confirm we're on the same page there. Could you share your thoughts on rent, move-in timing, and cleanliness expectations so Alex can decide?",
+      "disclosed": [
+        "move_in_date",
+        "budget",
+        "cleanliness"
+      ],
+      "at": "2026-11-12T22:19:51.708Z"
+    },
+    {
+      "id": "log_mp84afc6",
+      "userId": "alex",
+      "negotiationId": "neg_btkp7jl7",
+      "counterpartId": "sam",
+      "message": "Hi Sam, I'm Alex Kim and I'm looking for a room starting in the first two weeks of June. My budget numbers work with what you're looking for, and I'm pretty clean and looking for a tidy roommate. Could you share your thoughts on rent, quiet hours, and guests so we can see if we're a good fit?",
+      "disclosed": [
+        "move_in_date",
+        "budget",
+        "cleanliness"
+      ],
+      "at": "2026-11-12T22:19:51.880Z"
+    },
+    {
+      "id": "log_h205gnw2",
+      "userId": "alex",
+      "negotiationId": "neg_fmrhvy0u",
+      "counterpartId": "jordan",
+      "message": "Hi Jordan, I'm Alex — I'm looking for a room starting in the first two weeks of June, and I'm pretty clean and don't want a messy roommate, which is a dealbreaker for me. I understand our budgets were compared privately and they do not overlap, so rent looks blocked on my side. Happy to let our humans decide if they want to explore any compromise, but I can't commit to a final agreement here.",
+      "disclosed": [
+        "move_in_date",
+        "budget",
+        "cleanliness"
+      ],
+      "at": "2026-11-12T22:19:51.993Z"
+    },
+    {
+      "id": "log_sgsu4ce9",
+      "userId": "sam",
+      "negotiationId": "neg_btkp7jl7",
+      "counterpartId": "alex",
+      "message": "Hi Alex, thanks for reaching out — the numbers work on rent, and I'm very clean so that part sounds like a good fit. One thing to flag: I'm looking to move in mid-September, though I'm flexible, so June would be early for me — could we discuss a compromise or timeline that works for both? I'm a night owl who games late with headphones, so I'd want to agree on quiet hours that let me stay up without disturbing you, and I have no pets.",
+      "disclosed": [
+        "sam_movein",
+        "sam_sleep",
+        "sam_clean",
+        "sam_pets"
+      ],
+      "at": "2026-11-12T22:19:53.158Z"
+    },
+    {
+      "id": "log_wvs0s0x4",
+      "userId": "priya",
+      "negotiationId": "neg_l90p2fp7",
+      "counterpartId": "alex",
+      "message": "Thanks for reaching out for Alex. On rent, Priya's budget is around a private number and the numbers work on our side. On cleanliness, Priya keeps common areas clean, so that should align with Alex's expectation, though Priya would want to confirm specifics. The timing is a mismatch to flag plainly: Alex is looking for June, but Priya is looking to move in early September, so we can't settle on a start date without the humans deciding if that gap works.",
+      "disclosed": [
+        "priya_budget",
+        "priya_movein",
+        "priya_clean"
+      ],
+      "at": "2026-11-12T22:19:53.412Z"
+    },
+    {
+      "id": "log_awt0rs8d",
+      "userId": "jordan",
+      "negotiationId": "neg_fmrhvy0u",
+      "counterpartId": "alex",
+      "message": "Hi Alex, thanks for sharing — I'm Jordan, pretty tidy myself so cleanliness sounds aligned. Our budgets were compared privately and do not overlap, so rent is blocked on my side too. I also need to flag plainly that I'm bringing my golden retriever and that's non-negotiable, and my move-in is September 1 rather than early June, so timing and pets may be blocked as well — happy for our humans to decide if they want to explore any compromise, but I can't commit to a final agreement here.",
+      "disclosed": [
+        "jordan_movein",
+        "jordan_dog",
+        "jordan_clean"
+      ],
+      "at": "2026-11-12T22:19:53.989Z"
+    },
+    {
+      "id": "log_7pwybnu9",
+      "userId": "alex",
+      "negotiationId": "neg_btkp7jl7",
+      "counterpartId": "sam",
+      "message": "Thanks for sharing that — clean and tidy is a dealbreaker for me, so I'm glad that part aligns. June is important for me, so mid-September would be too late; could we try a compromise like starting in June and you could sublet or do a shorter initial term if needed, or would an earlier start be possible for you? For quiet hours, I'm happy to try a specific compromise where late gaming with headphones is fine as long as we agree on a cutoff time to test for a few weeks.",
+      "disclosed": [
+        "move_in_date",
+        "budget",
+        "cleanliness"
+      ],
+      "at": "2026-11-12T22:19:54.628Z"
+    },
+    {
+      "id": "log_i01qtrfh",
+      "userId": "alex",
+      "negotiationId": "neg_l90p2fp7",
+      "counterpartId": "priya",
+      "message": "Thanks for sharing that — glad to hear Priya keeps common areas clean, which lines up with Alex's pretty clean standard and no-messy-roommate dealbreaker, though we'd still want to confirm specifics on what clean means day-to-day. On rent, our budgets overlap so the numbers work. The move-in timing is the blocker to flag plainly: Alex is looking for the first two weeks of June and Priya is looking for early September, so we can't settle a start date here and the humans would need to decide if that gap works or not.",
+      "disclosed": [
+        "move_in_date",
+        "budget",
+        "cleanliness"
+      ],
+      "at": "2026-11-12T22:19:55.543Z"
+    },
+    {
+      "id": "log_5it5zbd8",
+      "userId": "sam",
+      "negotiationId": "neg_btkp7jl7",
+      "counterpartId": "alex",
+      "message": "Thanks for clarifying — I'm glad the clean and tidy fit works, and I have no pets. On timing, mid-September is my preference but I'm flexible, so I could try a June start on a shorter initial term to test it, though I can't commit to that yet for Sam to decide. For quiet hours, I'm happy to try late gaming with headphones with a cutoff we test for a few weeks, and we still need to discuss guests and any furniture or leftover items.",
+      "disclosed": [
+        "sam_movein",
+        "sam_sleep",
+        "sam_clean",
+        "sam_pets"
+      ],
+      "at": "2026-11-12T22:19:56.450Z"
+    },
+    {
+      "id": "log_40hfmcv3",
+      "userId": "priya",
+      "negotiationId": "neg_l90p2fp7",
+      "counterpartId": "alex",
+      "message": "Thanks for confirming — on rent Priya's budget is around a private number and the numbers work on our side, and on cleanliness Priya keeps common areas clean, which should align with Alex's no-messy-roommate dealbreaker, though specifics would need confirming. The move-in timing remains a clear blocker to flag: Alex is looking for the first two weeks of June while Priya is looking for early September, so we can't settle a start date here. For day-to-day habits, Priya is up early on weekdays and keeps quiet after 11pm on weeknights, so we'd want to confirm that quiet-hours compromise works for Alex.",
+      "disclosed": [
+        "priya_budget",
+        "priya_clean",
+        "priya_movein",
+        "priya_quiet",
+        "priya_wake"
+      ],
+      "at": "2026-11-12T22:19:57.459Z"
+    }
+  ],
+  "userOverrides": {
+    "alex": {
+      "museGroups": [
+        "g_housing27"
+      ]
+    }
+  },
+  "eventOverrides": {}
+}

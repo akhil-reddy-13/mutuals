@@ -14,7 +14,8 @@
     "dev:lan": "next dev -H 0.0.0.0",
     "demo": "tsx scripts/run-demo.ts",
     "demo:build": "NEXT_DIST_DIR=.next-demo next build",
-    "demo:start": "NEXT_DIST_DIR=.next-demo next start -p 3000"
+    "demo:start": "NEXT_DIST_DIR=.next-demo next start -p 3000",
+    "snapshot": "node scripts/snapshot.mjs"
   },
   "dependencies": {
     "@next/env": "^15.5.29",
