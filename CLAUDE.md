@@ -6,7 +6,7 @@ Hackathon project (Facebook Closer Together AI Hackathon). **Devpost deadline Fr
 ## Run
 ```
 npm install
-cp .env.example .env.local   # fill MUSE_API_KEY + MUSE_BASE_URL (dev.meta.ai quickstart)
+# Team key is in the committed .env (works out of the box). Personal overrides go in .env.local.
 npm run smoke                # 1 call per model; confirms key/base URL
 npm run dev                  # http://localhost:3000   (npm run dev:lan to open from phones)
 npm test                     # privacy tests (must always pass)

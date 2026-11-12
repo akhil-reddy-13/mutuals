@@ -82,7 +82,7 @@ Group composer ─► Muse sheet ─► POST /api/asks (Spark)  ─► POST /api
 
 ```bash
 npm install
-cp .env.example .env.local      # MUSE_API_KEY + MUSE_BASE_URL from dev.meta.ai
+cp .env.example .env.local      # add your MUSE_API_KEY (base URL: https://api.meta.ai/v1)
 npm run smoke                   # one tiny call per model: confirms key, base URL, model ids
 npm run dev                     # http://localhost:3000  (npm run dev:lan to open from phones)
 ```
