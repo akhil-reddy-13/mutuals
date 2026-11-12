@@ -1,0 +1,267 @@
+[
+  {
+    "id": "ask_alex_seed",
+    "userId": "alex",
+    "type": "roommate",
+    "summary": "Looking for a roommate in SF starting September",
+    "reach": "school",
+    "preferences": [
+      {
+        "id": "alex_budget_posted",
+        "topic": "budget",
+        "value": "$1,200/mo",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "alex_budget_max",
+        "topic": "budget_max",
+        "value": "Real max $1,350/mo",
+        "importance": "high",
+        "visibility": "match_only",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "alex_movein",
+        "topic": "move_in",
+        "value": "September 1",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "alex_sleep",
+        "topic": "sleep_schedule",
+        "value": "Night owl, usually up until 1am",
+        "importance": "medium",
+        "visibility": "match_only",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "alex_guests",
+        "topic": "guests",
+        "value": "Partner visits some weekends",
+        "importance": "medium",
+        "visibility": "match_only",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "alex_pets",
+        "topic": "pets",
+        "value": "Allergic to dogs — no dogs",
+        "importance": "dealbreaker",
+        "visibility": "match_only",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "alex_clean",
+        "topic": "cleanliness",
+        "value": "Tidy-ish, not spotless",
+        "importance": "low",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "alex_health",
+        "topic": "health",
+        "value": "Has a chronic condition, doesn't want it shared",
+        "importance": "low",
+        "visibility": "never",
+        "source": "stated",
+        "confirmed": true
+      }
+    ],
+    "createdAt": "2026-11-10T20:00:00Z"
+  },
+  {
+    "id": "ask_priya",
+    "userId": "priya",
+    "type": "roommate",
+    "summary": "Looking for a roommate in SF from September",
+    "reach": "school",
+    "preferences": [
+      {
+        "id": "priya_budget",
+        "topic": "budget",
+        "value": "$1,250–$1,400/mo",
+        "importance": "high",
+        "visibility": "match_only",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "priya_movein",
+        "topic": "move_in",
+        "value": "Early September",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "priya_quiet",
+        "topic": "quiet_hours",
+        "value": "Needs quiet after 11pm on weeknights (early job)",
+        "importance": "high",
+        "visibility": "match_only",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "priya_clean",
+        "topic": "cleanliness",
+        "value": "Clean common areas",
+        "importance": "medium",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "priya_guests",
+        "topic": "guests",
+        "value": "Occasional guests fine",
+        "importance": "low",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      }
+    ],
+    "createdAt": "2026-11-10T20:00:00Z"
+  },
+  {
+    "id": "ask_jordan",
+    "userId": "jordan",
+    "type": "roommate",
+    "summary": "Need a dog-friendly roommate in SF, Sept",
+    "reach": "school",
+    "preferences": [
+      {
+        "id": "jordan_budget",
+        "topic": "budget",
+        "value": "$1,250–$1,350/mo",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "jordan_movein",
+        "topic": "move_in",
+        "value": "September 1",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "jordan_dog",
+        "topic": "pets",
+        "value": "Bringing my golden retriever — non-negotiable",
+        "importance": "dealbreaker",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      }
+    ],
+    "createdAt": "2026-11-10T20:00:00Z"
+  },
+  {
+    "id": "ask_sam",
+    "userId": "sam",
+    "type": "roommate",
+    "summary": "Roommate for SF apartment, fall",
+    "reach": "school",
+    "preferences": [
+      {
+        "id": "sam_budget",
+        "topic": "budget",
+        "value": "Up to $1,300/mo",
+        "importance": "high",
+        "visibility": "match_only",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "sam_movein",
+        "topic": "move_in",
+        "value": "Mid-September, flexible",
+        "importance": "medium",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "sam_sleep",
+        "topic": "sleep_schedule",
+        "value": "Night owl, games late with headphones",
+        "importance": "low",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "sam_clean",
+        "topic": "cleanliness",
+        "value": "Very clean",
+        "importance": "medium",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      }
+    ],
+    "createdAt": "2026-11-10T20:00:00Z"
+  },
+  {
+    "id": "ask_maya_swap",
+    "userId": "maya",
+    "type": "skill_swap",
+    "summary": "Teach guitar in exchange for resume help",
+    "reach": "nearby",
+    "preferences": [],
+    "createdAt": "2026-11-07T20:00:00Z"
+  },
+  {
+    "id": "ask_theo_show",
+    "userId": "theo",
+    "type": "plus_one",
+    "summary": "Going to the beabadoobee show at the Fox in Dec, looking for people to go with",
+    "reach": "anyone",
+    "preferences": [],
+    "createdAt": "2026-11-08T20:00:00Z"
+  },
+  {
+    "id": "ask_lena_show",
+    "userId": "lena",
+    "type": "plus_one",
+    "summary": "Have an extra beabadoobee ticket",
+    "reach": "anyone",
+    "preferences": [],
+    "createdAt": "2026-11-09T20:00:00Z"
+  },
+  {
+    "id": "ask_marcus_sfo",
+    "userId": "marcus",
+    "type": "ride",
+    "summary": "Driving to SFO Friday 2pm, 2 seats",
+    "reach": "nearby",
+    "preferences": [],
+    "createdAt": "2026-11-10T20:00:00Z"
+  },
+  {
+    "id": "ask_dev_161",
+    "userId": "dev",
+    "type": "other",
+    "summary": "CS 161 study partners for the final",
+    "reach": "school",
+    "preferences": [],
+    "createdAt": "2026-11-10T20:00:00Z"
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "id": "g_housing27",
+    "name": "Stanford Housing '27",
+    "memberIds": [
+      "alex",
+      "priya",
+      "jordan",
+      "sam",
+      "casey"
+    ]
+  },
+  {
+    "id": "g_ffs",
+    "name": "Stanford Free & For Sale",
+    "memberIds": [
+      "alex",
+      "maya",
+      "theo",
+      "marcus",
+      "dev"
+    ]
+  },
+  {
+    "id": "g_sfgrads",
+    "name": "SF New Grads 2026",
+    "memberIds": [
+      "alex",
+      "priya",
+      "jordan",
+      "casey"
+    ]
+  },
+  {
+    "id": "g_runners",
+    "name": "Bay Area Runners",
+    "memberIds": [
+      "alex",
+      "priya"
+    ]
+  }
+]

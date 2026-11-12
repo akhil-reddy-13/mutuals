@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+!.env.example
+
+# muse response cache (local dev). Commit snapshots to seed/cache/ instead if needed for demo.
+.cache/

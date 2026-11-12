@@ -1,0 +1,400 @@
+[
+  {
+    "id": "alex",
+    "name": "Alex Kim",
+    "avatarUrl": "https://i.pravatar.cc/150?u=alex",
+    "school": "Stanford",
+    "schoolVerified": true,
+    "city": "San Francisco",
+    "groups": [
+      "g_housing27",
+      "g_ffs",
+      "g_sfgrads",
+      "g_runners"
+    ],
+    "friends": [
+      "maya",
+      "dev"
+    ],
+    "museEnabled": true,
+    "defaultReach": "school",
+    "connectionSuggestionsOptIn": true,
+    "interests": [
+      {
+        "value": "weekend morning runs",
+        "shareForConnection": true
+      },
+      {
+        "value": "new to SF",
+        "shareForConnection": true
+      },
+      {
+        "value": "indie music",
+        "shareForConnection": true
+      },
+      {
+        "value": "anime",
+        "shareForConnection": false
+      }
+    ],
+    "bio": "Stanford '26 → moving to SF in Sept for a job. Night owl."
+  },
+  {
+    "id": "priya",
+    "name": "Priya Shah",
+    "avatarUrl": "https://i.pravatar.cc/150?u=priya",
+    "school": "Stanford",
+    "schoolVerified": true,
+    "city": "San Francisco",
+    "groups": [
+      "g_housing27",
+      "g_sfgrads",
+      "g_runners"
+    ],
+    "friends": [
+      "maya"
+    ],
+    "museEnabled": true,
+    "defaultReach": "school",
+    "connectionSuggestionsOptIn": true,
+    "interests": [
+      {
+        "value": "weekend morning runs",
+        "shareForConnection": true
+      },
+      {
+        "value": "new to SF",
+        "shareForConnection": true
+      },
+      {
+        "value": "cooking",
+        "shareForConnection": true
+      },
+      {
+        "value": "climbing",
+        "shareForConnection": true
+      }
+    ],
+    "bio": "Stanford '26, starting at a startup in SoMa this fall."
+  },
+  {
+    "id": "jordan",
+    "name": "Jordan Lee",
+    "avatarUrl": "https://i.pravatar.cc/150?u=jordan",
+    "school": "Stanford",
+    "schoolVerified": true,
+    "city": "San Francisco",
+    "groups": [
+      "g_housing27",
+      "g_sfgrads"
+    ],
+    "friends": [],
+    "museEnabled": true,
+    "defaultReach": "school",
+    "connectionSuggestionsOptIn": true,
+    "interests": [
+      {
+        "value": "dogs",
+        "shareForConnection": true
+      },
+      {
+        "value": "hiking",
+        "shareForConnection": true
+      }
+    ],
+    "bio": "Moving to SF with my golden retriever, Biscuit."
+  },
+  {
+    "id": "sam",
+    "name": "Sam Rivera",
+    "avatarUrl": "https://i.pravatar.cc/150?u=sam",
+    "school": "Stanford",
+    "schoolVerified": true,
+    "city": "San Francisco",
+    "groups": [
+      "g_housing27"
+    ],
+    "friends": [],
+    "museEnabled": true,
+    "defaultReach": "school",
+    "connectionSuggestionsOptIn": false,
+    "interests": [
+      {
+        "value": "video games",
+        "shareForConnection": true
+      },
+      {
+        "value": "basketball",
+        "shareForConnection": true
+      }
+    ],
+    "bio": "Quiet, clean, works hybrid."
+  },
+  {
+    "id": "casey",
+    "name": "Casey Nguyen",
+    "avatarUrl": "https://i.pravatar.cc/150?u=casey",
+    "school": "Stanford",
+    "schoolVerified": true,
+    "city": "San Francisco",
+    "groups": [
+      "g_housing27",
+      "g_sfgrads"
+    ],
+    "friends": [],
+    "museEnabled": false,
+    "defaultReach": "school",
+    "connectionSuggestionsOptIn": true,
+    "interests": [],
+    "bio": ""
+  },
+  {
+    "id": "maya",
+    "name": "Maya Patel",
+    "avatarUrl": "https://i.pravatar.cc/150?u=maya",
+    "school": "Stanford",
+    "schoolVerified": true,
+    "city": "San Francisco",
+    "groups": [
+      "g_ffs"
+    ],
+    "friends": [
+      "alex",
+      "priya"
+    ],
+    "museEnabled": true,
+    "defaultReach": "school",
+    "connectionSuggestionsOptIn": true,
+    "interests": [
+      {
+        "value": "guitar",
+        "shareForConnection": true
+      },
+      {
+        "value": "songwriting",
+        "shareForConnection": true
+      }
+    ],
+    "bio": "Teaches guitar. Applying to internships."
+  },
+  {
+    "id": "theo",
+    "name": "Theo Park",
+    "avatarUrl": "https://i.pravatar.cc/150?u=theo",
+    "school": "Stanford",
+    "schoolVerified": true,
+    "city": "San Francisco",
+    "groups": [
+      "g_ffs"
+    ],
+    "friends": [],
+    "museEnabled": true,
+    "defaultReach": "school",
+    "connectionSuggestionsOptIn": true,
+    "interests": [
+      {
+        "value": "beabadoobee",
+        "shareForConnection": true
+      },
+      {
+        "value": "indie music",
+        "shareForConnection": true
+      },
+      {
+        "value": "vinyl",
+        "shareForConnection": true
+      }
+    ],
+    "bio": ""
+  },
+  {
+    "id": "lena",
+    "name": "Lena Brooks",
+    "avatarUrl": "https://i.pravatar.cc/150?u=lena",
+    "schoolVerified": false,
+    "city": "San Francisco",
+    "groups": [],
+    "friends": [],
+    "museEnabled": true,
+    "defaultReach": "school",
+    "connectionSuggestionsOptIn": true,
+    "interests": [
+      {
+        "value": "beabadoobee",
+        "shareForConnection": true
+      },
+      {
+        "value": "concerts",
+        "shareForConnection": true
+      }
+    ],
+    "bio": ""
+  },
+  {
+    "id": "rosa",
+    "name": "Rosa Diaz",
+    "avatarUrl": "https://i.pravatar.cc/150?u=rosa",
+    "schoolVerified": false,
+    "city": "San Francisco",
+    "groups": [],
+    "friends": [],
+    "museEnabled": true,
+    "defaultReach": "school",
+    "connectionSuggestionsOptIn": true,
+    "interests": [
+      {
+        "value": "vintage clothes",
+        "shareForConnection": true
+      },
+      {
+        "value": "thrifting",
+        "shareForConnection": true
+      }
+    ],
+    "bio": ""
+  },
+  {
+    "id": "kai",
+    "name": "Kai Tanaka",
+    "avatarUrl": "https://i.pravatar.cc/150?u=kai",
+    "schoolVerified": false,
+    "city": "San Francisco",
+    "groups": [],
+    "friends": [],
+    "museEnabled": true,
+    "defaultReach": "school",
+    "connectionSuggestionsOptIn": true,
+    "interests": [
+      {
+        "value": "vintage clothes",
+        "shareForConnection": true
+      },
+      {
+        "value": "denim",
+        "shareForConnection": true
+      }
+    ],
+    "bio": ""
+  },
+  {
+    "id": "nina",
+    "name": "Nina Okafor",
+    "avatarUrl": "https://i.pravatar.cc/150?u=nina",
+    "school": "Stanford",
+    "schoolVerified": true,
+    "city": "San Francisco",
+    "groups": [],
+    "friends": [],
+    "museEnabled": true,
+    "defaultReach": "school",
+    "connectionSuggestionsOptIn": true,
+    "interests": [
+      {
+        "value": "vintage clothes",
+        "shareForConnection": true
+      },
+      {
+        "value": "sewing",
+        "shareForConnection": true
+      }
+    ],
+    "bio": ""
+  },
+  {
+    "id": "omar",
+    "name": "Omar Haddad",
+    "avatarUrl": "https://i.pravatar.cc/150?u=omar",
+    "schoolVerified": false,
+    "city": "San Francisco",
+    "groups": [],
+    "friends": [],
+    "museEnabled": true,
+    "defaultReach": "school",
+    "connectionSuggestionsOptIn": true,
+    "interests": [
+      {
+        "value": "vintage clothes",
+        "shareForConnection": true
+      },
+      {
+        "value": "sneakers",
+        "shareForConnection": true
+      }
+    ],
+    "bio": ""
+  },
+  {
+    "id": "june",
+    "name": "June Liu",
+    "avatarUrl": "https://i.pravatar.cc/150?u=june",
+    "school": "Stanford",
+    "schoolVerified": true,
+    "city": "San Francisco",
+    "groups": [],
+    "friends": [],
+    "museEnabled": true,
+    "defaultReach": "school",
+    "connectionSuggestionsOptIn": true,
+    "interests": [
+      {
+        "value": "vintage clothes",
+        "shareForConnection": true
+      },
+      {
+        "value": "film photography",
+        "shareForConnection": true
+      }
+    ],
+    "bio": ""
+  },
+  {
+    "id": "marcus",
+    "name": "Marcus Bell",
+    "avatarUrl": "https://i.pravatar.cc/150?u=marcus",
+    "school": "Stanford",
+    "schoolVerified": true,
+    "city": "San Francisco",
+    "groups": [
+      "g_ffs"
+    ],
+    "friends": [],
+    "museEnabled": true,
+    "defaultReach": "school",
+    "connectionSuggestionsOptIn": true,
+    "interests": [
+      {
+        "value": "road trips",
+        "shareForConnection": true
+      }
+    ],
+    "bio": ""
+  },
+  {
+    "id": "dev",
+    "name": "Dev Mehta",
+    "avatarUrl": "https://i.pravatar.cc/150?u=dev",
+    "school": "Stanford",
+    "schoolVerified": true,
+    "city": "Stanford",
+    "groups": [
+      "g_ffs"
+    ],
+    "friends": [
+      "alex"
+    ],
+    "museEnabled": true,
+    "defaultReach": "school",
+    "connectionSuggestionsOptIn": true,
+    "interests": [
+      {
+        "value": "algorithms",
+        "shareForConnection": true
+      },
+      {
+        "value": "chess",
+        "shareForConnection": true
+      }
+    ],
+    "bio": ""
+  }
+]
