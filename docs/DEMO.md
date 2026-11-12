@@ -103,4 +103,9 @@ Recreate it exactly:
    - `I'm pretty clean and don't want a messy roomate; otherwise idc`  (keep the typo: inputs must match exactly)
    - tap **Yes, check**
 3. On Priya's card: **More than a lease** → **Go together** → the Event → **Going**.
+4. **Prove the Muses talked:** avatar menu → switch to **Priya Shah**. Her Home's first card is **"Alex's Muse talked
+   with yours in Stanford Housing '27"** (also in her Notifications). Tap it: both Muses side by side, every message
+   (Alex's private budget shows as "a private number" on her side), what they concluded, and which of *her*
+   preferences her Muse used. Say: "Nobody messaged Priya. Two separate Muses did this, each knowing only its own
+   person." Then **Message Alex** from her side.
 
