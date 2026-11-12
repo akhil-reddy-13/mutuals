@@ -60,6 +60,8 @@ export interface Ask {
   groupId: string;
   type: AskType;
   summary: string;
+  /** offering = has the room/items/seat; seeking = looking for one. Only offerers get the "show me" video step. */
+  side?: "offering" | "seeking";
   preferences: Preference[];
   roomDetails?: RoomDetails;
   items?: Item[];

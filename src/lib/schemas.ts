@@ -39,6 +39,8 @@ export const AskParseSchema = z.object({
       source: z.enum(["stated", "inferred"]),
     }),
   ),
+  /** offering = the user HAS the room / items / ticket / ride; seeking = they're looking for one. */
+  side: z.enum(["offering", "seeking"]).nullable().optional(),
   /** Muse's next conversational line. Present while key info is still missing. */
   follow_up_question: z.string().nullable().optional(),
   /** True when Muse has enough to search. */
