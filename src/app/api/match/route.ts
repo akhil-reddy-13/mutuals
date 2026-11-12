@@ -2,15 +2,23 @@
 // POST { askId }  -> { matches: Match[] } (same work, no stream; used by scripts).
 // Candidates run in parallel; see lib/match.ts.
 import { NextResponse } from "next/server";
-import { getAsk, optIntoGroup } from "@/lib/db";
+import { getAsk, optIntoGroup, saveAsk, updateUser } from "@/lib/db";
 import { runMatching } from "@/lib/match";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 120;
 
 export async function GET(req: Request) {
-  const askId = new URL(req.url).searchParams.get("askId") ?? "";
-  const ask = getAsk(askId);
+  const url = new URL(req.url);
+  const askId = url.searchParams.get("askId") ?? "";
+  const reachParam = url.searchParams.get("reach");
+  let ask = getAsk(askId);
+  // The opt-in choice: who this person's Muse may talk to. Saved on the ask and as their default.
+  if (ask && (reachParam === "network" || reachParam === "groups" || reachParam === "everyone")) {
+    ask = { ...ask, museReach: reachParam };
+    saveAsk(ask);
+    updateUser(ask.userId, { museReach: reachParam });
+  }
   if (!ask) return new Response("unknown ask", { status: 404 });
   optIntoGroup(ask.userId, ask.groupId); // starting a search is the opt-in for this Group
 
@@ -51,9 +59,14 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const { askId } = await req.json();
-  const ask = getAsk(askId);
+  const { askId, reach } = await req.json();
+  let ask = getAsk(askId);
   if (!ask) return NextResponse.json({ error: "unknown ask" }, { status: 404 });
+  if (reach === "network" || reach === "groups" || reach === "everyone") {
+    ask = { ...ask, museReach: reach };
+    saveAsk(ask);
+    updateUser(ask.userId, { museReach: reach });
+  }
   optIntoGroup(ask.userId, ask.groupId);
   const matches = await runMatching(ask);
   return NextResponse.json({ matches });

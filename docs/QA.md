@@ -93,11 +93,13 @@ our answer and the product would work this way. Never claim a Decision is built.
 - Big asks (a roommate) bring you in. Small weekly ones (a ride, a study partner, a show) and the daily digest bring
   you back. Events turn one exchange into something recurring.
 
-## Where does it search?
+## Where does it search? Who can my Muse talk to?
 
-- **Built:** Inside the Group you ask in. If nobody there fits, Muse says so and offers the Group where people do
-  ("4 people in Stanford Housing '27 might fit. Ask there?"). **Decision:** reach expands to your school, friends of
-  friends and nearby, with you choosing. (See PRD §3.1.)
+- **Built:** You choose when you opt in, per ask, with a live count of how many people's Muses each option reaches:
+  **People I'm connected with** (friends + friends of friends, most private), **People in my Groups** (recommended:
+  members of your Groups who turned Muse on), **Everyone nearby** (your school or city, widest). Your last choice is the
+  default next time. If nobody's in reach, Muse offers the next wider option. Private preferences stay private in
+  every option: reach only changes who Muse checks with. The shortlist and the Muse-to-Muse page show which reach was used.
 
 ---
 

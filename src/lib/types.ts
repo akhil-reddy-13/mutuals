@@ -19,6 +19,8 @@ export interface User {
   museEnabled: boolean;
   /** Groups where this user told Muse "yes, check with other Muses here". The opt-in is per Group. */
   museGroups: string[];
+  /** Last reach this person picked; the default next time. */
+  museReach?: MuseReach;
   connectionSuggestionsOptIn: boolean;
   interests: { value: string; shareForConnection: boolean }[];
   bio?: string;
@@ -67,6 +69,14 @@ export interface Item {
   frameIndex?: number;
 }
 
+/**
+ * Who your Muse may talk to, chosen when you opt in (and changeable per ask):
+ *   network  = people you're connected with (friends + friends of friends). Most private.
+ *   groups   = people in the Facebook Groups you're in who turned Muse on. The default.
+ *   everyone = anyone nearby with Muse on (same verified school or same city). Widest.
+ */
+export type MuseReach = "network" | "groups" | "everyone";
+
 export interface Ask {
   id: string;
   userId: string;
@@ -76,6 +86,8 @@ export interface Ask {
   summary: string;
   /** offering = has the room/items/seat; seeking = looking for one. Only offerers get the "show me" video step. */
   side?: "offering" | "seeking";
+  /** Who Muse checked with for this ask (see MuseReach). Missing = "groups". */
+  museReach?: MuseReach;
   preferences: Preference[];
   roomDetails?: RoomDetails;
   items?: Item[];

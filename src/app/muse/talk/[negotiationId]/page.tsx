@@ -9,6 +9,7 @@ import MessageButton from "@/components/muse/MessageButton";
 import { getAsk, getGroup, getNegotiation, getUser, matchesInvolving } from "@/lib/db";
 import { firstName } from "@/lib/format";
 import { publicSummary, redactPrivateValues } from "@/lib/privacy";
+import { REACH_LABEL, reachOf } from "@/lib/reach";
 import { currentUser } from "@/lib/session";
 import type { Preference } from "@/lib/types";
 
@@ -62,6 +63,7 @@ export default async function MuseTalkPage({ params }: { params: Promise<{ negot
           About {iStarted ? "your ask" : `${t1}'s ask`}: &ldquo;{iStarted ? askA.summary : publicSummary(askA)}&rdquo;
         </p>
         <p className="mt-2 text-center text-[13px] text-fb-muted">
+          {iStarted ? `You chose to let your Muse talk to ${REACH_LABEL[reachOf(askA)].toLowerCase()}. ` : `${t1} chose to let their Muse talk to ${REACH_LABEL[reachOf(askA)].toLowerCase()}. `}
           Two separate Muses. Each one only knew its own person&apos;s preferences. Nobody messaged {iStarted ? t1 : "you"} — this happened between the Muses.
         </p>
       </section>

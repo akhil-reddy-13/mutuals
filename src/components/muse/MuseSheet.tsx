@@ -9,12 +9,13 @@ import MatchCard from "../MatchCard";
 import type { EventInfo } from "../ConnectionCard";
 import IntakeCard from "./IntakeCard";
 import HomesCard from "./HomesCard";
+import ReachCard from "./ReachCard";
 import LiveMatching, { type LiveCandidate } from "./LiveMatching";
 import PrefChips from "./PrefChips";
 import VideoCapture from "./VideoCapture";
 import { firstName } from "@/lib/format";
 import type { MatchEvent } from "@/lib/match";
-import type { Ask, Group, Item, Match, Preference, RoomDetails, User } from "@/lib/types";
+import type { Ask, Group, Item, Match, MuseReach, Preference, RoomDetails, User } from "@/lib/types";
 
 export interface MuseSheetProps {
   me: Pick<User, "id" | "name" | "avatarUrl" | "museGroups">;
@@ -22,7 +23,7 @@ export interface MuseSheetProps {
   onClose: () => void;
 }
 
-type Card = "prefs" | "video" | "intake" | "matching" | "shortlist" | "homes";
+type Card = "prefs" | "video" | "intake" | "matching" | "shortlist" | "homes" | "reach";
 interface Msg {
   id: string;
   role: "muse" | "user";
@@ -30,7 +31,7 @@ interface Msg {
   card?: Card;
   // A name, not a callback, so the chat can be saved and resumed.
   // Serializable so the chat survives a reload (chat memory). "move" re-asks in another Group.
-  actions?: { label: string; primary?: boolean; act: "check" | "notnow" | "move"; groupId?: string; groupName?: string }[];
+  actions?: { label: string; primary?: boolean; act: "check" | "notnow" | "move" | "broaden"; groupId?: string; groupName?: string; reach?: MuseReach }[];
   chips?: string[];
 }
 
@@ -80,6 +81,13 @@ const GROUP_CHIPS: Record<string, string[]> = {
   g_runners: ["Looking for a weekend running buddy", "New in SF, want a run crew"],
 };
 const DEFAULT_CHIPS = ["I need something", "I'm selling something", "Looking for people to do something with"];
+
+/** How Muse says each reach out loud ("On it. Checking with people in your Groups."). */
+const REACH_TEXT: Record<MuseReach, string> = {
+  network: "people you're connected with",
+  groups: "people in your Groups",
+  everyone: "everyone nearby",
+};
 
 export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
   const router = useRouter();
@@ -259,12 +267,10 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
     const id = push({
       role: "muse",
       text: isSelling(askRef.current)
-        ? `Want me to check with people's Muses in ${group.name} and see who'd want these? I'll work out price and pickup with theirs, only say what's in your list, and you'll see everything I share.`
-        : `Want me to ask around ${group.name}? I'll check with people's Muses and read the posts. I only share what you said was OK, and you'll see everything I say.`,
-      actions: [
-        { label: "Yes, check", primary: true, act: "check" },
-        { label: "Not now", act: "notnow" },
-      ],
+        ? `Want me to check with other people's Muses and see who'd want these? I'll work out price and pickup with theirs, only say what's in your list, and you'll see everything I share. Who should I check with?`
+        : `Want me to check with other people's Muses? I only share what you said was OK, and you'll see everything I say. Who should I check with?`,
+      card: "reach",
+      actions: [{ label: "Not now", act: "notnow" }],
     });
     return id;
   }
@@ -346,7 +352,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
     push({ role: "muse", text: `Listed. "${listing.title}" is on Marketplace for $${listing.priceUsd}. I'll mention it to anyone whose Muse is looking for one.` });
   }
 
-  async function startMatching() {
+  async function startMatching(reach?: MuseReach) {
     const cur = askRef.current ?? ask;
     if (!cur) return;
     setCands([]);
@@ -354,7 +360,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
     const selling = isSelling(cur);
     push({
       role: "muse",
-      text: selling ? `On it. Asking around ${groupNameNow.current} for anyone who needs these.` : `On it. Asking around ${groupNameNow.current}. You can watch.`,
+      text: `On it. Checking with ${REACH_TEXT[reach ?? cur.museReach ?? "groups"]}${selling ? " for anyone who needs these" : ""}. You can watch.`,
       card: "matching",
     });
     // Selling: route exactly what the seller approved (Spark's model names, their edits), not Ember's first pass.
@@ -362,7 +368,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
     if (selling && latest?.items.length) {
       await fetch("/api/ask-items", { method: "POST", body: JSON.stringify({ askId: cur.id, items: latest.items }) }).catch(() => {});
     }
-    const es = new EventSource(`/api/match?askId=${cur.id}`);
+    const es = new EventSource(`/api/match?askId=${cur.id}${reach ? `&reach=${reach}` : ""}`);
     esRef.current = es;
     es.onmessage = (ev) => {
       const e = JSON.parse(ev.data) as MatchEvent;
@@ -381,18 +387,15 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
       } else if (e.type === "done" && e.matches.length === 0) {
         es.close();
         setMatches([]);
-        const best = e.elsewhere?.[0];
+        const best = e.broaden;
         const what = cur.type === "roommate" || cur.type === "sublet" ? "a room" : "this";
+        const here = REACH_TEXT[reach ?? cur.museReach ?? "groups"];
         push({
           role: "muse",
           text: best
-            ? `Nobody in ${groupNameNow.current} is looking for ${what} right now. ${best.people === 1 ? "One person" : `${best.people} people`} in ${best.name} might fit. Want me to ask there?`
-            : `Nobody in ${groupNameNow.current} fits yet. I'll keep an eye out and tell you when someone does.`,
-          actions: best
-            ? [
-                { label: `Ask in ${best.name}`, primary: true, act: "move" as const, groupId: best.groupId, groupName: best.name },
-              ]
-            : undefined,
+            ? `Nobody among ${here} is looking for ${what} right now. ${best.people === 1 ? "One person" : `${best.people} people`} in "${best.label}" might fit. Want me to check with them too?`
+            : `Nobody among ${here} fits yet. I'll keep an eye out and tell you when someone does.`,
+          actions: best ? [{ label: `Check ${best.label.toLowerCase()}`, primary: true, act: "broaden" as const, reach: best.reach }] : undefined,
         });
       } else if (e.type === "done" && selling) {
         es.close();
@@ -556,7 +559,16 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
                           key={a.label}
                           disabled={used.has(m.id)}
                           onClick={() =>
-                            runAction(m.id, a.act === "check" ? startMatching : a.act === "move" ? () => void moveTo(a.groupId!, a.groupName!) : notNow)
+                            runAction(
+                              m.id,
+                              a.act === "check"
+                                ? () => void startMatching()
+                                : a.act === "broaden"
+                                  ? () => void startMatching(a.reach)
+                                  : a.act === "move"
+                                    ? () => void moveTo(a.groupId!, a.groupName!)
+                                    : notNow,
+                            )
                           }
                           className={`${a.primary ? "fb-btn-primary" : "fb-btn-secondary"} h-9 disabled:opacity-50`}
                         >
@@ -610,6 +622,15 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
                   {m.card === "matching" && (
                     <div className="ml-8">
                       {cands.length === 0 ? (matches ? null : <div className="h-14 rounded-xl shimmer" />) : <LiveMatching cands={cands} meName={first} defaultOpen={firstAgent} />}
+                    </div>
+                  )}
+                  {m.card === "reach" && ask && (
+                    <div className="ml-8">
+                      <ReachCard
+                        askId={ask.id}
+                        disabled={used.has(m.id)}
+                        onPick={(r) => runAction(m.id, () => void startMatching(r))}
+                      />
                     </div>
                   )}
                   {m.card === "homes" && matches && (

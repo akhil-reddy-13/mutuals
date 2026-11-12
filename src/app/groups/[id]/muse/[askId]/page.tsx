@@ -8,7 +8,8 @@ import ConnectionCard, { type EventInfo } from "@/components/ConnectionCard";
 import MatchCard from "@/components/MatchCard";
 import HomesCard from "@/components/muse/HomesCard";
 import AskElsewhere from "@/components/muse/AskElsewhere";
-import { elsewhereFor } from "@/lib/match";
+import { broaderFor } from "@/lib/match";
+import { REACH_LABEL, reachOf } from "@/lib/reach";
 import { buyersFor } from "@/lib/homes";
 import { BackIcon, FeedIcon, MuseMark } from "@/components/icons";
 import { getAsk, getEvent, getGroup, getUser, matchesForAsk } from "@/lib/db";
@@ -110,6 +111,7 @@ export default async function MatchesPage({ params }: { params: Promise<{ id: st
               </div>
               {/* What Muse did, as scannable facts instead of a paragraph. */}
               <ul className="mt-3 flex flex-wrap gap-2 text-[13px] font-semibold">
+                <li className="inline-flex items-center gap-1.5 rounded-full bg-fb-blue-soft px-2.5 py-1 text-fb-blue">Checked with: {REACH_LABEL[reachOf(ask)]}</li>
                 <li className="inline-flex items-center gap-1.5 rounded-full bg-fb-bg px-2.5 py-1">
                   <MuseMark size={14} /> {agentCount} {agentCount === 1 ? "Muse" : "Muses"} checked
                 </li>
@@ -160,9 +162,9 @@ export default async function MatchesPage({ params }: { params: Promise<{ id: st
         (iAmAsker ? (
           <AskElsewhere
             askId={ask.id}
-            hereName={group.name}
+            hereLabel={REACH_LABEL[reachOf(ask)]}
             what={ask.type === "roommate" || ask.type === "sublet" ? "a room" : "this"}
-            best={elsewhereFor(ask)[0] ?? null}
+            best={broaderFor(ask)}
           />
         ) : (
           <section className="fb-card p-6 text-center text-fb-muted">Nothing here yet.</section>

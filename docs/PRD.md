@@ -149,9 +149,11 @@ Big asks (roommates) bring people in. Small weekly asks (rides, study partners, 
 
 ### 3.1 Opt-in and reach
 
-> **As built (Nov 12 handoff):** there is no settings page or reach selector. Muse lives inside a Facebook Group; the
-> opt-in is one question in the chat ("Want me to ask around Stanford Housing '27?"), scoped to that Group
-> (`User.museGroups`). Candidates come from that Group only. The original design is kept below for reference.
+> **As built (Nov 12):** no settings page. The opt-in is a card in the chat, "Who can my Muse talk to?", with three
+> options and a live count for each: **People I'm connected with** (friends + friends of friends), **People in my
+> Groups** (recommended; members of my Groups who turned Muse on there), **Everyone nearby** (same verified school or
+> city). Saved per ask (`Ask.museReach`) and as the person's default (`User.museReach`). If nobody is in reach, Muse
+> offers the next wider option. Private preferences stay private in every option. The original design is below.
 
 - **One toggle:** "Let my Muse talk to other Muses."
 - **One reach setting**, with a sensible default:

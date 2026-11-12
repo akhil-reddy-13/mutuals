@@ -6,26 +6,19 @@
 //   buyers   = open "seeking" item asks in this Group from people whose Muse is on here
 //   routing  = ONE Wonder call (judgment): which items fit whom, why (in human terms), optional real-overlap hook
 //   budgets  = compared in CODE per home (privacy.moneyRange), so no one's private max is ever shown
-import { allAsks, getUser, newId, saveAsk, saveMatch } from "./db";
+import { getUser, newId, saveAsk, saveMatch } from "./db";
 import type { MatchEvent } from "./match";
 import { museJSON, modelFor } from "./muse";
 import { runNegotiation } from "./negotiation";
 import { homesPrompt } from "./prompts";
 import { agentContext, formatPrefs, isShareable, moneyRange, redactPrivateValues } from "./privacy";
-import { trustSignals } from "./reach";
+import { candidateAsks, trustSignals } from "./reach";
 import { HomesSchema, type HomesOutput } from "./schemas";
 import type { Ask, Item, Match, User } from "./types";
 
 export function buyersFor(ask: Ask): { ask: Ask; user: User }[] {
-  const latest = new Map<string, Ask>();
-  for (const a of allAsks()) {
-    if (a.userId === ask.userId || a.groupId !== ask.groupId || a.type !== "item" || a.side !== "seeking") continue;
-    const prev = latest.get(a.userId);
-    if (!prev || prev.createdAt < a.createdAt) latest.set(a.userId, a);
-  }
-  return [...latest.values()]
-    .map((a) => ({ ask: a, user: getUser(a.userId)! }))
-    .filter(({ user }) => user && user.museEnabled && user.museGroups.includes(ask.groupId));
+  // People looking for something, inside the reach the seller picked (candidateAsks pairs sellers with seekers).
+  return candidateAsks(ask);
 }
 
 const itemLabel = (i: Item) => i.name;

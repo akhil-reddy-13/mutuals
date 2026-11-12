@@ -3,36 +3,32 @@
 //   candidatePosts -> one-sided: Ember scores the human post, Spark drafts a reply -> Match
 // Then one Wonder connection call per compatible match (both opted in). Events stream to the chat sheet.
 import { judgeConnection } from "./connection";
-import { getAsk, getEvent, getGroup, getUser, newId, saveAsk, saveMatch } from "./db";
+import { getAsk, getEvent, getUser, newId, saveAsk, saveMatch } from "./db";
 import { mockPostEval, mockReplyDraft } from "./mocks";
 import { museJSON, museText, modelFor } from "./muse";
 import { runNegotiation } from "./negotiation";
 import { agentContext, formatPrefs, redactPrivateValues } from "./privacy";
-import { candidateAsks, candidatePosts, trustSignals } from "./reach";
+import { REACH_LABEL, candidateAsks, candidatePosts, reachCounts, reachOf, trustSignals } from "./reach";
 import { PostEvalSchema } from "./schemas";
 import { postEvalPrompt, replyDraftPrompt } from "./prompts";
-import type { Ask, ConnectionSuggestion, Match, NegotiationTurn, Verdict } from "./types";
+import type { Ask, ConnectionSuggestion, Match, MuseReach, NegotiationTurn, Verdict } from "./types";
 
 export type MatchEvent =
   | { type: "start"; askId: string; candidates: { id: string; name: string; avatarUrl: string; mode: Match["mode"]; postId?: string }[] }
   | { type: "turn"; candidateId: string; turn: NegotiationTurn; disclosedMeta: { id: string; topic: string; visibility: string }[] }
   | { type: "verdict"; candidateId: string; match: Match }
   | { type: "connection"; candidateId: string; matchId: string; connection: ConnectionSuggestion | null; event: { id: string; name: string; when: string; where: string; going: number; coverEmoji: string } | null }
-  | { type: "done"; askId: string; matches: Match[]; elsewhere?: { groupId: string; name: string; people: number }[] }
+  | { type: "done"; askId: string; matches: Match[]; broaden?: { reach: MuseReach; label: string; people: number } | null }
   | { type: "error"; message: string };
 
-/** Other Groups I'm in where someone could fit this ask (people with Muse + posts from people without). */
-export function elsewhereFor(ask: Ask): { groupId: string; name: string; people: number }[] {
-  const me = getUser(ask.userId);
-  if (!me) return [];
-  return me.groups
-    .filter((g) => g !== ask.groupId)
-    .map((g) => {
-      const there = { ...ask, groupId: g };
-      return { groupId: g, name: getGroup(g)?.name ?? g, people: candidateAsks(there).length + candidatePosts(there).length };
-    })
-    .filter((x) => x.people > 0)
-    .sort((a, b) => b.people - a.people);
+/** Nobody in the reach I picked: the next wider reach that has people (network -> groups -> everyone), if any. */
+export function broaderFor(ask: Ask): { reach: MuseReach; label: string; people: number } | null {
+  const order: MuseReach[] = ["network", "groups", "everyone"];
+  const counts = reachCounts(ask);
+  for (const r of order.slice(order.indexOf(reachOf(ask)) + 1)) {
+    if (counts[r] > 0) return { reach: r, label: REACH_LABEL[r], people: counts[r] };
+  }
+  return null;
 }
 
 export function sortMatches(ms: Match[]): Match[] {
@@ -62,7 +58,7 @@ export async function runMatching(askInput: Ask, emitRaw: (e: MatchEvent) => voi
   if (agentCands.length === 0 && posts.filter((p) => p.groupId === ask.groupId).length === 0) {
     emit({ type: "start", askId: ask.id, candidates: [] });
     saveAsk({ ...ask, status: "matched" });
-    emit({ type: "done", askId: ask.id, matches: [], elsewhere: elsewhereFor(ask) });
+    emit({ type: "done", askId: ask.id, matches: [], broaden: broaderFor(ask) });
     return [];
   }
   emit({
