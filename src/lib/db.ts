@@ -54,21 +54,32 @@ const empty = (): Runtime => ({
   eventOverrides: {},
 });
 
-// Survive Next.js hot reloads in dev.
-const g = globalThis as unknown as { __mutualsRuntime?: Runtime };
+// Survive Next.js hot reloads in dev, AND pick up writes from other processes (npm run warm / demo / reset
+// from a terminal while the dev server runs): reload whenever the file's mtime changes.
+const g = globalThis as unknown as { __mutualsRuntime?: Runtime; __mutualsRuntimeMtime?: number };
+function fileMtime(): number {
+  try {
+    return fs.statSync(RUNTIME_FILE).mtimeMs;
+  } catch {
+    return 0;
+  }
+}
 function rt(): Runtime {
-  if (!g.__mutualsRuntime) {
+  const m = fileMtime();
+  if (!g.__mutualsRuntime || g.__mutualsRuntimeMtime !== m) {
     try {
       g.__mutualsRuntime = { ...empty(), ...JSON.parse(fs.readFileSync(RUNTIME_FILE, "utf8")) };
     } catch {
       g.__mutualsRuntime = empty();
     }
+    g.__mutualsRuntimeMtime = m;
   }
   return g.__mutualsRuntime!;
 }
 function persist() {
   fs.mkdirSync(path.dirname(RUNTIME_FILE), { recursive: true });
-  fs.writeFileSync(RUNTIME_FILE, JSON.stringify(rt(), null, 2));
+  fs.writeFileSync(RUNTIME_FILE, JSON.stringify(g.__mutualsRuntime ?? empty(), null, 2));
+  g.__mutualsRuntimeMtime = fileMtime();
 }
 
 export function resetRuntime() {

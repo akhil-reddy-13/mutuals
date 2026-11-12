@@ -1,0 +1,50 @@
+# Mutuals demo script (5 min live + 3 min Q&A)
+
+Two phones (or two browser windows), both on the dev server (`npm run dev:lan`, open the Network URL on each phone).
+Phone A is **Alex** (presenter). Phone B is **Priya** (teammate). Switch persona from the avatar menu, top right.
+
+## Before you go on
+
+```bash
+npm run warm        # only with a real key: pre-runs every hero call so the cache is hot (also resets state)
+# or, with no key / flaky wifi:
+MOCK_MUSE=true npm run dev
+```
+
+Then on Phone A: avatar menu → **Reset demo**. That clears asks, matches, threads and the opt-in.
+Open **Groups → Stanford Housing '27** on both phones. Phone B goes to Notifications later.
+
+## The lines Alex types (keep them exactly, the offline mock is scripted to them)
+
+1. `I signed a 2BR in the Mission from Sept 1 and need a roommate for the second bedroom`
+2. `Posting it at $1,350 but honestly I'd take $1,200 for the right person, keep that private`
+3. `I'm a night owl, my partner stays over some weekends, no dogs please. Don't share my health stuff ever.`
+
+## Beats
+
+| Time | Say | Do (Phone A unless noted) |
+|---|---|---|
+| 0:00 | Problem. Young adults need roommates, rides, sublets. Public posts make you overshare or hide what matters. Most of us barely have a Facebook network. | Show the Group feed: Casey's ISO post, Jordan's dog post. Scroll. |
+| 0:45 | "Meta described a Muse network for friends and family. We built the part for people you haven't met yet, inside the Groups you're already in." | Tap **Ask Muse privately** in the composer. |
+| 1:00 | "You tell your Muse the stuff you'd never post." | Type line 1, 2, 3. Point at the badges: **Public**, **Match only**, **Never shared**. Tap one badge to show it cycles. |
+| 1:45 | "Film the room. Ten seconds." | Record video (or Use photos). Room facts + leftover items appear. Tap **List on Marketplace**. |
+| 2:15 | "Now the part no search box can do." | Tap **Yes, check**. Watch Priya's negotiation stream. Point at the lock chips: match-only facts are used, never shown. Point at Priya's Muse saying "a private number". |
+| 2:50 | "Jordan: dealbreaker, the Muses stopped early. Casey has no Muse, so mine read her post and drafted a reply. Sam fits, nothing more." | Scroll the shortlist. Open **What my Muse shared with Priya**. |
+| 3:15 | "Then you talk. The agents never message anyone." | Tap **Message Priya**. The opener is pre-drafted. Send. |
+| 3:30 | **Phone B:** "Priya got a notification. Her view shows the same summary, never Alex's numbers." | Phone B: Notifications → the match → Messenger. Reply by hand. Phone A sees it (2s poll). |
+| 4:00 | "Most exchanges stay exchanges. Sam got no suggestion. Priya did." | Back on A: Priya's card → **More than a lease** → **Go together** → the Event. Tap **Going**. |
+| 4:30 | "Same engine, every small ask." | Open **Muse** (left rail or home tab) → digest: skill swap, plus one, SFO ride. |
+| 4:50 | "You might have zero mutuals on Facebook today. Mutuals builds them for you." | Closing slide. |
+
+## If something breaks
+
+- Stream stalls: close the sheet, tap the **N people fit your ask** row on the Group page. Matches are saved as they finish.
+- Wifi dies: restart with `MOCK_MUSE=true npm run dev`. Same lines, same results, no network.
+- Wrong persona on a phone: avatar menu → pick the right one.
+- Everything: **Reset demo** and start from line 1. The whole hero path takes about 90 seconds.
+
+## Honesty notes for Q&A
+
+- If the negotiation you showed was served from cache or mock, say so: "pre-run on Muse this morning, replayed because of venue wifi."
+- The numbers comparison (budgets overlap) is computed in code, not by the model. Say that proudly: it is the privacy guarantee.
+- Models: Spark for the two agents, openers and ask parsing; Wonder once per candidate as referee and once for the connection judgment; Ember for video frames, post reading and the digest.
