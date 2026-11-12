@@ -53,7 +53,10 @@ function client() {
 }
 
 /** Content part for multimodal (Ember) calls. Images as data URLs or https URLs. */
-export type ContentPart = { type: "text"; text: string } | { type: "image_url"; image_url: { url: string } };
+export type ContentPart =
+  | { type: "text"; text: string }
+  | { type: "image_url"; image_url: { url: string } }
+  | { type: "input_audio"; input_audio: { data: string; format: "wav" | "mp3" } };
 
 export interface MuseCall {
   model: MuseModel;

@@ -4,6 +4,48 @@
 import { useRef, useState } from "react";
 import { PhotoIcon, VideoCamIcon } from "../icons";
 
+/**
+ * Pull the spoken narration out of a video, in the browser: decode the audio track, downmix to mono, resample to
+ * 16 kHz, cap at 30 s, encode as WAV. ~0.5 MB for 15 s, vs. 20-50 MB for the whole video. Returns base64 (no
+ * prefix) or null when the video has no decodable audio (silent clip, unsupported codec): intake then runs on
+ * frames alone.
+ */
+async function audioFromVideo(file: File, maxSeconds = 30): Promise<string | null> {
+  try {
+    const Ctx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    const ctx = new Ctx();
+    const decoded = await ctx.decodeAudioData(await file.arrayBuffer());
+    void ctx.close();
+    const rate = 16000;
+    const seconds = Math.min(decoded.duration, maxSeconds);
+    if (seconds < 0.5) return null;
+    const off = new OfflineAudioContext(1, Math.ceil(seconds * rate), rate);
+    const src = off.createBufferSource();
+    src.buffer = decoded;
+    src.connect(off.destination);
+    src.start();
+    const pcm = (await off.startRendering()).getChannelData(0);
+    // Skip near-silent clips so Ember isn't asked to listen to nothing.
+    let peak = 0;
+    for (let i = 0; i < pcm.length; i += 64) peak = Math.max(peak, Math.abs(pcm[i]));
+    if (peak < 0.01) return null;
+    const buf = new ArrayBuffer(44 + pcm.length * 2);
+    const v = new DataView(buf);
+    const str = (o: number, s: string) => [...s].forEach((c, i) => v.setUint8(o + i, c.charCodeAt(0)));
+    str(0, "RIFF"); v.setUint32(4, 36 + pcm.length * 2, true); str(8, "WAVE"); str(12, "fmt ");
+    v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, rate, true);
+    v.setUint32(28, rate * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); str(36, "data");
+    v.setUint32(40, pcm.length * 2, true);
+    for (let i = 0; i < pcm.length; i++) v.setInt16(44 + i * 2, Math.max(-1, Math.min(1, pcm[i])) * 0x7fff, true);
+    const bytes = new Uint8Array(buf);
+    let bin = "";
+    for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+    return btoa(bin);
+  } catch {
+    return null;
+  }
+}
+
 async function framesFromVideo(file: File, max = 10): Promise<string[]> {
   const url = URL.createObjectURL(file);
   const video = document.createElement("video");
@@ -80,8 +122,9 @@ async function framesFromImages(files: File[], max = 10): Promise<string[]> {
   return out;
 }
 
-export default function VideoCapture({ onFrames, onSkip, disabled }: { onFrames: (frames: string[], narration: string) => void; onSkip: () => void; disabled?: boolean }) {
+export default function VideoCapture({ onFrames, onSkip, disabled }: { onFrames: (frames: string[], narration: string, audio: string | null) => void; onSkip: () => void; disabled?: boolean }) {
   const [frames, setFrames] = useState<string[]>([]);
+  const [audio, setAudio] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [narration, setNarration] = useState("");
@@ -93,8 +136,14 @@ export default function VideoCapture({ onFrames, onSkip, disabled }: { onFrames:
     setBusy(true);
     setErr(null);
     try {
-      const f = kind === "video" ? await framesFromVideo(files[0]) : await framesFromImages(Array.from(files));
-      setFrames(f);
+      if (kind === "video") {
+        const [f, a] = await Promise.all([framesFromVideo(files[0]), audioFromVideo(files[0])]);
+        setFrames(f);
+        setAudio(a);
+      } else {
+        setFrames(await framesFromImages(Array.from(files)));
+        setAudio(null);
+      }
     } catch (e) {
       setErr(e instanceof Error ? e.message : String(e));
     } finally {
@@ -135,18 +184,21 @@ export default function VideoCapture({ onFrames, onSkip, disabled }: { onFrames:
               <img key={i} src={f} alt="" className="h-16 w-24 shrink-0 rounded-md object-cover" />
             ))}
           </div>
-          <p className="mt-1.5 text-[12px] text-fb-muted">{frames.length} frames sampled on your phone. Only these go to Muse.</p>
+          <p className="mt-1.5 text-[12px] text-fb-muted">
+            {frames.length} frames{audio ? " + your narration" : ""} sampled on your device. Only these go to Muse.
+          </p>
           <input
+            key="narration"
             value={narration}
             onChange={(e) => setNarration(e.target.value)}
             placeholder="Anything to add? e.g. the desk can stay"
             className="mt-2 h-9 w-full rounded-full bg-fb-bg px-3 text-[14px] outline-none"
           />
           <div className="mt-2 flex gap-2">
-            <button onClick={() => setFrames([])} className="fb-btn-secondary h-9 flex-1">
+            <button onClick={() => { setFrames([]); setAudio(null); }} className="fb-btn-secondary h-9 flex-1">
               Retake
             </button>
-            <button onClick={() => onFrames(frames, narration)} disabled={disabled} className="fb-btn-primary h-9 flex-1">
+            <button onClick={() => onFrames(frames, narration, audio)} disabled={disabled} className="fb-btn-primary h-9 flex-1">
               Analyze room
             </button>
           </div>

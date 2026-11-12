@@ -3,7 +3,7 @@
 // Rule for every prompt that produces human-facing text: never print exact private numbers or times. Code
 // compares them (privacy.budgetsOverlap) and redacts them (privacy.redactPrivateValues) anyway.
 
-export const intakePrompt = (narration?: string) => ({
+export const intakePrompt = (narration?: string, hasAudio = false) => ({
   system: `You are analyzing frames from a short phone video of a room or a storage area.
 Return ONLY JSON, no prose, matching this schema:
 {
@@ -14,7 +14,12 @@ Return ONLY JSON, no prose, matching this schema:
 }
 Rules: list each distinct physical item once (dedupe across frames). Do not invent items you cannot see.
 Items are things the next tenant might want to buy or take (desk, fridge, lamp, shelf). Skip fixtures.
-If the user narrated, prefer their stated facts. Prices are for a used-item sale between students nearby.
+If the user narrated, prefer their stated facts. Prices are for a used-item sale between students nearby.${hasAudio ? `
+AUDIO: the user talked while filming. Their words are authoritative:
+- If they say which items they are selling or giving away, list ONLY those. Leave out anything they say is not for sale.
+- Use the exact brand, model or edition they state as brand_guess (e.g. "Fujifilm X100V, silver").
+- If they say a price or condition, use it. Match spoken references ("this table", "that one") to what is on screen
+  at that point in the video, using frame order as the timeline.` : ""}
 Notes are 2 to 4 short phrases a roommate would care about (light, floors, windows, lock, noise).`,
   userText: narration ? `User narration: ${narration}` : "No narration.",
 });

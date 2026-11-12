@@ -159,12 +159,12 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
     return id;
   }
 
-  async function onFrames(frames: string[], narration: string) {
+  async function onFrames(frames: string[], narration: string, audio: string | null = null) {
     if (!ask) return;
     setThinking(true);
-    push({ role: "user", text: `📹 ${frames.length} frames${narration ? ` · "${narration}"` : ""}` });
+    push({ role: "user", text: `📹 ${frames.length} frames${audio ? " + narration" : ""}${narration ? ` · "${narration}"` : ""}` });
     try {
-      const res = await fetch("/api/intake", { method: "POST", body: JSON.stringify({ frames, narration, askId: ask.id }) });
+      const res = await fetch("/api/intake", { method: "POST", body: JSON.stringify({ frames, narration, audio, askId: ask.id }) });
       const out = (await res.json()) as { room: RoomDetails | null; items: Item[]; error?: string };
       if (out.error) throw new Error(out.error);
       setIntake(out);
@@ -339,9 +339,9 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
                     <div className="ml-8">
                       <VideoCapture
                         disabled={thinking}
-                        onFrames={(f, n) => {
+                        onFrames={(f, n, a) => {
                           setUsed((s) => new Set(s).add(m.id));
-                          onFrames(f, n);
+                          onFrames(f, n, a);
                         }}
                         onSkip={() => {
                           setUsed((s) => new Set(s).add(m.id));
