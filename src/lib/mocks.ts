@@ -126,7 +126,7 @@ const SCRIPTS: Script = {
     B: [
       {
         message:
-          "Priya is looking from early September, so the 1st works. Her posted budget is around $1,200. She can go a little higher for the right place but not all the way to $1,350. Clean common areas matter to her. She starts work at 7am and needs quiet after 11pm on weeknights. No pets, and unfurnished is fine.",
+          "Priya is looking from early September, so the 1st works. Her posted budget is a bit under the asking rent. She can go a little higher for the right place but not all the way to $1,350. Clean common areas matter to her. She starts work at 7am and needs quiet after 11pm on weeknights. No pets, and unfurnished is fine.",
         disclosed: ["priya_movein", "priya_budget", "priya_budget_max", "priya_clean", "priya_quiet", "priya_pets", "priya_furniture"],
         positions: { rent: "around $1,200, can stretch some", quiet_hours: "quiet after 11pm weeknights", move_in: "early September" },
         satisfied: false,
