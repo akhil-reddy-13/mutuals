@@ -17,3 +17,7 @@ export function timeAgo(iso: string, now = new Date()): string {
 export function topicLabel(topic: string) {
   return topic.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
+export function compactCount(n: number) {
+  if (n >= 1000) return `${(n / 1000).toFixed(n % 1000 >= 100 && n < 10000 ? 1 : 0)}K`;
+  return String(n);
+}

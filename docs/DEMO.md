@@ -48,3 +48,30 @@ Open **Groups → Stanford Housing '27** on both phones. Phone B goes to Notific
 - If the negotiation you showed was served from cache or mock, say so: "pre-run on Muse this morning, replayed because of venue wifi."
 - The numbers comparison (budgets overlap) is computed in code, not by the model. Say that proudly: it is the privacy guarantee.
 - Models: Spark for the two agents, openers and ask parsing; Wonder once per candidate as referee and once for the connection judgment; Ember for video frames, post reading and the digest.
+
+## Other live flows (same engine, 20 to 40 seconds each)
+
+Use these as the "and it's not just housing" beat, or as a backup if the room video misbehaves. Reset first or they stack up in Notifications.
+
+**Plus-one.** Groups → **SF New Grads 2026** → Ask Muse privately.
+1. `Going to beabadoobee at the Fox on Dec 12 and nobody I know is going`
+2. `No ticket yet, I'd pay up to $70 for a spare but keep that private`
+3. `Drinks before would be fun, small group, and I don't have a car so I'd need a ride back to the Mission`
+
+Theo's Muse (has a ticket, driving back) and Lena's Muse (spare ticket) negotiate tickets, meeting point and the ride. Casey posted the same thing without Muse, so a reply is drafted. The connection card suggests Theo's pre-show Event. Line to say: "Same engine. The private part this time is a ticket budget."
+
+**Ride to SFO.** Groups → **Stanford Free & For Sale** → Ask Muse privately.
+1. `Need a ride to SFO Friday afternoon from the Mission`
+2. `Flight's at 5:10, one carry-on and a backpack, happy to split gas`
+
+Marcus's Muse settles it in two turns: 24th and Mission at 2pm, $10. Line to say: "Big asks bring people in. This is the kind of ask that brings them back every week."
+
+**Reverse roommate.** Switch to Priya, Stanford Housing '27, ask for a room. Alex's room comes up. Shows the other side of the same match.
+
+Terminal versions, for rehearsing without the UI:
+
+```bash
+MOCK_MUSE=true npm run demo              # roommate
+MOCK_MUSE=true npm run demo -- plus_one
+MOCK_MUSE=true npm run demo -- ride
+```

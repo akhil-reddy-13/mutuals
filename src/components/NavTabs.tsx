@@ -9,7 +9,7 @@ const TABS = [
   { key: "friends", href: "#", match: () => false, Icon: FriendsIcon, label: "Friends" },
   { key: "video", href: "#", match: () => false, Icon: VideoIcon, label: "Video" },
   { key: "market", href: "/marketplace", match: (p: string) => p.startsWith("/marketplace"), Icon: MarketplaceIcon, label: "Marketplace" },
-  { key: "groups", href: "/groups/g_housing27", match: (p: string) => p.startsWith("/groups"), Icon: GroupsIcon, label: "Groups" },
+  { key: "groups", href: "/groups", match: (p: string) => p.startsWith("/groups"), Icon: GroupsIcon, label: "Groups" },
 ];
 
 export function DesktopTabs() {
@@ -38,7 +38,7 @@ export function MobileTabs({ notifCount }: { notifCount: number }) {
   const path = usePathname();
   const tabs = [
     ...TABS.slice(0, 4),
-    { key: "groups", href: "/groups/g_housing27", match: (p: string) => p.startsWith("/groups"), Icon: GroupsIcon, label: "Groups" },
+    { key: "groups", href: "/groups", match: (p: string) => p.startsWith("/groups"), Icon: GroupsIcon, label: "Groups" },
     { key: "bell", href: "/notifications", match: (p: string) => p.startsWith("/notifications"), Icon: BellIcon, label: "Notifications" },
     { key: "menu", href: "#", match: () => false, Icon: MenuIcon, label: "Menu" },
   ].filter((t) => t.key !== "friends");

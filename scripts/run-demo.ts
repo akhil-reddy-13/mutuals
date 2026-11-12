@@ -7,9 +7,50 @@ import { openThreadForMatch } from "../src/lib/messenger";
 import { leaks } from "../src/lib/privacy";
 import { museMode } from "../src/lib/muse";
 
+// `npm run demo -- plus_one` or `npm run demo -- ride` runs the other live flows through ask parsing first.
+const FLOWS: Record<string, { groupId: string; lines: string[] }> = {
+  plus_one: {
+    groupId: "g_sfgrads",
+    lines: [
+      "Going to beabadoobee at the Fox on Dec 12 and nobody I know is going",
+      "No ticket yet, I'd pay up to $70 for a spare but keep that private",
+      "Drinks before would be fun, small group, and I don't have a car so I'd need a ride back to the Mission",
+    ],
+  },
+  ride: {
+    groupId: "g_ffs",
+    lines: ["Need a ride to SFO Friday afternoon from the Mission", "Flight's at 5:10, one carry-on and a backpack, happy to split gas"],
+  },
+};
+
 async function main() {
   process.env.MOCK_DELAY_MS ??= "0";
   console.log(`muse mode: ${museMode()}`);
+  const flow = process.argv[2];
+  if (flow && FLOWS[flow]) {
+    const { parseAsk } = await import("../src/lib/asks");
+    const convo: { role: "user" | "muse"; text: string }[] = [];
+    let askId: string | undefined;
+    for (const line of FLOWS[flow].lines) {
+      convo.push({ role: "user", text: line });
+      const out = await parseAsk({ userId: "alex", groupId: FLOWS[flow].groupId, askId, conversation: convo });
+      askId = out.ask.id;
+      console.log(`Muse: ${out.followUp ?? "(ready)"}  [${out.ask.type}, ${out.ask.preferences.length} prefs]`);
+      if (out.followUp) convo.push({ role: "muse", text: out.followUp });
+    }
+    const ask = getAsk(askId!)!;
+    const matches = await runMatching(ask, (e) => {
+      if (e.type === "start") console.log(`→ candidates: ${e.candidates.map((c) => `${c.name} (${c.mode})`).join(", ")}`);
+      if (e.type === "turn") console.log(`  [${e.candidateId}] ${e.turn.speaker}: ${e.turn.message.slice(0, 100)}`);
+      if (e.type === "verdict") console.log(`  [${e.candidateId}] VERDICT ${e.match.verdict.compatible ? "✅" : "❌"} ${e.match.verdict.summaryForHumans}`);
+      if (e.type === "connection") console.log(`  [${e.candidateId}] connection: ${e.connection?.suggest ? `✨ ${e.connection.reason} → ${e.connection.eventId}` : "none"}`);
+    });
+    for (const m of matches.filter((m) => m.verdict.compatible)) {
+      const t = await openThreadForMatch(m.id, "alex");
+      console.log(`  opener → ${m.candidateId}: ${t.draft?.text}`);
+    }
+    return;
+  }
   if (process.env.RESET === "1") resetRuntime();
   else console.log("(not resetting the runtime store; RESET=1 to wipe it. Matches dedupe by latest run.)");
   const ask = getAsk("ask_alex_seed")!;

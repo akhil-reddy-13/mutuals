@@ -18,6 +18,9 @@ const pair = (a: string, b: string) => [a, b].sort().join("|");
 // ---------- ask parsing (chat sheet) ----------
 export function mockAskParse(ownerId: string, conversation: string): AskParseOutput {
   const userTurns = (conversation.match(/^User:/gm) ?? []).length;
+  const firstLine = conversation.split("\n").find((l) => l.startsWith("User:"))?.toLowerCase() ?? "";
+  if (/show|concert|beabadoobee|ticket|gig/.test(firstLine)) return mockPlusOneParse(userTurns);
+  if (/sfo|airport|ride|drive|driving|lift/.test(firstLine)) return mockRideParse(userTurns);
   if (ownerId === "alex") {
     const base = {
       ask_type: "roommate" as const,
@@ -77,6 +80,54 @@ export function mockAskParse(ownerId: string, conversation: string): AskParseOut
       { id: "budget", topic: "budget", value: "Around $1,200/mo", importance: "high", visibility: "public", source: "stated" },
       { id: "budget_max", topic: "budget_max", value: "Could stretch to $1,300/mo", importance: "high", visibility: "match_only", source: "stated" },
       { id: "move_in", topic: "move_in", value: "September", importance: "high", visibility: "public", source: "inferred" },
+    ],
+    follow_up_question: null,
+    ready: true,
+  };
+}
+
+
+function mockPlusOneParse(userTurns: number): AskParseOutput {
+  const base = { ask_type: "plus_one" as const, summary: "Going to beabadoobee at the Fox on Dec 12, looking for people to go with" };
+  const ev = { id: "alex_event", topic: "event", value: "beabadoobee at the Fox Theater, Oakland, Dec 12", importance: "high" as const, visibility: "public" as const, source: "stated" as const };
+  if (userTurns <= 1)
+    return { ...base, preferences: [ev], follow_up_question: "Fun, that show's going to be good. Do you have a ticket yet, and if someone has a spare, what's your max? I'll keep the number private.", ready: false };
+  const t2 = [
+    ev,
+    { id: "alex_ticket", topic: "ticket", value: "Doesn't have a ticket yet", importance: "high" as const, visibility: "public" as const, source: "stated" as const },
+    { id: "alex_ticket_budget", topic: "ticket_budget", value: "Up to $70 for a spare", importance: "high" as const, visibility: "match_only" as const, source: "stated" as const },
+  ];
+  if (userTurns === 2) return { ...base, preferences: t2, follow_up_question: "Got it, $70 stays between us. Last one: how do you want the night to go? Drinks before, straight to the show, and do you need a ride back?", ready: false };
+  return {
+    ...base,
+    preferences: [
+      ...t2,
+      { id: "alex_meet", topic: "meeting_plan", value: "Drinks before works, doors at 7:30", importance: "medium" as const, visibility: "public" as const, source: "stated" as const },
+      { id: "alex_group", topic: "group_size", value: "Small group, not a date", importance: "medium" as const, visibility: "public" as const, source: "stated" as const },
+      { id: "alex_ride", topic: "ride_home", value: "No car, needs a ride or BART back to the Mission", importance: "medium" as const, visibility: "match_only" as const, source: "stated" as const },
+    ],
+    follow_up_question: null,
+    ready: true,
+  };
+}
+
+function mockRideParse(userTurns: number): AskParseOutput {
+  const base = { ask_type: "ride" as const, summary: "Need a ride to SFO on Friday afternoon from the Mission" };
+  if (userTurns <= 1)
+    return {
+      ...base,
+      preferences: [{ id: "alex_dest", topic: "destination", value: "SFO, Friday afternoon", importance: "high" as const, visibility: "public" as const, source: "stated" as const }],
+      follow_up_question: "Easy one. What time's your flight, and how much are you bringing?",
+      ready: false,
+    };
+  return {
+    ...base,
+    preferences: [
+      { id: "alex_dest", topic: "destination", value: "SFO, Friday afternoon", importance: "high" as const, visibility: "public" as const, source: "stated" as const },
+      { id: "alex_flight", topic: "flight", value: "Flight at 5:10pm Friday, wants to be there by 3", importance: "high" as const, visibility: "public" as const, source: "stated" as const },
+      { id: "alex_bags", topic: "luggage", value: "One carry-on and a backpack", importance: "low" as const, visibility: "public" as const, source: "stated" as const },
+      { id: "alex_gas", topic: "cost", value: "Happy to split gas", importance: "medium" as const, visibility: "public" as const, source: "stated" as const },
+      { id: "alex_early", topic: "flexibility", value: "Could leave as early as 1pm", importance: "low" as const, visibility: "match_only" as const, source: "stated" as const },
     ],
     follow_up_question: null,
     ready: true,
@@ -225,6 +276,105 @@ const SCRIPTS: Script = {
   },
 };
 
+const ALEX_SHOW_OPEN: AgentTurnOutput = {
+  message:
+    "Alex is going to beabadoobee at the Fox on the 12th, no ticket yet, and would rather go with a few people than solo. Drinks before works, and Alex doesn't have a car. What's your side's plan?",
+  disclosed: ["alex_event", "alex_ticket", "alex_meet", "alex_group"],
+  positions: { tickets: "needs one", meeting_plan: "drinks before, doors 7:30", group_size: "small group" },
+  satisfied: false,
+};
+SCRIPTS[pair("alex", "theo")] = {
+  A: [
+    ALEX_SHOW_OPEN,
+    {
+      message: "That lines up. Alex would gladly take the ride back and is happy to keep it a small group. Alex still needs a ticket, so if anyone in the group has a spare, that solves it.",
+      disclosed: ["alex_ride", "alex_group", "alex_ticket"],
+      positions: { ride_home: "takes Theo's ride", tickets: "still needs one" },
+      satisfied: true,
+    },
+  ],
+  B: [
+    {
+      message:
+        "Theo already has a GA ticket and wants to meet for a drink before doors at 7:30, small group of three or four. Theo is driving back to SF and can take two people. Theo doesn't drink but is fine with others drinking.",
+      disclosed: ["theo_ticket", "theo_meet", "theo_group", "theo_ride", "theo_sober"],
+      positions: { tickets: "has one", meeting_plan: "drink before, 6:30", ride_home: "driving, two seats" },
+      satisfied: false,
+    },
+    {
+      message: "Theo can hold a seat in the car. Lena in the group has a spare ticket at face value. Theo's Muse can't commit for her, but it's worth asking.",
+      disclosed: ["theo_ride"],
+      positions: { ride_home: "seat held for Alex" },
+      satisfied: true,
+    },
+  ],
+  verdict: {
+    compatible: true,
+    score: 0.8,
+    fits: ["Both going on the 12th", "Both want a drink before doors", "Theo has room in the car back to SF", "Both prefer a small group"],
+    disagreements: ["Alex still needs a ticket"],
+    compromise: "Meet at Beer Revolution at 6:30 and walk over. Alex sorts a ticket first; Lena's spare is the obvious option.",
+    summary_for_humans: "Good match for the night. One thing to sort: Alex's ticket.",
+  },
+};
+SCRIPTS[pair("alex", "lena")] = {
+  A: [
+    ALEX_SHOW_OPEN,
+    {
+      message: "Face value works for Alex, that's within budget. No problem on drinks before, Alex can meet Lena at the doors. Alex can't help with the ride since Alex doesn't drive.",
+      disclosed: ["alex_ticket_budget", "alex_meet", "alex_ride"],
+      positions: { tickets: "takes Lena's spare at face value", meeting_plan: "doors at 7:30" },
+      satisfied: true,
+    },
+  ],
+  B: [
+    {
+      message:
+        "Lena has one extra GA ticket at face value and is happy for it to go to someone from the group. She's meeting friends after, so she can do the show itself but not drinks before. Taking BART back.",
+      disclosed: ["lena_ticket", "lena_meet", "lena_ride"],
+      positions: { tickets: "one spare, face value", meeting_plan: "show only", ride_home: "BART" },
+      satisfied: false,
+    },
+    { message: "Lena will hold the ticket for Alex until Thursday. Meet at will-call at 7:30.", disclosed: ["lena_ticket"], positions: { tickets: "held until Thursday" }, satisfied: true },
+  ],
+  verdict: {
+    compatible: true,
+    score: 0.78,
+    fits: ["Lena's spare ticket solves Alex's ticket", "Price works for both", "Both fine meeting at the doors"],
+    disagreements: ["Lena can't do drinks before"],
+    compromise: "Alex buys the spare at face value and meets Lena at the doors at 7:30.",
+    summary_for_humans: "Lena's spare ticket fits. Meet at the doors.",
+  },
+};
+SCRIPTS[pair("alex", "marcus")] = {
+  A: [
+    {
+      message: "Alex needs to get to SFO on Friday for a 5:10 flight, ideally there by 3. One carry-on and a backpack, happy to split gas. Does Marcus's 2pm still work?",
+      disclosed: ["alex_dest", "alex_flight", "alex_bags", "alex_gas"],
+      positions: { departure_time: "by 3 at SFO", luggage: "carry-on + backpack", cost_split: "yes" },
+      satisfied: false,
+    },
+    { message: "2pm works, that's SFO by 2:45. Alex is in the Mission too, and $10 is fine.", disclosed: ["alex_gas"], positions: { departure_time: "2pm", pickup_point: "Mission", cost_split: "$10" }, satisfied: true },
+  ],
+  B: [
+    {
+      message: "Marcus is leaving the Mission at 2pm with two seats, split gas at about $10 each, one big bag per person is fine. Marcus can leave a little earlier if a flight is tight.",
+      disclosed: ["marcus_time", "marcus_gas", "marcus_bags", "marcus_flex"],
+      positions: { departure_time: "2pm, could be earlier", pickup_point: "Mission", cost_split: "$10 each" },
+      satisfied: false,
+    },
+    { message: "Pickup at 24th and Mission at 2. Done.", disclosed: ["marcus_time"], positions: { pickup_point: "24th and Mission", departure_time: "2pm" }, satisfied: true },
+  ],
+  verdict: {
+    compatible: true,
+    score: 0.9,
+    fits: ["Same neighborhood, same afternoon", "2pm gets Alex there with time to spare", "Gas split works", "Luggage fits"],
+    disagreements: [],
+    compromise: null,
+    summary_for_humans: "Easy. Pickup at 24th and Mission at 2pm.",
+  },
+};
+
 const GENERIC_TURN = (name: string, round: number, satisfied: boolean): AgentTurnOutput => ({
   message:
     round === 1
@@ -262,6 +412,14 @@ export function mockReferee(aId: string, bId: string): RefereeOutput {
 
 // ---------- connection judgment ----------
 export function mockConnection(aId: string, bId: string): ConnectionOutput {
+  if (pair(aId, bId) === pair("alex", "theo"))
+    return {
+      suggest: true,
+      confidence: 0.76,
+      reason: "You're both into indie shows and both new to SF this fall.",
+      activity: "Pre-show drinks before beabadoobee",
+      event_id: "evt_bea_preshow",
+    };
   if (pair(aId, bId) === pair("alex", "priya"))
     return {
       suggest: true,
@@ -281,11 +439,21 @@ export function mockOpener(senderId: string, recipientId: string, recipientFirst
     "priya>alex": `hey ${recipientFirst}! my Muse says your Mission room lines up with what I'm looking for. only thing is I'm up at 7 for work, would quiet after 11 on weeknights be ok? would love to see it this week.`,
     "alex>sam": `hey ${recipientFirst}, sounds like the Mission room could work for Sept 1. my Muse flagged that you're very clean and I'm more tidy-ish, so maybe we talk through how we'd split chores? happy to show you the place.`,
     "sam>alex": `hey ${recipientFirst}, my Muse says your room could work for me from Sept 1. I'm pretty particular about shared spaces, happy to set up a cleaning schedule. could I come see it?`,
+    "alex>theo": `hey ${recipientFirst}! my Muse says you're going to beabadoobee on the 12th too and might have room in the car back. I'm in for drinks before if that's still the plan, where are you thinking?`,
+    "alex>lena": `hey ${recipientFirst}! heard you have a spare ticket for beabadoobee on the 12th, I'd love to take it at face value. can meet you at the doors at 7:30 if that works?`,
+    "alex>marcus": `hey ${recipientFirst}, my Muse says you're driving to SFO Friday at 2, could I grab a seat? 24th and Mission works for me, happy to split gas.`,
   };
   return lines[k] ?? `hey ${recipientFirst}! my Muse thinks we might be a good fit on the room. want to talk this week?`;
 }
 
 export function mockPostEval(postId: string): PostEvalOutput {
+  if (postId === "post_casey_show")
+    return {
+      fit: true,
+      score: 0.74,
+      reasons: ["Going to the same show", "Also looking for a group", "Already has a ticket"],
+      concerns: ["Didn't say how she's getting home"],
+    };
   if (postId === "post_casey_room")
     return {
       fit: true,
@@ -296,7 +464,9 @@ export function mockPostEval(postId: string): PostEvalOutput {
   return { fit: false, score: 0.2, reasons: [], concerns: ["Not about a room"] };
 }
 
-export function mockReplyDraft(recipientFirst: string): string {
+export function mockReplyDraft(recipientFirst: string, postId?: string): string {
+  if (postId === "post_casey_show")
+    return `Hey ${recipientFirst}! I'm going to beabadoobee on the 12th too and also going solo-ish. A few of us from the group are meeting for a drink before, want to come?`;
   return `Hi ${recipientFirst}! I have the second bedroom in a 2BR in the Mission opening Sept 1, about 10 min to BART. Unfurnished, but there's a desk if you want it. Want to come see it this week?`;
 }
 

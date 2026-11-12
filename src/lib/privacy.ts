@@ -46,13 +46,35 @@ export function dollarAmounts(text: string): number[] {
   return (text.match(MONEY) ?? []).map((m) => Number(m.replace(/[^\d.]/g, ""))).filter((n) => !Number.isNaN(n));
 }
 
-/** Rent/budget range implied by a set of preferences: [min, max] of every dollar amount on money topics. */
+/**
+ * Money range implied by a side's preferences, reading the words around the numbers:
+ *   "up to $70", "can stretch to $1,300", "max"            → ceiling: [0, n]
+ *   "would go down to $1,200", "at least", "floor"          → floor:   [n, ∞)
+ *   "$1,350/mo", "$1,250 to $1,350", "$62, would take $50"  → [min, max] of the numbers
+ * The side's range is the loosest combination (lowest low, highest high).
+ */
 export function moneyRange(prefs: Preference[]): [number, number] | null {
-  const nums = prefs
-    .filter((p) => /rent|budget|price|money/i.test(p.topic))
-    .flatMap((p) => dollarAmounts(p.value));
-  if (nums.length === 0) return null;
-  return [Math.min(...nums), Math.max(...nums)];
+  let lo = Infinity;
+  let hi = -Infinity;
+  let any = false;
+  for (const p of prefs) {
+    if (!/rent|budget|price|money|cost/i.test(p.topic)) continue;
+    const nums = dollarAmounts(p.value);
+    if (nums.length === 0) continue;
+    any = true;
+    const v = p.value.toLowerCase();
+    if (/up to|max|no more than|under|ceiling|stretch to|at most|cap/.test(v)) {
+      lo = Math.min(lo, 0);
+      hi = Math.max(hi, Math.max(...nums));
+    } else if (/down to|at least|minimum|floor|no less than|or more/.test(v)) {
+      lo = Math.min(lo, Math.min(...nums));
+      hi = Math.max(hi, Infinity);
+    } else {
+      lo = Math.min(lo, Math.min(...nums));
+      hi = Math.max(hi, Math.max(...nums));
+    }
+  }
+  return any ? [lo, hi] : null;
 }
 
 /**

@@ -16,6 +16,16 @@ import type { Ask, Negotiation, NegotiationTurn, Verdict } from "./types";
 
 export const MAX_ROUNDS = 2;
 export const DEFAULT_TOPICS = ["rent", "move_in_date", "furniture_and_leftover_items", "quiet_hours", "guests", "pets_and_dealbreakers"];
+export const TOPICS_BY_TYPE: Record<string, string[]> = {
+  roommate: DEFAULT_TOPICS,
+  sublet: ["rent", "dates", "furniture", "deposit", "dealbreakers"],
+  item: ["price", "condition", "pickup_time_and_place", "payment"],
+  skill_swap: ["what_each_person_offers", "schedule", "frequency", "location"],
+  plus_one: ["tickets", "meeting_plan", "group_size", "ride_home", "dealbreakers"],
+  ride: ["departure_time", "pickup_point", "cost_split", "luggage"],
+  other: ["what_is_needed", "when", "where", "dealbreakers"],
+};
+export const topicsFor = (type: string) => TOPICS_BY_TYPE[type] ?? TOPICS_BY_TYPE.other;
 
 export function describeAskContext(ask: Ask): string {
   const parts: string[] = [];
@@ -98,7 +108,7 @@ export async function runNegotiation(
         publicPrefs: formatPrefs(ctx[side].public),
         matchOnlyPrefs: formatPrefs(ctx[side].matchOnly),
         context: describeAskContext(ask),
-        topics: DEFAULT_TOPICS,
+        topics: topicsFor(askA.type),
         transcript: transcript(),
         round,
         maxRounds: MAX_ROUNDS,

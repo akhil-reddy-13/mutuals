@@ -138,7 +138,7 @@ export async function runMatching(askInput: Ask, emitRaw: (e: MatchEvent) => voi
         postText: post.text,
         reasons: ev.reasons.join("; "),
       });
-      draftReply = red(await museText({ model: "spark", system: rp.system, user: rp.user, mock: mockReplyDraft(author.name.split(" ")[0]) }));
+      draftReply = red(await museText({ model: "spark", system: rp.system, user: rp.user, mock: mockReplyDraft(author.name.split(" ")[0], post.id) }));
     }
     const match: Match = {
       id: newId("match"),

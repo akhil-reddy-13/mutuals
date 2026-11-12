@@ -113,7 +113,7 @@ export function getGroup(id: string) {
 export function postsInGroup(groupId: string): GroupPost[] {
   return seed.posts
     .filter((p) => p.groupId === groupId)
-    .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+    .sort((a, b) => Number(!!b.pinned) - Number(!!a.pinned) || (a.createdAt < b.createdAt ? 1 : -1));
 }
 export function getPost(id: string) {
   return seed.posts.find((p) => p.id === id);

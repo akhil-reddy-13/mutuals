@@ -134,10 +134,21 @@ export interface FbEvent {
 export interface Group {
   id: string;
   name: string;
+  /** Seeded personas who are members (used for matching). memberCount is the number shown in the UI. */
   memberIds: string[];
+  memberCount: number;
+  adminIds: string[];
   privacy: "public" | "private";
   coverEmoji: string;
+  /** Cover illustration key: housing | sf | ffs | run */
+  cover: string;
   about: string;
+}
+
+export interface PostComment {
+  authorId: string;
+  text: string;
+  createdAt: string;
 }
 
 export interface GroupPost {
@@ -146,6 +157,10 @@ export interface GroupPost {
   authorId: string;
   text: string;
   createdAt: string;
+  imageUrl?: string;
+  reactions: number;
+  comments: PostComment[];
+  pinned?: boolean;
 }
 
 export interface AgentLogEntry {

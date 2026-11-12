@@ -55,6 +55,12 @@ describe("sealed comparisons", () => {
     expect(budgetsOverlap(alex.preferences, jordan.preferences)).toBe(true);
     const cheap: Preference[] = [p({ topic: "budget", value: "Up to $900/mo", visibility: "match_only" })];
     expect(budgetsOverlap(alex.preferences, cheap)).toBe(false);
+    // "up to" is a ceiling, not an exact number: a $70 ceiling overlaps a $50 to $62 ticket.
+    const buyer: Preference[] = [p({ topic: "ticket_budget", value: "Up to $70 for a spare", visibility: "match_only" })];
+    const seller: Preference[] = [p({ topic: "ticket_price", value: "$62, would take $50 to not deal with resale", visibility: "match_only" })];
+    expect(budgetsOverlap(buyer, seller)).toBe(true);
+    const pricey: Preference[] = [p({ topic: "ticket_price", value: "$120 firm", visibility: "public" })];
+    expect(budgetsOverlap(buyer, pricey)).toBe(false);
   });
 
   it("redacts private numbers and times from any string shown to a human", () => {

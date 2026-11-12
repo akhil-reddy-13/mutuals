@@ -13,7 +13,12 @@
     ],
     "privacy": "private",
     "coverEmoji": "🏠",
-    "about": "Roommates, sublets and leases for Stanford students and new grads. Be kind, be specific, no scams."
+    "about": "Roommates, sublets and leases for Stanford students and new grads. Be kind, be specific, no scams.",
+    "memberCount": 1843,
+    "adminIds": [
+      "nina"
+    ],
+    "cover": "housing"
   },
   {
     "id": "g_ffs",
@@ -28,7 +33,12 @@
     ],
     "privacy": "private",
     "coverEmoji": "🛒",
-    "about": "Buy, sell, give away. Stanford only."
+    "about": "Buy, sell, give away. Stanford only. Mark items SOLD when they go.",
+    "memberCount": 12400,
+    "adminIds": [
+      "dev"
+    ],
+    "cover": "ffs"
   },
   {
     "id": "g_sfgrads",
@@ -41,11 +51,18 @@
       "lena",
       "rosa",
       "kai",
-      "omar"
+      "omar",
+      "theo",
+      "maya"
     ],
     "privacy": "public",
     "coverEmoji": "🌉",
-    "about": "New to SF? Same."
+    "about": "New to SF? Same. Shows, apartments, brunch, complaining about Muni.",
+    "memberCount": 3210,
+    "adminIds": [
+      "lena"
+    ],
+    "cover": "sf"
   },
   {
     "id": "g_runners",
@@ -60,6 +77,11 @@
     ],
     "privacy": "public",
     "coverEmoji": "🏃",
-    "about": "Group runs, race buddies, route tips."
+    "about": "Group runs, race buddies, route tips. All paces.",
+    "memberCount": 5600,
+    "adminIds": [
+      "maya"
+    ],
+    "cover": "run"
   }
 ]

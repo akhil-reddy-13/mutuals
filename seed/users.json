@@ -167,7 +167,8 @@
     "schoolVerified": true,
     "city": "San Francisco",
     "groups": [
-      "g_ffs"
+      "g_ffs",
+      "g_sfgrads"
     ],
     "friends": [
       "alex",
@@ -198,7 +199,8 @@
     "schoolVerified": true,
     "city": "San Francisco",
     "groups": [
-      "g_ffs"
+      "g_ffs",
+      "g_sfgrads"
     ],
     "friends": [],
     "museEnabled": true,
@@ -215,20 +217,27 @@
       {
         "value": "vinyl",
         "shareForConnection": true
+      },
+      {
+        "value": "new to SF",
+        "shareForConnection": true
       }
     ],
-    "bio": "",
+    "bio": "Stanford '26. Vinyl, shows, late dinners.",
     "museGroups": [
-      "g_ffs"
+      "g_ffs",
+      "g_sfgrads"
     ]
   },
   {
     "id": "lena",
     "name": "Lena Brooks",
     "avatarUrl": "https://randomuser.me/api/portraits/women/12.jpg",
-    "schoolVerified": false,
+    "schoolVerified": true,
     "city": "San Francisco",
-    "groups": [],
+    "groups": [
+      "g_sfgrads"
+    ],
     "friends": [],
     "museEnabled": true,
     "connectionSuggestionsOptIn": true,
@@ -242,8 +251,11 @@
         "shareForConnection": true
       }
     ],
-    "bio": "",
-    "museGroups": []
+    "bio": "New to SF, works in design. Always at the Fox.",
+    "museGroups": [
+      "g_sfgrads"
+    ],
+    "school": "Berkeley"
   },
   {
     "id": "rosa",
@@ -312,7 +324,7 @@
         "shareForConnection": true
       }
     ],
-    "bio": "",
+    "bio": "Housing group admin. Signed four SF leases, survived all of them.",
     "museGroups": []
   },
   {
@@ -381,7 +393,7 @@
         "shareForConnection": true
       }
     ],
-    "bio": "",
+    "bio": "Has a car. Will drive for gas money and a podcast recommendation.",
     "museGroups": [
       "g_ffs"
     ]

@@ -45,5 +45,20 @@
     ],
     "open": true,
     "coverEmoji": "📚"
+  },
+  {
+    "id": "evt_bea_preshow",
+    "name": "Pre-show drinks before beabadoobee",
+    "description": "Meet at Beer Revolution across from the Fox, 6:30pm, walk over together for doors at 7:30. GA crew.",
+    "city": "Oakland",
+    "when": "Fri Dec 12, 6:30 PM",
+    "where": "Beer Revolution, Oakland",
+    "hostId": "theo",
+    "goingIds": [
+      "theo",
+      "lena"
+    ],
+    "open": true,
+    "coverEmoji": "🎸"
   }
 ]

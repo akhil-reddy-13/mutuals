@@ -2,10 +2,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Avatar from "@/components/Avatar";
+import GroupCover from "@/components/GroupCover";
 import { CameraIcon, ChevronDown, GlobeIcon, LockIcon, MoreIcon, MuseMark, PhotoIcon, PlusIcon, SearchIcon, SparkleIcon } from "@/components/icons";
 import MuseLauncher from "@/components/MuseLauncher";
 import PostCard from "@/components/PostCard";
 import { asksForUser, getGroup, getUser, matchesForAsk, postsInGroup } from "@/lib/db";
+import { compactCount } from "@/lib/format";
 import { sortMatches } from "@/lib/match";
 import { currentUser } from "@/lib/session";
 
@@ -18,6 +20,7 @@ export default async function GroupPage({ params }: { params: Promise<{ id: stri
   const me = await currentUser();
   const posts = postsInGroup(id);
   const members = group.memberIds.map((m) => getUser(m)!).filter(Boolean);
+  const admins = group.adminIds.map((a) => getUser(a)!).filter(Boolean);
   const museMembers = members.filter((u) => u.museEnabled && u.museGroups.includes(id));
   const myAsk = asksForUser(me.id)
     .filter((a) => a.groupId === id && a.status === "matched")
@@ -25,16 +28,15 @@ export default async function GroupPage({ params }: { params: Promise<{ id: stri
   const matches = myAsk ? sortMatches(matchesForAsk(myAsk.id)) : [];
   const matchByAuthor = new Map(matches.map((m) => [m.candidateId, m]));
   const fits = matches.filter((m) => m.verdict.compatible);
+  const media = posts.filter((p) => p.imageUrl).slice(0, 6);
   const tabs = ["Discussion", "Featured", "Members", "Events", "Media", "Files"];
 
   return (
     <div className="mx-auto max-w-[1100px] pb-24 md:pb-10">
       {/* Cover + header */}
       <div className="fb-card overflow-hidden rounded-none md:rounded-t-none md:rounded-b-lg">
-        <div className="relative h-[170px] w-full md:h-[300px]" style={{ background: "linear-gradient(120deg,#0b2a6f 0%,#0866ff 45%,#8fbcff 100%)" }}>
-          <svg className="absolute inset-x-0 bottom-0 h-1/2 w-full text-white/15" viewBox="0 0 1200 200" preserveAspectRatio="none" fill="currentColor">
-            <path d="M0 200V120h60V80h40v40h50V40h30v80h60V90h40v30h70V60h50v60h60V20h40v100h60V70h50v50h70V100h40v20h60V50h50v70h70V90h40v30h60V30h40v90h60V80h40v120z" />
-          </svg>
+        <div className="relative">
+          <GroupCover kind={group.cover} className="h-[170px] w-full md:h-[300px]" />
           <div className="absolute bottom-3 right-3 hidden md:block">
             <button className="fb-btn-secondary h-9 bg-white/90 text-[15px] hover:bg-white">
               <CameraIcon size={18} /> Edit
@@ -47,11 +49,11 @@ export default async function GroupPage({ params }: { params: Promise<{ id: stri
             {group.privacy === "private" ? <LockIcon size={14} /> : <GlobeIcon size={14} />}
             <span>{group.privacy === "private" ? "Private group" : "Public group"}</span>
             <span>·</span>
-            <span className="font-semibold text-fb-muted">{members.length} members</span>
+            <span className="font-semibold text-fb-muted">{compactCount(group.memberCount)} members</span>
           </div>
           <div className="mt-3 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div className="flex -space-x-2">
-              {members.slice(0, 7).map((u) => (
+              {members.slice(0, 8).map((u) => (
                 <Avatar key={u.id} src={u.avatarUrl} name={u.name} size={32} ring />
               ))}
             </div>
@@ -130,7 +132,18 @@ export default async function GroupPage({ params }: { params: Promise<{ id: stri
 
           {posts.map((p) => {
             const author = getUser(p.authorId)!;
-            return <PostCard key={p.id} post={p} author={author} museOn={author.museEnabled && author.museGroups.includes(id)} match={matchByAuthor.get(author.id)} viewerId={me.id} />;
+            return (
+              <PostCard
+                key={p.id}
+                post={p}
+                author={author}
+                isAdmin={group.adminIds.includes(author.id)}
+                museOn={author.museEnabled && author.museGroups.includes(id)}
+                match={matchByAuthor.get(author.id)}
+                viewer={me}
+                resolve={getUser}
+              />
+            );
           })}
         </div>
 
@@ -140,10 +153,12 @@ export default async function GroupPage({ params }: { params: Promise<{ id: stri
             <h2 className="text-[17px] font-bold">About</h2>
             <p className="mt-2 text-[15px]">{group.about}</p>
             <div className="mt-3 flex gap-3 text-[15px]">
-              <LockIcon size={20} className="mt-0.5 shrink-0 text-fb-muted" />
+              {group.privacy === "private" ? <LockIcon size={20} className="mt-0.5 shrink-0 text-fb-muted" /> : <GlobeIcon size={20} className="mt-0.5 shrink-0 text-fb-muted" />}
               <div>
                 <div className="font-semibold">{group.privacy === "private" ? "Private" : "Public"}</div>
-                <div className="text-[13px] text-fb-muted">Only members can see who&apos;s in the group and what they post.</div>
+                <div className="text-[13px] text-fb-muted">
+                  {group.privacy === "private" ? "Only members can see who's in the group and what they post." : "Anyone can see who's in the group and what they post."}
+                </div>
               </div>
             </div>
           </section>
@@ -160,6 +175,33 @@ export default async function GroupPage({ params }: { params: Promise<{ id: stri
                 <Avatar key={u.id} src={u.avatarUrl} name={u.name} size={32} ring />
               ))}
             </div>
+          </section>
+          {media.length > 0 && (
+            <section className="fb-card p-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-[17px] font-bold">Recent media</h2>
+                <span className="text-[15px] font-semibold text-fb-blue">See all</span>
+              </div>
+              <div className="mt-3 grid grid-cols-3 gap-1 overflow-hidden rounded-lg">
+                {media.map((p) => (
+                  <img key={p.id} src={p.imageUrl} alt="" className="aspect-square w-full object-cover" loading="lazy" />
+                ))}
+              </div>
+            </section>
+          )}
+          <section className="fb-card p-4">
+            <h2 className="text-[17px] font-bold">Admins and moderators</h2>
+            <ul className="mt-2 flex flex-col gap-2">
+              {admins.map((u) => (
+                <li key={u.id} className="flex items-center gap-3">
+                  <Avatar src={u.avatarUrl} name={u.name} size={36} />
+                  <div>
+                    <div className="text-[15px] font-semibold">{u.name}</div>
+                    <div className="text-[13px] text-fb-muted">Admin</div>
+                  </div>
+                </li>
+              ))}
+            </ul>
           </section>
         </aside>
       </div>

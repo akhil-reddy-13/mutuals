@@ -1,6 +1,8 @@
 // Facebook home left rail (desktop only), as in the user's screenshot.
 import Link from "next/link";
 import Avatar from "./Avatar";
+import GroupCover from "./GroupCover";
+import { getGroup } from "@/lib/db";
 import { AdsIcon, BookmarkIcon, CalendarIcon, ChevronDown, FeedIcon, FriendsIcon, GroupsIcon, MarketplaceIcon, MemoriesIcon, MuseMark, VideoIcon } from "./icons";
 import type { User } from "@/lib/types";
 
@@ -9,7 +11,7 @@ const ITEMS: { label: string; href: string; icon: React.ReactNode }[] = [
   { label: "Friends", href: "#", icon: <FriendsIcon size={36} className="text-fb-blue" /> },
   { label: "Memories", href: "#", icon: <MemoriesIcon size={36} className="text-fb-blue" /> },
   { label: "Saved", href: "#", icon: <BookmarkIcon size={36} className="text-fb-purple" /> },
-  { label: "Groups", href: "/groups/g_housing27", icon: <GroupsIcon size={36} className="text-fb-blue" /> },
+  { label: "Groups", href: "/groups", icon: <GroupsIcon size={36} className="text-fb-blue" /> },
   { label: "Reels", href: "#", icon: <VideoIcon size={36} className="text-fb-pink" /> },
   { label: "Marketplace", href: "/marketplace", icon: <MarketplaceIcon size={36} className="text-fb-blue" /> },
   { label: "Feeds", href: "#", icon: <FeedIcon size={36} className="text-fb-blue" /> },
@@ -36,6 +38,20 @@ export default function LeftSidebar({ me }: { me: User }) {
         </span>
         <span className="text-[15px] font-medium">See more</span>
       </button>
+      <div className="mx-2 my-2 border-t border-fb-border" />
+      <div className="flex items-center justify-between px-2 pb-1 pt-1">
+        <span className="text-[17px] font-semibold text-fb-muted">Your shortcuts</span>
+        <span className="text-[13px] text-fb-blue">Edit</span>
+      </div>
+      {me.groups.map((gid) => {
+        const g = getGroup(gid);
+        return g ? (
+          <Link key={gid} href={`/groups/${gid}`} className="flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-[#e4e6e9]">
+            <GroupCover kind={g.cover} className="h-9 w-9 rounded-lg" />
+            <span className="truncate text-[15px] font-medium">{g.name}</span>
+          </Link>
+        ) : null;
+      })}
       <div className="mx-2 my-2 border-t border-fb-border" />
       <div className="px-2 pb-4 text-[13px] text-fb-muted">Privacy · Consumer Health Privacy · Terms · Advertising · Cookies · Meta © 2026</div>
     </aside>

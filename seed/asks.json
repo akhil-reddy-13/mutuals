@@ -321,20 +321,105 @@
   {
     "id": "ask_theo_show",
     "userId": "theo",
-    "groupId": "g_ffs",
+    "groupId": "g_sfgrads",
     "type": "plus_one",
-    "summary": "Going to the beabadoobee show at the Fox in Dec, looking for people to go with",
-    "preferences": [],
-    "createdAt": "2026-11-08T20:00:00Z"
+    "summary": "Going to beabadoobee at the Fox on Dec 12, looking for people to go with",
+    "preferences": [
+      {
+        "id": "theo_ticket",
+        "topic": "ticket",
+        "value": "Already has a GA ticket",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "theo_meet",
+        "topic": "meeting_plan",
+        "value": "Wants to grab a drink before, doors at 7:30",
+        "importance": "medium",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "theo_group",
+        "topic": "group_size",
+        "value": "Prefers a small group of 3 or 4",
+        "importance": "medium",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "theo_ride",
+        "topic": "ride_home",
+        "value": "Driving back to SF, can take two people",
+        "importance": "medium",
+        "visibility": "match_only",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "theo_sober",
+        "topic": "drinks",
+        "value": "Doesn't drink, fine with others drinking",
+        "importance": "low",
+        "visibility": "match_only",
+        "source": "stated",
+        "confirmed": true
+      }
+    ],
+    "createdAt": "2026-11-08T20:00:00Z",
+    "status": "matching"
   },
   {
     "id": "ask_marcus_sfo",
     "userId": "marcus",
     "groupId": "g_ffs",
     "type": "ride",
-    "summary": "Driving to SFO Friday 2pm, 2 seats",
-    "preferences": [],
-    "createdAt": "2026-11-10T20:00:00Z"
+    "summary": "Driving to SFO Friday 2pm from the Mission, 2 seats",
+    "preferences": [
+      {
+        "id": "marcus_time",
+        "topic": "departure",
+        "value": "Leaving the Mission at 2pm Friday, 2 seats",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "marcus_gas",
+        "topic": "cost",
+        "value": "Split gas, about $10 each",
+        "importance": "medium",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "marcus_flex",
+        "topic": "flexibility",
+        "value": "Can leave as early as 1:30 if someone's flight is tight",
+        "importance": "medium",
+        "visibility": "match_only",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "marcus_bags",
+        "topic": "luggage",
+        "value": "Small trunk, one big bag per person",
+        "importance": "low",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      }
+    ],
+    "createdAt": "2026-11-10T20:00:00Z",
+    "status": "matching"
   },
   {
     "id": "ask_dev_161",
@@ -344,5 +429,52 @@
     "summary": "CS 161 study partners for the final",
     "preferences": [],
     "createdAt": "2026-11-10T20:00:00Z"
+  },
+  {
+    "id": "ask_lena_show",
+    "userId": "lena",
+    "groupId": "g_sfgrads",
+    "type": "plus_one",
+    "summary": "Have an extra beabadoobee ticket for the Fox, Dec 12",
+    "preferences": [
+      {
+        "id": "lena_ticket",
+        "topic": "ticket",
+        "value": "One extra GA ticket, face value",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "lena_price",
+        "topic": "ticket_price",
+        "value": "$62, would take $50 to not deal with resale",
+        "importance": "high",
+        "visibility": "match_only",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "lena_meet",
+        "topic": "meeting_plan",
+        "value": "Meeting friends after, can only do the show itself",
+        "importance": "medium",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "lena_ride",
+        "topic": "ride_home",
+        "value": "Taking BART back, no car",
+        "importance": "low",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      }
+    ],
+    "createdAt": "2026-11-09T20:00:00Z",
+    "status": "matching"
   }
 ]

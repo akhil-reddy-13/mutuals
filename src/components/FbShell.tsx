@@ -21,7 +21,12 @@ export default async function FbShell({ children }: { children: React.ReactNode 
   const meId = await currentUserId();
   const me = getUser(meId) ?? getUser("alex")!;
   const personas = allUsers().map((u) => ({ id: u.id, name: u.name, avatarUrl: u.avatarUrl }));
-  const notifCount = matchesInvolving(me.id).filter((m) => m.verdict.compatible).length;
+  // One notification per ask I made that found fits, plus one per other person whose Muse matched with mine.
+  const involving = matchesInvolving(me.id).filter((m) => m.verdict.compatible);
+  const notifCount = new Set([
+    ...involving.filter((m) => m.userId === me.id).map((m) => `ask:${m.askId}`),
+    ...involving.filter((m) => m.candidateId === me.id && m.mode === "agent_to_agent").map((m) => `from:${m.userId}`),
+  ]).size;
   const msgCount = threadsForUser(me.id).filter((t) => t.messages.some((m) => m.from !== me.id && !m.text.startsWith("(from their post"))).length;
   const mode = museMode();
 
