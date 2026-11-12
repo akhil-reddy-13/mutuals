@@ -11,14 +11,15 @@ import { agentContext, formatPrefs, redactPrivateValues } from "./privacy";
 import { candidateAsks, candidatePosts, trustSignals } from "./reach";
 import { PostEvalSchema } from "./schemas";
 import { postEvalPrompt, replyDraftPrompt } from "./prompts";
-import type { Ask, ConnectionSuggestion, Match, NegotiationTurn, Verdict } from "./types";
+import type { Ask, ConnectionSuggestion, Match, NegotiationTurn, User, Verdict } from "./types";
 
 export type MatchEvent =
   | { type: "start"; askId: string; candidates: { id: string; name: string; avatarUrl: string; mode: Match["mode"]; postId?: string }[] }
   | { type: "turn"; candidateId: string; turn: NegotiationTurn; disclosedMeta: { id: string; topic: string; visibility: string }[] }
   | { type: "verdict"; candidateId: string; match: Match }
   | { type: "connection"; candidateId: string; matchId: string; connection: ConnectionSuggestion | null; event: { id: string; name: string; when: string; where: string; going: number; coverEmoji: string } | null }
-  | { type: "done"; askId: string; matches: Match[] }
+  | { type: "failed"; candidateId: string; message: string }
+  | { type: "done"; askId: string; matches: Match[]; failed: string[] }
   | { type: "error"; message: string };
 
 export function sortMatches(ms: Match[]): Match[] {
@@ -36,7 +37,16 @@ export async function runMatching(askInput: Ask, emitRaw: (e: MatchEvent) => voi
   const me = getUser(ask.userId);
   if (!me) throw new Error("unknown user");
   saveAsk({ ...ask, status: "matching" });
+  try {
+    return await matchAll(ask, me, emit);
+  } catch (e) {
+    // Never leave the ask stuck in "matching": the Group page and the sheet would wait forever.
+    saveAsk({ ...(getAsk(ask.id) ?? ask), status: "draft" });
+    throw e;
+  }
+}
 
+async function matchAll(ask: Ask, me: User, emit: (e: MatchEvent) => void): Promise<Match[]> {
   const agentCands = candidateAsks(ask);
   const posts = candidatePosts(ask);
   emit({
@@ -52,8 +62,17 @@ export async function runMatching(askInput: Ask, emitRaw: (e: MatchEvent) => voi
   });
 
   const matches: Match[] = [];
+  const failed: string[] = [];
+  // One candidate failing (API error, bad JSON twice) must not sink the others: log it, tell the sheet, move on.
+  const guard = (candidateId: string, job: () => Promise<void>) =>
+    job().catch((e: unknown) => {
+      const message = e instanceof Error ? e.message : String(e);
+      console.error(`[match] ${candidateId} failed: ${message}`);
+      failed.push(candidateId);
+      emit({ type: "failed", candidateId, message });
+    });
 
-  const agentJobs = agentCands.map(async ({ ask: other, user }) => {
+  const agentJobs = agentCands.map(({ ask: other, user }) => guard(user.id, async () => {
     const { negotiation, verdict } = await runNegotiation(ask, other, (turn) => {
       // What streams to the asker's screen: their own Muse's words in full, the other Muse's words with that
       // person's private numbers redacted, plus topic-level metadata for the "disclosed" chips.
@@ -89,7 +108,11 @@ export async function runMatching(askInput: Ask, emitRaw: (e: MatchEvent) => voi
     saveMatch(match);
     matches.push(match);
     emit({ type: "verdict", candidateId: user.id, match });
-    const connection = await judgeConnection(me, user, ask, verdict);
+    // The match stands on its own; a failed connection call just means no suggestion.
+    const connection = await judgeConnection(me, user, ask, verdict).catch((e: unknown) => {
+      console.error(`[match] connection ${user.id} failed: ${e instanceof Error ? e.message : String(e)}`);
+      return null;
+    });
     match.connection = connection;
     saveMatch(match);
     const ev = connection?.eventId ? getEvent(connection.eventId) : undefined;
@@ -100,9 +123,9 @@ export async function runMatching(askInput: Ask, emitRaw: (e: MatchEvent) => voi
       connection,
       event: ev ? { id: ev.id, name: ev.name, when: ev.when, where: ev.where, going: ev.goingIds.length, coverEmoji: ev.coverEmoji } : null,
     });
-  });
+  }));
 
-  const postJobs = posts.map(async (post) => {
+  const postJobs = posts.map((post) => guard(post.authorId, async () => {
     const author = getUser(post.authorId)!;
     emit({
       type: "turn",
@@ -155,11 +178,12 @@ export async function runMatching(askInput: Ask, emitRaw: (e: MatchEvent) => voi
     saveMatch(match);
     matches.push(match);
     emit({ type: "verdict", candidateId: author.id, match });
-  });
+  }));
 
-  await Promise.all([...agentJobs, ...postJobs]);
+  await Promise.all([...agentJobs, ...postJobs]); // each job catches its own error (guard)
+  if (matches.length === 0 && failed.length > 0) throw new Error(`couldn't reach any of the ${failed.length} candidates`);
   saveAsk({ ...(getAsk(ask.id) ?? ask), status: "matched" });
   const sorted = sortMatches(matches);
-  emit({ type: "done", askId: ask.id, matches: sorted });
+  emit({ type: "done", askId: ask.id, matches: sorted, failed });
   return sorted;
 }

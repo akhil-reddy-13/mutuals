@@ -16,6 +16,8 @@ export interface LiveCandidate {
   turns: { turn: NegotiationTurn; disclosedMeta: { id: string; topic: string; visibility: string }[] }[];
   match?: Match;
   connection?: ConnectionSuggestion | null;
+  /** Set when this candidate's run failed (the others carry on). */
+  failed?: string;
 }
 
 function Typing() {
@@ -53,7 +55,7 @@ export default function LiveMatching({ cands, meName, defaultOpen }: { cands: Li
   return (
     <div className="flex flex-col gap-2">
       {cands.map((c) => {
-        const done = !!c.match;
+        const done = !!c.match || !!c.failed;
         const fit = c.match?.verdict.compatible;
         const isOpen = open[c.id] ?? false;
         return (
@@ -73,7 +75,12 @@ export default function LiveMatching({ cands, meName, defaultOpen }: { cands: Li
                   <span className="rounded bg-fb-bg px-1 py-px text-[10px] font-semibold uppercase tracking-wide text-fb-muted">{c.mode === "agent_to_agent" ? "Muse to Muse" : "From their post"}</span>
                 </span>
                 <span className="block truncate text-[12px] text-fb-muted">
-                  {done ? (
+                  {c.failed && !c.match ? (
+                    <span className="inline-flex items-center gap-1 font-semibold text-fb-muted">
+                      <XSmallIcon size={12} />
+                      Couldn&apos;t reach {firstName(c.name)}&apos;s Muse this time
+                    </span>
+                  ) : done ? (
                     <span className={`inline-flex items-center gap-1 font-semibold ${fit ? "text-fb-green" : "text-fb-muted"}`}>
                       {fit ? <CheckIcon size={12} /> : <XSmallIcon size={12} />}
                       {c.match!.verdict.summaryForHumans}
@@ -127,7 +134,7 @@ export default function LiveMatching({ cands, meName, defaultOpen }: { cands: Li
                     <Typing />
                   </div>
                 )}
-                {done && (
+                {done && !c.failed && (
                   <p className="px-1 pt-1 text-[11px] text-fb-muted">
                     {c.mode === "agent_to_agent"
                       ? `Two Muse Spark agents, one Muse Wonder referee. ${meName}'s private numbers never left the comparison. ${firstName(c.name)}'s are hidden here too.`

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import seedAsks from "../../seed/asks.json";
-import { agentContext, budgetsOverlap, formatPrefs, isShareable, leaks, publicOnly, redactPrivateValues } from "./privacy";
+import { agentContext, budgetsOverlap, formatPrefs, isShareable, leakedPrivateFacts, leaks, publicOnly, redactPrivateValues } from "./privacy";
 import type { Ask, Preference } from "./types";
 
 const asks = seedAsks as Ask[];
@@ -94,5 +94,37 @@ describe("sealed comparisons", () => {
   it("never values are stripped even if a model echoed them", () => {
     const txt = "Note: Has a chronic condition, doesn't want it shared";
     expect(redactPrivateValues(txt, alex.preferences)).not.toMatch(/chronic/);
+  });
+});
+
+describe("private phrases (match_only wording on shared surfaces)", () => {
+  const alexLive = [
+    p({ id: "a_sched", topic: "schedule", value: "night owl", visibility: "match_only" }),
+    p({ id: "a_guests", topic: "guests", value: "partner stays over some weekends", visibility: "match_only" }),
+  ];
+  const theo = asks.find((a) => a.id === "ask_theo_show")!;
+  const ids = (text: string, prefs: Preference[]) => leakedPrivateFacts(text, prefs).map((x) => x.id);
+
+  it("catches a private fact echoed into a match card", () => {
+    expect(ids("wants earlier quiet hours vs night owl", alexLive)).toEqual(["a_sched"]);
+    expect(ids("weekend partner guests to confirm", alexLive)).toEqual(["a_guests"]);
+    expect(ids("Theo doesn't drink, so plan the pre-show around that", theo.preferences)).toEqual(["theo_sober"]);
+    // Seed wording too: "Night owl, usually up until 1am" and "Starts work at 7am, up early on weekdays".
+    expect(ids("Alex is a night owl", alex.preferences)).toEqual(["alex_sleep"]);
+    expect(ids("Priya is up early on weekdays", priya.preferences)).toEqual(["priya_wake"]);
+  });
+
+  it("lets topic-level wording through", () => {
+    const both = [...alex.preferences, ...priya.preferences, ...alexLive];
+    expect(ids("Strong fit on timing, budget, and no dogs; just confirm the weeknight quiet-hours compromise works day to day.", priya.preferences)).toEqual([]);
+    expect(ids("One thing to talk about: weeknight noise.", both)).toEqual([]);
+    expect(ids("Different sleep schedules; agree on weeknight quiet hours", both)).toEqual([]);
+    expect(ids("different plans for drinks", theo.preferences)).toEqual([]);
+    expect(ids("Occasional weekend guests agreed", alexLive)).toEqual([]);
+  });
+
+  it("only checks non-public prefs", () => {
+    const pub = [p({ topic: "pets", value: "no dogs please", visibility: "public" })];
+    expect(ids("no dogs please", pub)).toEqual([]);
   });
 });

@@ -7,6 +7,7 @@ Phone A is **Alex** (presenter). Phone B is **Priya** (teammate). Switch persona
 
 ```bash
 npm run warm        # only with a real key: pre-runs every hero call so the cache is hot (also resets state)
+npm run warm -- --video room.mov   # also warms the video beat, if you'll upload this exact clip on stage
 npm run demo:build  # production build (separate .next-demo folder, safe alongside npm run dev)
 npm run demo:start  # http://localhost:3000. ~100x faster pages than dev, and no Next.js "N" dev badge
 # or, with no key / flaky wifi:
@@ -29,7 +30,7 @@ Both phones start on **Home** (a normal-looking feed). Phone A goes **Groups →
 |---|---|---|
 | 0:00 | Problem. Young adults need roommates, rides, sublets. Public posts make you overshare or hide what matters. Most of us barely have a Facebook network. | Start on Home. Tap Groups → Stanford Housing '27. Show Casey's ISO post, Jordan's dog post. Scroll. |
 | 0:45 | "Meta described a Muse network for friends and family. We built the part for people you haven't met yet, inside the Groups you're already in." | Tap **Ask Muse privately** in the composer. |
-| 1:00 | "You tell your Muse the stuff you'd never post." | Type line 1, 2, 3. Point at the badges: **Public**, **Match only**, **Never shared**. Tap one badge to show it cycles. |
+| 1:00 | "You tell your Muse the stuff you'd never post." | Type line 1, 2, 3. Point at the badges: **Public**, **Match only**, **Never shared**. Tap one badge to show it cycles, then tap it back (a changed badge re-runs matching live). |
 | 1:45 | "Film the room. Ten seconds." | Record video (or Use photos). Room facts + leftover items appear. Tap **List on Marketplace**. |
 | 2:15 | "Now the part no search box can do." | Tap **Yes, check**. Watch Priya's negotiation stream. Point at the lock chips: match-only facts are used, never shown. Point at Priya's Muse saying "a private number". |
 | 2:50 | "Jordan: dealbreaker, the Muses stopped early. Casey has no Muse, so mine read her post and drafted a reply. Sam fits, nothing more." | Scroll the shortlist. Open **What my Muse shared with Priya**. |

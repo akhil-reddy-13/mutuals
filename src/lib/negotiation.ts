@@ -4,13 +4,14 @@
 // Privacy, structurally:
 //   - Each agent's prompt is built ONLY from privacy.agentContext(ask.preferences). `never` prefs never enter.
 //   - Money is compared in code (privacy.budgetsOverlap). The verdict strings are redacted
-//     (privacy.redactPrivateValues) before they are stored, so no match_only number can reach a human.
+//     (privacy.redactPrivateValues) before they are stored, so no match_only number can reach a human, and checked
+//     for echoed match_only wording (privacy.leakedPrivateFacts), which is replaced by a topic-level line.
 //   - Every outgoing agent message is logged for its owner ("What my Muse shared").
 import { getUser, logAgentMessage, newId, saveNegotiation } from "./db";
 import { mockAgentTurn, mockReferee } from "./mocks";
 import { museJSON } from "./muse";
 import { agentPrompt, refereePrompt } from "./prompts";
-import { agentContext, budgetsOverlap, formatPrefs, isShareable, redactPrivateValues } from "./privacy";
+import { agentContext, budgetsOverlap, formatPrefs, isShareable, leakedPrivateFacts, redactPrivateValues } from "./privacy";
 import { AgentTurnSchema, RefereeSchema } from "./schemas";
 import type { Ask, Negotiation, NegotiationTurn, Verdict } from "./types";
 
@@ -55,13 +56,31 @@ function sealVerdict(raw: { compatible: boolean; score: number; fits: string[]; 
     disagreements = ["Budgets don't overlap", ...disagreements.filter((d) => !/budget|rent|price/i.test(d))];
     compatible = false;
   }
+  // Both people see this card, so neither side's match_only wording may appear on it ("wants earlier quiet hours
+  // vs night owl" told Priya that Alex is a night owl). A string that echoes a private fact is replaced by a
+  // topic-level line. The referee prompt asks for that already; this catches it when the model doesn't listen.
+  const privatePrefs = all.filter((p) => p.visibility !== "public");
+  const leakedTopic = (s: string) => {
+    const hit = leakedPrivateFacts(s, privatePrefs)[0];
+    return hit ? hit.topic.replace(/[_-]+/g, " ").toLowerCase() : null;
+  };
+  const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+  const guard = (s: string, topicLine: (topic: string) => string) => {
+    const t = leakedTopic(s);
+    return t ? topicLine(t) : s;
+  };
+  const uniq = (xs: string[]) => [...new Set(xs)];
+  fits = uniq(fits.map((f) => guard(f, (t) => `${cap(t)}: lines up`)));
+  disagreements = uniq(disagreements.map((d) => guard(d, (t) => `${cap(t)}: ${compatible ? "worth talking through" : "doesn't line up"}`)));
+  const compromise = raw.compromise ? guard(red(raw.compromise), (t) => `Talk through ${t} and agree on a plan that works for both of you.`) : null;
+  const summaryForHumans = guard(red(raw.summary_for_humans), (t) => (compatible ? `One thing to talk about: ${t}.` : `Not a fit: ${t}.`));
   return {
     compatible,
     score: Math.max(0, Math.min(1, raw.score)),
     fits,
     disagreements,
-    compromise: raw.compromise ? red(raw.compromise) : null,
-    summaryForHumans: red(raw.summary_for_humans),
+    compromise,
+    summaryForHumans,
   };
 }
 
