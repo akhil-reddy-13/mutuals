@@ -5,7 +5,7 @@
 import { judgeConnection } from "./connection";
 import { getAsk, getEvent, getGroup, getUser, newId, saveAsk, saveMatch } from "./db";
 import { mockPostEval, mockReplyDraft } from "./mocks";
-import { museJSON, museText, modelFor } from "./muse";
+import { museJSON, museText, modelFor, matchModels, type MatchModels } from "./muse";
 import { runNegotiation } from "./negotiation";
 import { agentContext, formatPrefs, redactPrivateValues } from "./privacy";
 import { candidateAsks, candidatePosts, trustSignals } from "./reach";
@@ -14,7 +14,7 @@ import { postEvalPrompt, replyDraftPrompt } from "./prompts";
 import type { Ask, ConnectionSuggestion, Match, NegotiationTurn, Verdict } from "./types";
 
 export type MatchEvent =
-  | { type: "start"; askId: string; candidates: { id: string; name: string; avatarUrl: string; mode: Match["mode"]; postId?: string }[] }
+  | { type: "start"; askId: string; candidates: { id: string; name: string; avatarUrl: string; mode: Match["mode"]; postId?: string }[]; models?: MatchModels }
   | { type: "turn"; candidateId: string; turn: NegotiationTurn; disclosedMeta: { id: string; topic: string; visibility: string }[] }
   | { type: "verdict"; candidateId: string; match: Match }
   | { type: "connection"; candidateId: string; matchId: string; connection: ConnectionSuggestion | null; event: { id: string; name: string; when: string; where: string; going: number; coverEmoji: string } | null }
@@ -68,6 +68,7 @@ export async function runMatching(askInput: Ask, emitRaw: (e: MatchEvent) => voi
   emit({
     type: "start",
     askId: ask.id,
+    models: matchModels(),
     candidates: [
       ...agentCands.map(({ user }) => ({ id: user.id, name: user.name, avatarUrl: user.avatarUrl, mode: "agent_to_agent" as const })),
       ...posts.map((p) => {

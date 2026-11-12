@@ -24,7 +24,7 @@ Video of the room. "Ten seconds of video. Muse Ember pulls the room details and 
 
 ## 2:00 Behind the scenes (60s)
 
-Tap Yes, check. "Now the part a search box can't do. My Muse is talking to Priya's Muse, Jordan's Muse and Sam's Muse at the same time. Two Spark agents each, a Wonder referee at the end."
+Tap Yes, check. "Now the part a search box can't do. My Muse is talking to Priya's Muse, Jordan's Muse and Sam's Muse at the same time. Two Muse Ember calls per round, one referee call at the end, every candidate in parallel."
 
 Point at the lock chips. "Those locks are match-only facts. Priya's Muse knows my real floor is lower than my asking rent. Priya never will."
 
@@ -56,5 +56,5 @@ Open SF New Grads, type the plus-one lines if time allows, or show the digest. "
 - **Privacy?** Three levels. Never-shared is removed before any prompt exists. Match-only numbers are compared in code and redacted from every string a human sees. Full log of what your Muse shared.
 - **How is this different from Meta's own Muse network?** That network is friends, family and businesses. Ours is strangers in a Group, with a concrete need and private preferences. It fits inside theirs.
 - **Was that live?** Say exactly what it was. "Live on Muse" or "replayed from this morning's run because of venue wifi." The avatar menu shows the mode.
-- **Costs?** Ember for anything high volume, Wonder only for verdicts and connection judgments. A full search is a handful of cents.
+- **Costs?** Ember for nearly everything, which is why a full search is about six short calls per candidate and a fraction of a cent. Spark only for reading the exact model off a photo. Wonder is one setting away per role; we measured Ember giving the same verdicts 10 to 30 times faster.
 - **What breaks it?** Someone who lies to their Muse. Same as someone who lies in a post, except the log shows exactly what was claimed.

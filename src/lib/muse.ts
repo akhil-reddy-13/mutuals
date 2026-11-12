@@ -42,6 +42,16 @@ export function modelFor(role: MuseRole): MuseModel {
   const v = process.env[`MUSE_ROLE_${role.toUpperCase()}`];
   return v === "ember" || v === "spark" || v === "wonder" ? v : ROLE_DEFAULTS[role];
 }
+/** "Muse Ember" etc. for on-screen credits, so copy follows the role map instead of hardcoding a model. */
+export function modelLabel(role: MuseRole): string {
+  const m = modelFor(role);
+  return `Muse ${m[0].toUpperCase()}${m.slice(1)}`;
+}
+/** The roles the live matching view credits, as labels. Sent with the match stream's start event. */
+export type MatchModels = { agent: string; referee: string; posteval: string; opener: string };
+export function matchModels(): MatchModels {
+  return { agent: modelLabel("agent"), referee: modelLabel("referee"), posteval: modelLabel("posteval"), opener: modelLabel("opener") };
+}
 
 const MODEL_IDS: Record<MuseModel, string> = {
   wonder: process.env.MODEL_WONDER ?? "muse-wonder-1.0",
