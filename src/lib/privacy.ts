@@ -148,3 +148,12 @@ export function redactPrivateValues(text: string, prefs: Preference[]): string {
   }
   return out.replace(/[ \t]{2,}/g, " ");
 }
+
+/**
+ * An ask's one-line summary as OTHER people may see it. The model writes the summary in the owner's words and can
+ * slip a kept-private number into it ("budget around $1200"), so anywhere a summary is shown to someone other than
+ * its owner (home card, Muse conversation page, candidate's shortlist, digest), its own private values are redacted.
+ */
+export function publicSummary(ask: { summary: string; preferences: Preference[] }): string {
+  return redactPrivateValues(ask.summary, ask.preferences.filter((p) => p.visibility !== "public"));
+}

@@ -1,5 +1,6 @@
 // Full shortlist for an ask (reached from the notification or the Group's Muse row). Both sides can open it:
 // the asker sees every candidate, a candidate sees only their own match. PRD §11.5 / handoff 4c.
+import { publicSummary } from "@/lib/privacy";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import Avatar from "@/components/Avatar";
@@ -147,7 +148,7 @@ export default async function MatchesPage({ params }: { params: Promise<{ id: st
               <h1 className="text-[20px] font-bold leading-tight">{firstName(asker.name)}&apos;s Muse checked with yours</h1>
               <div className="mt-3 rounded-lg border-l-4 border-fb-blue bg-fb-bg px-3.5 py-2.5">
                 <div className="text-[13px] font-semibold text-fb-muted">{firstName(asker.name)}&apos;s ask in {group.name}</div>
-                <p className="mt-0.5 text-[17px] font-semibold leading-[22px] text-fb-text">{ask.summary}</p>
+                <p className="mt-0.5 text-[17px] font-semibold leading-[22px] text-fb-text">{publicSummary(ask)}</p>
               </div>
               <p className="mt-2 text-[13px] text-fb-muted">Your Muse only used what you said was OK to share. {firstName(asker.name)} sees a summary, never your private numbers.</p>
             </>

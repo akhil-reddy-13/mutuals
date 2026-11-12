@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import seedAsks from "../../seed/asks.json";
-import { agentContext, budgetsOverlap, formatPrefs, isShareable, leaks, publicOnly, redactPrivateValues } from "./privacy";
+import { agentContext, budgetsOverlap, formatPrefs, isShareable, leaks, publicOnly, publicSummary, redactPrivateValues } from "./privacy";
 import type { Ask, Preference } from "./types";
 
 const asks = seedAsks as Ask[];
@@ -110,3 +110,15 @@ describe("memory across asks", () => {
     expect(rememberedPrefs([sent], "a_sent")).toEqual([]); // the ask being written is not "last time"
   });
 });
+
+describe("publicSummary (an ask's one-liner as other people see it)", () => {
+  it("hides the owner's kept-private number that the model wrote into the summary", () => {
+    const ask = { summary: "Looking for a room from June, budget around $1200, tidy", preferences: [p({ topic: "budget", value: "$1200", visibility: "match_only" })] };
+    expect(publicSummary(ask)).toBe("Looking for a room from June, budget around a private number, tidy");
+  });
+  it("leaves public numbers alone", () => {
+    const ask = { summary: "Room in the Mission, $1,350/mo", preferences: [p({ topic: "rent", value: "$1,350/mo", visibility: "public" })] };
+    expect(publicSummary(ask)).toBe("Room in the Mission, $1,350/mo");
+  });
+});
+

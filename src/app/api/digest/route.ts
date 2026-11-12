@@ -1,4 +1,5 @@
 // GET -> { cards: DigestCard[] }   Ember writes a short digest of open asks in the persona's Groups (breadth beat).
+import { publicSummary } from "@/lib/privacy";
 import { NextResponse } from "next/server";
 import { allAsks, getUser } from "@/lib/db";
 import { mockDigest } from "@/lib/mocks";
@@ -15,7 +16,7 @@ export async function GET() {
   const asks = allAsks().filter((a) => a.userId !== me.id && me.groups.includes(a.groupId) && a.type !== "roommate");
   const p = digestPrompt({
     userProfile: `${me.name}, ${me.school ?? ""}, ${me.city}. Interests: ${me.interests.map((i) => i.value).join(", ")}. ${me.bio ?? ""}`,
-    asks: asks.map((a) => `${a.userId} (${getUser(a.userId)?.name}): [${a.type}] ${a.summary}`).join("\n"),
+    asks: asks.map((a) => `${a.userId} (${getUser(a.userId)?.name}): [${a.type}] ${publicSummary(a)}`).join("\n"),
   });
   const out = await museJSON({ model: "ember", system: p.system, user: p.user, schema: DigestSchema, mock: mockDigest });
   return NextResponse.json({

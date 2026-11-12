@@ -73,9 +73,16 @@ export default function MatchCard({
       ? { text: "Fits", cls: "bg-[#e6f4ea] text-fb-green" }
       : { text: "Not a fit", cls: "bg-fb-chip text-fb-muted" };
 
+  const talkLink = match.negotiationId ? (
+    <a href={`/muse/talk/${match.negotiationId}`} className="mx-4 mb-1 block text-[13px] font-semibold text-fb-blue hover:underline">
+      See the whole conversation between your Muses →
+    </a>
+  ) : null;
+
   // "What my Muse shared" is the card's footer: always there, out of the way of the decision.
   const sharedLog = (
     <div className="mx-4 border-t border-fb-divider">
+      {talkLink && <div className="-mx-4 pt-2">{talkLink}</div>}
       <button onClick={toggleLog} aria-expanded={logOpen} className="flex w-full items-center gap-2 py-2.5 text-left text-[13px] font-semibold text-fb-muted hover:text-fb-text">
         <LockIcon size={13} />
         What my Muse shared with {first}

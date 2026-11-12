@@ -1,5 +1,6 @@
 // Muse page: today's digest of people in your Groups who need something you can help with (breadth beat, PRD §5.3).
 // Ember writes the cards from seeded asks; served from the mock offline.
+import { publicSummary } from "@/lib/privacy";
 import Link from "next/link";
 import Avatar from "@/components/Avatar";
 import { MuseMark } from "@/components/icons";
@@ -19,7 +20,7 @@ export default async function DigestPage() {
   const asks = allAsks().filter((a) => a.userId !== me.id && me.groups.includes(a.groupId) && a.type !== "roommate");
   const p = digestPrompt({
     userProfile: `${me.name}, ${me.school ?? ""}, ${me.city}. Interests: ${me.interests.map((i) => i.value).join(", ")}. ${me.bio ?? ""}`,
-    asks: asks.map((a) => `${a.userId} (${getUser(a.userId)?.name}): [${a.type}] ${a.summary}`).join("\n"),
+    asks: asks.map((a) => `${a.userId} (${getUser(a.userId)?.name}): [${a.type}] ${publicSummary(a)}`).join("\n"),
   });
   let cards = mockDigest.cards;
   try {

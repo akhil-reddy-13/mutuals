@@ -58,7 +58,7 @@ export default async function NotificationsPage() {
     if (!ask || !asker || !group) continue;
     items.push({
       id: `cand_${m.id}`,
-      href: `/groups/${group.id}/muse/${m.askId}`,
+      href: m.negotiationId ? `/muse/talk/${m.negotiationId}` : `/groups/${group.id}/muse/${m.askId}`,
       avatar: { src: asker.avatarUrl, name: asker.name },
       badge: "muse",
       text: (

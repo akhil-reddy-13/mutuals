@@ -1,10 +1,11 @@
 // Facebook Home: composer, stories, and a feed of posts from the Groups you're in. The demo starts here, then goes
 // into a Group where Muse lives. Nothing on this page is Muse-specific except the Muse suggestion card.
+import { publicSummary } from "@/lib/privacy";
 import Link from "next/link";
 import Avatar from "@/components/Avatar";
 import { MuseMark, PhotoIcon, PlusIcon, SmileIcon, VideoCamIcon } from "@/components/icons";
 import PostCard from "@/components/PostCard";
-import { allUsers, asksForUser, getGroup, getUser, matchesForAsk, seed } from "@/lib/db";
+import { allUsers, asksForUser, getAsk, getGroup, getUser, matchesForAsk, matchesInvolving, seed } from "@/lib/db";
 import { firstName } from "@/lib/format";
 import { currentUser } from "@/lib/session";
 
@@ -23,6 +24,10 @@ export default async function Home() {
     .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))[0];
   const fits = latestMatched ? matchesForAsk(latestMatched.id).filter((m) => m.verdict.compatible) : [];
   const matchedGroup = latestMatched ? getGroup(latestMatched.groupId) : undefined;
+  // Someone else's Muse reached out to mine (I'm the candidate): the proof that Muses talk to each other.
+  const reachedMe = matchesInvolving(me.id)
+    .filter((m) => m.candidateId === me.id && m.negotiationId && m.verdict.compatible)
+    .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
 
   return (
     <div className="mx-auto flex w-full max-w-[680px] flex-col gap-3 pb-24 md:gap-4 md:py-4">
@@ -67,6 +72,30 @@ export default async function Home() {
           </div>
         ))}
       </section>
+
+      {reachedMe.map((m) => {
+        const from = getUser(m.userId)!;
+        const ask = getAsk(m.askId);
+        const g = ask ? getGroup(ask.groupId) : undefined;
+        return (
+          <Link key={m.id} href={`/muse/talk/${m.negotiationId}`} className="fb-card flex items-center gap-3 rounded-none border-l-4 border-fb-purple p-3 hover:bg-fb-hover md:rounded-[8px] md:p-4">
+            <span className="relative shrink-0">
+              <Avatar src={from.avatarUrl} name={from.name} size={44} />
+              <span className="absolute -bottom-1 -right-1 rounded-full bg-white p-0.5">
+                <MuseMark size={20} />
+              </span>
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[15px] font-semibold leading-5">
+                {firstName(from.name)}&apos;s Muse talked with yours{g ? ` in ${g.name}` : ""}
+              </span>
+              <span className="block text-[13px] leading-4 text-fb-muted">
+                About &ldquo;{ask ? publicSummary(ask) : ""}&rdquo;. Looks like a fit. See what they said →
+              </span>
+            </span>
+          </Link>
+        );
+      })}
 
       {/* First screen: the roommate example, in Muse's voice. Breadth lives in the Muse digest, not here. */}
       {!(latestMatched && fits.length > 0) && <MutualsIntro schoolMuses={allUsers().filter((u) => u.museEnabled && u.school === me.school && u.schoolVerified && u.id !== me.id).length} school={me.school ?? "school"} />}
