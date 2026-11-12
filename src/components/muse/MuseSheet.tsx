@@ -27,8 +27,24 @@ interface Msg {
   role: "muse" | "user";
   text?: string;
   card?: Card;
-  actions?: { label: string; primary?: boolean; onClick: () => void }[];
+  // A name, not a callback, so the chat can be saved and resumed.
+  actions?: { label: string; primary?: boolean; act: "check" | "notnow" }[];
   chips?: string[];
+}
+
+// What "resume the chat" keeps in localStorage. The ask itself is re-fetched from the server on open, so
+// never-shared prefs don't sit in browser storage, and a demo reset (ask gone) starts a fresh chat.
+interface SavedChat {
+  askId: string;
+  msgs: Msg[];
+  used: string[];
+  ready: boolean;
+  intake: { room: RoomDetails | null; items: Item[] } | null;
+  listed: { id: string; title: string; priceUsd: number } | null;
+  cands: LiveCandidate[];
+  matches: Match[] | null;
+  events: Record<string, EventInfo | null>;
+  remembered?: string[];
 }
 
 let seq = 0;
@@ -66,6 +82,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
   const [cands, setCands] = useState<LiveCandidate[]>([]);
   const [matches, setMatches] = useState<Match[] | null>(null);
   const [events, setEvents] = useState<Record<string, EventInfo | null>>({});
+  const [remembered, setRemembered] = useState<string[]>([]);
   const bodyRef = useRef<HTMLDivElement>(null);
   const esRef = useRef<EventSource | null>(null);
   const askRef = useRef<Ask | null>(null);
@@ -79,19 +96,81 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
     return id;
   }, []);
 
-  // Opening line (guarded: React strict mode runs effects twice in dev)
-  const started = useRef(false);
-  useEffect(() => {
-    if (started.current) return;
-    started.current = true;
+  const storeKey = `muse-chat:${me.id}:${group.id}`;
+  const greet = () =>
     push({
       role: "muse",
       text: `Hey ${first}. What do you need in ${group.name}? Tell me the stuff you wouldn't post, too. I keep that between us.`,
       chips: ["I have a room to fill", "Looking for a room", "Selling furniture before I move"],
     });
-    return () => esRef.current?.close();
+
+  // Resume the saved chat for this persona + Group, else the opening line (guarded: strict mode runs effects twice in dev)
+  const started = useRef(false);
+  useEffect(() => {
+    if (started.current) return;
+    started.current = true;
+    (async () => {
+      let saved: SavedChat | null = null;
+      try {
+        saved = JSON.parse(localStorage.getItem(storeKey) ?? "null");
+      } catch {}
+      if (saved) {
+        const [a, m] = await Promise.all([
+          fetch(`/api/asks?askId=${saved.askId}`, { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)),
+          fetch(`/api/matches?askId=${saved.askId}`, { cache: "no-store" }).then((r) => r.json()),
+        ]).catch(() => [null, null]);
+        if (a?.ask) {
+          setAsk(a.ask);
+          setReady(saved.ready);
+          setUsed(new Set(saved.used));
+          setIntake(saved.intake);
+          setListed(saved.listed);
+          setCands(saved.cands);
+          setEvents(saved.events);
+          setRemembered(saved.remembered ?? []);
+          setMatches(m?.matches?.length ? m.matches : saved.matches); // server copy has threadId once Messenger opened
+          setMsgs(saved.msgs);
+          const lastMatching = saved.msgs.findLastIndex((x) => x.card === "matching");
+          if (lastMatching >= 0 && !saved.msgs.slice(lastMatching).some((x) => x.card === "shortlist")) {
+            recoverByPolling(a.ask.id, "Welcome back. Still checking in the background, I'll show results as soon as they're in.");
+          }
+          return;
+        }
+        try {
+          localStorage.removeItem(storeKey);
+        } catch {}
+      }
+      greet();
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  useEffect(() => () => esRef.current?.close(), []);
+
+  useEffect(() => {
+    if (!ask) return;
+    const saved: SavedChat = { askId: ask.id, msgs, used: [...used], ready, intake, listed, cands, matches, events, remembered };
+    try {
+      localStorage.setItem(storeKey, JSON.stringify(saved));
+    } catch {}
+  }, [storeKey, ask, msgs, used, ready, intake, listed, cands, matches, events, remembered]);
+
+  function startOver() {
+    esRef.current?.close();
+    try {
+      localStorage.removeItem(storeKey);
+    } catch {}
+    setAsk(null);
+    setReady(false);
+    setUsed(new Set());
+    setIntake(null);
+    setListed(null);
+    setCands([]);
+    setMatches(null);
+    setEvents({});
+    setRemembered([]);
+    setMsgs([]);
+    greet();
+  }
 
   useEffect(() => {
     const el = bodyRef.current;
@@ -112,9 +191,10 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
         method: "POST",
         body: JSON.stringify({ groupId: group.id, askId: askRef.current?.id, conversation: conversation(t) }),
       });
-      const out = (await res.json()) as { ask: Ask; followUp: string | null; ready: boolean; error?: string };
+      const out = (await res.json()) as { ask: Ask; followUp: string | null; ready: boolean; remembered?: string[]; error?: string };
       if (out.error) throw new Error(out.error);
       setAsk(out.ask);
+      setRemembered(out.remembered ?? []);
       if (!out.ready) {
         push({ role: "muse", text: out.followUp ?? "Tell me a bit more." });
       } else if (!ready) {
@@ -156,19 +236,19 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
       role: "muse",
       text: `Want me to check with other Muses in ${group.name}? I'll also read the group's posts. Only public and match-only facts go out, and you'll see everything I share.`,
       actions: [
-        { label: "Yes, check", primary: true, onClick: () => startMatching() },
-        {
-          label: "Not now",
-          onClick: () =>
-            push({
-              role: "muse",
-              text: "No problem. Your ask is saved. Whenever you're ready, I can check.",
-              actions: [{ label: "Check now", primary: true, onClick: () => startMatching() }],
-            }),
-        },
+        { label: "Yes, check", primary: true, act: "check" },
+        { label: "Not now", act: "notnow" },
       ],
     });
     return id;
+  }
+
+  function notNow() {
+    push({
+      role: "muse",
+      text: "No problem. Your ask is saved. Whenever you're ready, I can check.",
+      actions: [{ label: "Check now", primary: true, act: "check" }],
+    });
   }
 
   async function onFrames(frames: string[], narration: string, audio: string | null = null) {
@@ -289,8 +369,8 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
 
   // The stream dropped (phone locked, Safari backgrounded). Matching keeps running on the server, so poll for
   // the saved matches and show the shortlist when the ask is marked matched.
-  function recoverByPolling(askId: string) {
-    push({ role: "muse", text: "Lost the connection for a second. Still checking in the background, I'll show results as soon as they're in." });
+  function recoverByPolling(askId: string, note = "Lost the connection for a second. Still checking in the background, I'll show results as soon as they're in.") {
+    push({ role: "muse", text: note });
     const started = Date.now();
     const tick = async () => {
       try {
@@ -337,6 +417,11 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
             <div className="text-[15px] font-bold leading-tight">Muse</div>
             <div className="truncate text-[12px] text-fb-muted">Private · {group.name}</div>
           </div>
+          {ask && (
+            <button onClick={startOver} className="rounded-full px-3 py-1.5 text-[13px] font-semibold text-fb-blue hover:bg-fb-blue-soft">
+              New ask
+            </button>
+          )}
           <button onClick={onClose} className="fb-icon-btn h-9 w-9" aria-label="Close">
             <CloseIcon size={20} />
           </button>
@@ -373,7 +458,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
                         <button
                           key={a.label}
                           disabled={used.has(m.id)}
-                          onClick={() => runAction(m.id, a.onClick)}
+                          onClick={() => runAction(m.id, a.act === "check" ? startMatching : notNow)}
                           className={`${a.primary ? "fb-btn-primary" : "fb-btn-secondary"} h-9 disabled:opacity-50`}
                         >
                           {a.label}
@@ -384,7 +469,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
                   {m.card === "prefs" && ask && (
                     <div className="ml-8 rounded-xl border border-fb-divider bg-fb-bg p-2.5">
                       <div className="mb-2 text-[14px] font-semibold">{ask.summary}</div>
-                      <PrefChips prefs={ask.preferences} onChange={updatePrefs} />
+                      <PrefChips prefs={ask.preferences} onChange={updatePrefs} remembered={remembered} />
                     </div>
                   )}
                   {m.card === "video" && !intake && !used.has(m.id) && (
@@ -429,7 +514,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
                     </div>
                   )}
                   {m.card === "shortlist" && matches && (
-                    <div className="ml-8 flex flex-col gap-2.5">
+                    <div className="flex flex-col gap-2.5">
                       {matches.map((mt) => {
                         const c = candById[mt.candidateId];
                         return c ? <MatchCard key={mt.id} match={mt} candidate={c} viewerId={me.id} groupId={group.id} event={events[mt.id] ?? null} compact /> : null;

@@ -53,7 +53,7 @@ ${a.spokenAs ? `The seller called it: "${a.spokenAs}".` : "The seller didn't men
 ${a.transcript ? `Full narration: "${a.transcript}"` : ""}`,
 });
 
-export const askParsePrompt = (a: { ownerName: string; groupName: string; conversation: string }) => ({
+export const askParsePrompt = (a: { ownerName: string; groupName: string; conversation: string; memory?: string }) => ({
   system: `You are ${a.ownerName}'s personal Muse inside the Facebook Group "${a.groupName}". ${a.ownerName} is telling you
 privately what they need. Your job: turn the conversation into a structured ask with visibility-tagged preferences,
 asking at most one short follow-up at a time until you have what matters (for housing: rent or budget, move-in date,
@@ -74,7 +74,19 @@ Visibility rules: posted numbers and plain facts → public. Real ceilings/floor
 anything they say to keep private → match_only. Anything they say to NEVER share → never.
 Mark inferred facts as "inferred". Ids are short snake_case, stable across turns (keep earlier ids).
 Follow-ups sound like a friend texting, one sentence, and say what you'll keep private.
-After 3 user messages, set ready = true even if some topics are missing.`,
+After 3 user messages, set ready = true even if some topics are missing.${
+    a.memory
+      ? `
+
+You remember these facts from ${a.ownerName}'s earlier asks (built from privacy.agentContext; never-shared facts are not here):
+${a.memory}
+When one of them matters for THIS ask and the conversation hasn't covered it, check it in your follow-up the way a
+friend would: "Last time you said <fact>. Still true?" One at a time, most important first. Carry a remembered fact
+into preferences with the same id, visibility and importance, and source "inferred" until ${a.ownerName} confirms it;
+once they confirm it, mark it "stated". If they say it changed, use the new value. Skip facts that don't fit this
+kind of ask (a ride doesn't need pets). Never treat a remembered fact as confirmed on your own.`
+      : ""
+  }`,
   user: a.conversation,
 });
 

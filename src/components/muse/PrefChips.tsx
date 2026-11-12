@@ -24,7 +24,7 @@ export function VisBadge({ v, onClick, size = "sm" }: { v: Visibility; onClick?:
   );
 }
 
-export default function PrefChips({ prefs, onChange }: { prefs: Preference[]; onChange?: (next: Preference[]) => void }) {
+export default function PrefChips({ prefs, onChange, remembered = [] }: { prefs: Preference[]; onChange?: (next: Preference[]) => void; remembered?: string[] }) {
   function cycle(id: string) {
     if (!onChange) return;
     onChange(prefs.map((p) => (p.id === id ? { ...p, visibility: NEXT[p.visibility] } : p)));
@@ -44,7 +44,7 @@ export default function PrefChips({ prefs, onChange }: { prefs: Preference[]; on
             <div className="text-[14px] leading-5">{p.value}</div>
             {p.source === "inferred" && !p.confirmed && (
               <button onClick={() => confirm(p.id)} className="mt-0.5 text-[12px] font-semibold text-fb-blue hover:underline">
-                I guessed this. Confirm?
+                {remembered.includes(p.id) ? "From your last ask. Still true?" : "I guessed this. Confirm?"}
               </button>
             )}
           </div>

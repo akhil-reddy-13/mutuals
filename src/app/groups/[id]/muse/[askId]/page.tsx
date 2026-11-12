@@ -2,6 +2,7 @@
 // the asker sees every candidate, a candidate sees only their own match. PRD §11.5 / handoff 4c.
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import Avatar from "@/components/Avatar";
 import MatchCard from "@/components/MatchCard";
 import { BackIcon, MuseMark } from "@/components/icons";
 import { getAsk, getEvent, getGroup, getUser, matchesForAsk, postsInGroup } from "@/lib/db";
@@ -22,7 +23,16 @@ export default async function MatchesPage({ params }: { params: Promise<{ id: st
   const all = sortMatches(matchesForAsk(askId));
   const matches = iAmAsker ? all : all.filter((m) => m.candidateId === me.id);
   const fits = matches.filter((m) => m.verdict.compatible);
+  const misses = matches.filter((m) => !m.verdict.compatible);
   const agentCount = all.filter((m) => m.mode === "agent_to_agent").length;
+  // Already sorted (fits first, best first); the asker sees that order as labeled sections.
+  const sections = iAmAsker
+    ? [
+        { title: "Best match", items: fits.slice(0, 1) },
+        { title: "Also a fit", items: fits.slice(1) },
+        { title: "Not a fit", items: misses },
+      ].filter((s) => s.items.length > 0)
+    : [{ title: "", items: matches }];
 
   return (
     <div className="mx-auto flex max-w-[680px] flex-col gap-3 pb-24 md:gap-4 md:py-4">
@@ -52,6 +62,30 @@ export default async function MatchesPage({ params }: { params: Promise<{ id: st
               <p className="mt-1 text-[12px] text-fb-muted">
                 Muse Spark negotiated, Muse Wonder refereed and judged the connection, Muse Ember read the posts{ask.roomDetails ? " and your video" : ""}.
               </p>
+              {/* Ranked overview, like Facebook's people lists: compare at a glance, tap to jump to the card. */}
+              {matches.length > 1 && (
+                <ol className="mt-3 overflow-hidden rounded-lg border border-fb-divider">
+                  {matches.map((m) => {
+                    const u = getUser(m.candidateId)!;
+                    const fit = m.verdict.compatible;
+                    return (
+                      <li key={m.id} className="border-b border-fb-divider last:border-b-0">
+                        <a href={`#${m.id}`} className={`flex items-center gap-3 px-3 py-2 hover:bg-fb-bg ${fit ? "" : "opacity-70"}`}>
+                          <span className="w-4 shrink-0 text-center text-[13px] font-semibold text-fb-muted">{fit ? fits.indexOf(m) + 1 : ""}</span>
+                          <Avatar src={u.avatarUrl} name={u.name} size={36} />
+                          <span className="min-w-0 flex-1">
+                            <span className="block text-[15px] font-semibold leading-5">{u.name}</span>
+                            <span className="block truncate text-[13px] text-fb-muted">{m.verdict.summaryForHumans}</span>
+                          </span>
+                          <span className={`shrink-0 rounded-full px-2 py-0.5 text-[12px] font-semibold ${fit ? "bg-[#e6f4ea] text-fb-green" : "bg-fb-chip text-fb-muted"}`}>
+                            {fit ? "Fits" : "Not a fit"}
+                          </span>
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ol>
+              )}
             </>
           ) : (
             <>
@@ -66,20 +100,30 @@ export default async function MatchesPage({ params }: { params: Promise<{ id: st
       {matches.length === 0 && (
         <section className="fb-card p-6 text-center text-fb-muted">Nothing here yet.</section>
       )}
-      {matches.map((m) => {
-        const other = getUser(iAmAsker ? m.candidateId : m.userId)!;
-        const ev = m.connection?.eventId ? getEvent(m.connection.eventId) : undefined;
-        return (
-          <MatchCard
-            key={m.id}
-            match={m}
-            candidate={{ id: other.id, name: other.name, avatarUrl: other.avatarUrl, school: other.school }}
-            viewerId={me.id}
-            groupId={group.id}
-            event={ev ? { id: ev.id, name: ev.name, when: ev.when, where: ev.where, going: ev.goingIds.length, coverEmoji: ev.coverEmoji } : null}
-          />
-        );
-      })}
+      {sections.map((s) => (
+        <section key={s.title || "all"} className="flex flex-col gap-3 md:gap-4">
+          {s.title && (
+            <h2 className="flex items-baseline gap-2 px-4 pt-1 md:px-1">
+              <span className="text-[17px] font-bold">{s.title}</span>
+              {s.items.length > 1 && <span className="text-[15px] text-fb-muted">{s.items.length}</span>}
+            </h2>
+          )}
+          {s.items.map((m) => {
+            const other = getUser(iAmAsker ? m.candidateId : m.userId)!;
+            const ev = m.connection?.eventId ? getEvent(m.connection.eventId) : undefined;
+            return (
+              <MatchCard
+                key={m.id}
+                match={m}
+                candidate={{ id: other.id, name: other.name, avatarUrl: other.avatarUrl, school: other.school }}
+                viewerId={me.id}
+                groupId={group.id}
+                event={ev ? { id: ev.id, name: ev.name, when: ev.when, where: ev.where, going: ev.goingIds.length, coverEmoji: ev.coverEmoji } : null}
+              />
+            );
+          })}
+        </section>
+      ))}
     </div>
   );
 }
