@@ -6,9 +6,11 @@ import Avatar from "@/components/Avatar";
 import ConnectionCard, { type EventInfo } from "@/components/ConnectionCard";
 import MatchCard from "@/components/MatchCard";
 import HomesCard from "@/components/muse/HomesCard";
+import AskElsewhere from "@/components/muse/AskElsewhere";
+import { elsewhereFor } from "@/lib/match";
 import { buyersFor } from "@/lib/homes";
 import { BackIcon, FeedIcon, MuseMark } from "@/components/icons";
-import { getAsk, getEvent, getGroup, getUser, matchesForAsk, postsInGroup } from "@/lib/db";
+import { getAsk, getEvent, getGroup, getUser, matchesForAsk } from "@/lib/db";
 import { firstName } from "@/lib/format";
 import { sortMatches } from "@/lib/match";
 import { currentUser } from "@/lib/session";
@@ -111,7 +113,7 @@ export default async function MatchesPage({ params }: { params: Promise<{ id: st
                   <MuseMark size={14} /> {agentCount} {agentCount === 1 ? "Muse" : "Muses"} checked
                 </li>
                 <li className="inline-flex items-center gap-1.5 rounded-full bg-fb-bg px-2.5 py-1">
-                  <FeedIcon size={14} /> {postsInGroup(group.id).length} posts read
+                  <FeedIcon size={14} /> {all.filter((m) => m.mode === "one_sided").length} {all.filter((m) => m.mode === "one_sided").length === 1 ? "post" : "posts"} read
                 </li>
               </ul>
               </div>
@@ -153,9 +155,17 @@ export default async function MatchesPage({ params }: { params: Promise<{ id: st
         </div>
       </section>
 
-      {matches.length === 0 && (
-        <section className="fb-card p-6 text-center text-fb-muted">Nothing here yet.</section>
-      )}
+      {matches.length === 0 &&
+        (iAmAsker ? (
+          <AskElsewhere
+            askId={ask.id}
+            hereName={group.name}
+            what={ask.type === "roommate" || ask.type === "sublet" ? "a room" : "this"}
+            best={elsewhereFor(ask)[0] ?? null}
+          />
+        ) : (
+          <section className="fb-card p-6 text-center text-fb-muted">Nothing here yet.</section>
+        ))}
       {sections.map((s) => (
         <section key={s.title || "all"} className="flex flex-col gap-3 md:gap-4">
           {s.title && (

@@ -72,6 +72,15 @@ function isSelling(a: Ask | null | undefined): boolean {
   return !!a && a.type === "item" && a.side !== "seeking";
 }
 
+/** Starter chips that make sense in each Group (and that the seeded people there can actually answer). */
+const GROUP_CHIPS: Record<string, string[]> = {
+  g_housing27: ["I have a room to fill", "Looking for a room", "Need a summer sublet"],
+  g_ffs: ["Selling some stuff before I move out", "Need a tent for a camping trip", "Need a ride to SFO Friday"],
+  g_sfgrads: ["Going to beabadoobee, nobody to go with", "New in SF, want to meet people", "Looking for a room in SF"],
+  g_runners: ["Looking for a weekend running buddy", "New in SF, want a run crew"],
+};
+const DEFAULT_CHIPS = ["I need something", "I'm selling something", "Looking for people to do something with"];
+
 export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
   const router = useRouter();
   const first = firstName(me.name);
@@ -113,7 +122,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
     push({
       role: "muse",
       text: `Hey ${first}. What do you need in ${group.name}? Tell me the stuff you wouldn't post, too. I keep that between us.`,
-      chips: ["I have a room to fill", "Looking for a room", "Selling furniture before I move"],
+      chips: GROUP_CHIPS[group.id] ?? DEFAULT_CHIPS,
     });
 
   // Resume the saved chat for this persona + Group, else the opening line (guarded: strict mode runs effects twice in dev)

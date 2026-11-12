@@ -41,6 +41,13 @@ export function rememberedPrefs(asks: Ask[], currentAskId?: string): Preference[
   return out;
 }
 
+/** Clear "I have it" phrasing wins over the model: "need a roommate for my second bedroom" is OFFERING a room. */
+const STRONG_OFFER = /\b(i signed|i have a (room|spare|extra)|i've got a (room|spare)|my (room|second bedroom|spare room|place)|room to fill|for the second bedroom|i'm selling|selling my|giving away|i'm driving)\b/i;
+export function resolveSide(model: "offering" | "seeking" | null | undefined, prev: "offering" | "seeking" | undefined, text: string): "offering" | "seeking" {
+  if (STRONG_OFFER.test(text)) return "offering";
+  return model ?? prev ?? guessSide(text);
+}
+
 export async function parseAsk(a: { userId: string; groupId: string; askId?: string; conversation: ChatMsg[] }) {
   const user = getUser(a.userId);
   const group = getGroup(a.groupId);
@@ -71,7 +78,7 @@ export async function parseAsk(a: { userId: string; groupId: string; askId?: str
     groupId: group.id,
     type: out.ask_type,
     summary: out.summary,
-    side: out.side ?? existing?.side ?? guessSide(a.conversation.filter((m) => m.role === "user").map((m) => m.text).join("\n")),
+    side: resolveSide(out.side, existing?.side, a.conversation.filter((m) => m.role === "user").map((m) => m.text).join("\n")),
     preferences,
     roomDetails: existing?.roomDetails,
     items: existing?.items,
