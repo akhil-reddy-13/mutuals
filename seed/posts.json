@@ -41,7 +41,7 @@
     "createdAt": "2026-11-08T18:00:00Z",
     "text": "Moving to SF in Sept with my dog Biscuit (golden, very chill). Looking for a dog-friendly 2BR, roughly $1,300/person.",
     "reactions": 23,
-    "imageUrl": "https://picsum.photos/seed/biscuit-dog/900/700",
+    "imageUrl": "/img/post_sublet.jpg",
     "comments": [
       {
         "authorId": "june",
@@ -121,7 +121,7 @@
     "createdAt": "2026-11-07T18:00:00Z",
     "text": "Offering guitar lessons (beginner/intermediate)! Would love to trade for resume help, applying to PM internships.",
     "reactions": 14,
-    "imageUrl": "https://picsum.photos/seed/guitar-case/900/600",
+    "imageUrl": "/img/post_guitar.jpg",
     "comments": [
       {
         "authorId": "dev",
@@ -170,7 +170,7 @@
     "createdAt": "2026-11-10T18:00:00Z",
     "text": "Free IKEA floor lamp, works fine, small scratch on the base. Pickup at EVGR.",
     "reactions": 3,
-    "imageUrl": "https://picsum.photos/seed/ikea-lamp/900/900",
+    "imageUrl": "/img/post_lamp.jpg",
     "comments": []
   },
   {
@@ -180,7 +180,7 @@
     "createdAt": "2026-11-04T18:00:00Z",
     "text": "Anyone doing Saturday morning runs along the Embarcadero once we're in SF?",
     "reactions": 18,
-    "imageUrl": "https://picsum.photos/seed/embarcadero-run/900/600",
+    "imageUrl": "/img/post_runs.jpg",
     "comments": [
       {
         "authorId": "maya",
@@ -204,7 +204,7 @@
     "authorId": "lena",
     "createdAt": "2026-11-11T17:00:00Z",
     "reactions": 9,
-    "imageUrl": "https://picsum.photos/seed/fox-theater/900/600",
+    "imageUrl": "/img/post_lena_tix.jpg",
     "comments": [
       {
         "authorId": "theo",
@@ -220,7 +220,7 @@
     "authorId": "rosa",
     "createdAt": "2026-11-10T16:00:00Z",
     "reactions": 31,
-    "imageUrl": "https://picsum.photos/seed/mission-brunch/900/700",
+    "imageUrl": "/img/post_rosa_brunch.jpg",
     "comments": [
       {
         "authorId": "kai",
@@ -281,7 +281,7 @@
     "authorId": "maya",
     "createdAt": "2026-11-10T14:00:00Z",
     "reactions": 27,
-    "imageUrl": "https://picsum.photos/seed/golden-gate-run/900/600",
+    "imageUrl": "/img/post_maya_runs2.jpg",
     "comments": [
       {
         "authorId": "june",
@@ -306,7 +306,7 @@
     "authorId": "dev",
     "createdAt": "2026-11-11T12:00:00Z",
     "reactions": 2,
-    "imageUrl": "https://picsum.photos/seed/monitor-desk/900/700",
+    "imageUrl": "/img/post_dev_sold.jpg",
     "comments": [],
     "text": "SOLD: 27in monitor. Thanks all. Still have the monitor arm, $15."
   }

@@ -9,12 +9,13 @@ export default async function MarketplaceIndex() {
   const me = await currentUser();
   const mine = listingsForUser(me.id);
   const ambient = [
-    ["Free IKEA floor lamp", 0],
-    ["Mini fridge, works great", 45],
-    ["Desk chair, mesh back", 35],
-    ["Bookshelf, 5 tier", 20],
-    ["Yoga mat + blocks", 15],
-    ["Monitor 24in 1080p", 60],
+    // Photos generated with Muse Image (scripts/gen-images.ts), stored in public/img so the demo works offline.
+    ["Free IKEA floor lamp", 0, "/img/mp_lamp.jpg"],
+    ["Mini fridge, works great", 45, "/img/mp_fridge.jpg"],
+    ["Desk chair, mesh back", 35, "/img/mp_chair.jpg"],
+    ["Bookshelf, 5 tier", 20, "/img/mp_bookshelf.jpg"],
+    ["Yoga mat + blocks", 15, "/img/mp_yoga.jpg"],
+    ["Monitor 24in 1080p", 60, "/img/mp_monitor.jpg"],
   ] as const;
   return (
     <div className="mx-auto max-w-[1100px] px-3 pb-24 md:px-4 md:py-4">
@@ -40,9 +41,9 @@ export default async function MarketplaceIndex() {
       )}
       <h2 className="mt-4 text-[17px] font-bold">Today&apos;s picks</h2>
       <div className="mt-2 grid grid-cols-2 gap-3 md:grid-cols-4">
-        {ambient.map(([t, p], i) => (
+        {ambient.map(([t, p, img]) => (
           <div key={t} className="fb-card overflow-hidden">
-            <div className="aspect-square" style={{ background: `linear-gradient(135deg, hsl(${(i * 57) % 360} 40% 85%), hsl(${(i * 57 + 40) % 360} 40% 70%))` }} />
+            <img src={img} alt={t} className="aspect-square w-full object-cover" loading="lazy" />
             <div className="p-2">
               <div className="text-[15px] font-semibold">{p === 0 ? "Free" : `$${p}`}</div>
               <div className="truncate text-[14px]">{t}</div>

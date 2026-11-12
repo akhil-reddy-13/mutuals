@@ -2,7 +2,7 @@
   {
     "id": "alex",
     "name": "Alex Kim",
-    "avatarUrl": "https://randomuser.me/api/portraits/men/32.jpg",
+    "avatarUrl": "/avatars/alex.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "San Francisco",
@@ -42,7 +42,7 @@
   {
     "id": "priya",
     "name": "Priya Shah",
-    "avatarUrl": "https://randomuser.me/api/portraits/women/44.jpg",
+    "avatarUrl": "/avatars/priya.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "San Francisco",
@@ -82,7 +82,7 @@
   {
     "id": "jordan",
     "name": "Jordan Lee",
-    "avatarUrl": "https://randomuser.me/api/portraits/men/75.jpg",
+    "avatarUrl": "/avatars/jordan.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "San Francisco",
@@ -111,7 +111,7 @@
   {
     "id": "sam",
     "name": "Sam Rivera",
-    "avatarUrl": "https://randomuser.me/api/portraits/men/11.jpg",
+    "avatarUrl": "/avatars/sam.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "San Francisco",
@@ -139,7 +139,7 @@
   {
     "id": "casey",
     "name": "Casey Nguyen",
-    "avatarUrl": "https://randomuser.me/api/portraits/women/65.jpg",
+    "avatarUrl": "/avatars/casey.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "San Francisco",
@@ -162,7 +162,7 @@
   {
     "id": "maya",
     "name": "Maya Patel",
-    "avatarUrl": "https://randomuser.me/api/portraits/women/68.jpg",
+    "avatarUrl": "/avatars/maya.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "San Francisco",
@@ -194,7 +194,7 @@
   {
     "id": "theo",
     "name": "Theo Park",
-    "avatarUrl": "https://randomuser.me/api/portraits/men/86.jpg",
+    "avatarUrl": "/avatars/theo.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "San Francisco",
@@ -232,7 +232,7 @@
   {
     "id": "lena",
     "name": "Lena Brooks",
-    "avatarUrl": "https://randomuser.me/api/portraits/women/12.jpg",
+    "avatarUrl": "/avatars/lena.jpg",
     "schoolVerified": true,
     "city": "San Francisco",
     "groups": [
@@ -260,7 +260,7 @@
   {
     "id": "rosa",
     "name": "Rosa Diaz",
-    "avatarUrl": "https://randomuser.me/api/portraits/women/90.jpg",
+    "avatarUrl": "/avatars/rosa.jpg",
     "schoolVerified": false,
     "city": "San Francisco",
     "groups": [],
@@ -283,7 +283,7 @@
   {
     "id": "kai",
     "name": "Kai Tanaka",
-    "avatarUrl": "https://randomuser.me/api/portraits/men/41.jpg",
+    "avatarUrl": "/avatars/kai.jpg",
     "schoolVerified": false,
     "city": "San Francisco",
     "groups": [],
@@ -306,7 +306,7 @@
   {
     "id": "nina",
     "name": "Nina Okafor",
-    "avatarUrl": "https://randomuser.me/api/portraits/women/26.jpg",
+    "avatarUrl": "/avatars/nina.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "San Francisco",
@@ -330,7 +330,7 @@
   {
     "id": "omar",
     "name": "Omar Haddad",
-    "avatarUrl": "https://randomuser.me/api/portraits/men/53.jpg",
+    "avatarUrl": "/avatars/omar.jpg",
     "schoolVerified": false,
     "city": "San Francisco",
     "groups": [],
@@ -353,7 +353,7 @@
   {
     "id": "june",
     "name": "June Liu",
-    "avatarUrl": "https://randomuser.me/api/portraits/women/33.jpg",
+    "avatarUrl": "/avatars/june.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "San Francisco",
@@ -377,7 +377,7 @@
   {
     "id": "marcus",
     "name": "Marcus Bell",
-    "avatarUrl": "https://randomuser.me/api/portraits/men/64.jpg",
+    "avatarUrl": "/avatars/marcus.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "San Francisco",
@@ -401,7 +401,7 @@
   {
     "id": "dev",
     "name": "Dev Mehta",
-    "avatarUrl": "https://randomuser.me/api/portraits/men/22.jpg",
+    "avatarUrl": "/avatars/dev.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "Stanford",
