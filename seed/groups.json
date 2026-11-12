@@ -7,8 +7,18 @@
       "priya",
       "jordan",
       "sam",
-      "casey"
-    ]
+      "casey",
+      "nina",
+      "june"
+    ],
+    "privacy": "private",
+    "coverEmoji": "🏠",
+    "about": "Roommates, sublets and leases for Stanford students and new grads. Be kind, be specific, no scams.",
+    "memberCount": 1843,
+    "adminIds": [
+      "nina"
+    ],
+    "cover": "housing"
   },
   {
     "id": "g_ffs",
@@ -18,8 +28,17 @@
       "maya",
       "theo",
       "marcus",
+      "dev",
+      "nina"
+    ],
+    "privacy": "private",
+    "coverEmoji": "🛒",
+    "about": "Buy, sell, give away. Stanford only. Mark items SOLD when they go.",
+    "memberCount": 12400,
+    "adminIds": [
       "dev"
-    ]
+    ],
+    "cover": "ffs"
   },
   {
     "id": "g_sfgrads",
@@ -28,15 +47,41 @@
       "alex",
       "priya",
       "jordan",
-      "casey"
-    ]
+      "casey",
+      "lena",
+      "rosa",
+      "kai",
+      "omar",
+      "theo",
+      "maya"
+    ],
+    "privacy": "public",
+    "coverEmoji": "🌉",
+    "about": "New to SF? Same. Shows, apartments, brunch, complaining about Muni.",
+    "memberCount": 3210,
+    "adminIds": [
+      "lena"
+    ],
+    "cover": "sf"
   },
   {
     "id": "g_runners",
     "name": "Bay Area Runners",
     "memberIds": [
       "alex",
-      "priya"
-    ]
+      "priya",
+      "maya",
+      "theo",
+      "june",
+      "kai"
+    ],
+    "privacy": "public",
+    "coverEmoji": "🏃",
+    "about": "Group runs, race buddies, route tips. All paces.",
+    "memberCount": 5600,
+    "adminIds": [
+      "maya"
+    ],
+    "cover": "run"
   }
 ]

@@ -1,8 +1,60 @@
-// POST { askId } -> Match[]  (reach.candidateAsks -> negotiation.runNegotiation; reach.candidatePosts -> one-sided postEvalPrompt + opener draft; then connection judgment)
-// OWNER: see CLAUDE.md "Who owns what". Contract documented in docs/PRD.md.
+// GET ?askId=... -> text/event-stream of MatchEvent (start, turn, verdict, connection, done).
+// POST { askId }  -> { matches: Match[] } (same work, no stream; used by scripts).
+// Candidates run in parallel; see lib/match.ts.
 import { NextResponse } from "next/server";
+import { getAsk, optIntoGroup } from "@/lib/db";
+import { runMatching } from "@/lib/match";
+
+export const dynamic = "force-dynamic";
+export const maxDuration = 120;
+
+export async function GET(req: Request) {
+  const askId = new URL(req.url).searchParams.get("askId") ?? "";
+  const ask = getAsk(askId);
+  if (!ask) return new Response("unknown ask", { status: 404 });
+  optIntoGroup(ask.userId, ask.groupId); // starting a search is the opt-in for this Group
+
+  const enc = new TextEncoder();
+  // Matching must finish even if the phone locks or Safari drops the stream: once the client is gone, `send`
+  // becomes a no-op and runMatching keeps writing matches to the store (the Group page / notifications pick
+  // them up; the sheet recovers by polling).
+  let closed = false;
+  const stream = new ReadableStream({
+    async start(controller) {
+      const send = (data: unknown) => {
+        if (closed) return;
+        try {
+          controller.enqueue(enc.encode(`data: ${JSON.stringify(data)}\n\n`));
+        } catch {
+          closed = true;
+        }
+      };
+      try {
+        await runMatching(ask, send);
+      } catch (e) {
+        send({ type: "error", message: String(e) });
+      }
+      if (!closed) {
+        closed = true;
+        try {
+          controller.close();
+        } catch {}
+      }
+    },
+    cancel() {
+      closed = true;
+    },
+  });
+  return new Response(stream, {
+    headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache, no-transform", Connection: "keep-alive" },
+  });
+}
 
 export async function POST(req: Request) {
-  void req;
-  return NextResponse.json({ error: "TODO: match not implemented" }, { status: 501 });
+  const { askId } = await req.json();
+  const ask = getAsk(askId);
+  if (!ask) return NextResponse.json({ error: "unknown ask" }, { status: 404 });
+  optIntoGroup(ask.userId, ask.groupId);
+  const matches = await runMatching(ask);
+  return NextResponse.json({ matches });
 }

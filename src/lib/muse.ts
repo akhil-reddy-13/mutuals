@@ -21,8 +21,25 @@ const MODEL_IDS: Record<MuseModel, string> = {
   ember: process.env.MODEL_EMBER ?? "muse-ember-1.0",
 };
 
+// Reasoning effort per model. Muse models reason before answering; "minimal" is ~3x faster than the default for
+// Spark (measured: ~4s vs ~12s per negotiation turn), which keeps the live demo watchable. The referee keeps more.
+// Override with MUSE_EFFORT_SPARK / _EMBER / _WONDER (minimal|low|medium|high), or "default" to send nothing.
+const EFFORT: Record<MuseModel, string> = {
+  wonder: process.env.MUSE_EFFORT_WONDER ?? "low",
+  spark: process.env.MUSE_EFFORT_SPARK ?? "minimal",
+  ember: process.env.MUSE_EFFORT_EMBER ?? "minimal",
+};
+const effortUnsupported = new Set<MuseModel>();
+
 const MOCK = process.env.MOCK_MUSE === "true";
+/** Small pause per mocked call so streamed negotiations read as live during offline dev/demo. */
+const MOCK_DELAY_MS = Number(process.env.MOCK_DELAY_MS ?? 600);
 const CACHE_DIR = path.join(process.cwd(), ".cache", "muse");
+
+/** "mock" = never hits the network. "live" = real key configured. Shown as a small badge in the UI (handoff fix 9). */
+export function museMode(): "mock" | "live" {
+  return MOCK || !process.env.MUSE_API_KEY ? "mock" : "live";
+}
 
 let _client: OpenAI | null = null;
 function client() {
@@ -72,18 +89,33 @@ async function rawCall(model: MuseModel, messages: ChatMessage[], temperature: n
     if (hit !== null) return hit;
   }
   if (MOCK) {
-    if (mock !== undefined) return mock;
+    if (mock !== undefined) {
+      if (MOCK_DELAY_MS > 0) await new Promise((r) => setTimeout(r, MOCK_DELAY_MS));
+      return mock;
+    }
     throw new Error(`MOCK_MUSE=true and no cache for ${model} call ${key}`);
   }
   let lastErr: unknown;
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
-      const res = await client().chat.completions.create({ model: id, messages, temperature });
+      const effort = EFFORT[model];
+      const extra = effort !== "default" && !effortUnsupported.has(model) ? { reasoning_effort: effort } : {};
+      const res = await client().chat.completions.create({
+        model: id,
+        messages,
+        temperature,
+        ...(extra as object),
+      } as OpenAI.Chat.Completions.ChatCompletionCreateParamsNonStreaming);
       const text = res.choices[0]?.message?.content ?? "";
       writeCache(key, id, text);
       return text;
     } catch (e) {
       lastErr = e;
+      // A model that rejects the effort value: stop sending it and retry immediately.
+      if (/reasoning_effort/i.test(String((e as Error)?.message)) && !effortUnsupported.has(model)) {
+        effortUnsupported.add(model);
+        continue;
+      }
       await new Promise((r) => setTimeout(r, 500 * 2 ** attempt));
     }
   }
@@ -93,7 +125,8 @@ async function rawCall(model: MuseModel, messages: ChatMessage[], temperature: n
 function buildMessages(c: MuseCall): ChatMessage[] {
   return [
     { role: "system", content: c.system },
-    { role: "user", content: c.user as string },
+    // ContentPart[] is structurally compatible with the SDK's multimodal user content.
+    { role: "user", content: c.user as unknown as OpenAI.Chat.Completions.ChatCompletionUserMessageParam["content"] },
   ];
 }
 

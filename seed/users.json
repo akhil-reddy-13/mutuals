@@ -2,7 +2,7 @@
   {
     "id": "alex",
     "name": "Alex Kim",
-    "avatarUrl": "https://i.pravatar.cc/150?u=alex",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/32.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "San Francisco",
@@ -17,7 +17,6 @@
       "dev"
     ],
     "museEnabled": true,
-    "defaultReach": "school",
     "connectionSuggestionsOptIn": true,
     "interests": [
       {
@@ -37,12 +36,13 @@
         "shareForConnection": false
       }
     ],
-    "bio": "Stanford '26 → moving to SF in Sept for a job. Night owl."
+    "bio": "Stanford '26. Moving to SF in Sept for a job. Signed a 2BR lease in the Mission, second bedroom open.",
+    "museGroups": []
   },
   {
     "id": "priya",
     "name": "Priya Shah",
-    "avatarUrl": "https://i.pravatar.cc/150?u=priya",
+    "avatarUrl": "https://randomuser.me/api/portraits/women/44.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "San Francisco",
@@ -55,7 +55,6 @@
       "maya"
     ],
     "museEnabled": true,
-    "defaultReach": "school",
     "connectionSuggestionsOptIn": true,
     "interests": [
       {
@@ -75,12 +74,15 @@
         "shareForConnection": true
       }
     ],
-    "bio": "Stanford '26, starting at a startup in SoMa this fall."
+    "bio": "Stanford '26, starting at a startup in SoMa this fall. Early riser.",
+    "museGroups": [
+      "g_housing27"
+    ]
   },
   {
     "id": "jordan",
     "name": "Jordan Lee",
-    "avatarUrl": "https://i.pravatar.cc/150?u=jordan",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/75.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "San Francisco",
@@ -90,7 +92,6 @@
     ],
     "friends": [],
     "museEnabled": true,
-    "defaultReach": "school",
     "connectionSuggestionsOptIn": true,
     "interests": [
       {
@@ -102,12 +103,15 @@
         "shareForConnection": true
       }
     ],
-    "bio": "Moving to SF with my golden retriever, Biscuit."
+    "bio": "Moving to SF with my golden retriever, Biscuit.",
+    "museGroups": [
+      "g_housing27"
+    ]
   },
   {
     "id": "sam",
     "name": "Sam Rivera",
-    "avatarUrl": "https://i.pravatar.cc/150?u=sam",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/11.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "San Francisco",
@@ -116,7 +120,6 @@
     ],
     "friends": [],
     "museEnabled": true,
-    "defaultReach": "school",
     "connectionSuggestionsOptIn": false,
     "interests": [
       {
@@ -128,12 +131,15 @@
         "shareForConnection": true
       }
     ],
-    "bio": "Quiet, clean, works hybrid."
+    "bio": "Quiet, clean, works hybrid.",
+    "museGroups": [
+      "g_housing27"
+    ]
   },
   {
     "id": "casey",
     "name": "Casey Nguyen",
-    "avatarUrl": "https://i.pravatar.cc/150?u=casey",
+    "avatarUrl": "https://randomuser.me/api/portraits/women/65.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "San Francisco",
@@ -143,27 +149,32 @@
     ],
     "friends": [],
     "museEnabled": false,
-    "defaultReach": "school",
     "connectionSuggestionsOptIn": true,
-    "interests": [],
-    "bio": ""
+    "interests": [
+      {
+        "value": "photography",
+        "shareForConnection": true
+      }
+    ],
+    "bio": "Stanford '26. Looking for a place in SF.",
+    "museGroups": []
   },
   {
     "id": "maya",
     "name": "Maya Patel",
-    "avatarUrl": "https://i.pravatar.cc/150?u=maya",
+    "avatarUrl": "https://randomuser.me/api/portraits/women/68.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "San Francisco",
     "groups": [
-      "g_ffs"
+      "g_ffs",
+      "g_sfgrads"
     ],
     "friends": [
       "alex",
       "priya"
     ],
     "museEnabled": true,
-    "defaultReach": "school",
     "connectionSuggestionsOptIn": true,
     "interests": [
       {
@@ -175,21 +186,24 @@
         "shareForConnection": true
       }
     ],
-    "bio": "Teaches guitar. Applying to internships."
+    "bio": "Teaches guitar. Applying to internships.",
+    "museGroups": [
+      "g_ffs"
+    ]
   },
   {
     "id": "theo",
     "name": "Theo Park",
-    "avatarUrl": "https://i.pravatar.cc/150?u=theo",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/86.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "San Francisco",
     "groups": [
-      "g_ffs"
+      "g_ffs",
+      "g_sfgrads"
     ],
     "friends": [],
     "museEnabled": true,
-    "defaultReach": "school",
     "connectionSuggestionsOptIn": true,
     "interests": [
       {
@@ -203,20 +217,29 @@
       {
         "value": "vinyl",
         "shareForConnection": true
+      },
+      {
+        "value": "new to SF",
+        "shareForConnection": true
       }
     ],
-    "bio": ""
+    "bio": "Stanford '26. Vinyl, shows, late dinners.",
+    "museGroups": [
+      "g_ffs",
+      "g_sfgrads"
+    ]
   },
   {
     "id": "lena",
     "name": "Lena Brooks",
-    "avatarUrl": "https://i.pravatar.cc/150?u=lena",
-    "schoolVerified": false,
+    "avatarUrl": "https://randomuser.me/api/portraits/women/12.jpg",
+    "schoolVerified": true,
     "city": "San Francisco",
-    "groups": [],
+    "groups": [
+      "g_sfgrads"
+    ],
     "friends": [],
     "museEnabled": true,
-    "defaultReach": "school",
     "connectionSuggestionsOptIn": true,
     "interests": [
       {
@@ -228,18 +251,21 @@
         "shareForConnection": true
       }
     ],
-    "bio": ""
+    "bio": "New to SF, works in design. Always at the Fox.",
+    "museGroups": [
+      "g_sfgrads"
+    ],
+    "school": "Berkeley"
   },
   {
     "id": "rosa",
     "name": "Rosa Diaz",
-    "avatarUrl": "https://i.pravatar.cc/150?u=rosa",
+    "avatarUrl": "https://randomuser.me/api/portraits/women/90.jpg",
     "schoolVerified": false,
     "city": "San Francisco",
     "groups": [],
     "friends": [],
     "museEnabled": true,
-    "defaultReach": "school",
     "connectionSuggestionsOptIn": true,
     "interests": [
       {
@@ -251,18 +277,18 @@
         "shareForConnection": true
       }
     ],
-    "bio": ""
+    "bio": "",
+    "museGroups": []
   },
   {
     "id": "kai",
     "name": "Kai Tanaka",
-    "avatarUrl": "https://i.pravatar.cc/150?u=kai",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/41.jpg",
     "schoolVerified": false,
     "city": "San Francisco",
     "groups": [],
     "friends": [],
     "museEnabled": true,
-    "defaultReach": "school",
     "connectionSuggestionsOptIn": true,
     "interests": [
       {
@@ -274,19 +300,19 @@
         "shareForConnection": true
       }
     ],
-    "bio": ""
+    "bio": "",
+    "museGroups": []
   },
   {
     "id": "nina",
     "name": "Nina Okafor",
-    "avatarUrl": "https://i.pravatar.cc/150?u=nina",
+    "avatarUrl": "https://randomuser.me/api/portraits/women/26.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "San Francisco",
     "groups": [],
     "friends": [],
     "museEnabled": true,
-    "defaultReach": "school",
     "connectionSuggestionsOptIn": true,
     "interests": [
       {
@@ -298,18 +324,18 @@
         "shareForConnection": true
       }
     ],
-    "bio": ""
+    "bio": "Housing group admin. Signed four SF leases, survived all of them.",
+    "museGroups": []
   },
   {
     "id": "omar",
     "name": "Omar Haddad",
-    "avatarUrl": "https://i.pravatar.cc/150?u=omar",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/53.jpg",
     "schoolVerified": false,
     "city": "San Francisco",
     "groups": [],
     "friends": [],
     "museEnabled": true,
-    "defaultReach": "school",
     "connectionSuggestionsOptIn": true,
     "interests": [
       {
@@ -321,19 +347,19 @@
         "shareForConnection": true
       }
     ],
-    "bio": ""
+    "bio": "",
+    "museGroups": []
   },
   {
     "id": "june",
     "name": "June Liu",
-    "avatarUrl": "https://i.pravatar.cc/150?u=june",
+    "avatarUrl": "https://randomuser.me/api/portraits/women/33.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "San Francisco",
     "groups": [],
     "friends": [],
     "museEnabled": true,
-    "defaultReach": "school",
     "connectionSuggestionsOptIn": true,
     "interests": [
       {
@@ -345,12 +371,13 @@
         "shareForConnection": true
       }
     ],
-    "bio": ""
+    "bio": "",
+    "museGroups": []
   },
   {
     "id": "marcus",
     "name": "Marcus Bell",
-    "avatarUrl": "https://i.pravatar.cc/150?u=marcus",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/64.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "San Francisco",
@@ -359,7 +386,6 @@
     ],
     "friends": [],
     "museEnabled": true,
-    "defaultReach": "school",
     "connectionSuggestionsOptIn": true,
     "interests": [
       {
@@ -367,12 +393,15 @@
         "shareForConnection": true
       }
     ],
-    "bio": ""
+    "bio": "Has a car. Will drive for gas money and a podcast recommendation.",
+    "museGroups": [
+      "g_ffs"
+    ]
   },
   {
     "id": "dev",
     "name": "Dev Mehta",
-    "avatarUrl": "https://i.pravatar.cc/150?u=dev",
+    "avatarUrl": "https://randomuser.me/api/portraits/men/22.jpg",
     "school": "Stanford",
     "schoolVerified": true,
     "city": "Stanford",
@@ -383,7 +412,6 @@
       "alex"
     ],
     "museEnabled": true,
-    "defaultReach": "school",
     "connectionSuggestionsOptIn": true,
     "interests": [
       {
@@ -395,6 +423,9 @@
         "shareForConnection": true
       }
     ],
-    "bio": ""
+    "bio": "",
+    "museGroups": [
+      "g_ffs"
+    ]
   }
 ]

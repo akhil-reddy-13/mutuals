@@ -3,70 +3,311 @@
     "id": "post_casey_room",
     "groupId": "g_housing27",
     "authorId": "casey",
-    "text": "Have a room opening in a 2BR in the Mission starting Sept 1! $1,300/mo, furnished, 10 min walk to BART. I work from home some days and go to bed pretty late. Looking for someone chill and tidy-ish. DM me",
-    "createdAt": "2026-11-08T18:00:00Z"
+    "createdAt": "2026-11-10T18:00:00Z",
+    "text": "ISO a room in SF from Sept 1, budget around $1,300. I'm quiet, tidy, no pets, work from home a couple days a week. Mission or anywhere near BART. DM me!",
+    "reactions": 11,
+    "comments": [
+      {
+        "authorId": "june",
+        "text": "Try the Housing '27 spreadsheet pinned above, a few Mission rooms on there",
+        "createdAt": "2026-11-10T19:10:00Z"
+      },
+      {
+        "authorId": "nina",
+        "text": "Reminder: never pay a deposit before you've seen the place in person",
+        "createdAt": "2026-11-10T20:00:00Z"
+      }
+    ]
   },
   {
-    "id": "post_room_2",
-    "groupId": "g_sfgrads",
-    "authorId": "casey",
-    "text": "Also open to someone taking over my lease in Inner Sunset if the Mission place fills — just ask.",
-    "createdAt": "2026-11-09T18:00:00Z"
-  },
-  {
-    "id": "post_iso_desk",
-    "groupId": "g_ffs",
-    "authorId": "theo",
-    "text": "ISO a desk + chair before move-out, under $50 ideally. Can pick up on campus.",
-    "createdAt": "2026-11-09T18:00:00Z"
-  },
-  {
-    "id": "post_guitar",
-    "groupId": "g_ffs",
-    "authorId": "maya",
-    "text": "Offering guitar lessons (beginner/intermediate)! Would love to trade for resume help — applying to PM internships.",
-    "createdAt": "2026-11-07T18:00:00Z"
-  },
-  {
-    "id": "post_sfo",
-    "groupId": "g_ffs",
-    "authorId": "marcus",
-    "text": "Driving to SFO Friday ~2pm, have 2 seats. Split gas?",
-    "createdAt": "2026-11-10T18:00:00Z"
-  },
-  {
-    "id": "post_cs161",
-    "groupId": "g_ffs",
-    "authorId": "dev",
-    "text": "Anyone want to form a CS 161 study group for the final? Thinking Tues/Thurs nights in Huang.",
-    "createdAt": "2026-11-10T18:00:00Z"
-  },
-  {
-    "id": "post_fridge",
-    "groupId": "g_ffs",
-    "authorId": "theo",
-    "text": "Looking for a mini fridge for winter quarter. Will pay cash.",
-    "createdAt": "2026-11-06T18:00:00Z"
+    "id": "post_priya_room",
+    "groupId": "g_housing27",
+    "authorId": "priya",
+    "createdAt": "2026-11-09T18:00:00Z",
+    "text": "Looking for a room in SF from early September. Clean common areas is a must. Early riser, so I'm a pretty low-key roommate. Open to Mission, SoMa, Hayes.",
+    "reactions": 7,
+    "comments": [
+      {
+        "authorId": "casey",
+        "text": "same timeline!! dm me if you want to look together",
+        "createdAt": "2026-11-09T19:00:00Z"
+      }
+    ]
   },
   {
     "id": "post_sublet",
     "groupId": "g_housing27",
     "authorId": "jordan",
-    "text": "Moving to SF in Sept with my dog — looking for a dog-friendly 2BR, roughly $1,300/person.",
-    "createdAt": "2026-11-05T18:00:00Z"
+    "createdAt": "2026-11-08T18:00:00Z",
+    "text": "Moving to SF in Sept with my dog Biscuit (golden, very chill). Looking for a dog-friendly 2BR, roughly $1,300/person.",
+    "reactions": 23,
+    "imageUrl": "https://picsum.photos/seed/biscuit-dog/900/700",
+    "comments": [
+      {
+        "authorId": "june",
+        "text": "BISCUIT 😭",
+        "createdAt": "2026-11-08T18:30:00Z"
+      },
+      {
+        "authorId": "sam",
+        "text": "dog-friendly 2BRs in the Mission are rare, try Bernal",
+        "createdAt": "2026-11-08T19:00:00Z"
+      }
+    ]
   },
   {
-    "id": "post_runs",
-    "groupId": "g_runners",
-    "authorId": "priya",
-    "text": "Anyone doing Saturday morning runs along the Embarcadero once we're in SF?",
-    "createdAt": "2026-11-04T18:00:00Z"
+    "id": "post_sam_room",
+    "groupId": "g_housing27",
+    "authorId": "sam",
+    "createdAt": "2026-11-07T18:00:00Z",
+    "text": "Roommate search, fall move-in, flexible on dates. I'm very clean and mostly keep to myself. Hybrid job.",
+    "reactions": 4,
+    "comments": []
+  },
+  {
+    "id": "post_nina_lease",
+    "groupId": "g_housing27",
+    "authorId": "nina",
+    "createdAt": "2026-11-06T18:00:00Z",
+    "text": "PSA: if you're signing a lease in SF, ask about the security deposit cap. Saved me $900.",
+    "reactions": 58,
+    "pinned": true,
+    "comments": [
+      {
+        "authorId": "priya",
+        "text": "This should be pinned",
+        "createdAt": "2026-11-06T18:30:00Z"
+      },
+      {
+        "authorId": "alex",
+        "text": "wish I knew this in June",
+        "createdAt": "2026-11-06T19:00:00Z"
+      },
+      {
+        "authorId": "june",
+        "text": "Saved",
+        "createdAt": "2026-11-06T21:00:00Z"
+      }
+    ]
+  },
+  {
+    "id": "post_june_q",
+    "groupId": "g_housing27",
+    "authorId": "june",
+    "createdAt": "2026-11-05T18:00:00Z",
+    "text": "Anyone lived in Inner Sunset? Is the fog as bad as people say?",
+    "reactions": 9,
+    "comments": [
+      {
+        "authorId": "nina",
+        "text": "Worse. Bring a jacket in July.",
+        "createdAt": "2026-11-05T19:00:00Z"
+      }
+    ]
+  },
+  {
+    "id": "post_iso_desk",
+    "groupId": "g_ffs",
+    "authorId": "theo",
+    "createdAt": "2026-11-09T18:00:00Z",
+    "text": "ISO a desk + chair before move-out, under $50 ideally. Can pick up on campus.",
+    "reactions": 2,
+    "comments": []
+  },
+  {
+    "id": "post_guitar",
+    "groupId": "g_ffs",
+    "authorId": "maya",
+    "createdAt": "2026-11-07T18:00:00Z",
+    "text": "Offering guitar lessons (beginner/intermediate)! Would love to trade for resume help, applying to PM internships.",
+    "reactions": 14,
+    "imageUrl": "https://picsum.photos/seed/guitar-case/900/600",
+    "comments": [
+      {
+        "authorId": "dev",
+        "text": "I'll take resume help for CS tutoring lol",
+        "createdAt": "2026-11-07T19:00:00Z"
+      }
+    ]
+  },
+  {
+    "id": "post_sfo",
+    "groupId": "g_ffs",
+    "authorId": "marcus",
+    "createdAt": "2026-11-10T18:00:00Z",
+    "text": "Driving to SFO Friday ~2pm, have 2 seats. Split gas?",
+    "reactions": 6,
+    "comments": [
+      {
+        "authorId": "theo",
+        "text": "might take you up on this",
+        "createdAt": "2026-11-10T19:00:00Z"
+      }
+    ]
+  },
+  {
+    "id": "post_cs161",
+    "groupId": "g_ffs",
+    "authorId": "dev",
+    "createdAt": "2026-11-10T18:00:00Z",
+    "text": "Anyone want to form a CS 161 study group for the final? Thinking Tues/Thurs nights in Huang.",
+    "reactions": 12,
+    "comments": []
+  },
+  {
+    "id": "post_fridge",
+    "groupId": "g_ffs",
+    "authorId": "theo",
+    "createdAt": "2026-11-06T18:00:00Z",
+    "text": "Looking for a mini fridge for winter quarter. Will pay cash.",
+    "reactions": 1,
+    "comments": []
   },
   {
     "id": "post_lamp",
     "groupId": "g_ffs",
     "authorId": "nina",
+    "createdAt": "2026-11-10T18:00:00Z",
     "text": "Free IKEA floor lamp, works fine, small scratch on the base. Pickup at EVGR.",
-    "createdAt": "2026-11-10T18:00:00Z"
+    "reactions": 3,
+    "imageUrl": "https://picsum.photos/seed/ikea-lamp/900/900",
+    "comments": []
+  },
+  {
+    "id": "post_runs",
+    "groupId": "g_runners",
+    "authorId": "priya",
+    "createdAt": "2026-11-04T18:00:00Z",
+    "text": "Anyone doing Saturday morning runs along the Embarcadero once we're in SF?",
+    "reactions": 18,
+    "imageUrl": "https://picsum.photos/seed/embarcadero-run/900/600",
+    "comments": [
+      {
+        "authorId": "maya",
+        "text": "Saturdays 8am, Ferry Building. Event's in the group!",
+        "createdAt": "2026-11-04T19:00:00Z"
+      }
+    ]
+  },
+  {
+    "id": "post_casey_show",
+    "groupId": "g_sfgrads",
+    "authorId": "casey",
+    "createdAt": "2026-11-11T20:00:00Z",
+    "reactions": 5,
+    "comments": [],
+    "text": "Anyone going to beabadoobee at the Fox on Dec 12? Have a GA ticket and none of my friends like her 😭 would love to go with a group."
+  },
+  {
+    "id": "post_lena_tix",
+    "groupId": "g_sfgrads",
+    "authorId": "lena",
+    "createdAt": "2026-11-11T17:00:00Z",
+    "reactions": 9,
+    "imageUrl": "https://picsum.photos/seed/fox-theater/900/600",
+    "comments": [
+      {
+        "authorId": "theo",
+        "text": "👀",
+        "createdAt": "2026-11-11T17:30:00Z"
+      }
+    ],
+    "text": "Extra beabadoobee ticket for the Fox, Dec 12. Face value, $62. Friend bailed. Also just looking for people to go with tbh."
+  },
+  {
+    "id": "post_rosa_brunch",
+    "groupId": "g_sfgrads",
+    "authorId": "rosa",
+    "createdAt": "2026-11-10T16:00:00Z",
+    "reactions": 31,
+    "imageUrl": "https://picsum.photos/seed/mission-brunch/900/700",
+    "comments": [
+      {
+        "authorId": "kai",
+        "text": "Tartine line was 45 min on sunday be warned",
+        "createdAt": "2026-11-10T17:00:00Z"
+      }
+    ],
+    "text": "New grads brunch #3 is Sunday 11am, Mission. 14 people last time. Comment if you're in."
+  },
+  {
+    "id": "post_kai_muni",
+    "groupId": "g_sfgrads",
+    "authorId": "kai",
+    "createdAt": "2026-11-09T22:00:00Z",
+    "reactions": 44,
+    "comments": [
+      {
+        "authorId": "omar",
+        "text": "the N is a lifestyle",
+        "createdAt": "2026-11-09T23:00:00Z"
+      },
+      {
+        "authorId": "lena",
+        "text": "Clipper on your phone, you're welcome",
+        "createdAt": "2026-11-10T01:00:00Z"
+      }
+    ],
+    "text": "PSA for new arrivals: the N Judah at 8:40am is not a train, it's a sardine experience. Leave at 8:15 or take the bus."
+  },
+  {
+    "id": "post_omar_apt",
+    "groupId": "g_sfgrads",
+    "authorId": "omar",
+    "createdAt": "2026-11-08T15:00:00Z",
+    "reactions": 12,
+    "comments": [],
+    "text": "Landed in Hayes Valley. If anyone's apartment hunting, the building on Octavia has two openings in Jan, DM for the leasing agent."
+  },
+  {
+    "id": "post_lena_welcome",
+    "groupId": "g_sfgrads",
+    "authorId": "lena",
+    "createdAt": "2026-11-01T15:00:00Z",
+    "reactions": 120,
+    "pinned": true,
+    "comments": [
+      {
+        "authorId": "rosa",
+        "text": "🙌",
+        "createdAt": "2026-11-01T16:00:00Z"
+      }
+    ],
+    "text": "Welcome new grads! Rules: be nice, no sublet scams, no MLMs. Introduce yourself below. Shows, hikes, apartment leads, all welcome."
+  },
+  {
+    "id": "post_maya_runs2",
+    "groupId": "g_runners",
+    "authorId": "maya",
+    "createdAt": "2026-11-10T14:00:00Z",
+    "reactions": 27,
+    "imageUrl": "https://picsum.photos/seed/golden-gate-run/900/600",
+    "comments": [
+      {
+        "authorId": "june",
+        "text": "in!",
+        "createdAt": "2026-11-10T15:00:00Z"
+      }
+    ],
+    "text": "Saturday's run: Ferry Building to Crissy Field and back, 10k, easy pace. Coffee at the end. Event is up."
+  },
+  {
+    "id": "post_kai_shoes",
+    "groupId": "g_runners",
+    "authorId": "kai",
+    "createdAt": "2026-11-07T14:00:00Z",
+    "reactions": 8,
+    "comments": [],
+    "text": "Anyone tried the new Pegasus? Mine are at 600km and my knees have opinions."
+  },
+  {
+    "id": "post_dev_sold",
+    "groupId": "g_ffs",
+    "authorId": "dev",
+    "createdAt": "2026-11-11T12:00:00Z",
+    "reactions": 2,
+    "imageUrl": "https://picsum.photos/seed/monitor-desk/900/700",
+    "comments": [],
+    "text": "SOLD: 27in monitor. Thanks all. Still have the monitor arm, $15."
   }
 ]

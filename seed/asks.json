@@ -2,23 +2,23 @@
   {
     "id": "ask_alex_seed",
     "userId": "alex",
+    "groupId": "g_housing27",
     "type": "roommate",
-    "summary": "Looking for a roommate in SF starting September",
-    "reach": "school",
+    "summary": "Have a 2BR in the Mission from Sept 1. Looking for a roommate for the second bedroom.",
     "preferences": [
       {
-        "id": "alex_budget_posted",
-        "topic": "budget",
-        "value": "$1,200/mo",
+        "id": "alex_rent_posted",
+        "topic": "rent",
+        "value": "$1,350/mo for the second bedroom, utilities split",
         "importance": "high",
         "visibility": "public",
         "source": "stated",
         "confirmed": true
       },
       {
-        "id": "alex_budget_max",
-        "topic": "budget_max",
-        "value": "Real max $1,350/mo",
+        "id": "alex_rent_floor",
+        "topic": "rent_floor",
+        "value": "Would go down to $1,200/mo for the right person",
         "importance": "high",
         "visibility": "match_only",
         "source": "stated",
@@ -27,8 +27,17 @@
       {
         "id": "alex_movein",
         "topic": "move_in",
-        "value": "September 1",
+        "value": "September 1, 12-month lease",
         "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "alex_furniture",
+        "topic": "furniture",
+        "value": "Second bedroom is unfurnished. Desk and mini fridge available if they want them",
+        "importance": "medium",
         "visibility": "public",
         "source": "stated",
         "confirmed": true
@@ -54,7 +63,7 @@
       {
         "id": "alex_pets",
         "topic": "pets",
-        "value": "Allergic to dogs — no dogs",
+        "value": "No dogs in the apartment",
         "importance": "dealbreaker",
         "visibility": "match_only",
         "source": "stated",
@@ -79,19 +88,61 @@
         "confirmed": true
       }
     ],
-    "createdAt": "2026-11-10T20:00:00Z"
+    "roomDetails": {
+      "furnished": false,
+      "approxSize": "medium",
+      "naturalLight": "high",
+      "deskSpace": true,
+      "closet": true,
+      "notes": [
+        "Corner room with two windows",
+        "Hardwood floors",
+        "Door locks"
+      ]
+    },
+    "items": [
+      {
+        "id": "item_desk",
+        "name": "IKEA desk",
+        "brandGuess": "IKEA",
+        "condition": "good",
+        "flaws": [
+          "Small scratch on the top left corner"
+        ],
+        "suggestedPriceUsd": 30
+      },
+      {
+        "id": "item_fridge",
+        "name": "Mini fridge",
+        "brandGuess": "Insignia",
+        "condition": "good",
+        "flaws": [],
+        "suggestedPriceUsd": 40
+      }
+    ],
+    "createdAt": "2026-11-10T20:00:00Z",
+    "status": "draft"
   },
   {
     "id": "ask_priya",
     "userId": "priya",
+    "groupId": "g_housing27",
     "type": "roommate",
-    "summary": "Looking for a roommate in SF from September",
-    "reach": "school",
+    "summary": "Looking for a room in SF from early September",
     "preferences": [
       {
         "id": "priya_budget",
         "topic": "budget",
-        "value": "$1,250–$1,400/mo",
+        "value": "Around $1,200/mo",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "priya_budget_max",
+        "topic": "budget_max",
+        "value": "Can stretch to $1,300/mo for the right place",
         "importance": "high",
         "visibility": "match_only",
         "source": "stated",
@@ -109,7 +160,16 @@
       {
         "id": "priya_quiet",
         "topic": "quiet_hours",
-        "value": "Needs quiet after 11pm on weeknights (early job)",
+        "value": "Quiet after 11pm on weeknights",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "priya_wake",
+        "topic": "schedule",
+        "value": "Starts work at 7am, up early on weekdays",
         "importance": "high",
         "visibility": "match_only",
         "source": "stated",
@@ -132,21 +192,40 @@
         "visibility": "public",
         "source": "stated",
         "confirmed": true
+      },
+      {
+        "id": "priya_pets",
+        "topic": "pets",
+        "value": "No pets of my own, fine either way",
+        "importance": "low",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "priya_furniture",
+        "topic": "furniture",
+        "value": "Unfurnished is fine, would buy a desk",
+        "importance": "low",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
       }
     ],
-    "createdAt": "2026-11-10T20:00:00Z"
+    "createdAt": "2026-11-10T20:00:00Z",
+    "status": "matching"
   },
   {
     "id": "ask_jordan",
     "userId": "jordan",
+    "groupId": "g_housing27",
     "type": "roommate",
-    "summary": "Need a dog-friendly roommate in SF, Sept",
-    "reach": "school",
+    "summary": "Need a dog-friendly room in SF from Sept",
     "preferences": [
       {
         "id": "jordan_budget",
         "topic": "budget",
-        "value": "$1,250–$1,350/mo",
+        "value": "$1,250 to $1,350/mo",
         "importance": "high",
         "visibility": "public",
         "source": "stated",
@@ -164,21 +243,31 @@
       {
         "id": "jordan_dog",
         "topic": "pets",
-        "value": "Bringing my golden retriever — non-negotiable",
+        "value": "Bringing my golden retriever, non-negotiable",
         "importance": "dealbreaker",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "jordan_clean",
+        "topic": "cleanliness",
+        "value": "Pretty tidy",
+        "importance": "medium",
         "visibility": "public",
         "source": "stated",
         "confirmed": true
       }
     ],
-    "createdAt": "2026-11-10T20:00:00Z"
+    "createdAt": "2026-11-10T20:00:00Z",
+    "status": "matching"
   },
   {
     "id": "ask_sam",
     "userId": "sam",
+    "groupId": "g_housing27",
     "type": "roommate",
-    "summary": "Roommate for SF apartment, fall",
-    "reach": "school",
+    "summary": "Room in SF for fall, flexible on dates",
     "preferences": [
       {
         "id": "sam_budget",
@@ -215,53 +304,186 @@
         "visibility": "public",
         "source": "stated",
         "confirmed": true
+      },
+      {
+        "id": "sam_pets",
+        "topic": "pets",
+        "value": "No pets",
+        "importance": "low",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
       }
     ],
-    "createdAt": "2026-11-10T20:00:00Z"
+    "createdAt": "2026-11-10T20:00:00Z",
+    "status": "matching"
   },
   {
     "id": "ask_maya_swap",
     "userId": "maya",
+    "groupId": "g_ffs",
     "type": "skill_swap",
     "summary": "Teach guitar in exchange for resume help",
-    "reach": "nearby",
     "preferences": [],
     "createdAt": "2026-11-07T20:00:00Z"
   },
   {
     "id": "ask_theo_show",
     "userId": "theo",
+    "groupId": "g_sfgrads",
     "type": "plus_one",
-    "summary": "Going to the beabadoobee show at the Fox in Dec, looking for people to go with",
-    "reach": "anyone",
-    "preferences": [],
-    "createdAt": "2026-11-08T20:00:00Z"
-  },
-  {
-    "id": "ask_lena_show",
-    "userId": "lena",
-    "type": "plus_one",
-    "summary": "Have an extra beabadoobee ticket",
-    "reach": "anyone",
-    "preferences": [],
-    "createdAt": "2026-11-09T20:00:00Z"
+    "summary": "Going to beabadoobee at the Fox on Dec 12, looking for people to go with",
+    "preferences": [
+      {
+        "id": "theo_ticket",
+        "topic": "ticket",
+        "value": "Already has a GA ticket",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "theo_meet",
+        "topic": "meeting_plan",
+        "value": "Wants to grab a drink before, doors at 7:30",
+        "importance": "medium",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "theo_group",
+        "topic": "group_size",
+        "value": "Prefers a small group of 3 or 4",
+        "importance": "medium",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "theo_ride",
+        "topic": "ride_home",
+        "value": "Driving back to SF, can take two people",
+        "importance": "medium",
+        "visibility": "match_only",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "theo_sober",
+        "topic": "drinks",
+        "value": "Doesn't drink, fine with others drinking",
+        "importance": "low",
+        "visibility": "match_only",
+        "source": "stated",
+        "confirmed": true
+      }
+    ],
+    "createdAt": "2026-11-08T20:00:00Z",
+    "status": "matching"
   },
   {
     "id": "ask_marcus_sfo",
     "userId": "marcus",
+    "groupId": "g_ffs",
     "type": "ride",
-    "summary": "Driving to SFO Friday 2pm, 2 seats",
-    "reach": "nearby",
-    "preferences": [],
-    "createdAt": "2026-11-10T20:00:00Z"
+    "summary": "Driving to SFO Friday 2pm from the Mission, 2 seats",
+    "preferences": [
+      {
+        "id": "marcus_time",
+        "topic": "departure",
+        "value": "Leaving the Mission at 2pm Friday, 2 seats",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "marcus_gas",
+        "topic": "cost",
+        "value": "Split gas, about $10 each",
+        "importance": "medium",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "marcus_flex",
+        "topic": "flexibility",
+        "value": "Can leave as early as 1:30 if someone's flight is tight",
+        "importance": "medium",
+        "visibility": "match_only",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "marcus_bags",
+        "topic": "luggage",
+        "value": "Small trunk, one big bag per person",
+        "importance": "low",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      }
+    ],
+    "createdAt": "2026-11-10T20:00:00Z",
+    "status": "matching"
   },
   {
     "id": "ask_dev_161",
     "userId": "dev",
+    "groupId": "g_ffs",
     "type": "other",
     "summary": "CS 161 study partners for the final",
-    "reach": "school",
     "preferences": [],
     "createdAt": "2026-11-10T20:00:00Z"
+  },
+  {
+    "id": "ask_lena_show",
+    "userId": "lena",
+    "groupId": "g_sfgrads",
+    "type": "plus_one",
+    "summary": "Have an extra beabadoobee ticket for the Fox, Dec 12",
+    "preferences": [
+      {
+        "id": "lena_ticket",
+        "topic": "ticket",
+        "value": "One extra GA ticket, face value",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "lena_price",
+        "topic": "ticket_price",
+        "value": "$62, would take $50 to not deal with resale",
+        "importance": "high",
+        "visibility": "match_only",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "lena_meet",
+        "topic": "meeting_plan",
+        "value": "Meeting friends after, can only do the show itself",
+        "importance": "medium",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "lena_ride",
+        "topic": "ride_home",
+        "value": "Taking BART back, no car",
+        "importance": "low",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      }
+    ],
+    "createdAt": "2026-11-09T20:00:00Z",
+    "status": "matching"
   }
 ]

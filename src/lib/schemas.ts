@@ -29,7 +29,6 @@ export type IntakeOutput = z.infer<typeof IntakeSchema>;
 export const AskParseSchema = z.object({
   ask_type: z.enum(["roommate", "sublet", "item", "skill_swap", "plus_one", "ride", "other"]),
   summary: z.string(),
-  suggested_reach: z.enum(["school", "network", "nearby", "anyone"]),
   preferences: z.array(
     z.object({
       id: z.string(),
@@ -40,7 +39,10 @@ export const AskParseSchema = z.object({
       source: z.enum(["stated", "inferred"]),
     }),
   ),
-  follow_up_question: z.string().optional(),
+  /** Muse's next conversational line. Present while key info is still missing. */
+  follow_up_question: z.string().nullable().optional(),
+  /** True when Muse has enough to search. */
+  ready: z.boolean().optional(),
 });
 export type AskParseOutput = z.infer<typeof AskParseSchema>;
 
@@ -52,19 +54,15 @@ export const AgentTurnSchema = z.object({
 });
 export type AgentTurnOutput = z.infer<typeof AgentTurnSchema>;
 
-// Referee either continues or concludes.
-export const RefereeSchema = z.union([
-  z.object({ action: z.literal("continue"), note: z.string().optional() }),
-  z.object({
-    action: z.literal("conclude"),
-    compatible: z.boolean(),
-    score: z.number().min(0).max(1),
-    fits: z.array(z.string()),
-    disagreements: z.array(z.string()),
-    compromise: z.string().nullable(),
-    summary_for_humans: z.string(),
-  }),
-]);
+// Referee is called once at the end (handoff note, fix 5) and must conclude.
+export const RefereeSchema = z.object({
+  compatible: z.boolean(),
+  score: z.number().min(0).max(1),
+  fits: z.array(z.string()),
+  disagreements: z.array(z.string()),
+  compromise: z.string().nullable(),
+  summary_for_humans: z.string(),
+});
 export type RefereeOutput = z.infer<typeof RefereeSchema>;
 
 export const ConnectionSchema = z.object({
@@ -72,7 +70,7 @@ export const ConnectionSchema = z.object({
   confidence: z.number().min(0).max(1),
   reason: z.string().nullable(),
   activity: z.string().nullable(),
-  circle_id: z.string().nullable(),
+  event_id: z.string().nullable(),
 });
 export type ConnectionOutput = z.infer<typeof ConnectionSchema>;
 
@@ -83,6 +81,14 @@ export const PostEvalSchema = z.object({
   concerns: z.array(z.string()),
 });
 export type PostEvalOutput = z.infer<typeof PostEvalSchema>;
+
+export const ListingSchema = z.object({
+  title: z.string(),
+  price_usd: z.number(),
+  condition: z.enum(["new", "good", "fair", "worn"]),
+  description: z.string(),
+});
+export type ListingOutput = z.infer<typeof ListingSchema>;
 
 export const DigestSchema = z.object({
   cards: z.array(

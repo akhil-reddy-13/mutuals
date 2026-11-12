@@ -1,120 +1,127 @@
 # Mutuals
 
-**Do things with people you can trust.**
+**Your Muse talks to other people's Muses inside Facebook Groups, so you only have the conversations worth having.**
 
-Muse is single-player today. Mutuals makes it multiplayer. Your Muse talks to other people's Muses to handle the tedious parts of finding the right person: searching, screening, logistics. You only spend time on the conversations worth having.
+Built at the Facebook Closer Together AI Hackathon 2026 (Meta HQ) by Akhil, Kyle, Luke and Eddy.
 
-Built at the Facebook Closer Together AI Hackathon 2026 (Meta HQ) by Akhil, Kyle, Luke, and Eddy.
+Inside a Facebook Group, you tap **Ask Muse privately** and tell your Muse what you need, including the things you would never post: your real budget, your habits, your dealbreakers. Your Muse pre-negotiates with other members' Muses and reads the Group's human posts, then hands you a shortlist of two or three people with what fits, what conflicts, and a proposed compromise. You pick one and a Messenger thread opens with a drafted opener. Agents only propose. Humans decide and send the first message.
 
----
+## Why this, why now
 
-## The problem
+Meta has described a Muse network where your Muse works with your friends' and family's Muses. Young adults have few Facebook friends. We built the part for people you have not met yet, matched on the preferences people keep private, living in the Groups they already use.
 
-Young adults constantly need things from people nearby: a roommate, a sublet, a ride to SFO, a study partner, someone to go to a show with. Facebook has the right pieces for this (real identity, verified schools, Groups, Marketplace, Messenger), but it doesn't work well for us today:
+- **Public posts force a bad tradeoff.** You either overshare or leave out exactly what matters. Here, private numbers are compared, never shown.
+- **The process is exhausting.** Scroll 200 posts, message 15 strangers, repeat the same screening questions. Here, the screening happens between Muses in seconds.
+- **It works from day one.** If the other person has no Muse, yours reads their Group post, judges the fit, and drafts a reply you can send.
+- **Every output is a Facebook object.** A Messenger thread. A Marketplace listing for the leftover desk. A Facebook Event when two people have more in common than a lease.
 
-- **Most of us barely have a Facebook network**, so the platform feels empty.
-- **Public posts force a bad tradeoff.** You either overshare ("my real max is $1,350, my partner stays over most weekends") or leave out exactly what matters.
-- **The process is exhausting.** You scroll 200 Group posts, message 15 strangers and repeat the same screening questions, mostly with people who turn out to be wrong.
-- **Connections end with the exchange.** You find your sublet and never talk to that person again.
+## The hero flow (what the demo shows)
 
-## What Mutuals does
+1. **Group page.** Stanford Housing '27. Casey's ISO post, Jordan's dog post, the usual.
+2. **Ask Muse privately.** Three lines of chat. Every preference comes back tagged **Public**, **Match only** or **Never shared**. Tap a badge to change it.
+3. **Film the room.** Ten seconds. Muse Ember returns room facts and the leftover items with prices. One tap lists them on Marketplace.
+4. **"Want me to check with other Muses in this group?"** That question is the opt-in. It is scoped to the Group.
+5. **Watch the negotiation.** Every candidate runs in parallel. Alex's Muse and Priya's Muse settle rent, dates, furniture and quiet hours in two rounds. A Wonder referee writes the verdict. Jordan's Muse brings a dog; Alex's Muse stops early. Casey has no Muse; Ember reads her post and Spark drafts a reply.
+6. **Shortlist.** Why it fits, where you'd disagree, the proposed compromise, trust signals (verified school, shared Groups, mutual friends), and **What my Muse shared**.
+7. **Message Priya.** The opener is drafted. Alex edits and sends. Priya replies from her own phone.
+8. **More than a lease.** Both new to SF, both run weekend mornings. Wonder suggests an existing Event: New in SF: Weekend Runs. Sam, who also fit, gets no suggestion. Most exchanges stay exchanges.
 
-> You film your room and tell your Muse what you actually want, including the stuff you'd never post. It quietly checks with other people's Muses. An hour later: *"2 people from Stanford fit. Here's why, and here's the one thing you'd need to talk about."* Then **you** message them.
+## Screenshots
 
-1. **Ask.** Describe what you need in plain language, or show it in a 10–15 second video. Muse turns this into structured preferences. Each preference gets a visibility level, and you can edit it.
-2. **Match.** Your Muse pre-negotiates with the Muses of candidates in your reach (your school, your network, nearby, or anyone). You get a shortlist that says why each person fits, where you'd disagree, and a proposed compromise.
-3. **Handoff.** You pick one, and a Messenger thread opens with a drafted opener. **Agents never commit and never message the other human.** From here, the two of you talk.
-4. **Follow-through.** Mutuals suggests doing something together only when there is real overlap and both people have opted in. The suggestion is a shared activity, usually a small open circle such as "New in SF: Weekend Runs." Most exchanges stay exchanges.
+| Group feed | Tagged preferences | Live negotiation |
+|---|---|---|
+| ![Group feed](docs/screenshots/group-feed-phone.jpg) | ![Preferences](docs/screenshots/muse-prefs-phone.jpg) | ![Negotiation](docs/screenshots/live-negotiation-phone.jpg) |
 
-It also **works from day one**. If the other person doesn't have Muse turned on, your Muse reads their existing Group and Marketplace posts, judges the fit, and drafts a reply for you to send.
+| Shortlist | More than a lease | Messenger handoff |
+|---|---|---|
+| ![Shortlist](docs/screenshots/shortlist-phone.jpg) | ![Connection](docs/screenshots/connection-card-phone.jpg) | ![Messenger](docs/screenshots/messenger-draft-phone.jpg) |
 
-## Private preferences stay private
+![Desktop](docs/screenshots/group-desktop-sheet.jpg)
 
-Every preference has a visibility level:
+## Privacy, enforced in code
 
-| Level | Meaning |
-|---|---|
-| `public` | Can appear on your match card |
-| `match_only` | Your agent uses it to check compatibility, but it is never shown to the other person |
-| `never` | Never enters any agent's context |
+| Level | Meaning | Where it is enforced |
+|---|---|---|
+| **Public** | Can appear on your match card | |
+| **Match only** | Your Muse uses it to check fit. Never shown to the other person. | Prompts are built only from `privacy.agentContext()`. Money is compared in code (`budgetsOverlap`) and every string a human sees goes through `redactPrivateValues()`, so no private number or time can be printed. The live view shows disclosed facts as locked chips. |
+| **Never shared** | Never enters any Muse's context | `agentContext()` drops it before the prompt exists. The model cannot leak what it was never given. |
 
-This is enforced in code, not by asking the model to behave. `src/lib/privacy.ts` removes `never` preferences, and inferred preferences you haven't confirmed, before any prompt is built. The test in `src/lib/privacy.test.ts` checks this. Every message your agent sends is logged on the **What my Muse shared** page.
+Every outgoing message your Muse sends is logged and visible to you under **What my Muse shared**. `src/lib/privacy.test.ts` covers all of this and must stay green.
 
 ## How the AI works
 
 | Step | Model | What it does |
 |---|---|---|
-| Video intake | **Muse Ember** | Phone video frames → room details plus a catalog of leftover items (condition, flaws, price) |
-| Ask parsing | **Muse Spark** | Conversation → structured preferences with visibility tags; asks follow-up questions if something is missing |
-| Negotiation | **Muse Spark** × 2 | One agent per person, each seeing only what its owner allows; up to 4 rounds |
-| Referee | **Muse Wonder** | Ends the negotiation; returns a verdict with fits, disagreements, a compromise and a 5-second summary |
-| One-sided mode | **Muse Ember** | Scores human Group posts against your preferences |
-| Connection judgment | **Muse Wonder** | Decides whether the overlap is real enough to suggest an activity (usually no) |
-| Openers and digest | **Spark** / **Ember** | Drafts the first Messenger message; writes a daily digest of nearby asks |
+| Ask parsing | **Muse Spark** | Chat turns → structured, visibility-tagged preferences; asks one follow-up at a time |
+| Video intake | **Muse Ember** | Phone video frames (sampled on device) → room details + item catalog with condition, flaws, price |
+| Negotiation | **Muse Spark** × 2 | One agent per person, each seeing only what its owner allows. Two rounds, candidates in parallel. |
+| Referee | **Muse Wonder** | One call per candidate at the end: fits, disagreements, compromise, a 5-second summary |
+| One-sided mode | **Ember** + **Spark** | Scores a human Group post against your ask, then drafts the reply |
+| Connection judgment | **Muse Wonder** | One call per compatible match, only if both opted in. Usually says no. |
+| Openers, listings, digest | **Spark** / **Ember** | Messenger opener, Marketplace copy, the daily digest |
+
+Code does only two things the model does not: sealed comparisons of private numbers, and leak checks on every string shown to a human.
 
 ```
- New Ask (chat + video) ──► /api/intake (Ember)  /api/asks (Spark)
-                                         │
-                                         ▼
-                                    /api/match
-                    ┌────────────────────┴────────────────────┐
-           candidate has Muse                       candidate has no Muse
-                    │                                         │
-   /api/negotiate (SSE stream)                Group post evaluation (Ember)
-   Spark A ⇄ Spark B, refereed by Wonder               + drafted reply
-                    └────────────────────┬────────────────────┘
-                                         ▼
-          Shortlist ──► Messenger opener (Spark) ──► Connection check (Wonder)
+Group composer ─► Muse sheet ─► POST /api/asks (Spark)  ─► POST /api/intake (Ember)
+                                       │
+                                       ▼  "Want me to check with other Muses here?"
+                              GET /api/match?askId  (SSE)
+                 ┌─────────────────────┼─────────────────────┐
+         agent-to-agent         agent-to-agent          one-sided
+   Spark A ⇄ Spark B ×2    Spark A ⇄ Spark B ×2     Ember reads post
+        Wonder referee          Wonder referee       Spark drafts reply
+                 └─────────────────────┼─────────────────────┘
+                          Wonder connection judgment (compatible + both opted in)
+                                       ▼
+          Notification ─► Match cards ─► POST /api/messenger (Spark opener) ─► Messenger thread
+                                                 └─► Facebook Event  ·  Marketplace listing
 ```
 
-All model calls go through `src/lib/muse.ts`, which uses the OpenAI-compatible Meta Model API. It caches responses, retries failed calls, checks outputs against zod schemas (and retries once if they fail), and has a mock mode (`MOCK_MUSE`) for working offline.
-
-## Running locally
-
-Requires Node 20+.
+## Run it
 
 ```bash
 npm install
-cp .env.example .env.local     # add MUSE_API_KEY and MUSE_BASE_URL from dev.meta.ai
-npm run smoke                  # makes one call to Ember, Spark and Wonder to check your setup
-npm run dev                    # http://localhost:3000
+cp .env.example .env.local      # MUSE_API_KEY + MUSE_BASE_URL from dev.meta.ai
+npm run smoke                   # one tiny call per model: confirms key, base URL, model ids
+npm run dev                     # http://localhost:3000  (npm run dev:lan to open from phones)
 ```
 
-| Command | Purpose |
-|---|---|
-| `npm run dev:lan` | Serves on your local network so phones can open the app |
-| `npm test` | Privacy tests |
-| `npm run typecheck` | TypeScript check |
-| `npm run warm` | Pre-runs the demo's model calls to fill the cache |
-| `MOCK_MUSE=true npm run dev` | Replays cached responses without any network calls |
-| `POST /api/reset` | Clears demo state (asks, matches, threads, agent log) |
+No key yet? Everything runs offline:
 
-Use the persona dropdown in the top bar to switch between demo users. For the live demo, each phone is signed in as a different persona.
-
-## Demo personas
-
-The seed data in `seed/` is set up so the matching has real tensions to resolve:
-
-- **Alex:** moving to SF in September; a night owl. Posted budget $1,200, real max $1,350 (`match_only`). Partner visits some weekends. Health info is marked `never`.
-- **Priya:** a strong match with two tensions. She needs quiet after 11pm on weeknights, and her budget overlaps Alex's by only about $100. You both run on weekend mornings, so a connection suggestion makes sense.
-- **Jordan:** budget fits, but Jordan has a dog and Alex is allergic. The system says no.
-- **Sam:** a good roommate fit who has opted out of connection suggestions, so the match stays a roommate match.
-- **Casey:** doesn't use Muse and only appears through a Group post, which exercises one-sided mode.
-- About ten background personas for the digest: a guitar-for-resume-help swap, people going to a beabadoobee show, a vintage-clothes circle, a ride to SFO, a CS 161 study group.
-
-## Project layout
-
-```
-docs/PRD.md          Full product spec, architecture, prompts, demo plan
-CLAUDE.md            Conventions for contributors and coding agents
-seed/                Personas, Groups, posts, circles, asks
-src/lib/             muse.ts · schemas.ts · prompts.ts · privacy.ts · reach.ts · negotiation.ts · db.ts
-src/app/api/         intake · asks · match · negotiate (SSE) · connection · messenger · digest
-src/app/mutuals/     settings · ask/new · ask/[id] · negotiation/[id] · log · digest · circles/[id]
-src/app/messenger/   Messenger handoff
-scripts/             smoke test, cache warmer
+```bash
+echo "MOCK_MUSE=true" > .env.local
+npm run dev
 ```
 
-## Status
+Other commands:
 
-Work in progress during the hackathon. The foundation is in place: the Muse client, privacy enforcement, prompts, seed data and the Facebook-style app shell. The negotiation engine, API routes and screens are being built now. See the "Status / handoff" section of `CLAUDE.md` for current progress.
+```bash
+npm run demo        # hero matching from the terminal, with a leak check on every string shown to a human
+npm run warm        # pre-run every hero call so the response cache is hot before going on stage
+npm test            # privacy tests
+npm run typecheck
+```
+
+`docs/DEMO.md` has the timed script and the exact lines to type. `docs/PRD.md` is the full spec.
+
+## Honesty about what is live
+
+Every core call goes through `src/lib/muse.ts` and hits the Meta Model API when a key is configured. Responses are cached by input hash, so a rehearsed negotiation replays instantly, and `MOCK_MUSE=true` serves scripted fallbacks with no network. The avatar menu shows which mode you are in. We do not claim a run was live when it was replayed.
+
+## Repo layout
+
+```
+src/lib/        muse.ts (client, cache, mock) · privacy.ts · negotiation.ts · match.ts · connection.ts
+                asks.ts · intake.ts · messenger.ts · listing.ts · reach.ts · db.ts · prompts.ts · schemas.ts · mocks.ts
+src/app/        groups/[id] (the Group + Muse sheet) · groups/[id]/muse/[askId] (shortlist) · notifications
+                messenger/[threadId] · events/[id] · marketplace/[id] · digest · api/*
+src/components/ FbShell, LeftSidebar, NavTabs (Facebook chrome) · muse/* (sheet, live matching, video capture)
+                MatchCard, ConnectionCard, PostCard, ThreadView
+seed/           users, groups, posts, events, asks (Alex, Priya, Jordan, Sam, Casey + background personas)
+scripts/        muse-smoke.ts · run-demo.ts · warm-cache.ts
+```
+
+## Team
+
+Akhil, Kyle, Luke, Eddy. Stanford.

@@ -1,50 +1,94 @@
-// Facebook chrome: top bar, left nav (desktop), bottom tab bar (mobile ~390px). Server component.
+// Facebook chrome: desktop top bar (logo, search, center tabs, right icons) + left rail; phone header + tab row.
 import Link from "next/link";
-import { allUsers, getUser } from "@/lib/db";
+import { allUsers, getUser, matchesInvolving, threadsForUser } from "@/lib/db";
+import { museMode } from "@/lib/muse";
 import { currentUserId } from "@/lib/session";
+import { BellIcon, FacebookF, GridIcon, MessengerIcon, PlusIcon, SearchIcon } from "./icons";
+import LeftSidebar from "./LeftSidebar";
+import { DesktopTabs, MobileTabs } from "./NavTabs";
 import PersonaSwitcher from "./PersonaSwitcher";
 
-const NAV = [
-  { href: "/mutuals/digest", label: "Mutuals", icon: "🤝" },
-  { href: "/mutuals/ask/new", label: "New ask", icon: "✨" },
-  { href: "/mutuals/log", label: "What my Muse shared", icon: "🔒" },
-  { href: "/mutuals/settings", label: "Muse settings", icon: "⚙️" },
-  { href: "/messenger", label: "Messenger", icon: "💬" },
-];
+function Badge({ n }: { n: number }) {
+  if (n <= 0) return null;
+  return (
+    <span className="absolute -right-0.5 -top-0.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full border-2 border-white bg-fb-red px-1 text-[11px] font-bold leading-none text-white">
+      {n}
+    </span>
+  );
+}
 
 export default async function FbShell({ children }: { children: React.ReactNode }) {
-  const me = getUser(await currentUserId());
-  const personas = allUsers().map((u) => ({ id: u.id, name: u.name }));
+  const meId = await currentUserId();
+  const me = getUser(meId) ?? getUser("alex")!;
+  const personas = allUsers().map((u) => ({ id: u.id, name: u.name, avatarUrl: u.avatarUrl }));
+  // One notification per ask I made that found fits, plus one per other person whose Muse matched with mine.
+  const involving = matchesInvolving(me.id).filter((m) => m.verdict.compatible);
+  const notifCount = new Set([
+    ...involving.filter((m) => m.userId === me.id).map((m) => `ask:${m.askId}`),
+    ...involving.filter((m) => m.candidateId === me.id && m.mode === "agent_to_agent").map((m) => `from:${m.userId}`),
+  ]).size;
+  const msgCount = threadsForUser(me.id).filter((t) => t.messages.some((m) => m.from !== me.id && !m.text.startsWith("(from their post"))).length;
+  const mode = museMode();
+
   return (
     <div className="min-h-dvh">
-      <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-fb-border bg-fb-card px-4 shadow-sm">
-        <Link href="/" className="flex items-center gap-2">
-          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-fb-blue text-2xl font-bold text-white">f</span>
-          <span className="hidden text-lg font-semibold sm:inline">Mutuals</span>
-        </Link>
+      {/* Desktop header */}
+      <header className="sticky top-0 z-30 hidden h-14 items-center justify-between bg-fb-card px-4 shadow-fb md:flex">
         <div className="flex items-center gap-2">
-          <PersonaSwitcher personas={personas} current={me?.id ?? "alex"} />
-          {me && <img src={me.avatarUrl} alt={me.name} className="h-9 w-9 rounded-full" />}
+          <Link href="/" aria-label="Facebook" className="flex h-10 w-10 items-center justify-center rounded-full bg-fb-blue text-white">
+            <FacebookF size={26} />
+          </Link>
+          <label className="flex h-10 w-10 items-center justify-center gap-2 rounded-full bg-fb-bg text-fb-muted lg:w-[200px] lg:justify-start lg:px-3 xl:w-[240px]">
+            <SearchIcon size={18} />
+            <input className="hidden w-full bg-transparent text-[15px] outline-none placeholder:text-fb-muted lg:block" placeholder="Search Facebook" />
+          </label>
+        </div>
+        <div className="absolute left-1/2 top-0 -translate-x-1/2">
+          <DesktopTabs />
+        </div>
+        <div className="flex items-center gap-2">
+          <button className="fb-icon-btn" aria-label="Menu">
+            <GridIcon size={22} />
+          </button>
+          <Link href="/messenger" className="fb-icon-btn relative" aria-label="Messenger">
+            <MessengerIcon size={22} />
+            <Badge n={msgCount} />
+          </Link>
+          <Link href="/notifications" className="fb-icon-btn relative" aria-label="Notifications">
+            <BellIcon size={22} />
+            <Badge n={notifCount} />
+          </Link>
+          <PersonaSwitcher personas={personas} current={me.id} mode={mode} />
         </div>
       </header>
-      <div className="mx-auto flex max-w-6xl gap-4 px-0 sm:px-4">
-        <nav className="sticky top-14 hidden h-[calc(100dvh-3.5rem)] w-64 shrink-0 flex-col gap-1 py-4 md:flex">
-          {NAV.map((n) => (
-            <Link key={n.href} href={n.href} className="flex items-center gap-3 rounded-lg px-3 py-2 font-medium hover:bg-fb-hover">
-              <span className="text-xl">{n.icon}</span>
-              {n.label}
-            </Link>
-          ))}
-        </nav>
-        <main className="min-w-0 flex-1 px-4 py-4 pb-20 md:pb-4">{children}</main>
-      </div>
-      <nav className="fixed inset-x-0 bottom-0 z-20 flex justify-around border-t border-fb-border bg-fb-card py-2 md:hidden">
-        {NAV.map((n) => (
-          <Link key={n.href} href={n.href} className="flex flex-col items-center text-xs text-fb-muted">
-            <span className="text-xl">{n.icon}</span>
+
+      {/* Phone header + tab row */}
+      <div className="sticky top-0 z-30 md:hidden">
+        <header className="flex h-[52px] items-center justify-between bg-fb-card px-3">
+          <Link href="/" className="text-[26px] font-bold tracking-tight text-fb-blue" style={{ fontFamily: "Helvetica, Arial, sans-serif", letterSpacing: "-0.03em" }}>
+            facebook
           </Link>
-        ))}
-      </nav>
+          <div className="flex items-center gap-2">
+            <button className="fb-icon-btn" aria-label="Create">
+              <PlusIcon size={22} />
+            </button>
+            <button className="fb-icon-btn" aria-label="Search">
+              <SearchIcon size={20} />
+            </button>
+            <Link href="/messenger" className="fb-icon-btn relative" aria-label="Messenger">
+              <MessengerIcon size={22} />
+              <Badge n={msgCount} />
+            </Link>
+            <PersonaSwitcher personas={personas} current={me.id} mode={mode} compact />
+          </div>
+        </header>
+        <MobileTabs notifCount={notifCount} />
+      </div>
+
+      <div className="mx-auto flex max-w-[1920px]">
+        <LeftSidebar me={me} />
+        <main className="min-w-0 flex-1">{children}</main>
+      </div>
     </div>
   );
 }

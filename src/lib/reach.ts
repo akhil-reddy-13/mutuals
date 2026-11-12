@@ -1,40 +1,30 @@
-// Candidate selection by reach (PRD §3.1) + trust signals for match cards.
-import { allAsks, getUser, seed } from "./db";
-import type { Ask, Reach, User } from "./types";
+// Candidate selection (handoff note: scoped to one Facebook Group, no reach setting) + trust signals.
+import { allAsks, getGroup, getUser, postsInGroup } from "./db";
+import type { Ask, GroupPost, User } from "./types";
 
-export function inReach(me: User, other: User, reach: Reach): boolean {
-  if (me.id === other.id) return false;
-  switch (reach) {
-    case "school":
-      return !!me.school && me.school === other.school && other.schoolVerified;
-    case "network": {
-      if (me.friends.includes(other.id)) return true;
-      return me.friends.some((f) => getUser(f)?.friends.includes(other.id));
-    }
-    case "nearby":
-      return me.city === other.city;
-    case "anyone":
-      return true;
-  }
-}
-
-/** Open asks from other Muse-enabled users in reach, of a compatible type. */
+/** Other members of the ask's Group who have Muse AND opted in for that Group, with an open ask of the same type. */
 export function candidateAsks(ask: Ask): { ask: Ask; user: User }[] {
   const me = getUser(ask.userId);
-  if (!me) return [];
-  return allAsks()
-    .filter((a) => a.id !== ask.id && a.type === ask.type)
+  const group = getGroup(ask.groupId);
+  if (!me || !group) return [];
+  const latestPerUser = new Map<string, Ask>();
+  for (const a of allAsks()) {
+    if (a.id === ask.id || a.userId === ask.userId || a.type !== ask.type || a.groupId !== ask.groupId) continue;
+    const prev = latestPerUser.get(a.userId);
+    if (!prev || prev.createdAt < a.createdAt) latestPerUser.set(a.userId, a);
+  }
+  return [...latestPerUser.values()]
     .map((a) => ({ ask: a, user: getUser(a.userId)! }))
-    .filter(({ user }) => user && user.museEnabled && inReach(me, user, ask.reach));
+    .filter(({ user }) => user && user.museEnabled && user.museGroups.includes(ask.groupId) && group.memberIds.includes(user.id));
 }
 
-/** Group posts from users WITHOUT Muse, in my groups, for one-sided mode. */
-export function candidatePosts(ask: Ask) {
+/** Posts in the Group by members WITHOUT Muse (one-sided mode: we read the human post and draft a reply). */
+export function candidatePosts(ask: Ask): GroupPost[] {
   const me = getUser(ask.userId);
   if (!me) return [];
-  return seed.posts.filter((p) => {
+  return postsInGroup(ask.groupId).filter((p) => {
     const author = getUser(p.authorId);
-    return author && !author.museEnabled && author.id !== me.id && me.groups.includes(p.groupId);
+    return author && !author.museEnabled && author.id !== me.id;
   });
 }
 
@@ -42,7 +32,7 @@ export function trustSignals(me: User, other: User): string[] {
   const out: string[] = [];
   if (other.schoolVerified && other.school) out.push(`Verified ${other.school}`);
   for (const gid of me.groups.filter((g) => other.groups.includes(g))) {
-    const g = seed.groups.find((x) => x.id === gid);
+    const g = getGroup(gid);
     if (g) out.push(`Both in ${g.name}`);
   }
   const mutuals = me.friends.filter((f) => other.friends.includes(f)).length;
