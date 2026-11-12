@@ -75,7 +75,15 @@ export async function runNegotiation(
   saveNegotiation(negotiation);
 
   const nameOf = (s: NegotiationTurn["speaker"]) => (s === "A" ? userA.name : s === "B" ? userB.name : "Referee");
-  const transcript = () => negotiation.rounds.map((t) => `${nameOf(t.speaker)}'s Muse: ${t.message}`).join("\n");
+  // The models negotiate over the raw transcript. Everything stored, logged or streamed is redacted against the
+  // OTHER side's non-public values (and the owner's own `never` values), so an agent echoing "fine at $1,300"
+  // can't put the counterpart's private number in front of a human.
+  const rawTurns: NegotiationTurn[] = [];
+  const transcript = () => rawTurns.map((t) => `${nameOf(t.speaker)}'s Muse: ${t.message}`).join("\n");
+  const otherPrivate = {
+    A: askB.preferences.filter((p) => p.visibility !== "public"),
+    B: askA.preferences.filter((p) => p.visibility !== "public"),
+  };
 
   const satisfied = { A: false, B: false };
   for (let round = 1; round <= MAX_ROUNDS; round++) {
@@ -104,11 +112,19 @@ export async function runNegotiation(
       });
       // Defense in depth: an agent can only "disclose" ids it was actually given, and a `never` value can never
       // be echoed (it was not in the context, but strip it anyway).
-      const turn: NegotiationTurn = {
+      const ownNever = ask.preferences.filter((x) => x.visibility === "never");
+      const rawTurn: NegotiationTurn = {
         speaker: side,
-        message: redactPrivateValues(out.message, ask.preferences.filter((x) => x.visibility === "never")),
+        message: redactPrivateValues(out.message, ownNever),
         disclosed: out.disclosed.filter((id) => shareableIds[side].has(id)),
         positions: out.positions,
+      };
+      rawTurns.push(rawTurn);
+      const shield = [...ownNever, ...otherPrivate[side]];
+      const turn: NegotiationTurn = {
+        ...rawTurn,
+        message: redactPrivateValues(rawTurn.message, shield),
+        positions: Object.fromEntries(Object.entries(rawTurn.positions).map(([k, v]) => [k, redactPrivateValues(v, shield)])),
       };
       satisfied[side] = out.satisfied;
       negotiation.rounds.push(turn);

@@ -275,12 +275,14 @@ export function mockConnection(aId: string, bId: string): ConnectionOutput {
 
 // ---------- messenger ----------
 export function mockOpener(senderId: string, recipientId: string, recipientFirst: string): string {
-  const k = pair(senderId, recipientId);
-  if (k === pair("alex", "priya"))
-    return `hey ${recipientFirst}! my Muse said we line up on basically everything for the Mission room except I'm a night owl and you're up at 7. totally fine keeping the living room quiet after 11 on weeknights. want to come see the place this week?`;
-  if (k === pair("alex", "sam"))
-    return `hey ${recipientFirst}, sounds like the Mission room could work for Sept 1. my Muse flagged that you're very clean and I'm more tidy-ish, so maybe we talk through how we'd split chores? happy to show you the place.`;
-  return `hey ${recipientFirst}! my Muse thinks we might be a good fit on the room. want to talk this week?`;
+  const k = `${senderId}>${recipientId}`;
+  const lines: Record<string, string> = {
+    "alex>priya": `hey ${recipientFirst}! my Muse said we line up on basically everything for the Mission room except I'm a night owl and you're up at 7. totally fine keeping the living room quiet after 11 on weeknights. want to come see the place this week?`,
+    "priya>alex": `hey ${recipientFirst}! my Muse says your Mission room lines up with what I'm looking for. only thing is I'm up at 7 for work, would quiet after 11 on weeknights be ok? would love to see it this week.`,
+    "alex>sam": `hey ${recipientFirst}, sounds like the Mission room could work for Sept 1. my Muse flagged that you're very clean and I'm more tidy-ish, so maybe we talk through how we'd split chores? happy to show you the place.`,
+    "sam>alex": `hey ${recipientFirst}, my Muse says your room could work for me from Sept 1. I'm pretty particular about shared spaces, happy to set up a cleaning schedule. could I come see it?`,
+  };
+  return lines[k] ?? `hey ${recipientFirst}! my Muse thinks we might be a good fit on the room. want to talk this week?`;
 }
 
 export function mockPostEval(postId: string): PostEvalOutput {

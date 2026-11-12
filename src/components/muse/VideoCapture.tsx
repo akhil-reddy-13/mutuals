@@ -11,15 +11,36 @@ async function framesFromVideo(file: File, max = 10): Promise<string[]> {
   video.muted = true;
   video.playsInline = true;
   video.preload = "auto";
-  await new Promise<void>((res, rej) => {
-    video.onloadedmetadata = () => res();
-    video.onerror = () => rej(new Error("Could not read that video"));
-  });
+  const withTimeout = <T,>(p: Promise<T>, ms: number, what: string) =>
+    Promise.race([p, new Promise<T>((_, rej) => setTimeout(() => rej(new Error(`${what} timed out. Try a shorter video or photos.`)), ms))]);
+  await withTimeout(
+    new Promise<void>((res, rej) => {
+      video.onloadeddata = () => res();
+      video.onerror = () => rej(new Error("Could not read that video"));
+      video.load();
+    }),
+    8000,
+    "Loading the video",
+  );
+  // iOS Safari paints blank frames until the element has played once.
+  try {
+    await video.play();
+    video.pause();
+  } catch {}
+  const seekTo = (t: number) =>
+    withTimeout(
+      new Promise<void>((r) => {
+        if (Math.abs(video.currentTime - t) < 0.01) return r();
+        video.onseeked = () => r();
+        video.currentTime = t;
+      }),
+      3000,
+      "Reading a frame",
+    );
   let duration = video.duration;
   if (!Number.isFinite(duration) || duration === 0) {
     // Some browsers report Infinity until a seek happens.
-    video.currentTime = 1e6;
-    await new Promise<void>((r) => (video.onseeked = () => r()));
+    await seekTo(1e6);
     duration = video.duration;
   }
   const n = Math.min(max, Math.max(3, Math.floor(duration)));
@@ -27,8 +48,7 @@ async function framesFromVideo(file: File, max = 10): Promise<string[]> {
   const ctx = canvas.getContext("2d")!;
   const out: string[] = [];
   for (let i = 0; i < n; i++) {
-    video.currentTime = Math.min(duration - 0.05, ((i + 0.5) / n) * duration);
-    await new Promise<void>((r) => (video.onseeked = () => r()));
+    await seekTo(Math.min(duration - 0.05, ((i + 0.5) / n) * duration));
     const W = Math.min(640, video.videoWidth || 640);
     canvas.width = W;
     canvas.height = Math.round((W * (video.videoHeight || 480)) / (video.videoWidth || 640));
@@ -91,7 +111,7 @@ export default function VideoCapture({ onFrames, onSkip, disabled }: { onFrames:
               <span className="flex h-10 w-10 items-center justify-center rounded-full bg-fb-red text-white">
                 <VideoCamIcon size={22} />
               </span>
-              {busy ? "Reading…" : "Record video"}
+              {busy ? "Reading…" : "Video of the room"}
             </button>
             <button disabled={busy || disabled} onClick={() => imgRef.current?.click()} className="flex flex-col items-center gap-1.5 rounded-lg bg-fb-bg px-2 py-3 text-[13px] font-semibold hover:bg-[#e4e6e9] disabled:opacity-50">
               <span className="flex h-10 w-10 items-center justify-center rounded-full bg-fb-green text-white">
@@ -100,7 +120,8 @@ export default function VideoCapture({ onFrames, onSkip, disabled }: { onFrames:
               Use photos
             </button>
           </div>
-          <input ref={vidRef} type="file" accept="video/*" capture="environment" className="hidden" onChange={(e) => pick(e.target.files, "video")} />
+          {/* No `capture` attribute: on iOS it would force the camera and hide the Photos library (pre-recorded room video). */}
+          <input ref={vidRef} type="file" accept="video/*" className="hidden" onChange={(e) => pick(e.target.files, "video")} />
           <input ref={imgRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => pick(e.target.files, "image")} />
           {err && <p className="mt-2 text-[13px] text-fb-red">{err}</p>}
           <button onClick={onSkip} disabled={disabled} className="mt-2 w-full text-[13px] font-semibold text-fb-muted hover:underline">

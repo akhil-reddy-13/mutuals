@@ -80,16 +80,32 @@ function privateTokenList(prefs: Preference[]): { token: string; kind: "money" |
   return [...out].map(([token, kind]) => ({ token, kind })).sort((x, y) => y.token.length - x.token.length);
 }
 
-function escapeRe(s: string) {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+/**
+ * A regex that matches every common way a model might rewrite a private token:
+ *   "$1,300" → $1,300 · 1300 · $1300 · 1,300 · $1.3k · 1.3k · 1,300/mo
+ *   "11pm"   → 11pm · 11 pm · 11:00pm · 11 p.m. · 11PM
+ */
+function tokenPattern(token: string, kind: "money" | "time"): RegExp {
+  if (kind === "time") {
+    const m = token.match(/(\d{1,2})(?::(\d{2}))?\s?(am|pm)/i)!;
+    const h = m[1];
+    const ap = m[3][0].toLowerCase();
+    return new RegExp(`(?<![\\d:])${h}(?::\\d{2})?\\s?${ap}\\.?m\\.?(?![a-z])`, "gi");
+  }
+  const digits = token.replace(/[^\d.]/g, "");
+  const n = Number(digits);
+  const intPart = String(Math.trunc(n));
+  const grouped = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",?");
+  const alts = [`${grouped}(?:\\.\\d+)?`];
+  if (n >= 1000 && n % 100 === 0) alts.push(`${(n / 1000).toString().replace(".", "\\.")}\\s?k`);
+  return new RegExp(`(?<![\\d$.])(?:\\$\\s?)?(?:${alts.join("|")})(?![\\d])(?:\\s?\\/\\s?mo(?:nth)?)?`, "gi");
 }
 
-/** Returns the private values that appear verbatim in `text` (for tests and logging). */
+/** Returns the private values that appear (in any common spelling) in `text` (for tests and logging). */
 export function leaks(text: string, prefs: Preference[]): string[] {
-  return privateTokens(prefs).filter((t) => {
-    const bare = t.replace(/^\$\s?/, "");
-    return new RegExp(`(^|[^\\d])${escapeRe(bare)}(?![\\d])`, "i").test(text);
-  });
+  return privateTokenList(prefs)
+    .filter(({ token, kind }) => tokenPattern(token, kind).test(text))
+    .map((t) => t.token);
 }
 
 /**
@@ -102,9 +118,7 @@ export function redactPrivateValues(text: string, prefs: Preference[]): string {
     if (p.visibility === "never" && p.value.length > 3) out = out.split(p.value).join("[private]");
   }
   for (const { token, kind } of privateTokenList(prefs)) {
-    const bare = escapeRe(token.replace(/^\$\s?/, ""));
-    // Match the token (with an optional leading "$" and trailing "/mo"), never the whitespace around it.
-    out = out.replace(new RegExp(`(?<![\\d$])\\$?${bare}(?![\\d])(?:\\s?\\/\\s?mo(?:nth)?)?`, "gi"), kind === "time" ? "a private time" : "a private number");
+    out = out.replace(tokenPattern(token, kind), kind === "time" ? "a private time" : "a private number");
   }
   return out.replace(/[ \t]{2,}/g, " ");
 }

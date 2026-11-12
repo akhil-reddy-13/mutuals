@@ -150,12 +150,22 @@ export function saveAsk(ask: Ask) {
 }
 
 // ---- matches ----
+/** Latest match per (ask, candidate), so re-runs never show duplicates. */
+function latestMatches(ms: Match[]): Match[] {
+  const byKey = new Map<string, Match>();
+  for (const m of ms) {
+    const k = `${m.askId}|${m.candidateId}`;
+    const prev = byKey.get(k);
+    if (!prev || prev.createdAt < m.createdAt) byKey.set(k, m);
+  }
+  return [...byKey.values()];
+}
 export function matchesForAsk(askId: string) {
-  return rt().matches.filter((m) => m.askId === askId);
+  return latestMatches(rt().matches.filter((m) => m.askId === askId));
 }
 /** Matches where this user is the asker OR the candidate (the candidate's phone also gets a notification). */
 export function matchesInvolving(userId: string) {
-  return rt().matches.filter((m) => m.userId === userId || m.candidateId === userId);
+  return latestMatches(rt().matches.filter((m) => m.userId === userId || m.candidateId === userId));
 }
 export function getMatch(id: string) {
   return rt().matches.find((m) => m.id === id);

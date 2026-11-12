@@ -4,7 +4,7 @@ import Avatar from "@/components/Avatar";
 import { CalendarIcon, FriendsIcon, GroupsIcon, MuseMark } from "@/components/icons";
 import { getAsk, getGroup, getUser, matchesInvolving } from "@/lib/db";
 import { firstName, timeAgo } from "@/lib/format";
-import { currentUserId } from "@/lib/session";
+import { currentUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +19,7 @@ interface Notif {
 }
 
 export default async function NotificationsPage() {
-  const me = getUser(await currentUserId())!;
+  const me = await currentUser();
   const mine = matchesInvolving(me.id);
   const items: Notif[] = [];
 

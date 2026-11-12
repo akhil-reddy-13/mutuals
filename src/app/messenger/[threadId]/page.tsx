@@ -2,7 +2,7 @@
 import { notFound } from "next/navigation";
 import ThreadView from "@/components/ThreadView";
 import { getAsk, getMatch, getThread, getUser } from "@/lib/db";
-import { currentUserId } from "@/lib/session";
+import { currentUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
@@ -10,7 +10,7 @@ export default async function ThreadPage({ params }: { params: Promise<{ threadI
   const { threadId } = await params;
   const thread = getThread(threadId);
   if (!thread) notFound();
-  const me = getUser(await currentUserId())!;
+  const me = await currentUser();
   const otherId = thread.participantIds.find((p) => p !== me.id) ?? thread.participantIds[0];
   const other = getUser(otherId)!;
   const match = thread.matchId ? getMatch(thread.matchId) : undefined;

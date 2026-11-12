@@ -5,7 +5,7 @@ import Avatar from "@/components/Avatar";
 import GoingButton from "@/components/GoingButton";
 import { BackIcon, CalendarIcon, GlobeIcon, MuseMark, PinIcon } from "@/components/icons";
 import { getEvent, getUser } from "@/lib/db";
-import { currentUserId } from "@/lib/session";
+import { currentUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +14,7 @@ export default async function EventPage({ params, searchParams }: { params: Prom
   const { with: withName } = await searchParams;
   const event = getEvent(id);
   if (!event) notFound();
-  const me = getUser(await currentUserId())!;
+  const me = await currentUser();
   const host = getUser(event.hostId)!;
   const going = event.goingIds.map((g) => getUser(g)!).filter(Boolean);
 

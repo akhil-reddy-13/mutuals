@@ -5,12 +5,12 @@ import { mockDigest } from "@/lib/mocks";
 import { museJSON } from "@/lib/muse";
 import { digestPrompt } from "@/lib/prompts";
 import { DigestSchema } from "@/lib/schemas";
-import { currentUserId } from "@/lib/session";
+import { currentUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const me = getUser(await currentUserId());
+  const me = await currentUser();
   if (!me) return NextResponse.json({ cards: [] });
   const asks = allAsks().filter((a) => a.userId !== me.id && me.groups.includes(a.groupId) && a.type !== "roommate");
   const p = digestPrompt({

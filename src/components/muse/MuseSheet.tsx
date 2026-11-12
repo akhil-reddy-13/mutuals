@@ -126,7 +126,15 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
       text: `Want me to check with other Muses in ${group.name}? I'll also read the group's posts. Only public and match-only facts go out, and you'll see everything I share.`,
       actions: [
         { label: "Yes, check", primary: true, onClick: () => startMatching() },
-        { label: "Not now", onClick: () => push({ role: "muse", text: "No problem. Your ask is saved here. Tap Ask Muse whenever you want me to check." }) },
+        {
+          label: "Not now",
+          onClick: () =>
+            push({
+              role: "muse",
+              text: "No problem. Your ask is saved. Whenever you're ready, I can check.",
+              actions: [{ label: "Check now", primary: true, onClick: () => startMatching() }],
+            }),
+        },
       ],
     });
     return id;
@@ -204,7 +212,34 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
     };
     es.onerror = () => {
       es.close();
+      recoverByPolling(ask.id);
     };
+  }
+
+  // The stream dropped (phone locked, Safari backgrounded). Matching keeps running on the server, so poll for
+  // the saved matches and show the shortlist when the ask is marked matched.
+  function recoverByPolling(askId: string) {
+    push({ role: "muse", text: "Lost the connection for a second. Still checking in the background, I'll show results as soon as they're in." });
+    const started = Date.now();
+    const tick = async () => {
+      try {
+        const [a, m] = await Promise.all([
+          fetch(`/api/asks?askId=${askId}`, { cache: "no-store" }).then((r) => r.json()),
+          fetch(`/api/matches?askId=${askId}`, { cache: "no-store" }).then((r) => r.json()),
+        ]);
+        const ms = (m.matches ?? []) as Match[];
+        setCands((cs) => cs.map((c) => ({ ...c, match: ms.find((x) => x.candidateId === c.id) ?? c.match })));
+        if (a.ask?.status === "matched") {
+          setMatches(ms);
+          push({ role: "muse", text: `${ms.filter((x) => x.verdict.compatible).length} people fit. Here's the shortlist.`, card: "shortlist" });
+          router.refresh();
+          return;
+        }
+      } catch {}
+      if (Date.now() - started < 90_000) setTimeout(tick, 2000);
+      else push({ role: "muse", text: "Still nothing back. Check Notifications in a minute, results land there too." });
+    };
+    setTimeout(tick, 1500);
   }
 
   function runAction(msgId: string, fn: () => void) {

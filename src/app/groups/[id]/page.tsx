@@ -7,7 +7,7 @@ import MuseLauncher from "@/components/MuseLauncher";
 import PostCard from "@/components/PostCard";
 import { asksForUser, getGroup, getUser, matchesForAsk, postsInGroup } from "@/lib/db";
 import { sortMatches } from "@/lib/match";
-import { currentUserId } from "@/lib/session";
+import { currentUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +15,7 @@ export default async function GroupPage({ params }: { params: Promise<{ id: stri
   const { id } = await params;
   const group = getGroup(id);
   if (!group) notFound();
-  const me = getUser(await currentUserId())!;
+  const me = await currentUser();
   const posts = postsInGroup(id);
   const members = group.memberIds.map((m) => getUser(m)!).filter(Boolean);
   const museMembers = members.filter((u) => u.museEnabled && u.museGroups.includes(id));

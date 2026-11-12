@@ -70,6 +70,16 @@ describe("sealed comparisons", () => {
     expect(redactPrivateValues("Rent is $1,350/mo", both)).toContain("$1,350");
   });
 
+  it("catches the ways a model rewrites a number or time", () => {
+    const both = [...alex.preferences, ...priya.preferences];
+    for (const t of ["$1300", "1300", "1,300", "$1.3k", "1.3k", "$1,300/mo", "11 pm", "11:00pm", "11 p.m.", "11PM", "7 am", "1:00am"]) {
+      expect(leaks(`x ${t} y`, both), t).not.toEqual([]);
+      expect(redactPrivateValues(`x ${t} y`, both), t).toMatch(/x a private (number|time) y/);
+    }
+    // Unrelated numbers survive.
+    expect(redactPrivateValues("CS 161 at 5pm, lease 12 months, $40 desk", both)).toBe("CS 161 at 5pm, lease 12 months, $40 desk");
+  });
+
   it("never values are stripped even if a model echoed them", () => {
     const txt = "Note: Has a chronic condition, doesn't want it shared";
     expect(redactPrivateValues(txt, alex.preferences)).not.toMatch(/chronic/);

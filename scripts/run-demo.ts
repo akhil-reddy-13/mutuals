@@ -10,7 +10,8 @@ import { museMode } from "../src/lib/muse";
 async function main() {
   process.env.MOCK_DELAY_MS ??= "0";
   console.log(`muse mode: ${museMode()}`);
-  resetRuntime();
+  if (process.env.RESET === "1") resetRuntime();
+  else console.log("(not resetting the runtime store; RESET=1 to wipe it. Matches dedupe by latest run.)");
   const ask = getAsk("ask_alex_seed")!;
   const t0 = Date.now();
   const matches = await runMatching(ask, (e) => {

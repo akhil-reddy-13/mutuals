@@ -7,8 +7,13 @@ export function candidateAsks(ask: Ask): { ask: Ask; user: User }[] {
   const me = getUser(ask.userId);
   const group = getGroup(ask.groupId);
   if (!me || !group) return [];
-  return allAsks()
-    .filter((a) => a.id !== ask.id && a.userId !== ask.userId && a.type === ask.type && a.groupId === ask.groupId)
+  const latestPerUser = new Map<string, Ask>();
+  for (const a of allAsks()) {
+    if (a.id === ask.id || a.userId === ask.userId || a.type !== ask.type || a.groupId !== ask.groupId) continue;
+    const prev = latestPerUser.get(a.userId);
+    if (!prev || prev.createdAt < a.createdAt) latestPerUser.set(a.userId, a);
+  }
+  return [...latestPerUser.values()]
     .map((a) => ({ ask: a, user: getUser(a.userId)! }))
     .filter(({ user }) => user && user.museEnabled && user.museGroups.includes(ask.groupId) && group.memberIds.includes(user.id));
 }

@@ -33,8 +33,9 @@ export default function ThreadView({
     const id = setInterval(async () => {
       const res = await fetch(`/api/messenger?threadId=${thread.id}`, { cache: "no-store" });
       if (res.ok) {
-        const { thread: t } = await res.json();
-        setThread(t);
+        const { thread: t } = (await res.json()) as { thread: MessengerThread };
+        // A poll that started before a send can resolve after it; never go backwards.
+        setThread((cur) => (t.messages.length < cur.messages.length ? cur : t));
       }
     }, 2000);
     return () => clearInterval(id);

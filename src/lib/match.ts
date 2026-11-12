@@ -25,7 +25,13 @@ export function sortMatches(ms: Match[]): Match[] {
   return [...ms].sort((a, b) => Number(b.verdict.compatible) - Number(a.verdict.compatible) || b.verdict.score - a.verdict.score);
 }
 
-export async function runMatching(askInput: Ask, emit: (e: MatchEvent) => void = () => {}): Promise<Match[]> {
+export async function runMatching(askInput: Ask, emitRaw: (e: MatchEvent) => void = () => {}): Promise<Match[]> {
+  // A broken stream must never abort matching.
+  const emit = (e: MatchEvent) => {
+    try {
+      emitRaw(e);
+    } catch {}
+  };
   const ask = getAsk(askInput.id) ?? askInput;
   const me = getUser(ask.userId);
   if (!me) throw new Error("unknown user");
@@ -55,7 +61,14 @@ export async function runMatching(askInput: Ask, emit: (e: MatchEvent) => void =
       emit({
         type: "turn",
         candidateId: user.id,
-        turn: turn.speaker === "B" ? { ...turn, message: redactPrivateValues(turn.message, other.preferences) } : turn,
+        turn:
+          turn.speaker === "B"
+            ? {
+                ...turn,
+                message: redactPrivateValues(turn.message, other.preferences),
+                positions: Object.fromEntries(Object.entries(turn.positions).map(([k, v]) => [k, redactPrivateValues(v, other.preferences)])),
+              }
+            : turn,
         disclosedMeta: turn.disclosed
           .map((id) => src.preferences.find((p) => p.id === id))
           .filter((p): p is NonNullable<typeof p> => !!p)

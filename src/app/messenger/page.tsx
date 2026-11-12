@@ -4,12 +4,12 @@ import Avatar from "@/components/Avatar";
 import { MoreIcon, MuseMark, SearchIcon } from "@/components/icons";
 import { getUser, threadsForUser } from "@/lib/db";
 import { timeAgo } from "@/lib/format";
-import { currentUserId } from "@/lib/session";
+import { currentUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
 export default async function MessengerPage() {
-  const me = getUser(await currentUserId())!;
+  const me = await currentUser();
   const threads = threadsForUser(me.id).sort((a, b) => {
     const la = a.messages.at(-1)?.at ?? "";
     const lb = b.messages.at(-1)?.at ?? "";

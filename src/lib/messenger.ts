@@ -17,7 +17,7 @@ export async function openThreadForMatch(matchId: string, senderId: string): Pro
   const ask = getAsk(match.askId)!;
 
   const existing = threadBetween(senderId, recipientId);
-  if (existing) return existing;
+  if (existing && (existing.draft?.for === senderId || existing.messages.some((m) => m.from === senderId))) return existing;
 
   let draft: string;
   if (match.mode === "one_sided" && match.draftReply) {
@@ -27,6 +27,13 @@ export async function openThreadForMatch(matchId: string, senderId: string): Pro
     draft = await museText({ model: "spark", system: p.system, user: p.user, mock: mockOpener(sender.id, recipient.id, recipient.name.split(" ")[0]) });
   }
   draft = redactPrivateValues(draft, ask.preferences);
+
+  if (existing) {
+    // The other person opened the thread first. Give this person their own opener.
+    existing.draft = { for: senderId, text: draft };
+    saveThread(existing);
+    return existing;
+  }
 
   const thread: MessengerThread = {
     id: newId("thread"),

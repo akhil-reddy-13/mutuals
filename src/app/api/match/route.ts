@@ -15,15 +15,34 @@ export async function GET(req: Request) {
   optIntoGroup(ask.userId, ask.groupId); // starting a search is the opt-in for this Group
 
   const enc = new TextEncoder();
+  // Matching must finish even if the phone locks or Safari drops the stream: once the client is gone, `send`
+  // becomes a no-op and runMatching keeps writing matches to the store (the Group page / notifications pick
+  // them up; the sheet recovers by polling).
+  let closed = false;
   const stream = new ReadableStream({
     async start(controller) {
-      const send = (data: unknown) => controller.enqueue(enc.encode(`data: ${JSON.stringify(data)}\n\n`));
+      const send = (data: unknown) => {
+        if (closed) return;
+        try {
+          controller.enqueue(enc.encode(`data: ${JSON.stringify(data)}\n\n`));
+        } catch {
+          closed = true;
+        }
+      };
       try {
         await runMatching(ask, send);
       } catch (e) {
         send({ type: "error", message: String(e) });
       }
-      controller.close();
+      if (!closed) {
+        closed = true;
+        try {
+          controller.close();
+        } catch {}
+      }
+    },
+    cancel() {
+      closed = true;
     },
   });
   return new Response(stream, {

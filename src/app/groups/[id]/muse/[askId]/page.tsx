@@ -7,7 +7,7 @@ import { BackIcon, MuseMark } from "@/components/icons";
 import { getAsk, getEvent, getGroup, getUser, matchesForAsk, postsInGroup } from "@/lib/db";
 import { firstName } from "@/lib/format";
 import { sortMatches } from "@/lib/match";
-import { currentUserId } from "@/lib/session";
+import { currentUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +16,7 @@ export default async function MatchesPage({ params }: { params: Promise<{ id: st
   const group = getGroup(id);
   const ask = getAsk(askId);
   if (!group || !ask) notFound();
-  const me = getUser(await currentUserId())!;
+  const me = await currentUser();
   const asker = getUser(ask.userId)!;
   const iAmAsker = me.id === ask.userId;
   const all = sortMatches(matchesForAsk(askId));

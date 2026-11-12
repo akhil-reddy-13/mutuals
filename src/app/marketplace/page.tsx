@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { MarketplaceIcon } from "@/components/icons";
-import { getUser, listingsForUser } from "@/lib/db";
-import { currentUserId } from "@/lib/session";
+import { listingsForUser } from "@/lib/db";
+import { currentUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
 export default async function MarketplaceIndex() {
-  const me = getUser(await currentUserId())!;
+  const me = await currentUser();
   const mine = listingsForUser(me.id);
   const ambient = [
     ["Free IKEA floor lamp", 0],
