@@ -51,6 +51,20 @@ export interface Item {
   flaws: string[];
   suggestedPriceUsd: number;
   imageDataUrl?: string;
+  /** Exact make/model from the identification step (Spark), e.g. "Canon PowerShot G7 X Mark III". */
+  model?: string;
+  /** Did the user say they're selling it? Unmentioned items Ember saw are offered but off by default. */
+  mentioned?: boolean;
+  /** How the user referred to it out loud ("this Canon camera"). */
+  spokenAs?: string;
+  priceLowUsd?: number;
+  priceHighUsd?: number;
+  confidence?: "high" | "medium" | "low";
+  /** One line on how Spark identified it ("Lens ring + body shape match the G7 X III"). */
+  identifyNote?: string;
+  identified?: boolean;
+  /** Which sampled frame this item is clearest in (so identification can look at neighboring frames too). */
+  frameIndex?: number;
 }
 
 export interface Ask {

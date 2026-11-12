@@ -2,7 +2,23 @@
 // as the model returns it). Convert to camelCase domain types at the call site.
 import { z } from "zod";
 
+export const IdentifySchema = z.object({
+  name: z.string(),
+  brand: z.string().nullable(),
+  model: z.string().nullable(),
+  confidence: z.enum(["high", "medium", "low"]),
+  condition: z.enum(["new", "good", "fair", "worn"]),
+  flaws: z.array(z.string()),
+  price_low_usd: z.number(),
+  price_high_usd: z.number(),
+  suggested_price_usd: z.number(),
+  note: z.string(),
+});
+export type IdentifyOutput = z.infer<typeof IdentifySchema>;
+
 export const IntakeSchema = z.object({
+  /** Word-for-word narration, when audio was attached. */
+  transcript: z.string().nullable().optional(),
   room: z
     .object({
       furnished: z.boolean(),
@@ -21,6 +37,8 @@ export const IntakeSchema = z.object({
       flaws: z.array(z.string()),
       suggested_price_usd: z.number(),
       frame_index: z.number(),
+      mentioned: z.boolean().optional(),
+      spoken_as: z.string().nullable().optional(),
     }),
   ),
 });

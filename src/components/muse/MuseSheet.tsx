@@ -40,6 +40,15 @@ function canShowVideo(ask: Ask): boolean {
   return ask.type === "roommate" || ask.type === "sublet" || ask.type === "item";
 }
 
+/** Fields the seller changed in a row since it was sent to Spark (so Spark's answer doesn't overwrite them). */
+function editedFields(now: Item, sent: Item): Partial<Item> {
+  const out: Partial<Item> = {};
+  for (const k of ["name", "model", "suggestedPriceUsd", "condition"] as const) {
+    if (now[k] !== sent[k]) (out as Record<string, unknown>)[k] = now[k];
+  }
+  return out;
+}
+
 export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
   const router = useRouter();
   const first = firstName(me.name);
@@ -49,7 +58,10 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
   const [used, setUsed] = useState<Set<string>>(new Set());
   const [ask, setAsk] = useState<Ask | null>(null);
   const [ready, setReady] = useState(false);
-  const [intake, setIntake] = useState<{ room: RoomDetails | null; items: Item[] } | null>(null);
+  const [intake, setIntake] = useState<{ room: RoomDetails | null; items: Item[]; transcript?: string | null } | null>(null);
+  // Items Spark is still identifying (step 2 of the seller pipeline).
+  const [identifying, setIdentifying] = useState<Set<string>>(new Set());
+  const framesRef = useRef<string[]>([]);
   const [listed, setListed] = useState<{ id: string; title: string; priceUsd: number } | null>(null);
   const [cands, setCands] = useState<LiveCandidate[]>([]);
   const [matches, setMatches] = useState<Match[] | null>(null);
@@ -161,15 +173,18 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
 
   async function onFrames(frames: string[], narration: string, audio: string | null = null) {
     if (!ask) return;
+    framesRef.current = frames;
     setThinking(true);
     push({ role: "user", text: `📹 ${frames.length} frames${audio ? " + narration" : ""}${narration ? ` · "${narration}"` : ""}` });
     try {
       const res = await fetch("/api/intake", { method: "POST", body: JSON.stringify({ frames, narration, audio, askId: ask.id }) });
-      const out = (await res.json()) as { room: RoomDetails | null; items: Item[]; error?: string };
+      const out = (await res.json()) as { room: RoomDetails | null; items: Item[]; transcript?: string | null; error?: string };
       if (out.error) throw new Error(out.error);
       setIntake(out);
       setAsk((a) => (a ? { ...a, roomDetails: out.room ?? a.roomDetails, items: out.items } : a));
-      const n = out.items.length;
+      // Step 2: Spark identifies each item you mentioned, in parallel. Rows update as each one lands.
+      for (const it of out.items.filter((i) => i.mentioned !== false)) void identify(it, out.transcript ?? undefined);
+      const n = out.items.filter((i) => i.mentioned !== false).length;
       const selling = ask.type === "item";
       push({
         role: "muse",
@@ -187,12 +202,42 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
     askOptIn();
   }
 
+  async function identify(item: Item, transcript?: string) {
+    setIdentifying((s) => new Set(s).add(item.id));
+    try {
+      const f = framesRef.current;
+      const k = item.frameIndex ?? -1;
+      const nearby = k >= 0 ? [f[k - 1], f[k + 1]].filter(Boolean) : [];
+      const res = await fetch("/api/identify", { method: "POST", body: JSON.stringify({ item, transcript, nearby }) });
+      const out = (await res.json()) as { item?: Item };
+      if (out.item) {
+        // Keep anything the seller already typed into this row while Spark was working.
+        setIntake((prev) =>
+          prev ? { ...prev, items: prev.items.map((i) => (i.id === item.id ? { ...out.item!, ...editedFields(i, item) } : i)) } : prev,
+        );
+      }
+    } catch {
+      // Identification is a bonus: on failure the row keeps Ember's first pass.
+    } finally {
+      setIdentifying((s) => {
+        const n = new Set(s);
+        n.delete(item.id);
+        return n;
+      });
+    }
+  }
+
+  function onEditItems(items: Item[]) {
+    setIntake((prev) => (prev ? { ...prev, items } : prev));
+    setAsk((a) => (a ? { ...a, items } : a));
+  }
+
   async function onList(items: Item[]) {
     if (!ask) return;
-    const res = await fetch("/api/listing", { method: "POST", body: JSON.stringify({ askId: ask.id, itemIds: items.map((i) => i.id) }) });
+    const res = await fetch("/api/listing", { method: "POST", body: JSON.stringify({ askId: ask.id, items }) });
     const { listing } = await res.json();
     setListed({ id: listing.id, title: listing.title, priceUsd: listing.priceUsd });
-    push({ role: "muse", text: `Listed. "${listing.title}" is on Marketplace for $${listing.priceUsd}. I'll mention it to anyone whose Muse asks about furniture.` });
+    push({ role: "muse", text: `Listed. "${listing.title}" is on Marketplace for $${listing.priceUsd}. I'll mention it to anyone whose Muse is looking for one.` });
   }
 
   function startMatching() {
@@ -361,7 +406,21 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
                   )}
                   {m.card === "intake" && intake && (
                     <div className="ml-8">
-                      <IntakeCard room={intake.room} items={intake.items} onList={onList} listed={listed} />
+                      <IntakeCard
+                        room={intake.room}
+                        items={intake.items}
+                        transcript={intake.transcript}
+                        identifying={identifying}
+                        selling={ask?.type === "item"}
+                        onChange={onEditItems}
+                        onAdd={(x) => {
+                          const on = { ...x, mentioned: true };
+                          onEditItems(intake.items.map((i) => (i.id === x.id ? on : i)));
+                          void identify(on, intake.transcript ?? undefined);
+                        }}
+                        onList={onList}
+                        listed={listed}
+                      />
                     </div>
                   )}
                   {m.card === "matching" && (

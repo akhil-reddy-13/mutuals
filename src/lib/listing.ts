@@ -9,7 +9,7 @@ import type { Item, MarketplaceListing } from "./types";
 export async function createListing(sellerId: string, items: Item[], askId?: string): Promise<MarketplaceListing> {
   const seller = getUser(sellerId)!;
   const p = listingPrompt({
-    items: items.map((i) => `${i.name}${i.brandGuess ? ` (${i.brandGuess})` : ""}, ${i.condition}, flaws: ${i.flaws.join("; ") || "none"}, ~$${i.suggestedPriceUsd}`).join("\n"),
+    items: items.map((i) => `${i.name}${i.model && i.model !== i.name ? ` (${i.model})` : i.brandGuess ? ` (${i.brandGuess})` : ""}, ${i.condition}, flaws: ${i.flaws.join("; ") || "none"}, ~$${i.suggestedPriceUsd}`).join("\n"),
     neighborhood: seller.city === "San Francisco" ? "the Mission" : seller.city,
   });
   const out = await museJSON({ model: "spark", system: p.system, user: p.user, schema: ListingSchema, mock: mockListing(items) });
@@ -18,7 +18,8 @@ export async function createListing(sellerId: string, items: Item[], askId?: str
     sellerId,
     askId,
     title: out.title,
-    priceUsd: out.price_usd,
+    // The seller set (or approved) each price, so the bundle is their sum, not the model's number.
+    priceUsd: items.reduce((sum, i) => sum + (Number(i.suggestedPriceUsd) || 0), 0) || out.price_usd,
     condition: out.condition,
     description: out.description,
     items,

@@ -10,13 +10,17 @@ Return ONLY JSON, no prose, matching this schema:
   "room": { "furnished": bool, "approx_size": "small|medium|large", "natural_light": "low|medium|high",
             "desk_space": bool, "closet": bool, "notes": [string] } | null,
   "items": [ { "name": string, "brand_guess": string|null, "condition": "new|good|fair|worn",
-               "flaws": [string], "suggested_price_usd": number, "frame_index": number } ]
+               "flaws": [string], "suggested_price_usd": number, "frame_index": number,
+               "mentioned": bool, "spoken_as": string|null } ]${hasAudio ? `,
+  "transcript": string   // word-for-word narration, keep "um"s out` : ""}
 }
 Rules: list each distinct physical item once (dedupe across frames). Do not invent items you cannot see.
 Items are things the next tenant might want to buy or take (desk, fridge, lamp, shelf). Skip fixtures.
 If the user narrated, prefer their stated facts. Prices are for a used-item sale between students nearby.${hasAudio ? `
 AUDIO: the user talked while filming. Their words are authoritative:
-- If they say which items they are selling or giving away, list ONLY those. Leave out anything they say is not for sale.
+- Every item they say they're selling or giving away: mentioned = true, spoken_as = their words ("this Canon camera").
+- Up to 3 OTHER sellable things clearly visible (not food, drinks, trash, cables): mentioned = false, so the app can
+  offer them. Never include anything they said is not for sale.
 - Use the exact brand, model or edition they state as brand_guess (e.g. "Fujifilm X100V, silver").
 - If they say a price or condition, use it. Match spoken references ("this table", "that one") to what is on screen
   at that point in the video, using frame order as the timeline.
@@ -28,6 +32,25 @@ AUDIO: the user talked while filming. Their words are authoritative:
 - frame_index is the frame where the item is clearest, so it can be the listing photo.` : ""}
 Notes are 2 to 4 short phrases a roommate would care about (light, floors, windows, lock, noise).`,
   userText: narration ? `User narration: ${narration}` : "No narration.",
+});
+
+export const identifyPrompt = (a: { emberName: string; brandGuess?: string; spokenAs?: string; transcript?: string }) => ({
+  system: `You are the identification step of a seller's Muse on Facebook Marketplace. Another model already found this
+item in the seller's video. Look closely at the photo and work out exactly what it is, then price it.
+Return ONLY JSON:
+{ "name": string,          // short listing name, e.g. "Canon PowerShot G7 X Mark III"
+  "brand": string|null, "model": string|null,   // null if you can't tell
+  "confidence": "high|medium|low",
+  "condition": "new|good|fair|worn", "flaws": [string],
+  "price_low_usd": number, "price_high_usd": number,  // typical used price range between students, today
+  "suggested_price_usd": number,                      // a fair ask that sells within a week
+  "note": string }         // one short line on what gave it away ("Silver body, flip screen, G7 X lettering")
+Rules: the seller's own words win over what you see (if they say "Canon", it's a Canon). Use visible details (logos,
+shape, ports, colors, case style) to narrow the model. If unsure between generations, pick the likelier one and say
+confidence "medium" or "low". Never invent a model you can't support.`,
+  user: `First pass called it: ${a.emberName}${a.brandGuess ? ` (${a.brandGuess})` : ""}.
+${a.spokenAs ? `The seller called it: "${a.spokenAs}".` : "The seller didn't mention it."}
+${a.transcript ? `Full narration: "${a.transcript}"` : ""}`,
 });
 
 export const askParsePrompt = (a: { ownerName: string; groupName: string; conversation: string }) => ({
@@ -164,7 +187,7 @@ Only state facts from the ask summary. Return ONLY the message text.`,
 });
 
 export const listingPrompt = (a: { items: string; neighborhood: string }) => ({
-  system: `Write a Facebook Marketplace listing for these leftover items a student is selling before a roommate moves in.
+  system: `Write a Facebook Marketplace listing for these items a student is selling. Use the exact names and models given.
 Return ONLY JSON: { "title": string, "price_usd": number, "condition": "new|good|fair|worn", "description": string }
 Title under 60 chars. Price is for the bundle. Description 2 sentences, honest about flaws, pickup in ${a.neighborhood}.`,
   user: a.items,

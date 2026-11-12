@@ -65,6 +65,8 @@ export interface MuseCall {
   temperature?: number;
   /** Skip cache read (still writes). Use for live demo moments where you want a fresh call. */
   fresh?: boolean;
+  /** Override the model's default reasoning effort for this call (minimal|low|medium|high). */
+  effort?: string;
 }
 
 type ChatMessage = OpenAI.Chat.Completions.ChatCompletionMessageParam;
@@ -84,7 +86,7 @@ function writeCache(key: string, model: string, text: string) {
   fs.writeFileSync(path.join(CACHE_DIR, `${key}.json`), JSON.stringify({ model, text, at: new Date().toISOString() }));
 }
 
-async function rawCall(model: MuseModel, messages: ChatMessage[], temperature: number, fresh: boolean, mock?: string) {
+async function rawCall(model: MuseModel, messages: ChatMessage[], temperature: number, fresh: boolean, mock?: string, effortOverride?: string) {
   const id = MODEL_IDS[model];
   const key = cacheKey(id, messages);
   if (!fresh || MOCK) {
@@ -101,7 +103,7 @@ async function rawCall(model: MuseModel, messages: ChatMessage[], temperature: n
   let lastErr: unknown;
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
-      const effort = EFFORT[model];
+      const effort = effortOverride ?? EFFORT[model];
       const extra = effort !== "default" && !effortUnsupported.has(model) ? { reasoning_effort: effort } : {};
       const res = await client().chat.completions.create({
         model: id,
@@ -134,7 +136,7 @@ function buildMessages(c: MuseCall): ChatMessage[] {
 }
 
 export async function museText(c: MuseCall & { mock?: string }): Promise<string> {
-  return (await rawCall(c.model, buildMessages(c), c.temperature ?? 0.7, !!c.fresh, c.mock)).trim();
+  return (await rawCall(c.model, buildMessages(c), c.temperature ?? 0.7, !!c.fresh, c.mock, c.effort)).trim();
 }
 
 /** Strip ```json fences / leading prose and parse the first JSON object or array. */
@@ -157,7 +159,7 @@ export async function museJSON<S extends z.ZodTypeAny>(
   const messages = buildMessages(c);
   const temp = c.temperature ?? 0.4;
   const mock = c.mock !== undefined ? JSON.stringify(c.mock) : undefined;
-  const text = await rawCall(c.model, messages, temp, !!c.fresh, mock);
+  const text = await rawCall(c.model, messages, temp, !!c.fresh, mock, c.effort);
   try {
     return c.schema.parse(extractJSON(text));
   } catch (err) {
@@ -169,7 +171,7 @@ export async function museJSON<S extends z.ZodTypeAny>(
         content: `Your output failed validation: ${String(err).slice(0, 800)}\nReturn ONLY corrected JSON.`,
       },
     ];
-    const text2 = await rawCall(c.model, retry, temp, false, mock);
+    const text2 = await rawCall(c.model, retry, temp, false, mock, c.effort);
     return c.schema.parse(extractJSON(text2));
   }
 }

@@ -7,7 +7,11 @@ import { intakePrompt } from "./prompts";
 import { IntakeSchema } from "./schemas";
 import type { Item, RoomDetails } from "./types";
 
-export async function runIntake(frames: string[], narration?: string, audioWavB64?: string): Promise<{ room: RoomDetails | null; items: Item[] }> {
+export async function runIntake(
+  frames: string[],
+  narration?: string,
+  audioWavB64?: string,
+): Promise<{ room: RoomDetails | null; items: Item[]; transcript: string | null }> {
   const use = capFrames(frames);
   const p = intakePrompt(narration, !!audioWavB64);
   // Ember is natively multimodal: the video's audio track goes in alongside the frames, so what the user SAYS
@@ -36,6 +40,10 @@ export async function runIntake(frames: string[], narration?: string, audioWavB6
     flaws: i.flaws,
     suggestedPriceUsd: i.suggested_price_usd,
     imageDataUrl: use[Math.min(Math.max(i.frame_index, 0), use.length - 1)],
+    frameIndex: Math.min(Math.max(i.frame_index, 0), use.length - 1),
+    // No narration: everything Ember saw counts as offered. With narration: only what they said.
+    mentioned: audioWavB64 ? (i.mentioned ?? true) : true,
+    spokenAs: i.spoken_as ?? undefined,
   }));
-  return { room, items };
+  return { room, items, transcript: out.transcript ?? null };
 }
