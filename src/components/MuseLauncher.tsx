@@ -12,11 +12,8 @@ export default function MuseLauncher(props: Omit<MuseSheetProps, "onClose">) {
         onClick={() => setOpen(true)}
         className="group mt-2 flex w-full items-center gap-3 rounded-lg border border-transparent bg-gradient-to-r from-[#eef3ff] via-[#f3ecff] to-[#ffeef3] px-3 py-2.5 text-left transition hover:border-[#d9c7ff]"
       >
-        <MuseMark size={36} />
-        <span className="min-w-0 flex-1">
-          <span className="block text-[15px] font-semibold">Ask Muse</span>
-          <span className="block truncate text-[13px] text-fb-muted">Tell me what you need. I&apos;ll find who fits here.</span>
-        </span>
+        <MuseMark size={28} />
+        <span className="min-w-0 flex-1 text-[15px] font-semibold">Ask Muse</span>
         <ChevronRight size={20} className="text-fb-muted transition group-hover:translate-x-0.5" />
       </button>
       {open && <MuseSheet {...props} onClose={() => setOpen(false)} />}
