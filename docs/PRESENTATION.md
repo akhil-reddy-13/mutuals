@@ -45,8 +45,8 @@ Chill, conversational, about 185 words. Let the video breathe between lines.
 
 ## 5. Selling, LIVE (2:40-3:40) A
 *Switch to the app: Stanford Free & For Sale, Ask Muse.* Backup if anything breaks: play `recordings/selling.mp4`.
-- **Transition (while switching):** But a roommate's a once-a-year thing. The stuff you're on Facebook for every
-  week is smaller, like getting rid of everything when you move out. So let's do that one live.
+- **Transition (while switching):** But you don't look for a roommate every week. What you do every week is way
+  smaller, like selling the random stuff on your desk you don't use anymore. Let's do that one live.
 - *Tap "Selling some stuff before I move out", answer Muse's question.* I filmed my desk on my phone and just talked
   over it.
 - *Upload `~/Downloads/Selling_catalog_items.MOV`, tap Catalog items.*
