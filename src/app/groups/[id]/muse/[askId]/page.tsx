@@ -13,7 +13,7 @@ import { REACH_LABEL, reachOf } from "@/lib/reach";
 import { buyersFor } from "@/lib/homes";
 import { BackIcon, FeedIcon, MuseMark } from "@/components/icons";
 import { getAsk, getEvent, getGroup, getUser, matchesForAsk } from "@/lib/db";
-import { firstName } from "@/lib/format";
+import { firstName, topLabel } from "@/lib/format";
 import { sortMatches } from "@/lib/match";
 import { currentUser } from "@/lib/session";
 import type { Match } from "@/lib/types";
@@ -136,7 +136,7 @@ export default async function MatchesPage({ params }: { params: Promise<{ id: st
                             <span className="block truncate text-[13px] text-fb-muted">{m.verdict.summaryForHumans}</span>
                           </span>
                           <span className={`shrink-0 rounded-full px-2 py-0.5 text-[12px] font-semibold ${m === fits[0] ? "bg-fb-blue-soft text-fb-blue" : fit ? "bg-[#e6f4ea] text-fb-green" : "bg-fb-chip text-fb-muted"}`}>
-                            {m === fits[0] ? "Best match" : fit ? "Fits" : "Not a fit"}
+                            {m === fits[0] ? topLabel(m) : fit ? "Fits" : "Not a fit"}
                           </span>
                         </a>
                       </li>
@@ -188,7 +188,7 @@ export default async function MatchesPage({ params }: { params: Promise<{ id: st
                     candidate={{ id: other.id, name: other.name, avatarUrl: other.avatarUrl, school: other.school }}
                     viewerId={me.id}
                     event={eventOf(m)}
-                    label={iAmAsker && m === fits[0] ? "Best match" : undefined}
+                    label={iAmAsker && m === fits[0] ? topLabel(m) : undefined}
                     showConnection={false}
                   />
                 </div>

@@ -210,3 +210,23 @@ export function leakedPrivateFacts(text: string, prefs: Preference[]): Preferenc
     });
   });
 }
+
+// ---------- move-in timing (code, not the model) ----------
+const MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+/** Month (0-11) a side says they start, from a move-in/start/date preference ("first two weeks of June", "Sept 1"). */
+export function moveInMonth(prefs: Preference[]): number | null {
+  for (const p of prefs) {
+    if (!/move|start|date|timing|when/i.test(p.topic)) continue;
+    const m = p.value.toLowerCase().match(/\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\b/);
+    if (m) return MONTHS.indexOf(m[1]);
+  }
+  return null;
+}
+/** Months between two sides' move-in dates (null if either didn't say). */
+export function moveInGapMonths(a: Preference[], b: Preference[]): number | null {
+  const ma = moveInMonth(a.filter(isShareable));
+  const mb = moveInMonth(b.filter(isShareable));
+  if (ma === null || mb === null) return null;
+  const d = Math.abs(ma - mb);
+  return Math.min(d, 12 - d);
+}

@@ -11,7 +11,7 @@ import { getUser, logAgentMessage, newId, saveNegotiation } from "./db";
 import { mockAgentTurn, mockReferee } from "./mocks";
 import { museJSON, modelFor } from "./muse";
 import { agentPrompt, refereePrompt } from "./prompts";
-import { agentContext, budgetsOverlap, formatPrefs, isShareable, leakedPrivateFacts, redactPrivateValues } from "./privacy";
+import { agentContext, budgetsOverlap, formatPrefs, isShareable, leakedPrivateFacts, moveInGapMonths, redactPrivateValues } from "./privacy";
 import { AgentTurnSchema, RefereeSchema } from "./schemas";
 import type { Ask, Negotiation, NegotiationTurn, Verdict } from "./types";
 
@@ -56,6 +56,16 @@ function sealVerdict(raw: { compatible: boolean; score: number; fits: string[]; 
     disagreements = ["Budgets don't overlap", ...disagreements.filter((d) => !/budget|rent|price/i.test(d))];
     compatible = false;
   }
+  // Move-in timing, compared in code (housing only): a gap of 2+ months is called out plainly on the card and ranks
+  // the person lower, but never makes them "not a fit". The humans decide whether to bridge it.
+  let dateGapMonths: number | undefined;
+  if (askA.type === "roommate" || askA.type === "sublet") {
+    const gap = moveInGapMonths(askA.preferences, askB.preferences);
+    if (gap !== null) dateGapMonths = gap;
+    if (gap !== null && gap >= 2 && !disagreements.some((d) => /move|timing|start|date|june|july|aug|sept|oct/i.test(d))) {
+      disagreements = [`Move-in dates are about ${gap} months apart`, ...disagreements];
+    }
+  }
   // Both people see this card, so neither side's match_only wording may appear on it ("wants earlier quiet hours
   // vs night owl" told Priya that Alex is a night owl). A string that echoes a private fact is replaced by a
   // topic-level line. The referee prompt asks for that already; this catches it when the model doesn't listen.
@@ -76,7 +86,9 @@ function sealVerdict(raw: { compatible: boolean; score: number; fits: string[]; 
   const summaryForHumans = guard(red(raw.summary_for_humans), (t) => (compatible ? `One thing to talk about: ${t}.` : `Not a fit: ${t}.`));
   return {
     compatible,
-    score: Math.max(0, Math.min(1, raw.score)),
+    // A 2+ month move-in gap ranks lower (so "Best match" goes to someone whose dates line up), never blocks.
+    score: Math.max(0, Math.min(1, raw.score) - (dateGapMonths !== undefined && dateGapMonths >= 2 ? 0.25 : 0)),
+    dateGapMonths,
     fits,
     disagreements,
     compromise,

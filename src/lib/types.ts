@@ -105,6 +105,8 @@ export interface NegotiationTurn {
 }
 
 export interface Verdict {
+  /** Months between the two move-in dates, when both said one (computed in code). 2+ = flagged, never a blocker. */
+  dateGapMonths?: number;
   compatible: boolean;
   /** Kept for ordering only. Never shown in the UI (handoff note, fix 8). */
   score: number;

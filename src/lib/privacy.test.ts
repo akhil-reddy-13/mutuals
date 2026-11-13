@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import seedAsks from "../../seed/asks.json";
-import { agentContext, budgetsOverlap, formatPrefs, isShareable, leakedPrivateFacts, leaks, publicOnly, publicSummary, redactPrivateValues } from "./privacy";
+import { agentContext, budgetsOverlap, formatPrefs, isShareable, leakedPrivateFacts, leaks, moveInGapMonths, publicOnly, publicSummary, redactPrivateValues } from "./privacy";
 import type { Ask, Preference } from "./types";
 
 const asks = seedAsks as Ask[];
@@ -151,6 +151,19 @@ describe("publicSummary (an ask's one-liner as other people see it)", () => {
   it("leaves public numbers alone", () => {
     const ask = { summary: "Room in the Mission, $1,350/mo", preferences: [p({ topic: "rent", value: "$1,350/mo", visibility: "public" })] };
     expect(publicSummary(ask)).toBe("Room in the Mission, $1,350/mo");
+  });
+});
+
+describe("moveInGapMonths (move-in timing is flagged in code, never a blocker)", () => {
+  const mv = (v: string) => [p({ topic: "move-in date", value: v })];
+  it("June vs early September is about 3 months", () => {
+    expect(moveInGapMonths(mv("first two weeks of June"), mv("Early September"))).toBe(3);
+  });
+  it("Sept 1 vs mid-September is 0", () => {
+    expect(moveInGapMonths(mv("Sept 1"), mv("Mid-September, flexible"))).toBe(0);
+  });
+  it("unknown when either side didn't say a month", () => {
+    expect(moveInGapMonths(mv("asap"), mv("Sept 1"))).toBeNull();
   });
 });
 

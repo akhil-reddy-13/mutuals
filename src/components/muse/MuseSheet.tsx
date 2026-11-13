@@ -13,7 +13,7 @@ import ReachCard from "./ReachCard";
 import LiveMatching, { type LiveCandidate, type MatchModelLabels } from "./LiveMatching";
 import PrefChips from "./PrefChips";
 import VideoCapture from "./VideoCapture";
-import { firstName } from "@/lib/format";
+import { firstName, topLabel } from "@/lib/format";
 import type { MatchEvent } from "@/lib/match";
 import { canShowVideo, sheetCopy } from "@/lib/sheetCopy";
 import type { Ask, Group, Item, Match, MuseReach, Preference, RoomDetails, User } from "@/lib/types";
@@ -644,7 +644,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
                     <div className="flex flex-col gap-2.5">
                       {matches.map((mt) => {
                         const c = candById[mt.candidateId];
-                        return c ? <MatchCard key={mt.id} match={mt} candidate={c} viewerId={me.id} event={events[mt.id] ?? null} compact label={mt === matches.find((x) => x.verdict.compatible) ? "Best match" : undefined} /> : null;
+                        return c ? <MatchCard key={mt.id} match={mt} candidate={c} viewerId={me.id} event={events[mt.id] ?? null} compact label={mt === matches.find((x) => x.verdict.compatible) ? topLabel(mt) : undefined} /> : null;
                       })}
                       <a href={`/groups/${group.id}/muse/${ask?.id}`} className="text-center text-[13px] font-semibold text-fb-blue hover:underline">
                         Open the full shortlist

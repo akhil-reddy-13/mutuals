@@ -21,3 +21,8 @@ export function compactCount(n: number) {
   if (n >= 1000) return `${(n / 1000).toFixed(n % 1000 >= 100 && n < 10000 ? 1 : 0)}K`;
   return String(n);
 }
+
+/** The top card's chip: "Best match" only when move-in dates line up; otherwise "Closest fit" (never "not a fit"). */
+export function topLabel(m: { verdict: { dateGapMonths?: number } }): string {
+  return (m.verdict.dateGapMonths ?? 0) >= 2 ? "Closest fit" : "Best match";
+}
