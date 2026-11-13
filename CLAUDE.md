@@ -61,6 +61,6 @@ push often, and merge to `main` only when the team says so (pull `main` again ri
 force-push `main`. Coordinate before changing `types.ts`, `schemas.ts`, `muse.ts`, `db.ts`, `prompts.ts`.
 Never commit `.env.local` or keys.
 
-## Before submitting
-Rotate the key, remove `.env` from the repo, make the repo public. Test `MOCK_MUSE=true npm run demo:start` once on
-the demo Mac.
+## Keys
+The API key lives only in `.env.local` (gitignored; Next.js reads it in dev and production). Never commit it.
+Without a key, `MOCK_MUSE=true` runs everything offline.
