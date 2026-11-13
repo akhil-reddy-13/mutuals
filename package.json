@@ -1,6 +1,7 @@
 {
   "name": "mutuals",
   "version": "0.1.0",
+  "description": "Your Muse talks to their Muse, so you only talk to the people who fit. Facebook Closer Together AI Hackathon 2026.",
   "private": true,
   "scripts": {
     "dev": "next dev",

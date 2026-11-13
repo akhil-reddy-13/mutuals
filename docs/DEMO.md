@@ -1,7 +1,7 @@
-# Mutuals demo script (5 min live + 3 min Q&A)
+# Demo runbook
 
-Two phones (or two browser windows), both on the dev server (`npm run dev:lan`, open the Network URL on each phone).
-Phone A is **Alex** (presenter). Phone B is **Priya** (teammate). Switch persona from the avatar menu, top right.
+The talk itself (who says what, timings, handoffs) is **`docs/PRESENTATION.md`**. This file is the setup, the
+fallbacks and the other flows. One laptop drives it; switch people from the avatar menu, top right.
 
 ## Before you go on
 
@@ -16,31 +16,20 @@ MOCK_MUSE=true npm run demo:start
 ```
 Stop any `npm run dev` on port 3000 first. Re-run `demo:build` after pulling new code.
 
-Then on Phone A: avatar menu → **Reset demo**. That clears asks, matches, threads and the opt-in.
-Both phones start on **Home** (a normal-looking feed). Phone A goes **Groups → Stanford Housing '27** when the problem beat ends. Phone B goes to Notifications later.
+Then: avatar menu → **Reset demo**. That clears asks, matches, threads and the opt-in.
+Restore the saved run (`npm run snapshot -- restore june-room-weekend-runs`), pre-run the selling video once, and leave the app on **Stanford Free & For Sale**.
 
-## The lines Alex types (keep them exactly, the offline mock is scripted to them)
+## The roommate lines (if you run it live instead of playing `recordings/friends.mp4`)
+
+Type them exactly; the cache and the offline mock are keyed to them.
 
 1. `I signed a 2BR in the Mission from Sept 1 and need a roommate for the second bedroom`
 2. `Posting it at $1,350 but honestly I'd take $1,200 for the right person, keep that private`
 3. `I'm a night owl, my partner stays over some weekends, no dogs please. Don't share my health stuff ever.`
 
-## Beats
-
-| Time | Say | Do (Phone A unless noted) |
-|---|---|---|
-| 0:00 | "Instagram is for people you already know. Facebook is for people you need to meet." Young adults end up in Groups and Marketplace for roommates, rides, sublets, and it's miserable: public posts make you overshare or hide what matters, and it's fifty awkward messages. | Start on Home. The first card is Mutuals: **"Skip the fifty awkward messages."** with the roommate example. Tap **Try it** → Stanford Housing '27. Show Casey's ISO post, Jordan's dog post. |
-| 0:45 | "Meta described a Muse network for friends and family. We built the part for people you haven't met yet, inside the Groups you're already in." | Tap **Ask Muse** in the composer. |
-| 1:00 | "You tell your Muse the stuff you'd never post." | Type line 1, 2, 3. Point at the badges: **Public**, **Kept private**, **Never shared**. Tap one badge to show it cycles, then tap it back (a changed badge re-runs matching live). |
-| 1:45 | "Film the room. Ten seconds." | Record video (or Use photos). Room facts + leftover items appear. |
-| 2:15 | "Now the part no search box can do. Muse is the friend who knows everyone." | Tap **Yes, check** (optional aside: Muse settings → "Who can my Muse talk to?" is the one-time privacy choice). "Checking with N people's Muses…" Watch Priya's stream. Point at the lock chips: kept-private facts are used, never shown. Point at Priya's Muse saying "a private number". |
-| 2:50 | Read Muse's line: "I found three people who fit. Priya's the best one, but you two should talk about weeknight noise." "Jordan: dealbreaker. Casey has no Muse, so mine read her post and drafted a reply." | Scroll the shortlist: every card leads with the person. Open **What my Muse shared with Priya**. |
-| 3:15 | "Then you talk. Muse never messages anyone for you." | Tap **Message Priya**. The opener already carries the context (the room, the noise question). Send. |
-| 3:30 | **Phone B:** "Priya got a notification. Her view shows the same summary, never Alex's numbers." | Phone B: Notifications → the match → Messenger. Reply by hand. Phone A sees it (2s poll). |
-| 4:00 | "Most exchanges stay exchanges. Sam got no suggestion. Priya did." | Back on A: the **New connection with Priya** banner under the cards (in the Muse chat: inside Priya's card) → **Go together** → the Event. Tap **Going**. |
-| 4:20 | "A marketplace finds you stuff. Your Muse finds you people, and the stuff is just the reason to meet." | Stanford Free & For Sale → Ask Muse → "Selling some stuff before I move out" → upload the pre-run video (you talking over your stuff). Ember heard you, Spark named each model (Canon G7 X Mark II). **Yes** → "2 of these already have a home": June (Japan trip) and Theo (BART commute). |
-| 4:45 | "Same engine, every small ask." | Open **Muse** (left rail) → the full-page Muse chat; the **Today** panel on the right shows skill swap, plus one, SFO ride. |
-| 4:50 | "You might have zero mutuals on Facebook today. Mutuals builds them for you." | Closing slide. |
+Then **Yes, check** → read Muse's verdict → shortlist → **Message Priya** → Priya's card: **More than a lease** →
+**Go together** → the Event. Switch to **Priya**: her Home's first card, "Alex's Muse talked with yours", opens the
+whole conversation from her side. She taps **Going**.
 
 ## If something breaks
 
