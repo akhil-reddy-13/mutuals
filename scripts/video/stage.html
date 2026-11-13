@@ -214,6 +214,15 @@
   .cm.them .b { background: #f0f0f2; color: #111; border-bottom-left-radius: 8px; }
   .cm .vid { width: 300px; height: 190px; border-radius: 24px; background: linear-gradient(135deg, #2b2733, #4a4356); position: relative; overflow: hidden; }
   .cm .vid img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cm .vid.tall { width: 170px; height: 300px; }
+  /* an upright (phone) clip: a card on the left over a blurred copy of itself, headline in the middle column */
+  .blurbg { filter: blur(44px) brightness(.42) saturate(1.15); transform: scale(1.12); }
+  .vcard { position: absolute; left: 110px; top: 70px; width: 529px; height: 940px; border-radius: 36px; overflow: hidden; background: #000;
+    box-shadow: 0 40px 100px rgba(0,0,0,.5), 0 0 0 1.5px rgba(255,255,255,.18); }
+  .vcard img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .vsub { position: absolute; left: 20px; right: 20px; bottom: 36px; text-align: center; }
+  .vsub span { display: inline-block; font-size: 30px; line-height: 1.3; font-weight: 600; color: #fff; background: rgba(0,0,0,.62); padding: 8px 18px 10px; border-radius: 12px; }
+  .scene.overlay.tall .oh { left: 700px; width: 470px; top: 300px; font-size: 68px; }
   .cm .vid .pl { position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; background: rgba(255,255,255,.9); display: flex; align-items: center; justify-content: center; }
   .cm .vid .pl::after { content: ""; border-left: 22px solid #111; border-top: 13px solid transparent; border-bottom: 13px solid transparent; margin-left: 6px; }
   .cm .vid .ln { position: absolute; right: 14px; bottom: 12px; font-size: 18px; font-weight: 700; color: #fff; background: rgba(0,0,0,.5); padding: 3px 10px; border-radius: 999px; }
@@ -875,9 +884,19 @@ const BUILD = {
   overlay(S) {
     const u = S.under;
     S.clip = S.events.find((e) => e.type === "clip");
-    if (S.clip?.media) S.clipImg = el("img", "footage", u);
+    const tall = S.clip?.media?.portrait;
+    if (tall) {
+      u.classList.add("tall");
+      S.bgImg = el("img", "footage blurbg", u);
+    } else if (S.clip?.media) S.clipImg = el("img", "footage", u);
     else el("div", "slot", u, `<div class="frame">${FILM_SVG}<div class="k">Video slot</div><div class="l">${esc(S.clip?.label ?? "A video goes here")}</div><div class="f">scripts/video/assets/clips/${esc(S.clip?.name ?? "clip")}.mov</div></div>`);
     el("div", "shade", u);
+    let capHost = u;
+    if (tall) {
+      capHost = el("div", "vcard", u);
+      S.clipImg = el("img", "", capHost);
+    }
+    S.csubs = (S.clip?.captions ?? []).map((c) => ({ ...c, e: el("div", tall ? "vsub" : "subwrap", capHost, `<span class="${tall ? "" : "subtitle"}">${esc(c.text).replace(/\n/g, "<br>")}</span>`) }));
     S.oheads = S.events.filter((e) => e.type === "super").map((e) => ({ t: e.t, e: el("div", "oh", u, fmt(e.text)) }));
     S.panel = el("div", "panel", u, '<div class="phd"><span class="mring"></span><div><b>Muse</b><span>Private · just you and Muse</span></div></div><div class="pbody"><div class="pin"></div></div>');
     S.pin = S.panel.querySelector(".pin");
@@ -891,8 +910,8 @@ const BUILD = {
         html = `<div class="cm them"><div class="who">Muse Spark</div><div class="row">${ring}<div class="icard"><div class="ic">${esc(icon ?? "✨")}</div><div><div class="nm">${esc(name ?? "")}</div><span class="tg">${esc(tag ?? "Named down to the model")}</span>${said ? `<div class="sd">${esc(said)}</div>` : ""}</div></div></div></div>`;
       } else if (m.who === "me") html = `<div class="cm me"><div class="b">${fmt(m.text)}</div></div>`;
       else if (m.who === "video") {
-        const thumb = S.clip?.media ? `<img src="${mediaSrc(S.clip.media, Math.floor(S.clip.media.count * 0.3))}">` : "";
-        html = `<div class="cm me"><div class="vid">${thumb}<div class="pl"></div><div class="ln">${esc(dur ?? m.text)}</div></div></div>`;
+        const thumb = S.clip?.media ? `<img src="${mediaSrc(S.clip.media, Math.floor(S.clip.media.count * 0.8))}">` : "";
+        html = `<div class="cm me"><div class="vid${tall ? " tall" : ""}">${thumb}<div class="pl"></div><div class="ln">${esc(dur ?? m.text)}</div></div></div>`;
       } else html = `<div class="cm them">${label[m.who] ? `<div class="who">${label[m.who]}</div>` : ""}<div class="row">${ring}<div class="b">${fmt(m.text)}</div></div></div>`;
       const wrap = el("div", "", S.pin, html);
       return { t: m.t, e: wrap };
@@ -1153,7 +1172,13 @@ const RENDER = {
     for (const c of S.subs) style(c.e, env(lt, c.a - 0.05, 0.15, c.b, 0.15), 0, 0);
   },
   overlay(S, t) {
-    if (S.clipImg) setImg(S.clipImg, mediaSrc(S.clip.media, Math.floor((t - S.clip.t) * S.clip.media.fps)));
+    if (S.clipImg) {
+      const src = mediaSrc(S.clip.media, Math.floor((t - S.clip.t) * S.clip.media.fps));
+      setImg(S.clipImg, src);
+      if (S.bgImg) setImg(S.bgImg, src);
+    }
+    const lt = t - (S.clip?.t ?? S.start);
+    for (const c of S.csubs) style(c.e, env(lt, c.a - 0.05, 0.15, c.b, 0.15), 0, 0);
     S.oheads.forEach((h, k) => {
       const r = RISE(h.t, t, S.oheads[k + 1]?.t ?? null);
       style(h.e, r.o, 0, r.y);

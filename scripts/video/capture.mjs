@@ -115,6 +115,7 @@ const wait = async (sec) => {
   else vcur += sec;
 };
 let voiceFree = 0;
+let clipEnd = 0; // when the current scene's [[clip]] finishes, for [[wait clip]]
 let events = [];
 const log = (e) => {
   if (OFF) return { ...e };
@@ -454,7 +455,9 @@ async function runScene(scene, transitionIn) {
       } else if (s.cmd === "clip") {
         // a slot for a video we'll drop in later: plays it if scripts/video/assets/clips/<name>.* exists
         const src = findMedia(s.parts[0]);
-        log({ type: "clip", name: s.parts[0], label: s.parts[1] ?? s.parts[0], src, dur: src ? seconds(src) : null });
+        const dur = src ? seconds(src) : null;
+        log({ type: "clip", name: s.parts[0], label: s.parts[1] ?? s.parts[0], src, dur, captions: readSrt(s.parts[2] && path.resolve(ROOT, s.parts[2])) });
+        clipEnd = vnow() + (dur ?? 0);
       } else if (s.cmd === "chat") {
         // one message in the overlay's Muse chat: "me: ...", "muse: ...", "ember: ...", "video: ..."
         const m = s.arg.match(/^(\w+)\s*:\s*([\s\S]*)$/);
@@ -464,7 +467,7 @@ async function runScene(scene, transitionIn) {
       } else if (s.cmd === "item") {
         log({ type: "item", parts: s.parts });
         await wait(1.6);
-      } else if (s.cmd === "wait") await wait(Number(s.arg || 1));
+      } else if (s.cmd === "wait") await wait(s.arg.trim() === "clip" ? Math.max(0, clipEnd - vnow()) : Number(s.arg || 1));
       else if (!["voice", "rate", "music", "captions"].includes(s.cmd)) log({ type: s.cmd, parts: s.parts, arg: s.arg });
     } else if (s.t === "super" || s.t === "caption") {
       log({ type: s.t, text: s.text });

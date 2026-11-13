@@ -58,8 +58,10 @@ Contact: docs/VIDEO.md
     [[reach a | b | c | d]]         rings around our persona, one per place Muse looks, people appearing on them;
                                     the persona's Muse sends agents out to them, and a few come back as fits
     [[film path | captions.srt]]    play filmed footage (a path from the repo root) with captions from an .srt file
-    [[clip name | label]]           a slot for a video we drop in later: scripts/video/assets/clips/<name>.mov (or .mp4).
-                                    Until the file is there it's drawn as an empty, labelled slot. Its sound is kept.
+    [[clip name | label | .srt]]    a video in the overlay: a path from the repo root, or a slot we fill later from
+                                    scripts/video/assets/clips/<name>.mov (or .mp4); until the file is there it's drawn
+                                    as an empty, labelled slot. Its sound is kept; captions from the optional .srt.
+                                    An upright (phone) video sits in a card beside the headline, on a blurred copy.
     [[chat me: text]]               a message in the overlay's Muse chat. Also muse:, ember:, spark:, and video: (a
                                     sent video; shows the clip's length once the clip is in)
     [[item name | said | tag | 📷]] a Spark item card in the overlay's chat
@@ -69,6 +71,7 @@ Contact: docs/VIDEO.md
     [[crowd line one | line two]]   a dark sea of strangers; at [[narrow]] the persona's Muse reaches out and only a
                                     few faces stay
     [[wait 1.0]]                    move on after 1 second (no waiting for narration)
+    [[wait clip]]                   move on when the scene's clip has finished playing
     [[hold 1.5]]                    let the current narration line finish, then hold 1.5 seconds more
     [[voice NAME: Voice]]           macOS voice used to time a character's lines (say -v '?' lists them)
     [[rate NAME: 215]]              how fast that character talks (words per minute), for timing
@@ -98,7 +101,7 @@ INT. FILM - THE SKIT #1#
 A hotel room at night. JAMIE (20) lies in bed, doomscrolling. RILEY (20) walks in with something to show them.
 
 RILEY
-There's a new feature on Facebook. Check it out.
+Yo why we genuinely still on reels gang? There's a new feature on Facebook. Check it out.
 
 JAMIE
 Bro, nobody's on Facebook anymore. I'm on Instagram, Snap, WhatsApp, Hinge, Beli, Grindr. My phone's out of storage. I'm not trying to download another app.
@@ -110,7 +113,7 @@ JAMIE
 Bro, I don't know anyone in Chicago, so I'm kind of homeless right now. I'm just gonna post on Facebook Marketplace and pray someone comes through.
 
 RILEY
-Bro, that's so chopped. People always be ghosting me when they got no profile, 'cause no one's on the app anymore. But this new feature, though...
+Bro, that's so chopped. People always be ghosting me or they genuinely got no profile, cause no one's real on that app anymore. But this new feature, tho...
 
 DISSOLVE TO:
 
@@ -208,31 +211,31 @@ DISSOLVE TO:
 
 INT. VIDEO OVERLAY - SELLING AT THE HACKATHON #8#
 
-[[clip selling | Our selling video, filmed at the hackathon]]
+[[clip docs/video/selling-hackathon.mp4 | Our selling video, filmed at the hackathon | docs/video/selling-hackathon.srt]]
 
 SUPER: Film it. Just ~say what's for sale~.
 
 [[chat me: Selling some stuff before I move out]]
 [[chat muse: Love it. Film your stuff and just talk me through what you're selling.]]
 
-NARRATOR (V.O.)
-Film your stuff and just say what's for sale.
+[[wait clip]]
 
-[[chat video: 0:14]]
-[[chat ember: What I heard: "I want to sell this Canon camera, these Poly earbuds..."]]
+[[chat video: 0:12]]
+[[chat ember: What I heard: "I want to sell the soda, these Poly earbuds, this Canon camera. It comes with a camera bag."]]
 
 NARRATOR (V.O.)
 Muse Ember watches the video, listens, and writes down what you said.
 
 SUPER: Spark names each one, ~down to the model~.
 
-[[item Canon PowerShot G7 X Mark II | You said "this Canon camera" | Named down to the model | 📷]]
-[[item Poly wireless earbuds | You said "these Poly earbuds" | Named down to the model | 🎧]]
+[[item Canon PowerShot G7 X Mark II | You said "this Canon camera", with its bag | Named down to the model | 📷]]
+[[item Poly Voyager Free 60+ earbuds | You said "these Poly earbuds" | Named down to the model | 🎧]]
+[[item Hawaiian Soda, Passion Orange | You said "the soda" | Named from the can | 🥤]]
 
 NARRATOR (V.O.)
 Spark names each one from its clearest frame, down to the model.
 
-[[chat muse: 2 of these already have a home. My Muse is working out price and pickup with theirs.]]
+[[chat muse: 2 of these 3 already have a home. My Muse is working out price and pickup with theirs.]]
 
 [[hold 1.2]]
 

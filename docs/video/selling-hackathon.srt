@@ -1,0 +1,23 @@
+1
+00:00:00,250 --> 00:00:02,150
+I want to sell the soda,
+
+2
+00:00:02,300 --> 00:00:05,100
+these earbuds, Poly earbuds,
+
+3
+00:00:05,300 --> 00:00:07,950
+this Canon camera.
+
+4
+00:00:08,000 --> 00:00:09,250
+I don't know exactly what model it is,
+
+5
+00:00:09,300 --> 00:00:10,400
+but this camera I think is good.
+
+6
+00:00:10,500 --> 00:00:11,950
+It comes with a camera bag.

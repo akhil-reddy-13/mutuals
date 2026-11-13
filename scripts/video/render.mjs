@@ -45,7 +45,9 @@ function probe(file) {
     out = String(e.stderr);
   }
   const fps = Number(out.match(/,\s*([\d.]+)\s*fps/)?.[1] ?? 30);
-  return { fps: Math.min(60, fps || 30), audio: /Stream #.*Audio:/.test(out) };
+  const [, w, h] = out.match(/Video:.*?, (\d+)x(\d+)/) ?? [0, 16, 9];
+  const turned = /rotation of -?90/.test(out);
+  return { fps: Math.min(60, fps || 30), audio: /Stream #.*Audio:/.test(out), portrait: turned ? +w > +h : +h > +w };
 }
 function prepareMedia() {
   for (const e of media()) {
@@ -56,16 +58,16 @@ function prepareMedia() {
     const st = fs.statSync(e.src);
     const key = Buffer.from(`${e.src}|${st.size}|${st.mtimeMs}`).toString("base64url").slice(-32);
     const dir = path.join(MEDIA, key);
-    const { fps, audio } = probe(e.src);
+    const { fps, audio, portrait } = probe(e.src);
     if (!fs.existsSync(path.join(dir, "done"))) {
       console.log(`cutting ${path.basename(e.src)} into frames`);
       fs.rmSync(dir, { recursive: true, force: true });
       fs.mkdirSync(dir, { recursive: true });
-      execFileSync(FFMPEG, ["-hide_banner", "-loglevel", "error", "-i", e.src, "-vf", "scale=1920:1080:force_original_aspect_ratio=increase:flags=lanczos", "-q:v", "3", path.join(dir, "f%05d.jpg")]);
+      execFileSync(FFMPEG, ["-hide_banner", "-loglevel", "error", "-i", e.src, "-vf", `scale=${portrait ? "-2:1080" : "1920:1080:force_original_aspect_ratio=increase"}:flags=lanczos`, "-q:v", "3", path.join(dir, "f%05d.jpg")]);
       fs.writeFileSync(path.join(dir, "done"), "");
     }
     const count = fs.readdirSync(dir).filter((f) => f.endsWith(".jpg")).length;
-    Object.assign(e, { media: { dir: key, fps, count }, audio });
+    Object.assign(e, { media: { dir: key, fps, count, portrait }, audio });
   }
 }
 prepareMedia();
