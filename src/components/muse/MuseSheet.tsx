@@ -1,8 +1,8 @@
 "use client";
 // The Muse chat, with one Group as context (handoff decisions 1, 2, 4b). Two layouts, same conversation:
 //   variant "sheet" (default): the side sheet opened from a Group's composer.
-//   variant "page": the full-page chat on the Muse page (components/muse/MusePage.tsx).
-// Both save under the same key, so a chat started in a Group continues on the Muse page and back.
+//   variant "page": the full-page chat on the Muse page (components/muse/MusePage.tsx). One chat across all my
+//     Groups: `group` is {id: "auto"} and the server gives each ask a home Group (asks.homeGroupFor).
 // One conversation carries the whole hero flow: ask -> follow-ups -> visibility-tagged prefs -> room video ->
 // opt-in question -> live matching (streamed) -> shortlist -> Messenger handoff.
 import { useRouter } from "next/navigation";
@@ -27,8 +27,8 @@ export interface MuseSheetProps {
   /** Sheet only: closes the sheet. */
   onClose?: () => void;
   variant?: "sheet" | "page";
-  /** Page only: shown under the header (the Group picker). */
-  headerExtra?: React.ReactNode;
+  /** Page only: my Groups, to name the Group an ask landed in. */
+  groups?: Pick<Group, "id" | "name">[];
 }
 
 type Card = "prefs" | "video" | "intake" | "matching" | "shortlist" | "homes" | "reach";
@@ -83,6 +83,8 @@ const GROUP_CHIPS: Record<string, string[]> = {
   g_runners: ["Looking for a weekend running buddy", "New in SF, want a run crew"],
 };
 const DEFAULT_CHIPS = ["I need something", "I'm selling something", "Looking for people to do something with"];
+/** The Muse page isn't in one Group, so its starters span them. */
+const PAGE_CHIPS = ["I have a room to fill", "Selling some stuff before I move out", "Going to beabadoobee, nobody to go with", "Need a ride to SFO Friday"];
 
 /** How Muse says each reach out loud ("On it. Checking with people in your Groups."). */
 const REACH_TEXT: Record<MuseReach, string> = {
@@ -91,7 +93,7 @@ const REACH_TEXT: Record<MuseReach, string> = {
   everyone: "everyone nearby",
 };
 
-export default function MuseSheet({ me, group, onClose, variant = "sheet", headerExtra }: MuseSheetProps) {
+export default function MuseSheet({ me, group, onClose, variant = "sheet", groups }: MuseSheetProps) {
   const router = useRouter();
   const page = variant === "page";
   // The page centres the conversation in a readable column; the sheet is already narrow.
@@ -135,8 +137,8 @@ export default function MuseSheet({ me, group, onClose, variant = "sheet", heade
   const greet = () =>
     push({
       role: "muse",
-      text: sheetCopy.greeting(first, group.name),
-      chips: GROUP_CHIPS[group.id] ?? DEFAULT_CHIPS,
+      text: page ? sheetCopy.greetingAnywhere(first) : sheetCopy.greeting(first, group.name),
+      chips: page ? PAGE_CHIPS : (GROUP_CHIPS[group.id] ?? DEFAULT_CHIPS),
     });
 
   // Resume the saved chat for this persona + Group, else the opening line (guarded: strict mode runs effects twice in dev)
@@ -180,6 +182,11 @@ export default function MuseSheet({ me, group, onClose, variant = "sheet", heade
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => () => esRef.current?.close(), []);
+  // Muse page: once the ask has a home Group, that's the Group Muse names ("Checking with 3 people's Muses in …").
+  useEffect(() => {
+    const name = page && ask ? groups?.find((g) => g.id === ask.groupId)?.name : undefined;
+    if (name) groupNameNow.current = name;
+  }, [page, ask, groups]);
 
   useEffect(() => {
     if (!ask) return;
@@ -412,7 +419,7 @@ export default function MuseSheet({ me, group, onClose, variant = "sheet", heade
           text:
             n > 0
               ? `Good news: ${n} of your things already ${n === 1 ? "has" : "have"} a home with ${names.join(" and ")}. I told them nothing beyond your list. You decide who to message.`
-              : `Nobody in ${group.name} is looking for these right now. I can offer them to everyone nearby.`,
+              : `Nobody in ${home.name} is looking for these right now. I can offer them to everyone nearby.`,
           card: "homes",
         });
         router.refresh();
@@ -513,6 +520,8 @@ export default function MuseSheet({ me, group, onClose, variant = "sheet", heade
     fn();
   }
 
+  // The Group this ask lives in: the sheet's own Group, or on the Muse page the one the server picked for it.
+  const home = page && ask ? (groups?.find((g) => g.id === ask.groupId) ?? group) : group;
   const candById = Object.fromEntries(cands.map((c) => [c.id, c]));
   const firstAgent = cands.find((c) => c.mode === "agent_to_agent")?.id;
 
@@ -537,20 +546,22 @@ export default function MuseSheet({ me, group, onClose, variant = "sheet", heade
             <MuseMark size={36} />
             <div className="min-w-0 flex-1">
               <div className="text-[15px] font-bold leading-tight">Muse</div>
-              <div className="truncate text-[12px] text-fb-muted">Private · {group.name}</div>
+              <div className="truncate text-[12px] text-fb-muted">{page ? "Private · across your Groups" : `Private · ${group.name}`}</div>
             </div>
-            {ask && (
-              <button onClick={startOver} className="rounded-full px-3 py-1.5 text-[13px] font-semibold text-fb-blue hover:bg-fb-blue-soft">
-                New ask
-              </button>
-            )}
+            {/* Always there; dimmed while the chat is already fresh (nothing to start over). */}
+            <button
+              onClick={startOver}
+              disabled={!ask && !msgs.some((x) => x.role === "user")}
+              className="rounded-full px-3 py-1.5 text-[13px] font-semibold text-fb-blue hover:bg-fb-blue-soft disabled:opacity-40 disabled:hover:bg-transparent"
+            >
+              New ask
+            </button>
             {!page && (
               <button onClick={onClose} className="fb-icon-btn h-9 w-9" aria-label="Close">
                 <CloseIcon size={20} />
               </button>
             )}
           </div>
-          {page && headerExtra && <div className={column}>{headerExtra}</div>}
         </header>
 
         {/* Body */}
@@ -677,10 +688,10 @@ export default function MuseSheet({ me, group, onClose, variant = "sheet", heade
                         const best = matches.find((x) => fitLevel(x.verdict) === "fit" && x.mode === "agent_to_agent") ?? matches.find((x) => fitLevel(x.verdict) === "fit");
                         return (best ? [best, ...matches.filter((x) => x !== best)] : matches).map((mt) => {
                           const c = candById[mt.candidateId];
-                          return c ? <MatchCard key={mt.id} match={mt} candidate={c} event={events[mt.id] ?? null} compact groupName={group.name} label={mt === best ? "Best match" : undefined} /> : null;
+                          return c ? <MatchCard key={mt.id} match={mt} candidate={c} event={events[mt.id] ?? null} compact groupName={home.name} label={mt === best ? "Best match" : undefined} /> : null;
                         });
                       })()}
-                      <a href={`/groups/${group.id}/muse/${ask?.id}`} className="text-center text-[13px] font-semibold text-fb-blue hover:underline">
+                      <a href={`/groups/${home.id}/muse/${ask?.id}`} className="text-center text-[13px] font-semibold text-fb-blue hover:underline">
                         Open the full shortlist
                       </a>
                     </div>

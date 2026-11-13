@@ -1,4 +1,4 @@
-// Muse page: one clean chat with Muse (the same conversation as the Group side sheet), with today's digest of
+// Muse page: one clean chat with Muse across all your Groups (same chat component as the Group side sheet), with today's digest of
 // people in your Groups who need something you can help with alongside it (breadth beat, PRD §5.3).
 // Ember writes the digest cards from seeded asks; served from the mock offline.
 import MusePage, { type TodayCard } from "@/components/muse/MusePage";
@@ -11,8 +11,7 @@ export const dynamic = "force-dynamic";
 
 const LABEL: Record<string, string> = { skill_swap: "Skill swap", plus_one: "Plus one", small_ask: "Small ask", taste_circle: "Taste circle" };
 
-export default async function DigestPage({ searchParams }: { searchParams: Promise<{ group?: string }> }) {
-  const { group } = await searchParams;
+export default async function DigestPage() {
   const me = await currentUser();
   let cards = mockDigest.cards;
   try {
@@ -39,9 +38,8 @@ export default async function DigestPage({ searchParams }: { searchParams: Promi
   return (
     <MusePage
       me={{ id: me.id, name: me.name, avatarUrl: me.avatarUrl, museGroups: me.museGroups }}
-      groups={groups.map((g) => ({ id: g.id, name: g.name, cover: g.cover }))}
+      groups={groups.map((g) => ({ id: g.id, name: g.name }))}
       today={today.filter((t) => t.groupId)}
-      initialGroupId={group}
     />
   );
 }

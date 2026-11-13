@@ -1,12 +1,12 @@
 // Ask parsing (PRD §5.1 step 2): the chat in the Muse sheet -> Spark -> structured, visibility-tagged prefs.
 // Called after every user message. Returns Muse's next line until `ready`.
-import { asksForUser, getAsk, getGroup, getUser, newId, saveAsk } from "./db";
+import { allAsks, asksForUser, getAsk, getGroup, getUser, newId, saveAsk } from "./db";
 import { mockAskParse } from "./mocks";
 import { modelFor, museJSON } from "./muse";
 import { agentContext } from "./privacy";
 import { askParsePrompt } from "./prompts";
 import { AskParseSchema } from "./schemas";
-import type { Ask, Preference } from "./types";
+import type { Ask, Preference, User } from "./types";
 
 export interface ChatMsg {
   role: "user" | "muse";
@@ -48,9 +48,29 @@ export function resolveSide(model: "offering" | "seeking" | null | undefined, pr
   return model ?? prev ?? guessSide(text);
 }
 
+/**
+ * The Group an ask from the Muse page lives in (the page is one chat, not one per Group): the one of my Groups
+ * where the most people have an ask that could answer it. Stays put once it's somewhere with people.
+ */
+export function homeGroupFor(user: User, type: Ask["type"], side: "offering" | "seeking", current?: string): string {
+  const family = (t: string) => (t === "sublet" ? "roommate" : t);
+  const count = new Map<string, number>();
+  for (const o of allAsks()) {
+    if (o.userId === user.id || !user.groups.includes(o.groupId) || family(o.type) !== family(type)) continue;
+    if (type === "item" && (o.side ?? "offering") === side) continue; // items: someone looking meets someone offering
+    count.set(o.groupId, (count.get(o.groupId) ?? 0) + 1);
+  }
+  if (current && (count.get(current) ?? 0) > 0) return current;
+  const best = [...user.groups].sort((x, y) => (count.get(y) ?? 0) - (count.get(x) ?? 0))[0];
+  return (count.get(best) ?? 0) > 0 ? best : (current ?? user.groups[0]);
+}
+
+/** `groupId: "auto"` = asked from the Muse page: Muse works out which of my Groups the ask belongs in. */
 export async function parseAsk(a: { userId: string; groupId: string; askId?: string; conversation: ChatMsg[] }) {
   const user = getUser(a.userId);
-  const group = getGroup(a.groupId);
+  const auto = a.groupId === "auto";
+  const existing = a.askId ? getAsk(a.askId) : undefined;
+  const group = getGroup(auto ? (existing?.groupId ?? user?.groups[0] ?? "") : a.groupId);
   if (!user || !group) throw new Error("unknown user/group");
   // Drop Muse lines before the user's first message: that's the sheet's fixed greeting, which the system prompt
   // already covers. Without this, the live sheet and `npm run warm` hash differently and the warm cache never hits.
@@ -62,14 +82,14 @@ export async function parseAsk(a: { userId: string; groupId: string; askId?: str
   const memory = rememberedPrefs(asksForUser(user.id), a.askId);
   const p = askParsePrompt({
     ownerName: user.name.split(" ")[0],
-    groupName: group.name,
+    // From the Muse page, before the ask has a home, Muse is told about all of my Groups.
+    groupName: auto && !existing ? user.groups.map((g) => getGroup(g)?.name).filter(Boolean).join(" / ") : group.name,
     conversation: convo,
     memory: memory.map((x) => `[${x.id}] ${x.topic}: ${x.value} (${x.importance}, ${x.visibility})`).join("\n"),
   });
   // Ember: every chat turn waits on this structured extraction. Measured Nov 12: ~1.3 s vs Spark 9-23 s, same tags.
   const out = await museJSON({ model: modelFor("ask"), system: p.system, user: p.user, schema: AskParseSchema, mock: mockAskParse(user.id, convo) });
 
-  const existing = a.askId ? getAsk(a.askId) : undefined;
   // Keep any visibility edits the user already made in the chips.
   const edited = new Map((existing?.preferences ?? []).map((x) => [x.id, x]));
   const preferences: Preference[] = out.preferences.map((x) => ({
@@ -78,13 +98,14 @@ export async function parseAsk(a: { userId: string; groupId: string; askId?: str
     importance: edited.get(x.id)?.importance ?? x.importance,
     confirmed: x.source === "stated" ? true : (edited.get(x.id)?.confirmed ?? false),
   }));
+  const side = resolveSide(out.side, existing?.side, a.conversation.filter((m) => m.role === "user").map((m) => m.text).join("\n"));
   const ask: Ask = {
     id: existing?.id ?? newId("ask"),
     userId: user.id,
-    groupId: group.id,
+    groupId: auto ? homeGroupFor(user, out.ask_type, side, existing?.groupId) : group.id,
     type: out.ask_type,
     summary: out.summary,
-    side: resolveSide(out.side, existing?.side, a.conversation.filter((m) => m.role === "user").map((m) => m.text).join("\n")),
+    side,
     preferences,
     roomDetails: existing?.roomDetails,
     items: existing?.items,
