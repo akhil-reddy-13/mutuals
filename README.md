@@ -14,6 +14,15 @@ Built at the **Facebook Closer Together AI Hackathon 2026** (Meta HQ) by Akhil, 
 
 **Demo video:** [`docs/video/mutuals-demo.mp4`](docs/video/mutuals-demo.mp4)
 
+**Screen recordings of the real app** (recorded by `npm run clips`, which drives the app in a browser):
+
+| Clip | What happens |
+|---|---|
+| [Roommate](docs/video/clips/roommate.mp4) (1:25) | Alex asks Muse, seven Muses check, the shortlist, Message Priya, More than a lease, then Priya's side: "Alex's Muse talked with yours", and she joins the weekend run |
+| [Selling](docs/video/clips/selling.mp4) (0:35) | A desk video with narration becomes items with exact models, then "2 of these already have a home" |
+| [Selling, the other side](docs/video/clips/selling-proof.mp4) (0:12) | June reads the conversation her Muse had with Alex's about the camera |
+| [Need a tent](docs/video/clips/tent.mp4) (0:27) | One friend-like question, then Marcus, who has a tent and is driving to Yosemite, plus the carpool |
+
 ---
 
 ## The problem
