@@ -4,6 +4,7 @@
 //   node scripts/video/make.mjs --skip-dry      when nothing that reaches Muse changed (wording, SUPERs, order, timing)
 //   node scripts/video/make.mjs --render-only   re-render from the last capture (changes to stage.html only)
 //   node scripts/video/make.mjs --pdf-only      just re-render docs/video/mutuals-screenplay.pdf
+//   node scripts/video/make.mjs --finish        PDF + 720p preview from the last render (after render.mjs ran on its own)
 //
 // Needs the app running (production build, so pages load instantly):
 //   NEXT_DIST_DIR=.next-demo npx next build
@@ -22,10 +23,10 @@ const ROOT = path.resolve(HERE, "../..");
 const FFMPEG = require("ffmpeg-static");
 const args = process.argv.slice(2);
 const has = (f) => args.includes(f);
-const pass = args.filter((a) => !["--skip-dry", "--pdf-only", "--render-only"].includes(a)); // --app / --script go through
+const pass = args.filter((a) => !["--skip-dry", "--pdf-only", "--render-only", "--finish"].includes(a)); // --app / --script go through
 const node = (script, extra = []) => execFileSync(process.execPath, [path.join(HERE, script), ...extra, ...pass], { stdio: "inherit", cwd: ROOT });
 
-if (!has("--pdf-only")) {
+if (!has("--pdf-only") && !has("--finish")) {
   if (!has("--render-only")) {
     const i = args.indexOf("--app");
     const app = i >= 0 ? args[i + 1] : "http://127.0.0.1:3001";

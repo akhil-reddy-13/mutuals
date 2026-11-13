@@ -188,6 +188,9 @@ ${titlePage}
 <main class="page">${body.join("\n")}</main>
 </body></html>`;
 
+// --html <file>: also save the page as HTML (handy for checking the text without a PDF viewer)
+if (arg("html", null)) fs.writeFileSync(path.resolve(String(arg("html", null))), html);
+
 // The title page has no page number; the script's pages are numbered from 1. Render both and join them.
 const browser = await puppeteer.launch({ executablePath: CHROME, headless: true });
 const page = await browser.newPage();

@@ -58,8 +58,11 @@ ff.on("close", () => {
   let cur = null;
   for (const f of perFrame) {
     if (f.n > size * 0.0004) {
-      if (cur && f.t - cur.end < 0.15) (cur.end = f.t), (cur.sum += f.n), cur.k++;
-      else runs.push((cur = { start: f.t, end: f.t, sum: f.n, k: 1, where: f.where }));
+      if (cur && f.t - cur.end < 0.15) {
+        cur.end = f.t;
+        cur.sum += f.n;
+        cur.k++;
+      } else runs.push((cur = { start: f.t, end: f.t, sum: f.n, k: 1, where: f.where }));
     }
   }
   console.log("longest flickering stretches:");

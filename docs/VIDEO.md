@@ -1,6 +1,7 @@
 # Demo video
 
-- **Watch:** [`docs/video/mutuals-demo.mp4`](video/mutuals-demo.mp4) (draft cut, about 3:00, 720p, no audio yet).
+- **Watch:** [`docs/video/mutuals-demo.mp4`](video/mutuals-demo.mp4) (draft cut, 2:28, 720p preview, no audio yet). The
+  full 1080p60 file is `scripts/video/out/mutuals-demo.mp4` after a render.
 - **Read:** [`docs/video/mutuals-screenplay.pdf`](video/mutuals-screenplay.pdf), the screenplay with each scene's
   timecode in the video.
 - **Edit:** [`docs/video/mutuals.fountain`](video/mutuals.fountain). **The screenplay is the video.** Change what Jamie
@@ -15,18 +16,18 @@ selling scene (Muse Image stills with a spoken narration).
 
 ## The story
 
-The arc follows Standard Response (Cal Hacks 13.0) and DotSight: one real person and one real moment, the problem in
-numbers, the reveal, a numbered "How it works", the payoff, and a callback.
+The cut follows our demo outline: we don't try to change how people see Facebook, we lean into why young adults already
+open it (a couch, a lamp, a roommate), show where it hurts, then show Muse doing the first conversation for you, once for
+buying and selling and once for finding people.
 
-| Act | Scenes | What happens |
+| Part | Scenes | What happens |
 |---|---|---|
-| One: Jamie | 1 | The skit. Jamie (B) got a summer SWE internship in Chicago and knows nobody there. Riley (A) shows them the new feature. |
-| Two: The problem | 2 to 4 | 23% of 18 to 34 year olds on Facebook use Marketplace every day. The first conversation is the worst part. The things that decide it are the things nobody posts. |
-| Three: Mutuals | 5 | Soft circular reveal to the logo. |
-| Four: How it works | 6 to 11 | **1 Tell:** Jamie types in the box beside the phone, each message flies into the chat; zoom into the privacy tags. **2 Match:** "Yes, check", the phone slides away and the Muse network takes the stage, live. Then the shortlist as cards (Nora, Dana, Diego). **3 Meet:** the run-club nudge next to the Event, then Messenger with a close-up of Muse's draft. |
-| Five: Moving out | 12 to 13 | Jamie types and films the desk, close-up of what Ember heard; then the Canon G7 X Spark identified, next to the Marketplace listing. |
-| Six: Under the hood | 14 | Spark, Wonder, Ember. Privacy in code, not prompts. |
-| Seven: Saturday | 15 to 16 | Jamie and Nora at the Lakefront Run Club. "You might have zero mutuals on Facebook today. Mutuals builds them for you." |
+| Cold open | 1 | Riley: "Posting your budget to three thousand strangers?" Jamie doesn't know anyone in Chicago and has to sell all this. |
+| The problem | 2 to 5 | We still open Facebook to get things done (couch, lamp, roommate). 23% of 18 to 34 year olds use Marketplace every day. Then come the messages ("is this still available?" eleven times). For people it's worse: the post that shares your budget, habits and dealbreakers with 3,120 members. |
+| Mutuals | 6 | Soft circular reveal to the logo. "Your Muse has the first conversation": Jamie's Muse reaches a crowd, most fall away, a few fit. |
+| 01 Buying and selling | 7 to 11 | Jamie says what's for sale and films the desk. Ember writes down what it heard; Spark names the Canon PowerShot G7 X Mark III from its clearest frame, with a used price range and how sure it is, and notes what Jamie didn't mention (a laptop, a desk). One tap lists it. Then "Yes, check": the phone slides away and Jamie's Muse talks to the buyers' Muses (Theo, Maya, Dev), live. Fifty identical DMs become one small detail: Theo's card is down to the price, Dev's to where to meet. |
+| 02 Finding people | 12 to 17 | The fun-fact card Muse makes from Jamie's profile (opt in). Where Muse looks: this Group, followers, nearby, your school. Jamie tells Muse what they'd never post (zoom on Public / Match only / Never shared). The Muse network, then the shortlist (Nora fits, Diego has a cat so the Muses stopped early), then a reason to meet: the Lakefront Run Club. |
+| Saturday | 18 to 19 | Jamie and Nora at the run club. "You might have zero mutuals on Facebook today. Mutuals builds them for you." |
 
 **Look:** the product parts take after Apple's iPhone films and its Liquid Glass keynote: a seamless off-white
 background with soft glass bubbles, one statement at a time in big type, the phone as the hero until the story moves
@@ -40,8 +41,9 @@ Two passes, so nothing has to be smooth in real time:
    as timestamped frames and logs every event (each typed message, tap, pop-out card, zoom, Muse network change) on
    one video timeline. Scenes without the app are timed from the screenplay.
 2. **`render.mjs`** draws the video frame by frame from that log with `stage.html`. Every position, opacity and blur
-   is a function of time with ease-in-out curves (no springs, no overshoot), and each of the ~5,500 frames is drawn
-   exactly once, 1/30 s apart, so there are no dropped or doubled frames however busy the machine is.
+   is a function of time with ease-in-out curves (no springs, no overshoot), and each of the ~8,900 frames is drawn
+   exactly once, 1/60 s apart, so there are no dropped or doubled frames however busy the machine is. Nothing blinks:
+   the network's lines carry slow moving dashes, carets pulse softly, cards never rescale once they're up.
 
 ```bash
 cd scripts/video && npm install && cd ../..          # once: puppeteer-core (uses your Chrome), pdf-lib
@@ -51,10 +53,14 @@ node scripts/video/make.mjs                           # dry run -> capture -> re
 ```
 
 - `--skip-dry` when nothing that reaches Muse changed; `--render-only` after editing only `stage.html` (looks, timing
-  of animations); `--pdf-only` for just the PDF.
+  of animations); `--pdf-only` for just the PDF; `--finish` for the PDF and the 720p preview after running
+  `render.mjs` on its own.
 - Check moments without a full render: `node scripts/video/render.mjs --stills 12,58.5,96` (PNGs in
   `scripts/video/out/stills/`), or a stretch: `--from 55 --to 90` (`out/preview.mp4`).
-- A full render takes about 10 minutes on 5 pages; a capture about 3.
+- A full render takes about 15 minutes on 5 pages (`--workers 5`); a capture about 3.
+- Check for flicker: `node scripts/video/flicker.mjs` lists the moments where pixels brighten and darken on
+  alternating frames. Big smooth moves (the phone sliding away, cards gliding) also show up there; anything else is a
+  bug.
 - `MUSE_REPLAY_DELAY_MS` (in `src/lib/muse.ts`, default 0) paces cached replies so the negotiation streams in turn by
   turn. If anyone asks: "run live on Muse, replayed for the video".
 
@@ -77,6 +83,7 @@ the file is the full cheat sheet. The short version:
 | `taps "..."`, `scrolls to "..."`, `"..." pops out`, `zooms in on "..."` | Happens in the app, in that order. |
 | `SUPER:` / `CAPTION:` | Big statement / smaller line. `~words~` get the gradient. |
 | `[[phone away]]`, `[[zoom out]]`, `[[network]]`, `[[stat ...]]`, `[[logo]]` ... | Camera moves and graphics. |
+| `[[activities ...]]`, `[[post ...]]`, `[[agents]]`, `[[chapter 01 \| ...]]`, `[[funcard]]`, `[[reach ...]]` | The diagrams for the problem, the reveal and the two chapters. |
 | `CUT TO:`, `DISSOLVE TO:`, `BUBBLE WIPE TO:`, `FADE OUT.` | Transitions (all soft). |
 | `NARRATOR (V.O.)` | No audio; sets how long the shot holds. |
 
@@ -84,17 +91,19 @@ the file is the full cheat sheet. The short version:
 
 | Persona | Role | What makes the scene work |
 |---|---|---|
-| **Jamie Reyes** (`jamie`) | The intern, B in the skit | Public budget $1,100, match-only ceiling $1,300 if walkable, up at 5:30 (match-only), allergic to cats (dealbreaker), visa status never shared. Runs Saturdays, bakes sourdough. |
+| **Jamie Reyes** (`jamie`) | The intern, B in the skit | Public budget $1,100, match-only ceiling $1,300 if walkable, up at 5:30 (match-only), allergic to cats (dealbreaker), visa status never shared. Runs Saturdays, bakes sourdough. Selling a Canon G7 X, a desk lamp and a mini fridge. |
 | **Nora Whitfield** (`nora`) | The match | West Loop 2BR, $1,250, match-only floor $1,150. A night owl vs Jamie's 5:30 alarm. Also runs Saturdays and bakes. |
 | **Diego Alvarez** (`diego`) | The dealbreaker | His cat Miso lives there. The Muses stop early. |
 | **Sofia Marino** (`sofia`) | Fits, nothing more | Opted out of connection suggestions. |
 | **Dana Kowalski** (`dana`) | No Muse, a sublet post | Jamie's Muse reads her post and drafts a reply. |
 | **Ava Thompson** (`ava`) | Group admin, run-club host | Hosts the Lakefront Run Club and the Sourdough Starter Swap. |
+| **Theo, Maya, Dev** (`theo`, `maya`, `dev`) | Buyers in Stanford Free & For Sale | Theo wants a compact camera (up to $600, match-only $650 for a G7 X), Maya a mini fridge (~$70), Dev a cheap desk lamp. |
 
 ## Before the final cut
 
-- **Film the live-action scenes** (1 and 15) and lay the footage over the storyboard frames.
+- **Film the live-action scenes** (1 and 18) and lay the footage over the storyboard frames.
 - **Record the voiceover** against `scripts/video/out/scratch-vo.wav` (same timings), and add music.
 - **Replace `scripts/video/assets/room.mp4`** with a real phone video of a desk, narrated, then run `make.mjs`.
 - **Re-capture after `fix/demo-blockers` merges**, so the agents speak as Muse in the third person.
 - **Check the 23% stat** (Capital One Shopping Research, from our notes) before publishing.
+- **"Where Muse looks"** (followers, nearby, your school) is where we're going; the app searches the Group today.
