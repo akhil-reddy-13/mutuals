@@ -347,8 +347,8 @@ const LOCK_SVG = '<svg viewBox="0 0 24 24" fill="#fff"><path d="M17 9V7a5 5 0 0 
 
 // ------------------------------------------------------------------ state built in load()
 let TL, BASE, FR = [], scenes = [], phoneKeys = [], stepsByScene = new Map();
-const TD = { cut: 0.5, smash: 0.45, dissolve: 0.9, match: 0.6, wipe: 1.25, fade: 1.3 };
-const kindOf = (t = "") => (/BUBBLE|WIPE|IRIS/.test(t) ? "wipe" : /SMASH/.test(t) ? "smash" : /MATCH/.test(t) ? "match" : /DISSOLVE/.test(t) ? "dissolve" : /FADE/.test(t) ? "fade" : "cut");
+const TD = { cut: 0.5, smash: 0.45, dissolve: 0.9, match: 0.6, wipe: 1.25, fade: 1.3, swipe: 0.6 };
+const kindOf = (t = "") => (/SWIPE|WHIP/.test(t) ? "swipe" : /BUBBLE|WIPE|IRIS/.test(t) ? "wipe" : /SMASH/.test(t) ? "smash" : /MATCH/.test(t) ? "match" : /DISSOLVE/.test(t) ? "dissolve" : /FADE/.test(t) ? "fade" : "cut");
 const isApp = (s) => s.kind === "phone" || s.kind === "feature";
 
 // background glass bubbles (positions are a function of t)
@@ -1050,6 +1050,13 @@ async function render(t) {
   if (prev && p < 1) {
     // the new shot opens in a soft circle and the old one clears out of that same circle, so they never overlap
     if (cur.tIn === "wipe") { show.set(prev, { op: 1, mask: soft(p), inv: true }); show.set(cur, { op: 1, mask: soft(p) }); }
+    else if (cur.tIn === "swipe") {
+      // the new shot pushes the old one off to the right, fast at first (it carries on the skit's camera whip), blurred
+      // while it's moving fastest
+      const q = out(p), blur = 14 * (1 - q);
+      show.set(prev, { op: 1, mask: null, x: q * 1920, blur });
+      show.set(cur, { op: 1, mask: null, x: (q - 1) * 1920, blur });
+    }
     else if (cur.tIn === "fade") { show.set(p < 0.5 ? prev : cur, { op: 1, mask: null }); }
     else {
       // the old shot clears out before the new one settles in, so two headlines never sit on top of each other
@@ -1066,6 +1073,8 @@ async function render(t) {
     if (!on) continue;
     for (const c of [s.under, s.over]) {
       c.style.opacity = v.op.toFixed(4);
+      c.style.transform = v.x ? `translateX(${v.x.toFixed(1)}px)` : "";
+      c.style.filter = v.blur > 0.3 ? `blur(${v.blur.toFixed(1)}px)` : "";
       if (v.mask != null) {
         const r = lerp(0, v.inv ? 1300 : 1350, v.mask);
         // incoming: solid inside r - 260, gone by r. outgoing: gone inside r + 60, solid by r + 320. They never overlap.

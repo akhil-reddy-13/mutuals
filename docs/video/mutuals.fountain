@@ -77,6 +77,7 @@ Contact: docs/VIDEO.md
     [[rate NAME: 215]]              how fast that character talks (words per minute), for timing
 
   Transitions: CUT TO: (a quick soft cut)  DISSOLVE TO:  SMASH CUT TO:  MATCH CUT TO:  BUBBLE WIPE TO:  FADE OUT.
+               SWIPE TO: (the next shot slides in from the left and pushes this one off to the right)
   Scene numbers (#4#) are optional. Sections (# ACT ONE) are just structure.
 
   Timing is script order: narration runs over whatever comes after it, and the next narration line waits for the
@@ -115,7 +116,7 @@ Bro, I don't know anyone in Chicago, so I'm kind of homeless right now. I'm just
 RILEY
 Bro, that's so chopped. People always be ghosting me or they genuinely got no profile, cause no one's real on that app anymore. But this new feature, tho...
 
-DISSOLVE TO:
+SWIPE TO:
 
 # THE PROBLEM
 
