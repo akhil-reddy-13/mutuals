@@ -37,7 +37,7 @@ export default async function DigestPage() {
 
   return (
     <MusePage
-      me={{ id: me.id, name: me.name, avatarUrl: me.avatarUrl, museGroups: me.museGroups }}
+      me={{ id: me.id, name: me.name, avatarUrl: me.avatarUrl, museGroups: me.museGroups, museReach: me.museReach, museGroupsOff: me.museGroupsOff }}
       groups={groups.map((g) => ({ id: g.id, name: g.name }))}
       today={today.filter((t) => t.groupId)}
     />

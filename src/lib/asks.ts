@@ -57,6 +57,7 @@ export function homeGroupFor(user: User, type: Ask["type"], side: "offering" | "
   const count = new Map<string, number>();
   for (const o of allAsks()) {
     if (o.userId === user.id || !user.groups.includes(o.groupId) || family(o.type) !== family(type)) continue;
+    if (user.museGroupsOff?.includes(o.groupId)) continue; // never file an ask in a Group I switched Muse off for
     if (type === "item" && (o.side ?? "offering") === side) continue; // items: someone looking meets someone offering
     count.set(o.groupId, (count.get(o.groupId) ?? 0) + 1);
   }

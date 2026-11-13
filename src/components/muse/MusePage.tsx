@@ -24,7 +24,7 @@ export default function MusePage({
   groups,
   today,
 }: {
-  me: Pick<User, "id" | "name" | "avatarUrl" | "museGroups">;
+  me: Pick<User, "id" | "name" | "avatarUrl" | "museGroups"> & Partial<Pick<User, "museReach" | "museGroupsOff">>;
   groups: Pick<Group, "id" | "name">[];
   today: TodayCard[];
 }) {

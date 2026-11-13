@@ -4,6 +4,7 @@
 import { NextResponse } from "next/server";
 import { getAsk, getUser, optIntoGroup, saveAsk, updateUser } from "@/lib/db";
 import { runMatching } from "@/lib/match";
+import { museOffIn } from "@/lib/reach";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 120;
@@ -31,6 +32,13 @@ export async function GET(req: Request) {
     });
   }
   if (!ask) return new Response("unknown ask", { status: 404 });
+  // Asking inside a Group I switched Muse off for (Muse settings): don't check, let the chat offer to turn it on.
+  if (owner && (ask.museReach ?? "groups") === "groups" && museOffIn(owner, ask.groupId)) {
+    const enc = new TextEncoder();
+    return new Response(enc.encode(`data: ${JSON.stringify({ type: "error", message: "GROUP_OFF" })}\n\n`), {
+      headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache" },
+    });
+  }
   optIntoGroup(ask.userId, ask.groupId); // starting a search is the opt-in for this Group
 
   const enc = new TextEncoder();

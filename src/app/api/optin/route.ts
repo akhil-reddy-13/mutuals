@@ -1,11 +1,12 @@
-// POST { groupId } -> { ok, museGroups }   The per-Group opt-in Muse asks in chat ("Want me to check with other Muses in X?").
+// POST { groupId } -> { ok, museGroups }   "Turn on for this Group" in the chat: switches Muse on there (also clears an
+// explicit off from Muse settings).
 import { NextResponse } from "next/server";
-import { getUser, optIntoGroup } from "@/lib/db";
+import { getUser, setMuseGroup } from "@/lib/db";
 import { currentUserId } from "@/lib/session";
 
 export async function POST(req: Request) {
   const { groupId } = await req.json();
   const userId = await currentUserId();
-  optIntoGroup(userId, groupId);
+  if (getUser(userId)?.groups.includes(groupId)) setMuseGroup(userId, groupId, true);
   return NextResponse.json({ ok: true, museGroups: getUser(userId)?.museGroups ?? [] });
 }

@@ -46,6 +46,7 @@ muse client ✅ → seed loader ✅ → intake API → ask parsing → `runNegot
 | Seed, pitch, video | `seed/*`, `README.md`, Devpost, demo script | _TBD_ |
 
 ## Status / handoff (update as you go)
+- ✅ **Per-Group Muse switches (Nov 12).** Muse settings lists my Groups under "People in my Groups", one switch each, two-way. Explicit offs live in `User.museGroupsOff` (Groups are on by default, so seeded flows are unchanged); `reach.inReach` skips off Groups on both sides, `asks.homeGroupFor` never files an ask there, and `/api/match` answers `GROUP_OFF` so the chat offers "Turn on for this Group" (`/api/optin` → `db.setMuseGroup`). Chat header is a gear + a plus (new chat: clears the conversation, the ask stays saved). The Muse page (`/digest`) is one full-page chat across all Groups (`MuseSheet` variant "page", `groupId: "auto"`).
 - ✅ **Agent-to-agent is the thesis; make it provable.** `/muse/talk/[negotiationId]` renders a Muse-to-Muse conversation from either side (other side's private values redacted, 404 for anyone else). The other person sees "X's Muse talked with yours" on Home + Notifications. Selling homes also run a real per-buyer negotiation (price/pickup).
 - ✅ **Opt-in = privacy choice** "Who can my Muse talk to?" (`Ask.museReach`: network | groups | everyone, `lib/reach.ts`), live counts per option, saved as the default; nobody in reach -> Muse offers the next wider one.
 - ✅ Badges have real read state (`thread.readAt`, `User.notificationsSeenAt`, `components/MarkSeen.tsx`).

@@ -7,7 +7,7 @@
 // opt-in question -> live matching (streamed) -> shortlist -> Messenger handoff.
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { CloseIcon, MuseMark, SendIcon, VideoCamIcon } from "../icons";
+import { CloseIcon, MuseMark, PlusIcon, SendIcon, SettingsIcon, VideoCamIcon } from "../icons";
 import MatchCard from "../MatchCard";
 import type { EventInfo } from "../ConnectionCard";
 import IntakeCard from "./IntakeCard";
@@ -21,7 +21,7 @@ import { canShowVideo, sheetCopy } from "@/lib/sheetCopy";
 import type { Ask, Group, Item, Match, MuseReach, Preference, RoomDetails, User } from "@/lib/types";
 
 export interface MuseSheetProps {
-  me: Pick<User, "id" | "name" | "avatarUrl" | "museGroups"> & Partial<Pick<User, "museReach">>;
+  me: Pick<User, "id" | "name" | "avatarUrl" | "museGroups"> & Partial<Pick<User, "museReach" | "museGroupsOff">>;
   group: Pick<Group, "id" | "name">;
   /** Sheet only: closes the sheet. */
   onClose?: () => void;
@@ -38,7 +38,7 @@ interface Msg {
   card?: Card;
   // A name, not a callback, so the chat can be saved and resumed.
   // Serializable so the chat survives a reload (chat memory). "move" re-asks in another Group.
-  actions?: { label: string; primary?: boolean; act: "check" | "notnow" | "move" | "broaden" | "settings"; groupId?: string; groupName?: string; reach?: MuseReach }[];
+  actions?: { label: string; primary?: boolean; act: "check" | "notnow" | "move" | "broaden" | "settings" | "turnon"; groupId?: string; groupName?: string; reach?: MuseReach }[];
   chips?: string[];
 }
 
@@ -120,6 +120,7 @@ export default function MuseSheet({ me, group, onClose, variant = "sheet", group
   const [events, setEvents] = useState<Record<string, EventInfo | null>>({});
   const [remembered, setRemembered] = useState<string[]>([]);
   const bodyRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const esRef = useRef<EventSource | null>(null);
   const askRef = useRef<Ask | null>(null);
   askRef.current = ask;
@@ -282,6 +283,13 @@ export default function MuseSheet({ me, group, onClose, variant = "sheet", group
       ],
     });
     return id;
+  }
+
+  /** "Turn on for this Group": flips the Group's switch in Muse settings back on, then checks. */
+  async function turnOnGroup(groupId: string) {
+    await fetch("/api/optin", { method: "POST", body: JSON.stringify({ groupId }) }).catch(() => {});
+    router.refresh();
+    void startMatching();
   }
 
   function notNow() {
@@ -460,6 +468,17 @@ export default function MuseSheet({ me, group, onClose, variant = "sheet", group
           card: "shortlist",
         });
         router.refresh();
+      } else if (e.type === "error" && e.message === "GROUP_OFF") {
+        es.close();
+        setMatches([]); // nothing is running: clear the "checking" placeholder
+        push({
+          role: "muse",
+          text: `Muse is switched off for ${groupNameNow.current} in your settings, so I'm not checking with people there. Turn it on and I'll check right away.`,
+          actions: [
+            { label: "Turn on for this Group", primary: true, act: "turnon", groupId: cur.groupId },
+            { label: "Muse settings", act: "settings" },
+          ],
+        });
       } else if (e.type === "error" && e.message === "MUSE_OFF") {
         es.close();
         push({
@@ -528,6 +547,18 @@ export default function MuseSheet({ me, group, onClose, variant = "sheet", group
     fn();
   }
 
+  function newChat() {
+    if (ask || msgs.some((x) => x.role === "user")) startOver();
+    inputRef.current?.focus();
+  }
+  // Muse page subtitle: who my Muse is working with right now (Muse settings).
+  const scope = (() => {
+    if (me.museReach === "network") return "people you're connected with";
+    if (me.museReach === "everyone") return "everyone nearby";
+    const all = groups ?? [];
+    const on = all.filter((g) => !me.museGroupsOff?.includes(g.id)).length;
+    return on === all.length ? "across your Groups" : `across ${on} of your ${all.length} Groups`;
+  })();
   // The Group this ask lives in: the sheet's own Group, or on the Muse page the one the server picked for it.
   const home = page && ask ? (groups?.find((g) => g.id === ask.groupId) ?? group) : group;
   const candById = Object.fromEntries(cands.map((c) => [c.id, c]));
@@ -554,18 +585,15 @@ export default function MuseSheet({ me, group, onClose, variant = "sheet", group
             <MuseMark size={36} />
             <div className="min-w-0 flex-1">
               <div className="text-[15px] font-bold leading-tight">Muse</div>
-              <div className="truncate text-[12px] text-fb-muted">{page ? "Private · across your Groups" : `Private · ${group.name}`}</div>
+              <div className="truncate text-[12px] text-fb-muted">{page ? `Private · ${scope}` : `Private · ${group.name}`}</div>
             </div>
-            <a href="/muse/settings" className="rounded-full px-2.5 py-1.5 text-[13px] font-semibold text-fb-muted hover:bg-fb-hover" title="Who your Muse can talk to">
-              Settings
+            <a href="/muse/settings" className="fb-icon-btn h-9 w-9" aria-label="Muse settings" title="Muse settings">
+              <SettingsIcon size={20} />
             </a>
-            {/* Always there; dimmed while the chat is already fresh (nothing to start over). */}
-            <button
-              onClick={startOver}
-              disabled={!ask && !msgs.some((x) => x.role === "user")}
-              className="rounded-full px-3 py-1.5 text-[13px] font-semibold text-fb-blue hover:bg-fb-blue-soft disabled:opacity-40 disabled:hover:bg-transparent"
-            >
-              New ask
+            {/* New chat: clears this conversation (the ask itself stays saved). Always works: on a fresh chat it
+                just puts the cursor in the message box. */}
+            <button onClick={newChat} className="fb-icon-btn h-9 w-9" aria-label="New chat" title="New chat">
+              <PlusIcon size={20} />
             </button>
             {!page && (
               <button onClick={onClose} className="fb-icon-btn h-9 w-9" aria-label="Close">
@@ -615,6 +643,8 @@ export default function MuseSheet({ me, group, onClose, variant = "sheet", group
                                   ? () => void startMatching(a.reach)
                                   : a.act === "settings"
                                     ? () => router.push("/muse/settings")
+                                    : a.act === "turnon"
+                                    ? () => void turnOnGroup(a.groupId!)
                                     : a.act === "move"
                                     ? () => void moveTo(a.groupId!, a.groupName!)
                                     : notNow,
@@ -739,6 +769,7 @@ export default function MuseSheet({ me, group, onClose, variant = "sheet", group
             <VideoCamIcon size={22} />
           </button>
           <input
+            ref={inputRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder={ask ? "Reply to Muse…" : "Tell Muse what you need…"}

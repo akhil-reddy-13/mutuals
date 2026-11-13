@@ -37,6 +37,9 @@ describe("homeGroupFor", () => {
   it("stays where it is once that Group has people", () => {
     expect(homeGroupFor(alex, "roommate", "offering", "g_housing27")).toBe("g_housing27");
   });
+  it("never files an ask in a Group I switched Muse off for", () => {
+    expect(homeGroupFor({ ...alex, museGroupsOff: ["g_sfgrads"] }, "plus_one", "seeking")).not.toBe("g_sfgrads");
+  });
   it("falls back to the current Group when nobody anywhere matches", () => {
     expect(homeGroupFor(alex, "skill_swap", "seeking", "g_ffs")).toBe("g_ffs");
   });

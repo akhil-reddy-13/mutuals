@@ -18,13 +18,17 @@ export function connected(me: User, other: User): boolean {
   return me.friends.some((f) => getUser(f)?.friends.includes(other.id));
 }
 
+/** Did this person switch Muse off for this Group (Muse settings)? Off is two-way: no asking there, no being asked. */
+export const museOffIn = (u: User, groupId: string) => !!u.museGroupsOff?.includes(groupId);
+
 /** Is this other person inside the reach the asker chose? (They must have Muse on; for groups, opted in there.) */
 function inReach(me: User, other: User, theirAsk: Ask, reach: MuseReach): boolean {
   if (!other.museEnabled) return false;
   if (reach === "network") return connected(me, other);
   if (reach === "everyone") return (!!me.school && me.school === other.school && other.schoolVerified) || me.city === other.city;
   // groups: their ask lives in a Group I'm in, and they turned Muse on there.
-  return me.groups.includes(theirAsk.groupId) && other.museGroups.includes(theirAsk.groupId);
+  const g = theirAsk.groupId;
+  return me.groups.includes(g) && !museOffIn(me, g) && other.museGroups.includes(g) && !museOffIn(other, g);
 }
 
 /** People whose Muse my Muse will check with for this ask, given the reach I picked. */

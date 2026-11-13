@@ -19,6 +19,8 @@ export interface User {
   museEnabled: boolean;
   /** Groups where this user told Muse "yes, check with other Muses here". The opt-in is per Group. */
   museGroups: string[];
+  /** Groups this person switched OFF in Muse settings. Two-way: their Muse doesn't ask there, and isn't asked there. */
+  museGroupsOff?: string[];
   /** When this person last opened Notifications (badge = notifications after this). */
   notificationsSeenAt?: string;
   /** Last reach this person picked; the default next time. */

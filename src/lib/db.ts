@@ -103,7 +103,16 @@ export function updateUser(id: string, patch: Partial<User>) {
 export function optIntoGroup(userId: string, groupId: string) {
   const u = getUser(userId);
   if (!u) return;
+  if (u.museGroupsOff?.includes(groupId)) return; // switched off in Muse settings: only setMuseGroup turns it back on
   if (!u.museGroups.includes(groupId)) updateUser(userId, { museGroups: [...u.museGroups, groupId] });
+}
+/** The Group switch in Muse settings (and "Turn on for this Group" in the chat). Two-way, see reach.inReach. */
+export function setMuseGroup(userId: string, groupId: string, on: boolean) {
+  const u = getUser(userId);
+  if (!u) return;
+  const off = (u.museGroupsOff ?? []).filter((g) => g !== groupId);
+  const mine = u.museGroups.filter((g) => g !== groupId);
+  updateUser(userId, on ? { museGroups: [...mine, groupId], museGroupsOff: off } : { museGroups: mine, museGroupsOff: [...off, groupId] });
 }
 
 // ---- groups / posts / events ----
