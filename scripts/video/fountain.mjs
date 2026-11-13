@@ -129,10 +129,16 @@ export function parseFountain(src) {
  *   "INT. PHONE SCREEN - CHICAGO SUMMER INTERNS 2027"  -> phone   (the real app, on a floating phone)
  *   "INT. FEATURE - THE SHORTLIST"                     -> feature  (the app still runs; pieces of it shown big, no phone)
  *   "INT. MOTION GRAPHICS - THE NUMBERS"               -> graphics (type, numbers, bubbles; no phone)
+ *   "INT. FILM - THE SKIT"                             -> film     (filmed footage: [[film file | captions.srt]])
+ *   "INT. VIDEO OVERLAY - SELLING"                     -> overlay  (a [[clip]] slot behind a Muse chat)
+ *   "INT. OFF CAMERA - JAMIE'S ROOMMATE ASK"           -> setup    (app steps run, nothing is filmed)
  *   anything else ("INT. JAMIE'S DORM - NIGHT")         -> live    (live action; a storyboard frame until filmed)
  */
 export function sceneKind(heading) {
   const loc = heading.replace(/^(INT\.?\/EXT|INT|EXT|EST|I\/E)[.\s]+/i, "");
+  if (/^(FILM|FOOTAGE)\b/.test(loc)) return "film";
+  if (/^(VIDEO OVERLAY|OVERLAY)\b/.test(loc)) return "overlay";
+  if (/^(OFF CAMERA|SETUP)\b/.test(loc)) return "setup";
   if (/^(PHONE|SCREEN|APP)\b/.test(loc)) return "phone";
   if (/^(FEATURE|CLOSE ON|SHOWCASE)\b/.test(loc)) return "feature";
   if (/^(MOTION GRAPHICS|GRAPHICS|TITLE|BLACK)\b/.test(loc)) return "graphics";

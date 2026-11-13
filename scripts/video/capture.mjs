@@ -72,7 +72,32 @@ function tts(who, text) {
   if (!fs.existsSync(file)) execFileSync("say", ["-v", voice, "-r", String(rate), "-o", file, speakable(text)]);
   return { file, dur: seconds(file) };
 }
-for (const s of plan) for (const st of s.steps) if (st.t === "vo" || st.t === "line") Object.assign(st, tts(st.who, st.text));
+// Filmed scenes have their own audio; their dialogue is in the screenplay for readers and captioned from an .srt.
+for (const s of plan) if (s.kind !== "film") for (const st of s.steps) if (st.t === "vo" || st.t === "line") Object.assign(st, tts(st.who, st.text));
+
+/** A filmed clip or a [[clip]] slot's file: a path from the repo root, else in scripts/video/assets/clips/ (any video type). */
+function findMedia(name) {
+  const direct = path.resolve(ROOT, name);
+  if (/\.\w+$/.test(name) && fs.existsSync(direct)) return direct;
+  const dir = path.join(HERE, "assets", "clips");
+  const hit = fs.existsSync(dir) && fs.readdirSync(dir).find((f) => f.replace(/\.\w+$/, "").toLowerCase() === name.replace(/\.\w+$/, "").toLowerCase());
+  return hit ? path.join(dir, hit) : null;
+}
+/** Captions from an .srt file: [{ a, b, text }] in seconds. */
+function readSrt(file) {
+  if (!file || !fs.existsSync(file)) return [];
+  const ts = (x) => {
+    const [h, m, rest] = x.split(":");
+    return Number(h) * 3600 + Number(m) * 60 + Number(rest.replace(",", "."));
+  };
+  return fs.readFileSync(file, "utf8").replace(/\r/g, "").split(/\n\n+/).map((b) => {
+    const lines = b.trim().split("\n");
+    const i = lines.findIndex((l) => l.includes("-->"));
+    if (i < 0) return null;
+    const [a, z] = lines[i].split("-->").map((x) => ts(x.trim()));
+    return { a, b: z, text: lines.slice(i + 1).join("\n").trim() };
+  }).filter((c) => c && c.text);
+}
 
 // ---------------------------------------------------------------- clock + log
 const sleep = (ms) => new Promise((r) => setTimeout(r, Math.max(0, ms)));
@@ -80,17 +105,19 @@ let page;
 let cdp;
 let vcur = 0; // video time while a scene is simulated
 let live = false; // inside an app scene, video time follows the wall clock
+let OFF = false; // an OFF CAMERA scene: the app steps run, but nothing is logged and no video time passes
 let vt0 = 0;
 let wall0 = 0;
 const vnow = () => (live ? vt0 + (Date.now() - wall0) / 1000 : vcur);
 const wait = async (sec) => {
-  if (DRY) return;
+  if (DRY || OFF) return;
   if (live) await sleep(sec * 1000);
   else vcur += sec;
 };
 let voiceFree = 0;
 let events = [];
 const log = (e) => {
+  if (OFF) return { ...e };
   const ev = { t: vnow(), ...e };
   events.push(ev);
   return ev;
@@ -299,7 +326,7 @@ async function popOut(text) {
   const clip = { x: rect.x, y: top, width: rect.width, height: Math.min(rect.y + rect.height, floor) - top };
   const radius = await card.evaluate((e) => parseFloat(getComputedStyle(e).borderTopLeftRadius) || 0);
   let file = null;
-  if (!DRY) {
+  if (!DRY && !OFF) {
     fs.mkdirSync(POPS, { recursive: true });
     file = `pop${popNo++}.png`;
     // The clip is in document coordinates (the page behind the sheet may be scrolled); captureBeyondViewport would
@@ -363,7 +390,9 @@ function networkPoller() {
 
 // ---------------------------------------------------------------- scenes
 async function runScene(scene, transitionIn) {
-  const app = scene.kind === "phone" || scene.kind === "feature";
+  const setup = scene.kind === "setup";
+  const app = scene.kind === "phone" || scene.kind === "feature" || setup;
+  OFF = setup;
   const st = scene.steps;
   events = [];
   let k = 0;
@@ -384,9 +413,11 @@ async function runScene(scene, transitionIn) {
       k++;
     }
     await sleep(DRY ? 0 : 400);
-    live = true;
-    vt0 = vcur;
-    wall0 = Date.now();
+    if (!setup) {
+      live = true;
+      vt0 = vcur;
+      wall0 = Date.now();
+    }
   }
   const start = vnow();
   voiceFree = Math.max(voiceFree, start);
@@ -414,12 +445,33 @@ async function runScene(scene, transitionIn) {
       } else if (s.cmd === "phone") {
         log({ type: "phone", pos: s.arg.trim().toLowerCase() });
         await wait(0.2);
-      } else if (!["voice", "rate", "music", "captions"].includes(s.cmd)) log({ type: s.cmd, parts: s.parts, arg: s.arg });
+      } else if (s.cmd === "film") {
+        // filmed footage plays at its own length, with captions from an .srt next to it
+        const src = findMedia(s.parts[0]);
+        if (!src) throw new Error(`[[film ${s.parts[0]}]]: no such file`);
+        log({ type: "film", src, dur: seconds(src), captions: readSrt(s.parts[1] && path.resolve(ROOT, s.parts[1])) });
+        await wait(seconds(src));
+      } else if (s.cmd === "clip") {
+        // a slot for a video we'll drop in later: plays it if scripts/video/assets/clips/<name>.* exists
+        const src = findMedia(s.parts[0]);
+        log({ type: "clip", name: s.parts[0], label: s.parts[1] ?? s.parts[0], src, dur: src ? seconds(src) : null });
+      } else if (s.cmd === "chat") {
+        // one message in the overlay's Muse chat: "me: ...", "muse: ...", "ember: ...", "video: ..."
+        const m = s.arg.match(/^(\w+)\s*:\s*([\s\S]*)$/);
+        const text = m ? m[2].trim() : s.arg;
+        log({ type: "chat", who: m ? m[1].toLowerCase() : "muse", text });
+        await wait(Math.min(2.8, 0.9 + text.length * 0.024));
+      } else if (s.cmd === "item") {
+        log({ type: "item", parts: s.parts });
+        await wait(1.6);
+      } else if (s.cmd === "wait") await wait(Number(s.arg || 1));
+      else if (!["voice", "rate", "music", "captions"].includes(s.cmd)) log({ type: s.cmd, parts: s.parts, arg: s.arg });
     } else if (s.t === "super" || s.t === "caption") {
       log({ type: s.t, text: s.text });
       await wait(0.25);
     } else if (s.t === "describe") log({ type: "describe", text: s.text });
     else if (s.t === "vo" || s.t === "line") {
+      if (scene.kind === "film") continue; // the footage has the real voices
       if (!DRY) await wait(Math.max(0, voiceFree - vnow()));
       log({ type: s.t, who: s.who, text: s.text, paren: s.paren, dur: s.dur, file: s.file });
       voiceFree = vnow() + s.dur + 0.2;
@@ -444,8 +496,12 @@ async function runScene(scene, transitionIn) {
     }
   }
   if (app) shortlistHref = (await page.$eval("a[href*='/muse/']", (a) => a.getAttribute("href")).catch(() => null)) ?? shortlistHref;
-  if (!DRY) await wait(Math.max(0, voiceFree - vnow()) + 0.5);
+  if (!DRY) await wait(Math.max(0, voiceFree - vnow()) + (scene.kind === "film" ? 0 : 0.5));
   if (stopNet) await stopNet();
+  if (setup) {
+    OFF = false;
+    return null;
+  }
   const end = vnow();
   const wallEnd = Date.now();
   if (app) {
@@ -453,6 +509,37 @@ async function runScene(scene, transitionIn) {
     vcur = end;
   }
   return { number: scene.number, heading: scene.heading, kind: scene.kind, act: scene.act, transitionIn, start, end, wallStart: app ? wall0 : null, wallEnd: app ? wallEnd : null, events };
+}
+
+/** Every Muse-to-Muse conversation the persona's Muse had in this run, grouped by ask (like the app's /conversations). */
+function conversations() {
+  const file = path.join(ROOT, ".cache", "runtime.json");
+  if (!fs.existsSync(file)) return [];
+  const rt = JSON.parse(fs.readFileSync(file, "utf8"));
+  const asks = [...JSON.parse(fs.readFileSync(path.join(ROOT, "seed/asks.json"), "utf8")), ...(rt.asks ?? [])];
+  const askOf = (id) => [...asks].reverse().find((a) => a.id === id);
+  const latest = new Map();
+  for (const n of rt.negotiations ?? []) latest.set(`${n.askAId}|${askOf(n.askBId)?.userId ?? n.askBId}`, n);
+  const byAsk = new Map();
+  for (const n of latest.values()) {
+    const a = askOf(n.askAId), b = askOf(n.askBId);
+    if (!a || !b || (a.userId !== PERSONA && b.userId !== PERSONA) || !n.rounds?.length) continue;
+    const meIsA = a.userId === PERSONA;
+    const mine = meIsA ? a : b;
+    const other = users.find((u) => u.id === (meIsA ? b.userId : a.userId));
+    if (!other) continue;
+    if (!byAsk.has(a.id)) {
+      // what this ask keeps out of every conversation: its match-only and never-shared facts, by topic
+      const kept = (mine.preferences ?? []).filter((p) => p.visibility === "match_only" || p.visibility === "never").map((p) => String(p.topic ?? "").replace(/_/g, " ")).filter(Boolean);
+      byAsk.set(a.id, { summary: a.summary, group: groups.find((g) => g.id === a.groupId)?.name ?? "", kept: [...new Set(kept)], convos: [] });
+    }
+    byAsk.get(a.id).convos.push({
+      other: other.name.split(" ")[0], avatar: other.avatarUrl, fit: n.verdict ? !!n.verdict.compatible : null,
+      turns: n.rounds.map((t) => ({ side: t.speaker === "orchestrator" ? "note" : (t.speaker === "A") === meIsA ? "me" : "other", text: t.message })),
+    });
+  }
+  // newest ask first, like the app
+  return [...byAsk.values()].reverse().map((g) => ({ ...g, convos: g.convos.sort((x, y) => x.other.localeCompare(y.other)) }));
 }
 
 async function main() {
@@ -478,13 +565,19 @@ async function main() {
   const out = [];
   let transition = globals.opening;
   for (const scene of plan) {
+    let done;
     try {
-      out.push(await runScene(scene, transition));
+      done = await runScene(scene, transition);
     } catch (e) {
       await page.screenshot({ path: path.join(OUT, "failed.png") }).catch(() => {});
       console.error(`scene ${scene.number} (${scene.heading}) failed, screenshot: scripts/video/out/failed.png`);
       throw e;
     }
+    if (!done) {
+      console.log(`     setup             (off camera)  ${scene.heading}`);
+      continue;
+    }
+    out.push(done);
     const s = out[out.length - 1];
     console.log(`#${String(s.number).padEnd(3)} ${s.kind.padEnd(8)} ${s.start.toFixed(1).padStart(6)}s -> ${s.end.toFixed(1).padStart(6)}s  ${s.heading}`);
     transition = scene.transition ?? "CUT TO:";
@@ -517,7 +610,7 @@ async function main() {
   fs.writeFileSync(
     path.join(OUT, "timeline.json"),
     JSON.stringify({ version: 2, script: path.relative(ROOT, SCRIPT), capturedAt: new Date().toISOString(), app: APP, phone: PHONE, duration, outro: transition,
-      persona: personaCard(PERSONA), people: users.filter((u) => u.id !== PERSONA).map((u) => ({ name: u.name, avatar: u.avatarUrl })), scenes: out.map((s) => Object.fromEntries(Object.entries(s).filter(([k]) => k !== "wallStart" && k !== "wallEnd"))), frames: timelineFrames }, null, 1),
+      persona: personaCard(PERSONA), convos: conversations(), people: users.filter((u) => u.id !== PERSONA).map((u) => ({ name: u.name, avatar: u.avatarUrl })), scenes: out.map((s) => Object.fromEntries(Object.entries(s).filter(([k]) => k !== "wallStart" && k !== "wallEnd"))), frames: timelineFrames }, null, 1),
   );
   console.log(`\ncaptured ${timelineFrames.length} app frames, ${duration.toFixed(1)}s of video -> scripts/video/out/timeline.json`);
 }

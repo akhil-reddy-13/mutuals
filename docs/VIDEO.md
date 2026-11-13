@@ -1,7 +1,8 @@
 # Demo video
 
-- **Watch:** [`docs/video/mutuals-demo-1080p60.mp4`](video/mutuals-demo-1080p60.mp4) (draft cut, 2:28, 1080p at 60fps,
-  no audio yet), or the smaller 720p preview [`docs/video/mutuals-demo.mp4`](video/mutuals-demo.mp4).
+- **Watch:** [`docs/video/mutuals-demo-1080p60.mp4`](video/mutuals-demo-1080p60.mp4) (v5, 2:20, 1080p at 60fps; the
+  skit has its own sound, the rest is silent until we record the voiceover), or the 720p preview
+  [`docs/video/mutuals-demo.mp4`](video/mutuals-demo.mp4).
 - **Read:** [`docs/video/mutuals-screenplay.pdf`](video/mutuals-screenplay.pdf), the screenplay with each scene's
   timecode in the video.
 - **Edit:** [`docs/video/mutuals.fountain`](video/mutuals.fountain). **The screenplay is the video.** Change what Jamie
@@ -11,8 +12,23 @@
 Everything shown from the app is the real app, and every model output is a real Muse response (run live once, replayed
 from the cache). The video has no audio: the narration lines in the screenplay set how long each shot holds, and
 `scripts/video/out/scratch-vo.wav` is a text-to-speech scratch track at those timings for whoever records the real
-voiceover. Still placeholders: the live-action scenes (storyboard frames until we film them) and the desk video in the
-selling scene (Muse Image stills with a spoken narration).
+voiceover. Still a placeholder: the selling video slot (scene 8), drawn as an empty, labelled frame until the clip is in.
+
+## Video slots (drop a clip in, re-render)
+
+| Slot | Scene | File | What goes there |
+|---|---|---|---|
+| `selling` | 8, Buying and selling | `scripts/video/assets/clips/selling.mov` (or `.mp4`) | Our selling video from the hackathon, full frame. The Muse chat sits over it on the right. |
+
+Drop the file in and run `node scripts/video/make.mjs --skip-dry` (or `node scripts/video/render.mjs` then
+`make.mjs --finish`). Its sound is kept. Then check scene 8's `[[chat]]` and `[[item]]` lines in the screenplay match
+what's said in the clip (the second item, "Poly wireless earbuds", should be the exact model Spark named). Add more
+slots anywhere with `[[clip name | label]]` in a `VIDEO OVERLAY` scene.
+
+## The skit
+
+`docs/video/metaCloserTogetherHackathonSkit.mov` plays first, whole, with its sound. Captions come from
+`docs/video/skit.srt` (transcribed with Whisper, corrected by hand; edit the text or timings there).
 
 ## The story
 
@@ -22,12 +38,13 @@ buying and selling and once for finding people.
 
 | Part | Scenes | What happens |
 |---|---|---|
-| Cold open | 1 | Riley: "Posting your budget to three thousand strangers?" Jamie doesn't know anyone in Chicago and has to sell all this. |
-| The problem | 2 to 5 | We still open Facebook to get things done (couch, lamp, roommate). 23% of 18 to 34 year olds use Marketplace every day. Then come the messages ("is this still available?" eleven times). For people it's worse: the post that shares your budget, habits and dealbreakers with 3,120 members. |
-| Mutuals | 6 | Soft circular reveal to the logo. "Your Muse has the first conversation": Jamie's Muse reaches a crowd, most fall away, a few fit. |
-| 01 Buying and selling | 7 to 11 | Jamie says what's for sale and films the desk. Ember writes down what it heard; Spark names the Canon PowerShot G7 X Mark III from its clearest frame, with a used price range and how sure it is, and notes what Jamie didn't mention (a laptop, a desk). One tap lists it. Then "Yes, check": the phone slides away and Jamie's Muse talks to the buyers' Muses (Theo, Maya, Dev), live. Fifty identical DMs become one small detail: Theo's card is down to the price, Dev's to where to meet. |
-| 02 Finding people | 12 to 17 | The fun-fact card Muse makes from Jamie's profile (opt in). Where Muse looks: this Group, followers, nearby, your school. Jamie tells Muse what they'd never post (zoom on Public / Match only / Never shared). The Muse network, then the shortlist (Nora fits, Diego has a cat so the Muses stopped early), then a reason to meet: the Lakefront Run Club. |
-| Saturday | 18 to 19 | Jamie and Nora at the run club. "You might have zero mutuals on Facebook today. Mutuals builds them for you." |
+| Cold open | 1 | The filmed skit, captioned. Riley shows Jamie the new feature; Jamie doesn't know anyone in Chicago and was going to post on Marketplace and pray. |
+| The problem | 2 to 5 | We still open Facebook to get things done: buy a couch, sell a lamp, find a roommate (each card with its line). 75% of Gen Z Facebook users bought something on Marketplace in the past year. "But it's always an overload": a pile-up of "is this still available?", then a beat of nothing. "Finding roommates, posting, messaging. It's all a headache": the post that shares your budget, habits and dealbreakers with 3,120 members. |
+| Mutuals | 6 | The logo: "Your Muse talks to their Muse, then points you to the people who fit." Jamie's Muse reaches a crowd, most fall away, a few fit. |
+| 01 Buying and selling | 7, 8 | Our selling video from the hackathon, full frame (a slot until it's in), with the Muse chat over it: say what's for sale, Ember writes down what it heard, Spark names each item down to the model (the Canon PowerShot G7 X Mark II), "2 of these already have a home". |
+| 02 Finding people | 9 to 13 | The fun-fact card (opt in). The radar of where Muse looks, with Muse agents flying out, talking to each person's Muse, and a few coming back as fits. The wall of Muse conversations (like the app's `/conversations`), each box at a different stage, each saying what's never shown. Then the phone: "Your Muse has the awkward first conversation", the live Muse network. |
+| Strangers | 14 | Dark: Facebook is a sea of faceless profiles ("No profile picture", "0 mutual friends"). Jamie's Muse reaches out to dozens, most fade, five real faces stay. |
+| End | 15 | "You might have zero mutuals on Facebook today. Mutuals builds them for you." |
 
 **Look:** the product parts take after Apple's iPhone films and its Liquid Glass keynote: a seamless off-white
 background with soft glass bubbles, one statement at a time in big type, the phone as the hero until the story moves
@@ -79,11 +96,15 @@ the file is the full cheat sheet. The short version:
 | `INT. PHONE SCREEN - ...` | The app on the phone. |
 | `INT. FEATURE - ...` | No phone; the cards that pop out sit big on screen, side by side. |
 | `INT. MOTION GRAPHICS - ...` | Type, numbers, bubbles. |
+| `INT. FILM - ...` | Filmed footage with its own sound: `[[film path \| captions.srt]]`. |
+| `INT. VIDEO OVERLAY - ...` | A `[[clip]]` slot full frame, with `[[chat]]` and `[[item]]` lines as the Muse chat over it. |
+| `INT. OFF CAMERA - ...` | App steps that run so later scenes have their data (the roommate ask, the selling run behind the wall); not filmed. |
 | `JAMIE` + `(typing)` in a phone scene | Typed in the box beside the phone, then flies into the chat. |
 | `taps "..."`, `scrolls to "..."`, `"..." pops out`, `zooms in on "..."` | Happens in the app, in that order. |
 | `SUPER:` / `CAPTION:` | Big statement / smaller line. `~words~` get the gradient. |
 | `[[phone away]]`, `[[zoom out]]`, `[[network]]`, `[[stat ...]]`, `[[logo]]` ... | Camera moves and graphics. |
 | `[[activities ...]]`, `[[post ...]]`, `[[agents]]`, `[[chapter 01 \| ...]]`, `[[funcard]]`, `[[reach ...]]` | The diagrams for the problem, the reveal and the two chapters. |
+| `[[flurry ...]]`, `[[clear]]`, `[[convos]]`, `[[crowd ...]]` + `[[narrow]]` | The message pile-up, a clean fade, the wall of Muse conversations, the sea of strangers. |
 | `CUT TO:`, `DISSOLVE TO:`, `BUBBLE WIPE TO:`, `FADE OUT.` | Transitions (all soft). |
 | `NARRATOR (V.O.)` | No audio; sets how long the shot holds. |
 
@@ -101,9 +122,12 @@ the file is the full cheat sheet. The short version:
 
 ## Before the final cut
 
-- **Film the live-action scenes** (1 and 18) and lay the footage over the storyboard frames.
+- **Drop in the selling clip** (see Video slots) and match scene 8's chat lines to it.
 - **Record the voiceover** against `scripts/video/out/scratch-vo.wav` (same timings), and add music.
-- **Replace `scripts/video/assets/room.mp4`** with a real phone video of a desk, narrated, then run `make.mjs`.
 - **Re-capture after `fix/demo-blockers` merges**, so the agents speak as Muse in the third person.
-- **Check the 23% stat** (Capital One Shopping Research, from our notes) before publishing.
+- **Check the 75% stat** before publishing. The source we found is an eMarketer chart (US Facebook shoppers who bought
+  on Marketplace in the past 12 months, by generation, March 2024); its numbers are paywalled, so confirm the 75% and
+  that it's "Facebook shoppers", not all Facebook users.
 - **"Where Muse looks"** (followers, nearby, your school) is where we're going; the app searches the Group today.
+- The wall's selling boxes come from the off-camera run on `assets/room.mp4` (camera, lamp, mini fridge with Theo, Maya,
+  Dev), not the hackathon clip.

@@ -2,7 +2,7 @@ Title: MUTUALS
 Credit: Demo video
 Author: Team Mutuals
 Source: Facebook Closer Together AI Hackathon
-Draft date: November 12, 2026
+Draft date: November 13, 2026
 Contact: docs/VIDEO.md
 
 /*
@@ -15,6 +15,9 @@ Contact: docs/VIDEO.md
     INT. FEATURE - <name>                    the app keeps running, but no phone: the pieces that "pop out" sit
                                              big on screen, side by side, under the SUPER.
     INT. MOTION GRAPHICS - <name>            type, numbers and bubbles. No phone.
+    INT. FILM - <name>                       filmed footage, played whole with its own sound: [[film file | captions.srt]]
+    INT. VIDEO OVERLAY - <name>              a [[clip]] slot full-frame, with the Muse chat ([[chat]], [[item]]) over it
+    INT. OFF CAMERA - <name>                 the app steps run (so later scenes have their data), nothing is filmed
 
   Dialogue:
     NARRATOR (V.O.)                          narration. No audio and no captions in the video (we record the real
@@ -33,7 +36,7 @@ Contact: docs/VIDEO.md
     waits for "..."    holds until that text appears
   Other words are just for us. They don't do anything.
 
-  On-screen text (any scene):  SUPER: big statement   CAPTION: smaller line under it.
+  On-screen text (any scene):  SUPER: big statement   CAPTION: smaller line under it.   " // " starts a new line.
   Words wrapped in ~tildes~ get the Muse gradient.
 
   Notes in [[double brackets]]:
@@ -46,12 +49,26 @@ Contact: docs/VIDEO.md
     [[secrets a | b | c]]           bubbles that blur behind a lock
     [[logo]]                        the Mutuals mark
     [[models]]                      the three Muse model cards
-    [[activities 🛋️ Buy a couch / Marketplace | ...]]   cards in a row: emoji, label, and a small line after " / "
+    [[activities 🛋️ Buy a couch / Marketplace | ...]]   cards in a row: emoji, label, and a small line after " / ".
+                                    With a narration line per card after it, each card comes up with its line.
     [[post text | Group | footer]]  a Facebook post by our persona; ~words~ in the text get highlighted one by one
     [[agents]]                      our persona's Muse reaching everyone; most fall away, a few fit
     [[chapter 01 | Title | line]]   a chapter card
     [[funcard]]                     the fun-fact card Muse makes from the persona's profile (seed/users.json)
-    [[reach a | b | c | d]]         rings around our persona, one per place Muse looks, people appearing on them
+    [[reach a | b | c | d]]         rings around our persona, one per place Muse looks, people appearing on them;
+                                    the persona's Muse sends agents out to them, and a few come back as fits
+    [[film path | captions.srt]]    play filmed footage (a path from the repo root) with captions from an .srt file
+    [[clip name | label]]           a slot for a video we drop in later: scripts/video/assets/clips/<name>.mov (or .mp4).
+                                    Until the file is there it's drawn as an empty, labelled slot. Its sound is kept.
+    [[chat me: text]]               a message in the overlay's Muse chat. Also muse:, ember:, spark:, and video: (a
+                                    sent video; shows the clip's length once the clip is in)
+    [[item name | said | tag | 📷]] a Spark item card in the overlay's chat
+    [[flurry a | b | c]]            messages pile up over the frame, faster and faster, with a "new messages" counter
+    [[clear]]                       everything on screen fades out (follow with [[hold]] for a pause)
+    [[convos]]                      the wall of Muse-to-Muse conversations from this run (like the app's /conversations)
+    [[crowd line one | line two]]   a dark sea of strangers; at [[narrow]] the persona's Muse reaches out and only a
+                                    few faces stay
+    [[wait 1.0]]                    move on after 1 second (no waiting for narration)
     [[hold 1.5]]                    let the current narration line finish, then hold 1.5 seconds more
     [[voice NAME: Voice]]           macOS voice used to time a character's lines (say -v '?' lists them)
     [[rate NAME: 215]]              how fast that character talks (words per minute), for timing
@@ -74,20 +91,28 @@ FADE IN:
 
 # COLD OPEN
 
-INT. JAMIE'S DORM ROOM, STANFORD - NIGHT #1#
+INT. FILM - THE SKIT #1#
 
-Half-packed boxes. An offer letter on the laptop: SWE Intern, Chicago, starts June 15. JAMIE (20) is typing a post in a Facebook housing Group. RILEY (20) leans over.
+[[film docs/video/metaCloserTogetherHackathonSkit.mov | docs/video/skit.srt]]
+
+A hotel room at night. JAMIE (20) lies in bed, doomscrolling. RILEY (20) walks in with something to show them.
 
 RILEY
-Posting your budget to three thousand strangers?
+There's a new feature on Facebook. Check it out.
 
 JAMIE
-I don't know anyone there. And I have to sell all this.
+Bro, nobody's on Facebook anymore. I'm on Instagram, Snap, WhatsApp, Hinge, Beli, Grindr. My phone's out of storage. I'm not trying to download another app.
 
 RILEY
-Just ask your Muse.
+Wait, aren't you trying to get housing for the summer? Since you got that McDonald's SWE internship?
 
-SMASH CUT TO:
+JAMIE
+Bro, I don't know anyone in Chicago, so I'm kind of homeless right now. I'm just gonna post on Facebook Marketplace and pray someone comes through.
+
+RILEY
+Bro, that's so chopped. People always be ghosting me when they got no profile, 'cause no one's on the app anymore. But this new feature, though...
+
+DISSOLVE TO:
 
 # THE PROBLEM
 
@@ -98,38 +123,51 @@ SUPER: We still open Facebook to ~get things done~.
 [[activities 🛋️ Buy a couch / Marketplace | 💡 Sell a lamp / Marketplace | 🏠 Find a roommate / Housing Groups]]
 
 NARRATOR (V.O.)
-Young adults still open Facebook for practical things. A couch, a lamp, a roommate.
+We still open Facebook to get real things done.
+
+NARRATOR (V.O.)
+Buy a couch.
+
+NARRATOR (V.O.)
+Sell a lamp.
+
+NARRATOR (V.O.)
+Find a roommate.
 
 DISSOLVE TO:
 
 INT. MOTION GRAPHICS - THE NUMBERS #3#
 
-[[stat 23% | of 18 to 34 year olds use Marketplace every day. The most of any age group. | Capital One Shopping Research, Facebook Marketplace statistics]]
+[[stat 75% | of Gen Z Facebook users have purchased something on Marketplace in the past year. | eMarketer, US Facebook shoppers by generation, March 2024]]
 
 NARRATOR (V.O.)
-A quarter of us use Marketplace every day. It's where people who have what you need are nearby.
+Three in four Gen Z Facebook users bought something on Marketplace this past year.
 
 DISSOLVE TO:
 
-INT. MOTION GRAPHICS - THE MESSAGES #4#
+INT. MOTION GRAPHICS - THE OVERLOAD #4#
 
-SUPER: Then come the ~messages~.
+SUPER: But it's always an ~overload~.
 
-[[bubbles is this still available? | is this still available? | would you take $40? | can you do Thursday? | still available?? | lowest you'd go? | seen 3 days ago | is this still available?]]
+[[flurry is this still available? | Still available? | hi is this still for sale | Is this available?? | still got it? | Available?? | hey! is the lamp still available | u still selling this? | is this still up? | Hi, is this still available? | still for sale? | is it gone? | any chance it's still available? | still there? | hello?? still available | Interested! Still available? | is this still available | can I grab it today? | Still have it? | is the couch still available? | available still? | is this still available??]]
 
 NARRATOR (V.O.)
-Is this still available, eleven times. Haggling. Pickup times.
+Is this still available. Is this still available. Is this still available.
+
+[[hold 0.3]]
+[[clear]]
+[[hold 0.5]]
 
 DISSOLVE TO:
 
 INT. MOTION GRAPHICS - THE POST #5#
 
-SUPER: For people, it's ~worse~.
+SUPER: Finding roommates, posting, messaging. // It's all a ~headache~.
 
 [[post Looking for a room near the West Loop this summer! ~Budget $1,100, can stretch to $1,300.~ ~I'm up at 5:30 every day.~ ~Allergic to cats.~ DM me! | Chicago Summer Interns 2027 | 3,120 members can see this]]
 
 NARRATOR (V.O.)
-For a roommate it's worse. Your budget, habits and dealbreakers, posted to three thousand strangers.
+And finding people is worse. Your budget, habits and dealbreakers, posted to three thousand strangers.
 
 BUBBLE WIPE TO:
 
@@ -139,7 +177,7 @@ INT. MOTION GRAPHICS - TITLE #6#
 
 [[logo]]
 
-CAPTION: Your Muse talks to their Muse. You only talk to people who fit.
+CAPTION: Your Muse talks to their Muse, then points you to the people who fit.
 
 NARRATOR (V.O.)
 We already ask Muse everything. So we built Mutuals.
@@ -151,7 +189,7 @@ SUPER: Your Muse has the ~first conversation~.
 [[agents]]
 
 NARRATOR (V.O.)
-Your Muse checks with their Muse first. You only talk to people who fit.
+Your Muse checks with their Muse first, then points you to the people who fit.
 
 DISSOLVE TO:
 
@@ -159,7 +197,7 @@ DISSOLVE TO:
 
 INT. MOTION GRAPHICS - CHAPTER ONE #7#
 
-[[chapter 01 | Buying and selling | Film it. Muse lists it and finds the buyers.]]
+[[chapter 01 | Buying and selling | Film it. Muse names it and finds who wants it.]]
 
 NARRATOR (V.O.)
 Buying and selling.
@@ -168,9 +206,41 @@ Buying and selling.
 
 DISSOLVE TO:
 
-INT. PHONE SCREEN - STANFORD FREE & FOR SALE #8#
+INT. VIDEO OVERLAY - SELLING AT THE HACKATHON #8#
+
+[[clip selling | Our selling video, filmed at the hackathon]]
 
 SUPER: Film it. Just ~say what's for sale~.
+
+[[chat me: Selling some stuff before I move out]]
+[[chat muse: Love it. Film your stuff and just talk me through what you're selling.]]
+
+NARRATOR (V.O.)
+Film your stuff and just say what's for sale.
+
+[[chat video: 0:14]]
+[[chat ember: What I heard: "I want to sell this Canon camera, these Poly earbuds..."]]
+
+NARRATOR (V.O.)
+Muse Ember watches the video, listens, and writes down what you said.
+
+SUPER: Spark names each one, ~down to the model~.
+
+[[item Canon PowerShot G7 X Mark II | You said "this Canon camera" | Named down to the model | 📷]]
+[[item Poly wireless earbuds | You said "these Poly earbuds" | Named down to the model | 🎧]]
+
+NARRATOR (V.O.)
+Spark names each one from its clearest frame, down to the model.
+
+[[chat muse: 2 of these already have a home. My Muse is working out price and pickup with theirs.]]
+
+[[hold 1.2]]
+
+DISSOLVE TO:
+
+INT. OFF CAMERA - JAMIE'S SELLING ASK #8A#
+
+The app run behind the selling conversations on the wall in scene 12.
 
 Jamie opens "Stanford Free & For Sale" and taps "Ask Muse privately".
 
@@ -178,60 +248,13 @@ JAMIE
 (typing)
 Moving out of my dorm before Chicago, I want to sell my camera, my desk lamp and my mini fridge
 
-Jamie taps "Video", uploads "room.mp4", and taps "Catalog items".
+Jamie taps "Video", uploads "room.mp4", and taps "Catalog items". Jamie waits for "identified each item" and taps "on Marketplace".
 
-NARRATOR (V.O.)
-Muse Ember watches the video, listens, and writes down what Jamie said.
-
-The camera zooms in on "What I heard".
-
-DISSOLVE TO:
-
-INT. FEATURE - WHAT YOU'RE SELLING #9#
-
-SUPER: Spark names each one, ~down to the model~.
-
-Jamie waits for "identified each item". "Canon PowerShot" pops out.
-
-NARRATOR (V.O.)
-Spark names each one from its clearest frame, with a used price range.
-
-"Also in your video" pops out. Jamie taps "on Marketplace". "Listed on Marketplace" pops out.
-
-DISSOLVE TO:
-
-INT. PHONE SCREEN - FINDING BUYERS #10#
-
-SUPER: Then it finds the ~buyers~.
-
-NARRATOR (V.O.)
-Once it's listed, Jamie's Muse checks with every Muse that's looking for one.
-
-Jamie taps "Yes, check".
-
-[[network]]
-[[phone away]]
-
-The Muses talk. Jamie waits for "You decide who to talk to".
-
-DISSOLVE TO:
-
-INT. FEATURE - THE BUYERS #11#
-
-SUPER: Fifty identical DMs become ~one small detail~.
-
-Jamie scrolls to "between the stated budget and asking price". "between the stated budget and asking price" pops out.
-
-NARRATOR (V.O.)
-Three buyers fit. Each one is down to a single detail, like a price or where to meet.
-
-Jamie scrolls to "Meet at Roble lobby". "Meet at Roble lobby" pops out.
-
-DISSOLVE TO:
+Jamie taps "Yes, check" and waits for "You decide who to talk to".
 
 # 02 FINDING PEOPLE
 
-INT. MOTION GRAPHICS - CHAPTER TWO #12#
+INT. MOTION GRAPHICS - CHAPTER TWO #9#
 
 [[chapter 02 | Finding people | Roommates, friends, someone to go with.]]
 
@@ -242,7 +265,7 @@ Finding people.
 
 DISSOLVE TO:
 
-INT. MOTION GRAPHICS - YOUR FUN FACTS #13#
+INT. MOTION GRAPHICS - YOUR FUN FACTS #10#
 
 SUPER: It starts with ~you~.
 
@@ -253,23 +276,22 @@ Opt in, and Muse turns your profile and posts into fun facts.
 
 [[hold 0.4]]
 
-SUPER: Then it looks for ~overlap~.
+SUPER: Then your Muse looks for ~overlap~.
 
 [[reach This Group | Followers | Nearby | Your school]]
 
 NARRATOR (V.O.)
-Then it looks where you choose. A Group, followers, nearby, or school.
+Then your Muse goes looking, and talks to theirs. A Group, followers, nearby, or school.
+
+[[hold 2.6]]
 
 DISSOLVE TO:
 
-INT. PHONE SCREEN - CHICAGO SUMMER INTERNS 2027 #14#
+INT. OFF CAMERA - JAMIE'S ROOMMATE ASK #11#
 
-SUPER: Tell it what you'd ~never post~.
+What Jamie tells Muse, privately, before scene 13. It sets up the chat on the phone.
 
 Jamie opens "Chicago Summer Interns 2027" and taps "Ask Muse privately".
-
-NARRATOR (V.O.)
-For a roommate, Jamie tells Muse what they'd never post.
 
 JAMIE
 (typing)
@@ -283,18 +305,25 @@ JAMIE
 (typing)
 I'm up at 5:30 for the gym before work, I'm allergic to cats so that's a dealbreaker, no smoking. Never share anything about my visa status.
 
-SUPER: Public. Match only. ~Never shared.~
+INT. MOTION GRAPHICS - EVERY CONVERSATION AT ONCE #12#
 
-The camera zooms in on "Budget ceiling".
+SUPER: Your Muse talks to theirs, so ~you never overshare~.
+
+CAPTION: Private facts only check fit. They're never shown, and never posted.
+
+[[convos]]
 
 NARRATOR (V.O.)
-Match only checks fit. Never shared never leaves.
+Your Muse has every one of these first conversations for you, all at once.
 
-[[zoom out]]
+NARRATOR (V.O.)
+And it only shares what you allow. Your real budget and your schedule check fit, and never leave.
 
-CUT TO:
+[[hold 1.0]]
 
-INT. PHONE SCREEN - THE MUSE NETWORK - CONTINUOUS #15#
+DISSOLVE TO:
+
+INT. PHONE SCREEN - THE MUSE NETWORK #13#
 
 SUPER: Your Muse has the ~awkward first conversation~.
 
@@ -310,46 +339,26 @@ The Muses talk. Jamie waits for "You decide who to talk to".
 
 DISSOLVE TO:
 
-INT. FEATURE - THE SHORTLIST #16#
+# STRANGERS
 
-SUPER: Only the people ~who fit~.
+INT. MOTION GRAPHICS - A SEA OF STRANGERS #14#
 
-Jamie scrolls to "Why it fits". "Why it fits" pops out.
+[[crowd Facebook is a sea of people ~you've never met~. | Your Muse finds the few ~you'd actually click with~.]]
 
 NARRATOR (V.O.)
-Nora fits. Diego has a cat, so the Muses stopped early.
+Facebook is a sea of people you've never met. No photo, no mutuals, no idea who's real.
 
-Jamie scrolls to "Your Muse stopped early". "Your Muse stopped early" pops out.
+[[hold 0.3]]
+[[narrow]]
+
+NARRATOR (V.O.)
+Your Muse talks to theirs first, and narrows it down to the few you'd actually vibe with.
+
+[[hold 1.6]]
 
 DISSOLVE TO:
 
-INT. FEATURE - MORE THAN A LEASE #17#
-
-SUPER: Then a reason to ~meet~.
-
-Jamie scrolls to "More than a lease". "More than a lease" pops out.
-
-NARRATOR (V.O.)
-They both run on Saturdays, and there's a run club this weekend.
-
-Jamie taps "Go together", then taps "Going". "Lakefront Run Club" pops out.
-
-[[hold 1.0]]
-
-DISSOLVE TO:
-
-# SATURDAY
-
-EXT. LAKEFRONT TRAIL, CHICAGO - SATURDAY, 7 A.M. #18#
-
-Sunrise over Lake Michigan. Jamie and Nora jog past Ohio Street Beach with the Lakefront Run Club.
-
-NARRATOR (V.O.)
-A room, and a running buddy.
-
-DISSOLVE TO:
-
-INT. MOTION GRAPHICS - END CARD #19#
+INT. MOTION GRAPHICS - END CARD #15#
 
 SUPER: You might have zero mutuals on Facebook today.
 

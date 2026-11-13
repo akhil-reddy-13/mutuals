@@ -177,6 +177,105 @@
   .line .paren { font-size: 28px; color: rgba(255,255,255,.55); font-style: italic; margin-bottom: 8px; }
   .line .say { font-size: 58px; line-height: 1.25; font-weight: 600; letter-spacing: -.01em; }
 
+  /* filmed footage + captions */
+  .scene.film { background: #000; }
+  .footage { position: absolute; inset: 0; width: 1920px; height: 1080px; object-fit: cover; display: block; }
+  .subwrap { position: absolute; left: 0; width: 1920px; bottom: 74px; text-align: center; }
+  .subtitle { display: inline-block; max-width: 1500px; font-size: 48px; line-height: 1.28; font-weight: 600; color: #fff; letter-spacing: -.005em;
+    background: rgba(0,0,0,.58); padding: 12px 28px 14px; border-radius: 16px; }
+
+  /* video overlay: a clip (or its empty slot) behind the Muse chat */
+  .scene.overlay { background: #16141b; }
+  .slot { position: absolute; inset: 0; background: radial-gradient(1200px 800px at 35% 40%, #34303f 0%, #1b1921 60%, #121016 100%); }
+  .slot .frame { position: absolute; left: 70px; top: 70px; width: 1060px; height: 940px; border: 3px dashed rgba(255,255,255,.28); border-radius: 36px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; color: rgba(255,255,255,.75); text-align: center; }
+  .slot .frame svg { width: 96px; height: 96px; opacity: .7; }
+  .slot .k { font-size: 24px; letter-spacing: .2em; font-weight: 700; text-transform: uppercase; color: rgba(255,255,255,.5); }
+  .slot .l { font-size: 44px; font-weight: 700; color: #fff; max-width: 860px; line-height: 1.2; }
+  .slot .f { font-size: 22px; color: rgba(255,255,255,.5); font-family: ui-monospace, Menlo, monospace; }
+  .shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(10,8,14,.0) 30%, rgba(10,8,14,.55) 70%), linear-gradient(180deg, rgba(10,8,14,.55), rgba(10,8,14,0) 30%); }
+  .oh { position: absolute; left: 96px; top: 84px; width: 1040px; font-size: 76px; font-weight: 700; letter-spacing: -.025em; line-height: 1.05; color: #fff; text-shadow: 0 4px 30px rgba(0,0,0,.45); }
+  .oh .grad { background: linear-gradient(135deg, #7db4ff 0%, #c99bff 55%, #ff9cbc 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .panel { position: absolute; left: 1220px; top: 70px; width: 640px; height: 940px; border-radius: 40px; background: rgba(255,255,255,.96); overflow: hidden;
+    box-shadow: 0 40px 100px rgba(0,0,0,.45), 0 0 0 1.5px rgba(255,255,255,.6); }
+  .panel .phd { height: 104px; display: flex; align-items: center; gap: 18px; padding: 0 30px; border-bottom: 1.5px solid #e4e6eb; }
+  .mring { width: 52px; height: 52px; border-radius: 50%; background: var(--muse); display: flex; align-items: center; justify-content: center; flex: none; }
+  .mring::after { content: ""; width: 30px; height: 30px; border-radius: 50%; background: #fff; }
+  .mring.sm { width: 34px; height: 34px; } .mring.sm::after { width: 20px; height: 20px; }
+  .panel .phd b { display: block; font-size: 30px; } .panel .phd span { font-size: 21px; color: var(--muted); }
+  .panel .pbody { position: absolute; left: 0; right: 0; top: 106px; bottom: 0; overflow: hidden; }
+  .panel .pin { position: absolute; left: 0; right: 0; top: 0; padding: 24px 26px 30px; display: flex; flex-direction: column; gap: 18px; }
+  .cm { display: flex; flex-direction: column; }
+  .cm.me { align-items: flex-end; } .cm.them { align-items: flex-start; }
+  .cm .who { font-size: 18px; font-weight: 700; color: var(--muted); margin: 0 0 6px 50px; letter-spacing: .01em; }
+  .cm .row { display: flex; align-items: flex-end; gap: 12px; max-width: 92%; }
+  .cm .b { font-size: 26px; line-height: 1.34; padding: 16px 22px; border-radius: 28px; }
+  .cm.me .b { background: var(--blue); color: #fff; border-bottom-right-radius: 8px; max-width: 470px; }
+  .cm.them .b { background: #f0f0f2; color: #111; border-bottom-left-radius: 8px; }
+  .cm .vid { width: 300px; height: 190px; border-radius: 24px; background: linear-gradient(135deg, #2b2733, #4a4356); position: relative; overflow: hidden; }
+  .cm .vid img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cm .vid .pl { position: absolute; left: 50%; top: 50%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; background: rgba(255,255,255,.9); display: flex; align-items: center; justify-content: center; }
+  .cm .vid .pl::after { content: ""; border-left: 22px solid #111; border-top: 13px solid transparent; border-bottom: 13px solid transparent; margin-left: 6px; }
+  .cm .vid .ln { position: absolute; right: 14px; bottom: 12px; font-size: 18px; font-weight: 700; color: #fff; background: rgba(0,0,0,.5); padding: 3px 10px; border-radius: 999px; }
+  .icard { width: 520px; border-radius: 24px; border: 1.5px solid #e4e6eb; background: #fff; padding: 18px 20px; display: flex; gap: 18px; align-items: center; box-shadow: 0 8px 24px rgba(30,40,90,.08); }
+  .icard .ic { width: 84px; height: 84px; border-radius: 18px; background: #f1ecff; display: flex; align-items: center; justify-content: center; font-size: 48px; flex: none; }
+  .icard .nm { font-size: 27px; font-weight: 800; letter-spacing: -.01em; line-height: 1.2; }
+  .icard .tg { display: inline-block; margin-top: 6px; font-size: 17px; font-weight: 700; color: #5a2db8; background: #f1ecff; border-radius: 999px; padding: 3px 12px; }
+  .icard .sd { font-size: 20px; color: var(--muted); margin-top: 6px; font-style: italic; }
+
+  /* the flurry of messages */
+  .msg.flur { font-size: 34px; padding: 16px 28px; border-radius: 30px; box-shadow: 0 10px 30px rgba(30,40,90,.10); }
+  .notif { position: absolute; display: flex; align-items: center; gap: 12px; padding: 10px 22px 10px 12px; border-radius: 999px; background: rgba(255,255,255,.92);
+    box-shadow: 0 8px 24px rgba(30,40,90,.1); font-size: 28px; font-weight: 700; color: var(--ink); }
+  .notif i { font-style: normal; min-width: 44px; height: 44px; padding: 0 10px; border-radius: 999px; background: #ff3b30; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+
+  /* the wall of Muse conversations */
+  .wall { position: absolute; left: 0; width: 1920px; overflow: hidden; }
+  .wall .in { position: absolute; left: 0; top: 0; width: 1920px; }
+  .ghead { position: absolute; left: 150px; width: 1620px; }
+  .ghead .gg { font-size: 22px; font-weight: 700; color: var(--blue); }
+  .ghead .gs { font-size: 34px; font-weight: 800; letter-spacing: -.015em; margin-top: 4px; }
+  .cbox { position: absolute; width: 790px; height: 470px; border-radius: 28px; background: #fff; border: 1.5px solid #e4e6eb; overflow: hidden; box-shadow: 0 18px 50px rgba(30,40,90,.10); }
+  .cbox .ch { height: 74px; display: flex; align-items: center; gap: 14px; padding: 0 22px; border-bottom: 1.5px solid #e4e6eb; }
+  .cbox .avs { display: flex; } .cbox .avs img { width: 42px; height: 42px; border-radius: 50%; border: 3px solid #fff; object-fit: cover; }
+  .cbox .avs img + img { margin-left: -12px; }
+  .cbox .cn { flex: 1; font-size: 26px; font-weight: 800; letter-spacing: -.01em; }
+  .cbox .chip { position: relative; height: 34px; min-width: 110px; }
+  .cbox .chip span { position: absolute; right: 0; top: 0; white-space: nowrap; font-size: 19px; font-weight: 800; padding: 5px 14px; border-radius: 999px; }
+  .cbox .chip .live { background: #e7f0ff; color: var(--blue); } .cbox .chip .fit { background: #d7f5dd; color: #12752c; } .cbox .chip .nofit { background: #ececf0; color: #6e6e73; }
+  .cbox .cb { position: absolute; left: 0; right: 0; top: 76px; bottom: 48px; overflow: hidden; }
+  .cbox .cbi { position: absolute; left: 0; right: 0; top: 0; padding: 14px 22px 18px; display: flex; flex-direction: column; gap: 10px; }
+  .cbox .cf { position: absolute; left: 0; right: 0; bottom: 0; height: 48px; display: flex; align-items: center; gap: 8px; padding: 0 22px; font-size: 18px; color: var(--muted); border-top: 1.5px solid #f0f0f2; background: #fafafb; white-space: nowrap; overflow: hidden; }
+  .cbox .cf b { color: #5a2db8; font-weight: 700; }
+  .tb { display: flex; flex-direction: column; } .tb.me { align-items: flex-end; } .tb.other { align-items: flex-start; }
+  .tb .lb { font-size: 15px; font-weight: 700; color: var(--muted); margin: 0 6px 4px; }
+  .tb .tx { font-size: 19px; line-height: 1.36; padding: 11px 16px; border-radius: 20px; max-width: 600px; }
+  .tb.me .tx { background: var(--blue); color: #fff; border-bottom-right-radius: 6px; } .tb.other .tx { background: #f0f0f2; color: #111; border-bottom-left-radius: 6px; }
+  .tb.note { align-items: center; } .tb.note .tx { background: #f5f5f7; color: #1d1d1f; font-size: 17px; text-align: center; border-radius: 14px; max-width: 680px; }
+  .typing { display: inline-flex; gap: 6px; padding: 15px 18px; border-radius: 20px; background: #f0f0f2; }
+  .typing.me { background: var(--blue); } .typing b { width: 9px; height: 9px; border-radius: 50%; background: #8e8e93; } .typing.me b { background: rgba(255,255,255,.85); }
+
+  /* the crowd: a sea of strangers, then the few your Muse found */
+  .crowd { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+  .crowd .dark { position: absolute; inset: 0; background: radial-gradient(1300px 900px at 50% 55%, #2a2632 0%, #15131a 55%, #0b0a0e 100%); }
+  .sil { position: absolute; width: 66px; height: 66px; border-radius: 50%; background: #3a3742; overflow: hidden; }
+  .sil svg { width: 100%; height: 100%; display: block; border-radius: 50%; }
+  .sil img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .ctag { position: absolute; white-space: nowrap; font-size: 27px; font-weight: 600; color: rgba(255,255,255,.85); background: rgba(40,36,48,.92); border: 1px solid rgba(255,255,255,.14);
+    padding: 8px 16px; border-radius: 999px; box-shadow: 0 8px 24px rgba(0,0,0,.35); }
+  .ctag::before { content: "⚠︎ "; color: #ffb020; }
+  .chd { position: absolute; left: 160px; width: 1600px; top: 62px; text-align: center; font-size: 74px; font-weight: 700; letter-spacing: -.03em; line-height: 1.06; color: #fff; }
+  .chd .grad { background: linear-gradient(135deg, #7db4ff 0%, #c99bff 55%, #ff9cbc 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .chk { position: absolute; right: -4px; bottom: -4px; width: 28px; height: 28px; border-radius: 50%; background: #31a24c; color: #fff; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center; border: 3px solid #fff; }
+
+  /* the reach radar: your Muse's agents at work */
+  .orb { position: absolute; width: 34px; height: 34px; border-radius: 50%; background: var(--muse); box-shadow: 0 0 0 6px rgba(160,51,255,.14), 0 8px 20px rgba(160,51,255,.35); }
+  .orb::after { content: ""; position: absolute; left: 9px; top: 9px; width: 16px; height: 16px; border-radius: 50%; background: #fff; }
+  .rtalk { position: absolute; display: flex; gap: 5px; padding: 8px 11px; border-radius: 16px; background: #fff; box-shadow: 0 6px 16px rgba(0,0,0,.12); }
+  .rtalk b { width: 8px; height: 8px; border-radius: 50%; background: #a033ff; }
+  .rchk { position: absolute; width: 26px; height: 26px; border-radius: 50%; background: #31a24c; color: #fff; font-size: 15px; font-weight: 800; display: flex; align-items: center; justify-content: center; border: 3px solid #fff; }
+  .rmuse { position: absolute; display: flex; align-items: center; gap: 10px; padding: 8px 18px 8px 8px; border-radius: 999px; background: rgba(255,255,255,.95); box-shadow: 0 6px 18px rgba(30,40,90,.12); font-size: 22px; font-weight: 700; white-space: nowrap; }
+
   #veil { position: absolute; inset: 0; background: #000; pointer-events: none; }
 </style>
 </head>
@@ -210,13 +309,25 @@ const el = (tag, cls, parent, html) => {
   return e;
 };
 const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]);
-const fmt = (s) => esc(s).replace(/~(.+?)~/g, '<span class="grad">$1</span>').replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/\*(.+?)\*/g, "<i>$1</i>");
+const fmt = (s) => esc(s).replace(/\s+\/\/\s+/g, "<br>").replace(/~(.+?)~/g, '<span class="grad">$1</span>').replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/\*(.+?)\*/g, "<i>$1</i>");
 const plain = (s) => String(s).replace(/[~*]/g, "");
 const style = (e, o, tx = 0, ty = 0, s = 1, extra = "") => {
   e.style.opacity = o.toFixed(4);
   e.style.transform = `translate(${tx.toFixed(2)}px, ${ty.toFixed(2)}px) scale(${s.toFixed(4)})${extra}`;
   e.style.visibility = o <= 0.001 ? "hidden" : "visible";
 };
+const pending = [];
+/** Point an <img> at a frame; the frame isn't shot until it has decoded. */
+const setImg = (img, src) => {
+  if (img.dataset.src === src) return;
+  img.dataset.src = src;
+  img.src = src;
+  pending.push(img.decode().catch(() => {}));
+};
+const mediaSrc = (m, k) => `${BASE}/media/${m.dir}/f${String(clamp(k, 0, m.count - 1) + 1).padStart(5, "0")}.jpg`;
+const rnd = (a, b) => { const x = Math.sin(a * 12.9898 + b * 78.233) * 43758.5453; return x - Math.floor(x); };
+const PERSON_SVG = '<svg viewBox="0 0 66 66"><rect width="66" height="66" fill="#3a3742"/><circle cx="33" cy="26" r="12" fill="#6b6775"/><path d="M11 62c2-14 11-21 22-21s20 7 22 21z" fill="#6b6775"/></svg>';
+const FILM_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5"><rect x="3" y="5" width="13" height="14" rx="2.5"/><path d="M16 10l5-3v10l-5-3z"/></svg>';
 const SEND_SVG = '<svg viewBox="0 0 24 24" fill="#fff"><path d="M3.4 20.4 21 12 3.4 3.6 3.4 10.2 15 12 3.4 13.8z"/></svg>';
 const LOCK_SVG = '<svg viewBox="0 0 24 24" fill="#fff"><path d="M17 9V7a5 5 0 0 0-10 0v2H5v12h14V9h-2zm-8 0V7a3 3 0 0 1 6 0v2H9z"/></svg>';
 
@@ -308,7 +419,7 @@ window.stage = {
     // scenes
     let steps = [];
     for (const [i, sc] of tl.scenes.entries()) {
-      const u = el("div", "scene" + (sc.kind === "live" ? " dark" : ""), under);
+      const u = el("div", "scene" + (sc.kind === "live" ? " dark" : "") + (sc.kind === "film" || sc.kind === "overlay" ? ` ${sc.kind}` : ""), under);
       const o = el("div", "scene", over);
       const S = { ...sc, i, under: u, over: o, items: [], tIn: kindOf(sc.transitionIn), dIn: i === 0 ? 1.1 : TD[kindOf(sc.transitionIn)] };
       if (S.tIn === "cut" && i > 0 && isApp(sc) && isApp(tl.scenes[i - 1])) S.dIn = 0.55;
@@ -330,8 +441,8 @@ window.stage = {
 const BUILD = {
   graphics(S) {
     // Beats: each starter replaces what was on screen. A diagram right after a SUPER joins it (statement on top).
-    const STARTERS = ["super", "logo", "stat", "models", "bubbles", "secrets", "activities", "post", "agents", "chapter", "funcard", "reach"];
-    const DIAGRAMS = ["models", "bubbles", "secrets", "activities", "post", "agents", "funcard", "reach"];
+    const STARTERS = ["super", "logo", "stat", "models", "bubbles", "secrets", "activities", "post", "agents", "chapter", "funcard", "reach", "flurry", "convos", "crowd", "clear"];
+    const DIAGRAMS = ["models", "bubbles", "secrets", "activities", "post", "agents", "funcard", "reach", "flurry", "convos", "crowd"];
     const beats = [];
     let cur = null;
     for (const e of S.events) {
@@ -427,12 +538,15 @@ const BUILD = {
         });
       } else if (D.type === "activities") {
         const n = D.parts.length, w = 420, gap = 48, x0 = 960 - (n * w + (n - 1) * gap) / 2;
+        // with a line of narration per card after the diagram, each card comes up with its line
+        const vos = S.events.filter((e) => e.type === "vo" && e.t >= D.t - 0.01);
+        const at = (k) => (vos.length >= n ? vos[vos.length - n + k].t + 0.05 : D.t + 0.2 + k * 0.3);
         D.parts.forEach((p, k) => {
           const [main, sub] = p.split(" / ");
           const m = main.match(/^(\S+)\s+(.*)$/);
           const c = el("div", "act", S.under, `<div class="ico">${esc(m ? m[1] : "")}</div><div class="lbl">${esc(m ? m[2] : main)}</div>${sub ? `<div class="where">${esc(sub)}</div>` : ""}`);
           c.style.left = x0 + k * (w + gap) + "px"; c.style.top = area.top + Math.max(0, (area.bottom - area.top - 400) / 2) + "px";
-          add(c, D.t + 0.2 + k * 0.3, "rise", { dist: 34 });
+          add(c, at(k), "rise", { dist: 34 });
         });
       } else if (D.type === "post") {
         const [text, group, members] = D.parts;
@@ -477,6 +591,173 @@ const BUILD = {
             style(n.d.querySelector(".badge"), fitQ, 0, 0, lerp(0.8, 1, fitQ));
           });
         } });
+      } else if (D.type === "flurry") {
+        // everyone asks the same thing: bubbles pile up faster and faster over the frame (a jittered grid, shuffled)
+        const n = D.parts.length, cols = 5, rows = Math.ceil(n / cols);
+        const top = area.top + 70, cw = 1760 / cols, rh = (area.bottom - top) / rows;
+        const order = D.parts.map((_, k) => k).sort((a, b) => rnd(a, 3) - rnd(b, 3));
+        const notif = el("div", "notif", S.under, "<i>0</i><span>new messages</span>");
+        notif.style.left = 960 - notif.offsetWidth / 2 + "px"; notif.style.top = area.top - 6 + "px";
+        const times = [];
+        D.parts.forEach((txt, k) => {
+          const cell = order[k];
+          const m = el("div", "msg flur them", S.under, esc(txt));
+          const w = m.offsetWidth, h = m.offsetHeight;
+          const x = 80 + (cell % cols) * cw + rnd(k, 1) * Math.max(0, cw - w * 0.55) - w * 0.2;
+          const y = top + Math.floor(cell / cols) * rh + rnd(k, 2) * Math.max(0, rh - h);
+          m.style.left = clamp(x, 40, 1880 - w) + "px"; m.style.top = clamp(y, top, area.bottom - h) + "px";
+          const at = D.t + 0.25 + 3.1 * Math.pow(k / Math.max(1, n - 1), 0.62);
+          times.push(at);
+          add(m, at, "flur", { k });
+        });
+        add(notif, D.t + 0.2, "fn", { fn: (t, o) => {
+          style(notif, env(t, D.t + 0.2, 0.4), 0, 0);
+          notif.querySelector("i").textContent = String(times.filter((x) => x <= t).length);
+        } });
+      } else if (D.type === "convos") {
+        // the wall of Muse conversations (the app's /conversations): every box on its own clock, the wall scrolls
+        const meAv = TL.persona?.avatar ?? "", meName = (TL.persona?.name ?? "You").split(" ")[0];
+        const wall = el("div", "wall", S.under);
+        const viewTop = area.top - 10;
+        wall.style.top = viewTop + "px"; wall.style.height = 1080 - viewTop + "px";
+        wall.style.webkitMaskImage = wall.style.maskImage = "linear-gradient(transparent 0, #000 36px, #000 calc(100% - 150px), transparent)";
+        const inner = el("div", "in", wall);
+        const BW = 790, BH = 470, GAP = 40;
+        let y = 30, bi = 0;
+        const boxes = [];
+        const PHASES = [1, 0.4, 0.65, 0.25, 1, 0.5, 0.8, 0.3];
+        for (const grp of TL.convos ?? []) {
+          const hd = el("div", "ghead", inner, `<div class="gg">${esc(grp.group)}</div><div class="gs">${esc(grp.summary)}</div>`);
+          hd.style.top = y + "px";
+          y += hd.offsetHeight + 22;
+          const kept = grp.kept?.length ? `🔒 Never shown: <b>${grp.kept.map(esc).join(" · ")}</b>` : "🔒 Only what you allow is shared";
+          grp.convos.forEach((c, k) => {
+            if (k && k % 2 === 0) y += BH + GAP;
+            const b = el("div", "cbox", inner, `<div class="ch"><span class="avs"><img src="${BASE}${meAv}"><img src="${BASE}${c.avatar}"></span><div class="cn">${esc(c.other)}'s Muse</div><div class="chip"><span class="live">● Live</span><span class="${c.fit === false ? "nofit" : "fit"}">${c.fit === false ? "Not a fit" : "Fits"}</span></div></div><div class="cb"><div class="cbi"></div></div><div class="cf">${kept}</div>`);
+            b.style.left = 150 + (k % 2) * (BW + GAP) + "px"; b.style.top = y + "px";
+            const body = b.querySelector(".cbi");
+            const turns = c.turns.map((tu) => el("div", `tb ${tu.side}`, body, `${tu.side === "note" ? "" : `<div class="lb">${esc(tu.side === "me" ? meName : c.other)}'s Muse</div>`}<div class="tx">${tu.side === "note" ? "<b>Referee</b> · " : ""}${esc(tu.text)}</div>`));
+            const typing = { me: el("div", "tb me", body, '<div class="typing me"><b></b><b></b><b></b></div>'), other: el("div", "tb other", body, '<div class="typing"><b></b><b></b><b></b></div>'), note: el("div", "tb note", body, '<div class="typing"><b></b><b></b><b></b></div>') };
+            // its own clock: starts part-way through, then one turn at a time (typing first), until the referee decides
+            const T = turns.length, v0 = Math.max(1, Math.round(T * PHASES[bi % PHASES.length]));
+            const states = [{ t: -1e9, v: v0, typing: null }];
+            let tt = D.t + 0.9 + (bi % 4) * 0.55;
+            for (let v = v0 + 1; v <= T; v++) {
+              const side = c.turns[v - 1].side;
+              states.push({ t: tt, v: v - 1, typing: side });
+              tt += side === "note" ? 1.3 : 1.1;
+              states.push({ t: tt, v, typing: null });
+              tt += 1.6;
+            }
+            // what the body shows in each state, measured once: how far it's scrolled to keep the latest at the bottom
+            const bodyH = BH - 76 - 48;
+            for (const st of states) {
+              turns.forEach((e, i) => (e.style.display = i < st.v ? "flex" : "none"));
+              for (const [side, e] of Object.entries(typing)) e.style.display = st.typing === side ? "flex" : "none";
+              st.scroll = Math.max(0, body.offsetHeight - bodyH);
+            }
+            boxes.push({ b, body, turns, typing, states, T, at: D.t + 0.15 + bi * 0.1, fit: c.fit, chip: b.querySelectorAll(".chip span") });
+            bi++;
+          });
+          y += BH + 64;
+        }
+        const contentH = y, viewH = 1080 - viewTop;
+        add(wall, D.t, "fn", { fn: (t) => {
+          const endT = S.end - 1.0;
+          const sc = Math.max(0, contentH - viewH + 40) * soft(prog(t, D.t + 2.2, Math.max(1, endT - D.t - 2.2)));
+          inner.style.transform = `translateY(${(-sc).toFixed(2)}px)`;
+          for (const bx of boxes) {
+            style(bx.b, env(t, bx.at, 0.6), 0, (1 - out(prog(t, bx.at, 0.7))) * 24);
+            let i = 0;
+            while (i + 1 < bx.states.length && bx.states[i + 1].t <= t) i++;
+            const st = bx.states[i], prevS = bx.states[Math.max(0, i - 1)];
+            bx.turns.forEach((e, k) => {
+              e.style.display = k < st.v ? "flex" : "none";
+              if (k === st.v - 1 && i > 0 && !st.typing) { const q = out(prog(t, st.t, 0.3)); e.style.opacity = q.toFixed(3); e.style.transform = `translateY(${((1 - q) * 10).toFixed(1)}px)`; }
+              else { e.style.opacity = "1"; e.style.transform = "none"; }
+            });
+            for (const [side, e] of Object.entries(bx.typing)) {
+              e.style.display = st.typing === side ? "flex" : "none";
+              [...e.querySelectorAll("b")].forEach((d, k) => (d.style.opacity = (0.35 + 0.65 * (0.5 + 0.5 * Math.sin(t * 6 - k * 0.9))).toFixed(3)));
+            }
+            const scroll = i > 0 ? lerp(prevS.scroll, st.scroll, inOut(prog(t, st.t, 0.45))) : st.scroll;
+            bx.body.style.transform = `translateY(${(-scroll).toFixed(2)}px)`;
+            const done = st.v >= bx.T && !st.typing;
+            const dq = done ? (i > 0 ? soft(prog(t, st.t, 0.4)) : 1) : 0;
+            bx.chip[0].style.opacity = (1 - dq).toFixed(3);
+            bx.chip[1].style.opacity = dq.toFixed(3);
+          }
+        } });
+      } else if (D.type === "crowd") {
+        // Facebook is a sea of strangers. Then your Muse talks to theirs, most fall away, and a few faces come back.
+        const g = el("div", "crowd", S.under);
+        const dark = el("div", "dark", g);
+        const narrowAt = S.events.find((e) => e.type === "narrow" && e.t >= D.t)?.t ?? D.t + 5;
+        const cx = 960, cy = 650, cols = 18, rows = 8, cw = 1920 / cols, rh = 108;
+        const sils = [];
+        for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
+          const x = c * cw + cw / 2 + (r % 2 ? cw / 4 : -cw / 4) + (rnd(r, c) - 0.5) * 26;
+          const y = 248 + r * rh + (rnd(c, r) - 0.5) * 22;
+          if (Math.hypot((x - cx) * 0.9, y - cy) < 150 || x < 30 || x > 1890) continue;
+          const d = el("div", "sil", g, PERSON_SVG);
+          d.style.left = x - 33 + "px"; d.style.top = y - 33 + "px";
+          sils.push({ d, x, y, at: D.t + 0.1 + rnd(c + 7, r + 3) * 1.4, base: 0.45 + rnd(r + 11, c) * 0.45, k: sils.length });
+        }
+        // the few: the strangers nearest a loose ring around the middle
+        const spots = [[-470, -150], [-300, 150], [20, -270], [330, 150], [480, -160]];
+        const people = (TL.people ?? []).slice(0, spots.length);
+        const chosen = spots.map(([dx, dy]) => sils.reduce((best, s) => (Math.hypot(s.x - cx - dx, s.y - cy - dy) < Math.hypot(best.x - cx - dx, best.y - cy - dy) ? s : best), sils[0]));
+        chosen.forEach((s, k) => {
+          s.fit = true;
+          s.img = el("img", "", s.d); s.img.src = `${BASE}${people[k]?.avatar ?? ""}`;
+          s.chk = el("div", "chk", s.d, "✓"); s.d.style.overflow = "visible"; s.img.style.borderRadius = "50%";
+        });
+        // your Muse reaches a lot of them at once
+        const reached = sils.filter((s) => s.fit || rnd(s.k, 9) < 0.3);
+        const svg = el("div", "", g);
+        svg.style.cssText = "position:absolute;inset:0";
+        svg.innerHTML = `<svg width="1920" height="1080" style="position:absolute;inset:0;overflow:visible"><defs><linearGradient id="cg${S.i}" x1="0" x2="1"><stop offset="0" stop-color="#5b9bff"/><stop offset=".55" stop-color="#b57bff"/><stop offset="1" stop-color="#ff7ea6"/></linearGradient></defs>${reached.map((s, j) => `<line data-j="${j}" x1="${cx}" y1="${cy}" x2="${s.x}" y2="${s.y}" stroke="url(#cg${S.i})" stroke-width="2.5" stroke-linecap="round"/>`).join("")}</svg>`;
+        reached.forEach((s, j) => { s.line = svg.querySelector(`line[data-j="${j}"]`); s.len = Math.hypot(s.x - cx, s.y - cy); s.lt = narrowAt + 0.5 + rnd(j, 4) * 0.9; });
+        const me = el("div", "anode me", g, `<div class="av"><img src="${BASE}${TL.persona?.avatar ?? ""}"></div><div class="nm" style="color:#fff">${esc((TL.persona?.name ?? "You").split(" ")[0])}'s Muse</div>`);
+        me.style.left = cx - 90 + "px"; me.style.top = cy - 90 + "px";
+        g.appendChild(svg); g.appendChild(me); chosen.forEach((s) => g.appendChild(s.d));
+        // what a stranger's profile tells you
+        const TAGS = ["No profile picture", "Joined 2 days ago", "0 mutual friends", "Seen 3 days ago", "No posts", "Account created this week", "Location hidden", "\"is this still available?\""];
+        // each tag on the stranger nearest its own spot, spread over the frame so none overlap
+        const TSPOTS = [[330, 380], [1500, 470], [760, 900], [1240, 330], [520, 650], [1640, 820], [1080, 760], [250, 900]];
+        const pool = sils.filter((s) => !s.fit);
+        const tags = TAGS.map((txt, k) => {
+          const [tx, ty] = TSPOTS[k % TSPOTS.length];
+          const s = pool.reduce((b, x) => (Math.hypot(x.x - tx, x.y - ty) < Math.hypot(b.x - tx, b.y - ty) ? x : b), pool[0]);
+          const e = el("div", "ctag", g, esc(txt));
+          e.style.left = clamp(s.x - e.offsetWidth / 2, 40, 1880 - e.offsetWidth) + "px"; e.style.top = s.y - 82 + "px";
+          return { e, at: D.t + 0.9 + k * ((narrowAt - D.t - 2.2) / TAGS.length) };
+        });
+        const h1 = el("div", "chd", g, fmt(D.parts[0] ?? "")), h2 = el("div", "chd", g, fmt(D.parts[1] ?? ""));
+        add(g, D.t, "fn", { fn: (t) => {
+          const fallAt = narrowAt + 1.7;
+          dark.style.opacity = env(t, D.t, 0.9).toFixed(3);
+          style(h1, env(t, D.t + 0.3, 0.8, narrowAt - 0.2, 0.5), 0, (1 - out(prog(t, D.t + 0.3, 0.8))) * 20);
+          style(h2, env(t, narrowAt + 0.4, 0.8), 0, (1 - out(prog(t, narrowAt + 0.4, 0.8))) * 20);
+          for (const s of sils) {
+            const fall = s.fit ? 0 : soft(prog(t, fallAt + rnd(s.k, 5) * 0.9, 0.9));
+            const grow = s.fit ? inOut(prog(t, fallAt + 0.6, 1.0)) : 0;
+            style(s.d, env(t, s.at, 0.7) * lerp(s.base, 1, grow) * (1 - 0.94 * fall), 0, Math.sin(t * 0.35 + s.k) * 4, lerp(1, 1.75, grow));
+            if (s.fit) {
+              const face = soft(prog(t, fallAt + 0.9, 0.8));
+              s.img.style.opacity = face.toFixed(3);
+              s.d.style.boxShadow = `0 0 0 ${(4 * face).toFixed(1)}px rgba(49,162,76,${(0.8 * face).toFixed(3)}), 0 10px 30px rgba(0,0,0,.35)`;
+              style(s.chk, out(prog(t, fallAt + 1.5, 0.5)), 0, 0, 0.75 * lerp(0.8, 1, out(prog(t, fallAt + 1.5, 0.5))));
+            }
+            if (s.line) {
+              s.line.setAttribute("stroke-dasharray", `${s.len}`);
+              s.line.setAttribute("stroke-dashoffset", (s.len * (1 - out(prog(t, s.lt, 0.6)))).toFixed(1));
+              s.line.setAttribute("opacity", ((s.fit ? 0.9 : 0.55) * (1 - fall) * env(t, s.lt, 0.2)).toFixed(3));
+            }
+          }
+          style(me, env(t, narrowAt, 0.6), 0, (1 - out(prog(t, narrowAt, 0.6))) * 12);
+          for (const tg of tags) style(tg.e, Math.min(env(t, tg.at, 0.35, tg.at + 1.9, 0.45), 1 - soft(prog(t, narrowAt - 0.3, 0.4))), 0, (1 - out(prog(t, tg.at, 0.35))) * 10);
+        } });
       } else if (D.type === "funcard") {
         const p = TL.persona ?? {};
         const ico = (s) => (/run/i.test(s) ? "🏃" : /bake|bread|sourdough/i.test(s) ? "🍞" : /chicago|city|new to/i.test(s) ? "🏙️" : /music|band|show/i.test(s) ? "🎵" : /cat|dog/i.test(s) ? "🐾" : "✨");
@@ -515,14 +796,48 @@ const BUILD = {
           const ring = k % 4, idx = Math.floor(k / 4), per = Math.ceil(people.length / 4);
           const ang = -Math.PI / 2 + 0.55 + ((2 * Math.PI - 1.1) * (idx + 0.5)) / per + (ring % 2 ? 0.35 : 0);
           const d = el("div", "rdot", g, `<img src="${BASE}${p.avatar}">`);
-          d.style.left = cx + Math.cos(ang) * radii[ring] - 26 + "px"; d.style.top = cy + Math.sin(ang) * radii[ring] - 26 + "px";
-          return { d, at: D.t + 0.8 + k * 0.12 + ring * 0.05 };
+          const x = cx + Math.cos(ang) * radii[ring], y = cy + Math.sin(ang) * radii[ring];
+          d.style.left = x - 26 + "px"; d.style.top = y - 26 + "px";
+          return { d, x, y, at: D.t + 0.8 + k * 0.12 + ring * 0.05 };
         });
+        // your Muse's agents: each flies out to one person, the two Muses talk (dots), and a few come back as fits
+        const T0 = D.t + 2.2;
+        const targets = [0, 5, 2, 9, 4, 11, 7, 13].filter((k) => k < dots.length);
+        const fitSet = new Set([targets[1], targets[4], targets[6]]);
+        const lines = el("div", "", g);
+        lines.style.cssText = "position:absolute;inset:0";
+        lines.innerHTML = `<svg width="1920" height="1080" style="position:absolute;inset:0;overflow:visible">${targets.map((k) => `<line data-a="${k}" x1="${cx}" y1="${cy}" x2="${dots[k].x}" y2="${dots[k].y}" stroke="#a033ff" stroke-width="3" stroke-dasharray="3 14" stroke-linecap="round" opacity="0"/>`).join("")}</svg>`;
+        const agents = targets.map((k, j) => ({
+          k, dot: dots[k], fit: fitSet.has(k), t0: T0 + j * 0.32, line: lines.querySelector(`line[data-a="${k}"]`),
+          orb: el("div", "orb", g), talk: el("div", "rtalk", g, "<b></b><b></b><b></b>"), chk: el("div", "rchk", g, "✓"),
+        }));
+        const meTag = el("div", "rmuse", g, '<span class="mring sm"></span><span>Your Muse, talking to theirs</span>');
+        meTag.style.left = cx - meTag.offsetWidth / 2 + "px"; meTag.style.top = cy + 104 + "px";
         add(g, D.t, "fn", { fn: (t, o) => {
           style(meEl, o * env(t, D.t, 0.6), 0, 0);
           rings.forEach((r, k) => style(r, o * env(t, D.t + 0.15 + k * 0.25, 0.7), 0, 0, lerp(0.85, 1, out(prog(t, D.t + 0.15 + k * 0.25, 0.9)))));
           labels.forEach((l, k) => style(l, o * env(t, D.t + 0.5 + k * 0.25, 0.6), 0, (1 - out(prog(t, D.t + 0.5 + k * 0.25, 0.6))) * 10));
-          dots.forEach((x) => style(x.d, o * env(t, x.at, 0.5), 0, 0, lerp(0.7, 1, out(prog(t, x.at, 0.5)))));
+          const dim = new Map();
+          style(meTag, o * env(t, T0 - 0.6, 0.6), 0, (1 - out(prog(t, T0 - 0.6, 0.6))) * 10);
+          for (const a of agents) {
+            const arrive = a.t0 + 0.8, done = arrive + 1.7;
+            const q = inOut(prog(t, a.t0, 0.8));
+            const ox = lerp(cx, a.dot.x, q), oy = lerp(cy, a.dot.y, q);
+            style(a.orb, o * Math.min(soft(prog(t, a.t0, 0.25)), 1 - soft(prog(t, arrive, 0.35))), ox - 17, oy - 17, lerp(0.7, 1, q));
+            const talking = Math.min(soft(prog(t, arrive, 0.3)), 1 - soft(prog(t, done, 0.4)));
+            a.line.setAttribute("opacity", (o * 0.55 * talking).toFixed(3));
+            a.line.setAttribute("stroke-dashoffset", (-t * 40).toFixed(1));
+            style(a.talk, o * talking, a.dot.x + 14, a.dot.y - 58, lerp(0.85, 1, out(prog(t, arrive, 0.3))));
+            [...a.talk.children].forEach((d, i) => (d.style.opacity = (0.4 + 0.6 * (0.5 + 0.5 * Math.sin(t * 5 - i * 0.9))).toFixed(3)));
+            const ring = Math.min(1, talking + (a.fit ? soft(prog(t, done, 0.4)) : 0));
+            a.dot.d.style.boxShadow = ring > 0.001
+              ? `0 0 0 ${(5 * ring).toFixed(1)}px ${a.fit && t > done ? "rgba(49,162,76,.55)" : `rgba(160,51,255,${(0.5 * ring).toFixed(3)})`}, 0 6px 16px rgba(30,40,90,.15)`
+              : "";
+            const fq = a.fit ? out(prog(t, done, 0.45)) : 0;
+            style(a.chk, o * fq, a.dot.x + 12, a.dot.y + 8, lerp(0.7, 1, fq));
+            if (!a.fit) dim.set(a.k, soft(prog(t, done, 0.6)));
+          }
+          dots.forEach((x, k) => style(x.d, o * env(t, x.at, 0.5) * (1 - 0.55 * (dim.get(k) ?? 0)), 0, 0, lerp(0.7, 1, out(prog(t, x.at, 0.5)))));
           sweep.style.opacity = (o * 0.9 * env(t, D.t + 0.6, 0.8)).toFixed(3);
           sweep.style.transform = `rotate(${((t - D.t) * 60).toFixed(2)}deg)`;
         } });
@@ -548,6 +863,46 @@ const BUILD = {
   },
   feature(S) {
     buildApp(S);
+  },
+  film(S) {
+    S.film = S.events.find((e) => e.type === "film");
+    S.img = el("img", "footage", S.under);
+    S.subs = (S.film?.captions ?? []).map((c) => {
+      const w = el("div", "subwrap", S.under, `<span class="subtitle">${esc(c.text).replace(/\n/g, "<br>")}</span>`);
+      return { ...c, e: w };
+    });
+  },
+  overlay(S) {
+    const u = S.under;
+    S.clip = S.events.find((e) => e.type === "clip");
+    if (S.clip?.media) S.clipImg = el("img", "footage", u);
+    else el("div", "slot", u, `<div class="frame">${FILM_SVG}<div class="k">Video slot</div><div class="l">${esc(S.clip?.label ?? "A video goes here")}</div><div class="f">scripts/video/assets/clips/${esc(S.clip?.name ?? "clip")}.mov</div></div>`);
+    el("div", "shade", u);
+    S.oheads = S.events.filter((e) => e.type === "super").map((e) => ({ t: e.t, e: el("div", "oh", u, fmt(e.text)) }));
+    S.panel = el("div", "panel", u, '<div class="phd"><span class="mring"></span><div><b>Muse</b><span>Private · just you and Muse</span></div></div><div class="pbody"><div class="pin"></div></div>');
+    S.pin = S.panel.querySelector(".pin");
+    const ring = '<span class="mring sm"></span>';
+    const label = { ember: "Muse Ember · watched and listened", spark: "Muse Spark" };
+    const dur = S.clip?.dur ? `${Math.floor(S.clip.dur / 60)}:${String(Math.round(S.clip.dur % 60)).padStart(2, "0")}` : null;
+    S.msgs = S.events.filter((e) => e.type === "chat" || e.type === "item").map((m) => {
+      let html;
+      if (m.type === "item") {
+        const [name, said, tag, icon] = m.parts;
+        html = `<div class="cm them"><div class="who">Muse Spark</div><div class="row">${ring}<div class="icard"><div class="ic">${esc(icon ?? "✨")}</div><div><div class="nm">${esc(name ?? "")}</div><span class="tg">${esc(tag ?? "Named down to the model")}</span>${said ? `<div class="sd">${esc(said)}</div>` : ""}</div></div></div></div>`;
+      } else if (m.who === "me") html = `<div class="cm me"><div class="b">${fmt(m.text)}</div></div>`;
+      else if (m.who === "video") {
+        const thumb = S.clip?.media ? `<img src="${mediaSrc(S.clip.media, Math.floor(S.clip.media.count * 0.3))}">` : "";
+        html = `<div class="cm me"><div class="vid">${thumb}<div class="pl"></div><div class="ln">${esc(dur ?? m.text)}</div></div></div>`;
+      } else html = `<div class="cm them">${label[m.who] ? `<div class="who">${label[m.who]}</div>` : ""}<div class="row">${ring}<div class="b">${fmt(m.text)}</div></div></div>`;
+      const wrap = el("div", "", S.pin, html);
+      return { t: m.t, e: wrap };
+    });
+    // how far the chat has scrolled once each message is in (the latest stays in view)
+    const bodyH = S.panel.querySelector(".pbody").offsetHeight;
+    S.scrolls = S.msgs.map((_, i) => {
+      S.msgs.forEach((m, k) => (m.e.style.display = k <= i ? "block" : "none"));
+      return Math.max(0, S.pin.offsetHeight - bodyH);
+    });
   },
 };
 
@@ -721,6 +1076,7 @@ async function render(t) {
     document.getElementById("shot0").style.visibility = q < 1 ? "visible" : "hidden";
   }
   STATE.phone = ph;
+  await Promise.all(pending.splice(0));
 }
 const STATE = { phone: null };
 
@@ -748,6 +1104,10 @@ const RENDER = {
         } else if (it.kind === "dot") {
           const o = env(t, it.t, 0.35, end, 0.45);
           style(e, o, 0, 0, lerp(0.7, 1, out(prog(t, it.t, 0.35))));
+        } else if (it.kind === "flur") {
+          const o = env(t, it.t, 0.2, end, 0.55);
+          const q = out(prog(t, it.t, 0.28));
+          style(e, o, 0, (1 - q) * 14 + Math.sin(t * 0.9 + it.k) * 3, lerp(0.82, 1, q));
         } else if (it.kind === "float") {
           const r = RISE(it.t, t, end, 22, 0.6);
           style(e, r.o, 0, r.y + Math.sin(t * 0.7 + it.k) * 4);
@@ -785,6 +1145,32 @@ const RENDER = {
   },
   feature(S, t) {
     renderApp(S, t);
+  },
+  film(S, t) {
+    const f = S.film;
+    if (f?.media) setImg(S.img, mediaSrc(f.media, Math.floor((t - f.t) * f.media.fps)));
+    const lt = t - (f?.t ?? S.start);
+    for (const c of S.subs) style(c.e, env(lt, c.a - 0.05, 0.15, c.b, 0.15), 0, 0);
+  },
+  overlay(S, t) {
+    if (S.clipImg) setImg(S.clipImg, mediaSrc(S.clip.media, Math.floor((t - S.clip.t) * S.clip.media.fps)));
+    S.oheads.forEach((h, k) => {
+      const r = RISE(h.t, t, S.oheads[k + 1]?.t ?? null);
+      style(h.e, r.o, 0, r.y);
+    });
+    style(S.panel, env(t, S.start + 0.4, 0.8), 0, (1 - out(prog(t, S.start + 0.4, 0.9))) * 36);
+    let last = -1;
+    S.msgs.forEach((m, k) => {
+      const on = t >= m.t;
+      m.e.style.display = on ? "block" : "none";
+      if (!on) return;
+      last = k;
+      const q = out(prog(t, m.t, 0.4));
+      m.e.style.opacity = q.toFixed(3);
+      m.e.style.transform = `translateY(${((1 - q) * 18).toFixed(1)}px)`;
+    });
+    const y = last < 0 ? 0 : lerp(S.scrolls[last - 1] ?? 0, S.scrolls[last], inOut(prog(t, S.msgs[last].t, 0.5)));
+    S.pin.style.transform = `translateY(${(-y).toFixed(2)}px)`;
   },
 };
 

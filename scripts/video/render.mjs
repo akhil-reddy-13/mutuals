@@ -31,6 +31,44 @@ const FPS = Number(arg("fps", 60));
 const WORKERS = Number(arg("workers", 4));
 const PORT = 3102;
 const tl = JSON.parse(fs.readFileSync(path.join(OUT, "timeline.json"), "utf8"));
+const MEDIA = path.join(OUT, "media");
+
+// ---------------------------------------------------------------- filmed footage and clip slots
+// Each [[film]] and each filled [[clip]] is cut into JPEG frames once (out/media/<key>/), and the stage shows the
+// frame for time t like it shows the app. A clip slot whose file isn't there yet is drawn as an empty slot.
+const media = () => tl.scenes.flatMap((s) => s.events.filter((e) => (e.type === "film" || e.type === "clip") && e.src));
+function probe(file) {
+  let out = "";
+  try {
+    execFileSync(FFMPEG, ["-hide_banner", "-i", file], { stdio: ["ignore", "ignore", "pipe"] });
+  } catch (e) {
+    out = String(e.stderr);
+  }
+  const fps = Number(out.match(/,\s*([\d.]+)\s*fps/)?.[1] ?? 30);
+  return { fps: Math.min(60, fps || 30), audio: /Stream #.*Audio:/.test(out) };
+}
+function prepareMedia() {
+  for (const e of media()) {
+    if (!fs.existsSync(e.src)) {
+      delete e.src;
+      continue;
+    }
+    const st = fs.statSync(e.src);
+    const key = Buffer.from(`${e.src}|${st.size}|${st.mtimeMs}`).toString("base64url").slice(-32);
+    const dir = path.join(MEDIA, key);
+    const { fps, audio } = probe(e.src);
+    if (!fs.existsSync(path.join(dir, "done"))) {
+      console.log(`cutting ${path.basename(e.src)} into frames`);
+      fs.rmSync(dir, { recursive: true, force: true });
+      fs.mkdirSync(dir, { recursive: true });
+      execFileSync(FFMPEG, ["-hide_banner", "-loglevel", "error", "-i", e.src, "-vf", "scale=1920:1080:force_original_aspect_ratio=increase:flags=lanczos", "-q:v", "3", path.join(dir, "f%05d.jpg")]);
+      fs.writeFileSync(path.join(dir, "done"), "");
+    }
+    const count = fs.readdirSync(dir).filter((f) => f.endsWith(".jpg")).length;
+    Object.assign(e, { media: { dir: key, fps, count }, audio });
+  }
+}
+prepareMedia();
 
 // ---------------------------------------------------------------- files for the stage
 const TYPES = { ".html": "text/html; charset=utf-8", ".jpg": "image/jpeg", ".png": "image/png", ".json": "application/json" };
@@ -41,6 +79,8 @@ function serve() {
     let file = null;
     if (url === "/stage.html") file = path.join(HERE, "stage.html");
     for (const [prefix, dir] of Object.entries(roots)) if (url.startsWith(prefix)) file = path.join(dir, path.basename(url));
+    const m = url.match(/^\/media\/([\w-]+)\/(f\d+\.jpg)$/);
+    if (m) file = path.join(MEDIA, m[1], m[2]);
     if (!file || !fs.existsSync(file)) return res.writeHead(404).end();
     res.writeHead(200, { "content-type": TYPES[path.extname(file)] ?? "application/octet-stream", "cache-control": "max-age=3600" });
     fs.createReadStream(file).pipe(res);
@@ -109,7 +149,9 @@ async function main() {
     const list = path.join(OUT, "segs.txt");
     fs.writeFileSync(list, segs.map((s) => `file '${s.file}'`).join("\n"));
     const final = path.join(OUT, partial ? "preview.mp4" : "mutuals-demo.mp4");
-    execFileSync(FFMPEG, ["-hide_banner", "-loglevel", "error", "-y", "-f", "concat", "-safe", "0", "-i", list, "-c", "copy", "-movflags", "+faststart", final]);
+    const silent = path.join(OUT, "silent.mp4");
+    execFileSync(FFMPEG, ["-hide_banner", "-loglevel", "error", "-y", "-f", "concat", "-safe", "0", "-i", list, "-c", "copy", "-movflags", "+faststart", silent]);
+    withAudio(silent, final, a / FPS, (b - a) / FPS);
     for (const s of segs) fs.rmSync(s.file, { force: true });
     fs.rmSync(list, { force: true });
     console.log(`wrote ${path.relative(process.cwd(), final)} in ${((Date.now() - t0) / 1000).toFixed(0)}s`);
@@ -118,6 +160,20 @@ async function main() {
     await browser.close();
     server.close();
   }
+}
+
+/** The footage's own sound (the skit, a filled clip slot) laid on the video at its place; silent everywhere else. */
+function withAudio(video, final, from, dur) {
+  const tracks = media().filter((e) => e.audio && e.src && e.t + (e.dur ?? 0) > from && e.t < from + dur);
+  if (!tracks.length) return fs.renameSync(video, final);
+  const inputs = tracks.flatMap((e) => ["-i", e.src]);
+  const parts = tracks.map((e, i) => {
+    const skip = Math.max(0, from - e.t), delay = Math.round(Math.max(0, e.t - from) * 1000), len = (e.dur ?? 0) - skip;
+    return `[${i + 1}:a]atrim=start=${skip.toFixed(3)},asetpts=PTS-STARTPTS,aresample=48000,afade=t=out:st=${Math.max(0, len - 0.6).toFixed(3)}:d=0.6,adelay=${delay}|${delay}[a${i}]`;
+  });
+  const filter = `${parts.join(";")};${tracks.map((_, i) => `[a${i}]`).join("")}amix=inputs=${tracks.length}:normalize=0,apad[out]`;
+  execFileSync(FFMPEG, ["-hide_banner", "-loglevel", "error", "-y", "-i", video, ...inputs, "-filter_complex", filter, "-map", "0:v", "-map", "[out]", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-t", dur.toFixed(3), "-movflags", "+faststart", final]);
+  fs.rmSync(video, { force: true });
 }
 
 /** The narration timing as a scratch track (macOS voices), for whoever records the real voiceover. Not in the video. */

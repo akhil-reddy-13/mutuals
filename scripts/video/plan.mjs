@@ -11,8 +11,10 @@ const CMD =
 export const transitionKind = (t = "") =>
   /BUBBLE|WIPE|IRIS/.test(t) ? "wipe" : /SMASH/.test(t) ? "smash" : /MATCH/.test(t) ? "match" : /DISSOLVE/.test(t) ? "dissolve" : /FADE/.test(t) ? "fade" : "cut";
 
+const APP_KINDS = ["phone", "feature", "setup"];
+
 function lineStep(scene, who, ext, paren, text) {
-  const appScene = scene.kind === "phone" || scene.kind === "feature";
+  const appScene = APP_KINDS.includes(scene.kind);
   if (appScene && (/typ/i.test(paren ?? "") || /TYP/.test(ext))) return { t: "type", who, text };
   const vo = /V\.?O|O\.?S|O\.?C/.test(ext) || who === "NARRATOR";
   return { t: vo ? "vo" : "line", who, paren, text };
@@ -22,7 +24,7 @@ function lineStep(scene, who, ext, paren, text) {
 export function compile(scene) {
   const steps = [];
   const els = scene.elements;
-  const appScene = scene.kind === "phone" || scene.kind === "feature";
+  const appScene = APP_KINDS.includes(scene.kind);
   for (let i = 0; i < els.length; i++) {
     const e = els[i];
     if (e.type === "note") {
@@ -41,7 +43,7 @@ export function compile(scene) {
             if (m[1]) steps.push({ t: "cmd", verb: VERB(m[1]), target: m[2] });
             else steps.push({ t: "cmd", verb: "pop", target: m[3] ?? m[4] });
           }
-        } else if (scene.kind === "live") steps.push({ t: "describe", text: line });
+        } else if (scene.kind === "live" || scene.kind === "film") steps.push({ t: "describe", text: line });
       }
     } else if (e.type === "character") {
       const who = e.name.toUpperCase();

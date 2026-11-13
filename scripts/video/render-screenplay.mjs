@@ -71,6 +71,27 @@ function onScreen(note) {
       return `ON SCREEN: Rings around one person, one for each place Muse looks: ${parts.map(q).join(", ")}. People appear on them.`;
     case "models":
       return "ON SCREEN: Three cards. Muse Spark, Muse Wonder, Muse Ember.";
+    case "film":
+      return `ON SCREEN: The filmed skit (${inline(parts[0] ?? "")}), with captions${parts[1] ? ` from ${inline(parts[1])}` : ""}.`;
+    case "clip":
+      return `ON SCREEN: Full frame, a video slot: ${inline(parts[1] ?? parts[0] ?? "")} (scripts/video/assets/clips/${inline(parts[0] ?? "")}.mov). The Muse chat sits over it.`;
+    case "chat": {
+      const m = argText.match(/^(\w+)\s*:\s*([\s\S]*)$/);
+      const who = { me: "Jamie", muse: "Muse", ember: "Muse Ember", spark: "Muse Spark", video: "Jamie sends the video" }[m?.[1]?.toLowerCase()] ?? "Muse";
+      return m?.[1]?.toLowerCase() === "video" ? `IN THE CHAT: ${who}.` : `IN THE CHAT, ${who.toUpperCase()}: ${q(m ? m[2] : argText)}`;
+    }
+    case "item":
+      return `IN THE CHAT: Spark's card, ${q(parts[0] ?? "")}${parts[1] ? ` (${inline(parts[1])})` : ""}.`;
+    case "flurry":
+      return `ON SCREEN: Messages pile up faster and faster, a counter running: ${parts.slice(0, 4).map(q).join(", ")} and ${parts.length - 4} more. Then they all fade.`;
+    case "clear":
+      return "ON SCREEN: Everything fades. A beat of nothing.";
+    case "convos":
+      return "ON SCREEN: The wall of Muse conversations (like the app's /conversations). Every box at a different point: some typing, some talking, some settled as Fits or Not a fit. Each box's footer says what's never shown. The wall scrolls.";
+    case "crowd":
+      return `ON SCREEN: Dark. A sea of gray, faceless profiles, tagged "No profile picture", "0 mutual friends", "Joined 2 days ago". ${q(parts[0] ?? "")}`;
+    case "narrow":
+      return `ON SCREEN: Jamie's Muse appears in the middle and reaches dozens of them. Most fade away. Five stay, turn into real faces, and get a green check.`;
     case "network":
       return "ON SCREEN: The Muse network, live. Jamie's Muse in the middle, everyone it is talking to around it, each one turning into Fits or Not a fit.";
     case "phone":
