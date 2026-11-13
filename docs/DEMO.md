@@ -29,7 +29,7 @@ Both phones start on **Home** (a normal-looking feed). Phone A goes **Groups →
 | Time | Say | Do (Phone A unless noted) |
 |---|---|---|
 | 0:00 | "Instagram is for people you already know. Facebook is for people you need to meet." Young adults end up in Groups and Marketplace for roommates, rides, sublets, and it's miserable: public posts make you overshare or hide what matters, and it's fifty awkward messages. | Start on Home. The first card is Mutuals: **"Skip the fifty awkward messages."** with the roommate example. Tap **Try it** → Stanford Housing '27. Show Casey's ISO post, Jordan's dog post. |
-| 0:45 | "Meta described a Muse network for friends and family. We built the part for people you haven't met yet, inside the Groups you're already in." | Tap **Ask Muse privately** in the composer. |
+| 0:45 | "Meta described a Muse network for friends and family. We built the part for people you haven't met yet, inside the Groups you're already in." | Tap **Ask Muse** in the composer. |
 | 1:00 | "You tell your Muse the stuff you'd never post." | Type line 1, 2, 3. Point at the badges: **Public**, **Kept private**, **Never shared**. Tap one badge to show it cycles, then tap it back (a changed badge re-runs matching live). |
 | 1:45 | "Film the room. Ten seconds." | Record video (or Use photos). Room facts + leftover items appear. |
 | 2:15 | "Now the part no search box can do. Muse is the friend who knows everyone." | Tap **Yes, check**. "Checking with N people's Muses…" Watch Priya's stream. Point at the lock chips: kept-private facts are used, never shown. Point at Priya's Muse saying "a private number". |
@@ -65,14 +65,14 @@ Both phones start on **Home** (a normal-looking feed). Phone A goes **Groups →
 
 Use these as the "and it's not just housing" beat, or as a backup if the room video misbehaves. Reset first or they stack up in Notifications.
 
-**Plus-one.** Groups → **SF New Grads 2026** → Ask Muse privately.
+**Plus-one.** Groups → **SF New Grads 2026** → Ask Muse.
 1. `Going to beabadoobee at the Fox on Dec 12 and nobody I know is going`
 2. `No ticket yet, I'd pay up to $70 for a spare but keep that private`
 3. `Drinks before would be fun, small group, and I don't have a car so I'd need a ride back to the Mission`
 
 Theo's Muse (has a ticket, driving back) and Lena's Muse (spare ticket) negotiate tickets, meeting point and the ride. Casey posted the same thing without Muse, so a reply is drafted. The connection card suggests Theo's pre-show Event. Line to say: "Same engine. The private part this time is a ticket budget."
 
-**Ride to SFO.** Groups → **Stanford Free & For Sale** → Ask Muse privately.
+**Ride to SFO.** Groups → **Stanford Free & For Sale** → Ask Muse.
 1. `Need a ride to SFO Friday afternoon from the Mission`
 2. `Flight's at 5:10, one carry-on and a backpack, happy to split gas`
 
@@ -100,7 +100,7 @@ Recreate it exactly:
    at snapshot time: main `857ce27` + `fix/extension-hydration`. If prompts change later, check that commit out to
    replay it word for word.
 2. To record it live from a clean slate instead: avatar menu → **Reset demo**, persona **Alex Kim**, open
-   **Stanford Housing '27 → Ask Muse privately**, then type exactly:
+   **Stanford Housing '27 → Ask Muse**, then type exactly:
    - tap the chip **Looking for a room**
    - `$1200; first two weeks of June.`
    - `I'm pretty clean and don't want a messy roomate; otherwise idc`  (keep the typo: inputs must match exactly)

@@ -8,7 +8,7 @@ Your Muse checks with other people's Muses to find who actually fits what you ne
 
 Built at the Facebook Closer Together AI Hackathon 2026 (Meta HQ) by Akhil, Kyle, Luke and Eddy.
 
-Instagram is for people you already know. Facebook is for people you need to meet. Young adults already end up in Facebook Groups and Marketplace for a roommate, a sublet, a ride, a buyer for the desk, a study partner, someone to go to a show with, and it's miserable. Mutuals turns that into one ask. Inside a Group you tap **Ask Muse privately** and say what you need, including what you'd never post (your real budget, your habits, your dealbreakers). Muse, the friend who knows everyone, quietly checks with other people's Muses and comes back with **people**, not listings: who fits, why, and the one thing you two should talk about. You decide who to message, and you send it. Muse never talks to anyone for you.
+Instagram is for people you already know. Facebook is for people you need to meet. Young adults already end up in Facebook Groups and Marketplace for a roommate, a sublet, a ride, a buyer for the desk, a study partner, someone to go to a show with, and it's miserable. Mutuals turns that into one ask. Inside a Group you tap **Ask Muse** and say what you need, including what you'd never post (your real budget, your habits, your dealbreakers). Muse, the friend who knows everyone, quietly checks with other people's Muses and comes back with **people**, not listings: who fits, why, and the one thing you two should talk about. You decide who to message, and you send it. Muse never talks to anyone for you.
 
 No posting required. No Facebook friends required: your school or city is enough.
 
@@ -32,7 +32,7 @@ Meta has described a Muse network where your Muse works with your friends' and f
 ## The hero flow (what the demo shows)
 
 1. **Group page.** Stanford Housing '27. Casey's ISO post, Jordan's dog post, the usual.
-2. **Ask Muse privately.** Three lines of chat. Every preference comes back tagged **Public**, **Kept private** or **Never shared**. Tap a badge to change it.
+2. **Ask Muse.** Three lines of chat. Every preference comes back tagged **Public**, **Kept private** or **Never shared**. Tap a badge to change it.
 3. **Film the room.** Ten seconds. Muse Ember returns room facts and the leftover items the next person might want.
 4. **"Want me to check with other Muses in this group?"** That question is the opt-in. It is scoped to the Group.
 5. **Watch the negotiation.** Every candidate runs in parallel. Alex's Muse and Priya's Muse settle rent, dates, furniture and quiet hours in two rounds. A referee call writes the verdict. Jordan's Muse brings a dog; Alex's Muse stops early. Casey has no Muse; Ember reads her post and drafts a reply.

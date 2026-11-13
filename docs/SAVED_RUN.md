@@ -14,7 +14,7 @@ search turned into a low-pressure plan to *do something together*. Keep it as th
    snapshot still restores this exact one. To re-record on newer prompts, run it again and
    `npm run snapshot -- save <new-name>`.
 
-## Inputs (as Alex Kim, Stanford Housing '27 → Ask Muse privately)
+## Inputs (as Alex Kim, Stanford Housing '27 → Ask Muse)
 
 1. Tap the chip **Looking for a room**
 2. Type `$1200; first two weeks of June.`

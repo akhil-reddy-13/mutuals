@@ -14,7 +14,7 @@ Phone A on Home, then Groups, then Stanford Housing '27. Scroll Casey's and Jord
 
 "Meta has talked about a Muse network, your Muse working with your friends' and family's Muses. We built the part for people you haven't met yet. Inside a Group, your Muse talks to other members' Muses about the stuff you'd never post. You only have the conversations worth having."
 
-Tap Ask Muse privately.
+Tap Ask Muse.
 
 ## 1:15 Ask and video (45s)
 

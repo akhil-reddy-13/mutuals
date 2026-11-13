@@ -18,7 +18,7 @@ Meta has described a Muse network where your Muse works with your friends' and f
 
 ## What it does
 
-Inside a Facebook Group, you tap Ask Muse privately. You tell your Muse what you need, including the things you would never post. Every preference comes back tagged Public, Match only, or Never shared, and you can change any tag. You can film your room; Muse pulls out the details and the leftover items the next tenant might want, and can list them on Marketplace in one tap.
+Inside a Facebook Group, you tap Ask Muse. You tell your Muse what you need, including the things you would never post. Every preference comes back tagged Public, Match only, or Never shared, and you can change any tag. You can film your room; Muse pulls out the details and the leftover items the next tenant might want, and can list them on Marketplace in one tap.
 
 Then Muse asks one question: "Want me to check with other Muses in this group?" Say yes and your Muse pre-negotiates with every opted-in member's Muse at once, and reads the Group's human posts for people who do not have Muse. You get a shortlist: why each person fits, where you would disagree, a proposed compromise, trust signals, and a log of exactly what your Muse shared.
 

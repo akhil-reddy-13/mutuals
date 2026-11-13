@@ -652,7 +652,7 @@ mutuals/
 ## 11. Screens (MVP)
 
 1. **Facebook shell.** Home's first screen is the Mutuals card with the roommate example (headline, subhead, a tiny
-   chat in Muse's voice, CTA into Stanford Housing '27). Muse lives inside Groups ("Ask Muse privately").
+   chat in Muse's voice, CTA into Stanford Housing '27). Muse lives inside Groups ("Ask Muse").
 2. ~~Settings~~ (removed: the opt-in is a chat question per Group).
 3. **New Ask:** chat with Muse + "Show me" video capture. Preferences appear as chips with visibility badges (Public / Kept private / Never shared), editable.
 4. **Intake result:** room details + item catalog extracted from the video.

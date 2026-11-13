@@ -32,6 +32,18 @@ export const IMAGES: Record<string, string> = {
 // Portraits for personas whose avatar file doesn't exist yet (fictional people). Saved as public/avatars/<id>.jpg.
 const PORTRAIT_STYLE = "Head-and-shoulders portrait, candid smartphone photo, natural light, realistic, friendly expression, no text, no logos.";
 export const PORTRAITS: Record<string, string> = {
+  // SF personas (regenerated Nov 12 so faces match the names; the originals were random stock portraits)
+  alex: "A 23-year-old Korean American man with short black hair and a friendly smile, olive bomber jacket, a sunny San Francisco street with pastel houses behind him.",
+  priya: "A 23-year-old Indian American woman with long dark hair and a warm smile, light blue denim jacket, a coffee shop window behind her.",
+  casey: "A 22-year-old Vietnamese American woman with shoulder-length black hair and a soft smile, cream knit sweater, a leafy Stanford campus path behind her.",
+  maya: "A 22-year-old Indian American woman with wavy dark hair tied back, bright smile, running jacket, the Embarcadero waterfront in the morning behind her.",
+  theo: "A 23-year-old Korean American man with neat dark hair and round glasses, smiling, grey crewneck, a BART station platform softly blurred behind him.",
+  rosa: "A 24-year-old Mexican American woman with dark curly hair and a big laugh, red top, a sunny Mission District mural behind her.",
+  kai: "A 24-year-old Japanese American man with slightly messy black hair and a relaxed smile, black t-shirt, Golden Gate Park trees behind him.",
+  nina: "A 22-year-old Nigerian American woman with short natural hair and a confident smile, mustard blouse, a university library interior behind her.",
+  omar: "A 25-year-old Lebanese American man with short dark hair and a trimmed beard, warm smile, navy quarter-zip, a bike parked on a city street behind him.",
+  june: "A 22-year-old Chinese American woman with straight black hair and bangs, gentle smile, green cardigan, a sunlit dorm room window behind her.",
+  dev: "A 21-year-old Indian American man with short dark hair and a wide grin, maroon hoodie, a Stanford quad arcade behind him.",
   jamie: "A 20-year-old Latino college student with short curly dark hair and a warm smile, plain grey hoodie, sunny university campus behind him.",
   nora: "A 21-year-old woman with long red hair and freckles, smiling, navy running jacket, city park in the morning.",
   diego: "A 21-year-old Latino man with a short beard and round glasses holding a grey tabby cat, cozy apartment behind him.",

@@ -218,11 +218,11 @@ export const StopIcon = (p: P) => (
 );
 
 /** The Meta AI / Muse mark: a gradient ring. */
+/** The Muse mark (public/muse-mark.png, transparent). Rendered as an image so it looks the same everywhere. */
 export function MuseMark({ size = 24, className = "" }: { size?: number; className?: string }) {
-  const ring = Math.max(2, Math.round(size * 0.16));
   return (
-    <span className={`muse-ring inline-flex shrink-0 items-center justify-center rounded-full ${className}`} style={{ width: size, height: size }}>
-      <span className="rounded-full bg-white" style={{ width: size - ring * 2, height: size - ring * 2 }} />
+    <span className={`inline-flex shrink-0 items-center justify-center ${className}`} style={{ width: size, height: size }}>
+      <img src="/muse-mark.png" alt="" width={size} height={size} draggable={false} style={{ width: size, height: size, objectFit: "contain" }} />
     </span>
   );
 }

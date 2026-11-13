@@ -31,7 +31,7 @@ export default async function DigestPage() {
           </div>
         </div>
         <p className="mt-3 text-[15px] leading-5">
-          Open any Group and tap <b>Ask Muse privately</b>. Your Muse checks with other members&apos; Muses on the things you&apos;d never post, then hands you a shortlist. You decide who to talk to.
+          Open any Group and tap <b>Ask Muse</b>. Your Muse checks with other members&apos; Muses on the things you&apos;d never post, then hands you a shortlist. You decide who to talk to.
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
           {groupsWithMuse.map((g) => (
