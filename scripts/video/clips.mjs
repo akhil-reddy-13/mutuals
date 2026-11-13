@@ -53,7 +53,7 @@ let page;
 // --pace 0.75 = 25% less waiting between steps (default). 1 = the original, slower pace.
 // --dry: run every step fast with no recording, just to fill the Muse cache so the real recording replays instantly.
 const DRY = flag("dry");
-const PACE = DRY ? 0.05 : Number(arg("pace", "0.75"));
+const PACE = DRY ? 0.05 : Number(arg("pace", "0.9"));
 const pause = (ms) => new Promise((r) => setTimeout(r, ms * PACE));
 /** Run a page step; if a navigation tears down the page mid-step, wait for the new page and try again. */
 async function steady(fn, tries = 4) {
@@ -198,6 +198,19 @@ async function scrollTo(text) {
   }, text);
   await pause(1600);
 }
+/** Bring some text into view, rest the cursor on it, and linger like someone reading. */
+async function read(text, ms = 3000) {
+  await scrollTo(text);
+  const b = await page
+    .evaluate((t) => {
+      const el = [...document.querySelectorAll("body *")].find((e) => e.children.length === 0 && e.textContent?.includes(t));
+      const r = el?.getBoundingClientRect();
+      return r ? { x: r.x + Math.min(r.width, 260) / 2, y: r.y + r.height / 2 } : null;
+    }, text)
+    .catch(() => null);
+  if (b) await page.evaluate((x, y) => window.__moveCur?.(x, y), b.x, b.y);
+  await pause(ms);
+}
 async function slowScroll(px = 1600, steps = 10) {
   for (let i = 0; i < steps; i++) {
     await page.evaluate((d) => {
@@ -237,15 +250,27 @@ async function alexRoommateToRun() {
   }
   await tap("Yes, check", { timeout: 60_000 }); // uses the reach set in Muse settings
   await waitText("I found", 240_000);
-  await slowScroll(2400, 14); // the Muses talking, then the shortlist
+  await pause(1200);
+  // Read Muse's verdict in the chat first: "I found N people who fit. Sam's the better one, but…"
+  await read("I found", 4200);
+  await slowScroll(800, 6); // a glance at the cards under it
+  // Then the full shortlist: look into the best match, message him
   await tap("Open the full shortlist");
-  await pause(1800);
-  await scrollTo("More than a lease");
-  await pause(2200);
-  await tap("Go together");
   await pause(1500);
+  await read("Best match", 2600);
+  await tap("See why").catch(() => {});
+  await pause(2200);
+  await tap("Message Priya"); // the best match (sortMatches is deterministic, so this is stable)
+  await sendMessage(); // Muse drafted the opener; Alex reads it and sends
+  await page.goBack({ waitUntil: "networkidle2" }).catch(() => {});
+  await cursor();
+  await pause(1200);
+  // And the bonus: Priya's "More than a lease"
+  await read("More than a lease", 3200);
+  await tap("Go together");
+  await pause(1600);
   await tap("Going").catch(() => {});
-  await pause(1800);
+  await pause(2000);
 }
 const fresh = async (persona) => {
   await api("/api/reset");
@@ -256,11 +281,6 @@ const clips = {
     setup: () => fresh("alex"),
     async run() {
       await alexRoommateToRun();
-      // Alex reaches out (Muse drafted the opener; Alex sends it)
-      await page.goBack({ waitUntil: "networkidle2" }).catch(() => {});
-      await cursor();
-      await tap("Message Priya");
-      await sendMessage();
       // Switch to Priya: her Muse talked with Alex's
       await as("priya");
       await go("/");
@@ -268,8 +288,7 @@ const clips = {
       await tap("talked with yours");
       await pause(1500);
       await slowScroll(1500, 14);
-      await scrollTo("What your Muse knew");
-      await pause(2200);
+      await read("What your Muse knew", 2600);
       // The run: Alex is going; Priya joins
       await go("/events/evt_weekend_runs");
       await pause(2200);

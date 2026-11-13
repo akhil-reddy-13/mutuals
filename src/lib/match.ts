@@ -32,8 +32,22 @@ export function broaderFor(ask: Ask): { reach: MuseReach; label: string; people:
   return null;
 }
 
+/**
+ * Shortlist order, fully deterministic so Muse's "X's the better one" line, the chat cards and the shortlist page
+ * always agree, before and after someone opens Messenger (saving a match moves it in the store, so ties used to
+ * flip). Fits first, then score, then a Muse-to-Muse match over one read from a post, then move-in dates that line
+ * up, then the person's name.
+ */
 export function sortMatches(ms: Match[]): Match[] {
-  return [...ms].sort((a, b) => Number(b.verdict.compatible) - Number(a.verdict.compatible) || b.verdict.score - a.verdict.score);
+  const name = (m: Match) => getUser(m.candidateId)?.name ?? m.candidateId;
+  return [...ms].sort(
+    (a, b) =>
+      Number(b.verdict.compatible) - Number(a.verdict.compatible) ||
+      b.verdict.score - a.verdict.score ||
+      Number(b.mode === "agent_to_agent") - Number(a.mode === "agent_to_agent") ||
+      (a.verdict.dateGapMonths ?? 0) - (b.verdict.dateGapMonths ?? 0) ||
+      name(a).localeCompare(name(b)),
+  );
 }
 
 export async function runMatching(askInput: Ask, emitRaw: (e: MatchEvent) => void = () => {}): Promise<Match[]> {
