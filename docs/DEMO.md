@@ -10,6 +10,7 @@ npm run warm        # only with a real key: pre-runs every hero call so the cach
 npm run warm -- --video room.mov   # also warms the video beat, if you'll upload this exact clip on stage
 npm run demo:build  # production build (separate .next-demo folder, safe alongside npm run dev)
 npm run demo:start  # http://localhost:3000. ~100x faster pages than dev, and no Next.js "N" dev badge
+npm run demo:start:stage  # same, but cached replies pause ~1.5 s so the live selling part looks live (use on stage)
 # or, with no key / flaky wifi:
 MOCK_MUSE=true npm run demo:start
 ```
@@ -58,7 +59,7 @@ Both phones start on **Home** (a normal-looking feed). Phone A goes **Groups →
 
 - **Selling (Stanford Free & For Sale):** "Selling some stuff before I move out" → upload a video where you talk over
   your stuff. Run the exact demo video once beforehand so the Ember and Spark calls are cached (about 15 s cold).
-  Result is people, not listings: "2 of these already have a home." `IMG_6396.MOV` → G7 X to June, Poly earbuds to Theo.
+  Result is people, not listings: "2 of these already have a home." `Selling_catalog_items.MOV` → G7 X to June, Poly earbuds to Theo.
 - **"I need X" (Stanford Free & For Sale):** "Need a tent for a camping trip next month" → Muse asks "Is this for a
   trip? Want people to go with too?" → "Yosemite, Dec 6, down to go with people" → Marcus (tent, driving there) + the
   Yosemite carpool Event. `npm run demo -- need` to pre-run it.

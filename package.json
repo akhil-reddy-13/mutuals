@@ -16,7 +16,8 @@
     "demo:build": "NEXT_DIST_DIR=.next-demo next build",
     "demo:start": "NEXT_DIST_DIR=.next-demo next start -p 3000",
     "snapshot": "node scripts/snapshot.mjs",
-    "clips": "node scripts/video/clips.mjs"
+    "clips": "node scripts/video/clips.mjs",
+    "demo:start:stage": "MUSE_REPLAY_DELAY_MS=1500 NEXT_DIST_DIR=.next-demo next start -p 3000"
   },
   "dependencies": {
     "@next/env": "^15.5.29",

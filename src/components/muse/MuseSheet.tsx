@@ -329,7 +329,7 @@ export default function MuseSheet({ me, group, onClose, variant = "sheet", group
       const f = framesRef.current;
       const k = item.frameIndex ?? -1;
       const nearby = k >= 0 ? [f[k - 1], f[k + 1]].filter(Boolean) : [];
-      const res = await fetch("/api/identify", { method: "POST", body: JSON.stringify({ item, transcript, nearby }) });
+      const res = await fetch("/api/identify", { method: "POST", body: JSON.stringify({ item, transcript, nearby, frames: f }) });
       const out = (await res.json()) as { item?: Item };
       if (out.item) {
         // Keep anything the seller already typed into this row while Spark was working.

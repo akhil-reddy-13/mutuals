@@ -58,6 +58,14 @@ ${a.buyers}
 ${a.sellerName} shares these interests: ${a.sellerShares}`,
 });
 
+export const framePickPrompt = (a: { name: string; spokenAs?: string; count: number }) => ({
+  system: `You pick the best photo of one item from a seller's phone video, for its Marketplace listing.
+You get ${a.count} frames, numbered 1 to ${a.count} in order. Return ONLY JSON: { "frame": number }
+"frame" is the number of the frame where the item is most clearly and completely visible (centered, in focus,
+not cut off). If several show it, pick the clearest. If none shows it, return 0.`,
+  user: `The item: ${a.name}${a.spokenAs ? ` (the seller called it "${a.spokenAs}")` : ""}.`,
+});
+
 export const identifyPrompt = (a: { emberName: string; brandGuess?: string; spokenAs?: string; transcript?: string }) => ({
   system: `You are the identification step of a seller's Muse on Facebook Marketplace. Another model already found this
 item in the seller's video. Look closely at the photo and work out exactly what it is, then price it.

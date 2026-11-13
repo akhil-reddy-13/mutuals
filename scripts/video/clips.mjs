@@ -5,7 +5,7 @@
 //   node scripts/video/clips.mjs                         # all clips
 //   node scripts/video/clips.mjs roommate proof          # some clips
 //   node scripts/video/clips.mjs roommate --room-video ~/Downloads/hotel.MOV
-//   node scripts/video/clips.mjs selling --video ~/Downloads/IMG_6396.MOV
+//   node scripts/video/clips.mjs selling --video ~/Downloads/Selling_catalog_items.MOV
 //   options: --app http://localhost:3000  --out recordings  --size 1440x900  --headed
 //
 // Clips:
@@ -44,7 +44,7 @@ const SPEED = Number(arg("speed", "1")); // e.g. --speed 1.25 for a tighter cut 
 const CHROME = process.env.CHROME_PATH ?? "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 const expand = (p) => (p ? p.replace(/^~/, os.homedir()) : p);
 const ROOM_VIDEO = expand(arg("room-video", ""));
-const SELL_VIDEO = expand(arg("video", path.join(os.homedir(), "Downloads/IMG_6396.MOV")));
+const SELL_VIDEO = expand(arg("video", path.join(os.homedir(), "Downloads/Selling_catalog_items.MOV")));
 const KNOWN = ["friends", "roommate", "proof", "selling", "selling-proof", "tent"];
 const wanted = argv.filter((a, i) => !a.startsWith("--") && !(i > 0 && argv[i - 1].startsWith("--")));
 const CLIPS = wanted.length ? wanted : KNOWN;

@@ -2,6 +2,9 @@
 // as the model returns it). Convert to camelCase domain types at the call site.
 import { z } from "zod";
 
+/** Which numbered frame shows an item most clearly (1-based; 0 = none). */
+export const FramePickSchema = z.object({ frame: z.number() });
+
 export const IdentifySchema = z.object({
   name: z.string(),
   brand: z.string().nullable(),

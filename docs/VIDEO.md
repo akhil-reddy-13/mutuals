@@ -30,7 +30,7 @@ are fast; everything shown is a real Muse response.
 ```bash
 npm run clips                                   # all
 npm run clips -- friends --room-video ~/Downloads/hotel.MOV   # with the room video
-npm run clips -- selling --video ~/Downloads/IMG_6396.MOV
+npm run clips -- selling --video ~/Downloads/Selling_catalog_items.MOV
 npm run clips -- friends --headed               # watch it drive the browser
 ```
 When it's done it restores the saved run (`june-room-weekend-runs`), so the app is ready for the live demo.

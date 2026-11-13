@@ -1,7 +1,8 @@
 # Presentation script (5:00)
 
 Speakers: **E** Eddy, **L** Luke (skit) · **K** Kyle (problem, how it works) · **A** Akhil (demo).
-Setup: one laptop, production build (`npm run demo:start`), saved run restored
+Setup: one laptop, production build in stage mode (`npm run demo:build`, stop the dev server, then
+`npm run demo:start:stage`: cached replies still "think" ~1.5 s so the live part doesn't look canned), saved run restored
 (`npm run snapshot -- restore june-room-weekend-runs`), desk video pre-run, `recordings/friends.mp4` open in
 QuickTime, the app open on **Stanford Free & For Sale**. Total 4:50 (10 s buffer).
 
@@ -47,7 +48,7 @@ So we built **Mutuals**. *Your Muse talks to their Muse, so you only talk to the
 
 ## 5. Selling, LIVE (2:40-3:40) A
 *Stanford Free & For Sale, Ask Muse, chip "Selling some stuff before I move out", answer the follow-up, upload
-`~/Downloads/IMG_6396.MOV`, Catalog items.* Backup if anything breaks: play `recordings/selling.mp4`.
+`~/Downloads/Selling_catalog_items.MOV`, Catalog items.* Backup if anything breaks: play `recordings/selling.mp4`.
 - Same engine, the other thing everyone does on Facebook. This part's live. I filmed my desk and talked over it.
 - **Muse Ember** watches the frames *and* listens. Here's the word-for-word transcript; it lists only what I said
   I'm selling and notes what it saw that I didn't mention.

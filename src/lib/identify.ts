@@ -3,12 +3,37 @@
 //   Spark  (identification) one item's best frame + what the seller said -> exact model + used price range  [here]
 // One Spark call per item, run in parallel by the client so each row updates as it lands.
 import { museJSON, type ContentPart, modelFor } from "./muse";
-import { identifyPrompt } from "./prompts";
-import { IdentifySchema } from "./schemas";
+import { framePickPrompt, identifyPrompt } from "./prompts";
+import { FramePickSchema, IdentifySchema } from "./schemas";
 import type { Item } from "./types";
 
-/** `nearby`: frames just before/after the item's best frame, so Spark sees it from more than one angle. */
-export async function identifyItem(item: Item, transcript?: string, nearby: string[] = []): Promise<Item> {
+/**
+ * Ember picks the frame where this item is clearest (its first-pass frame can show a different item: the soda's
+ * thumbnail was the earbuds). Fast, one call, all frames. Returns the 0-based index or null.
+ */
+async function pickFrame(item: Item, frames: string[]): Promise<number | null> {
+  if (frames.length < 2) return null;
+  const p = framePickPrompt({ name: item.name, spokenAs: item.spokenAs, count: frames.length });
+  const parts: ContentPart[] = [{ type: "text", text: p.user }, ...frames.map((url) => ({ type: "image_url" as const, image_url: { url } }))];
+  try {
+    const out = await museJSON({ model: modelFor("intake"), system: p.system, user: parts, schema: FramePickSchema, mock: { frame: 0 } });
+    const k = Math.round(out.frame);
+    return k >= 1 && k <= frames.length ? k - 1 : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * `nearby`: frames just before/after the item's best frame, so Spark sees it from more than one angle.
+ * `frames`: all sampled frames; when given, the item's photo is re-picked first so the listing shows the right thing.
+ */
+export async function identifyItem(item: Item, transcript?: string, nearby: string[] = [], frames: string[] = []): Promise<Item> {
+  const k = await pickFrame(item, frames);
+  if (k !== null) {
+    item = { ...item, imageDataUrl: frames[k], frameIndex: k };
+    nearby = [frames[k - 1], frames[k + 1]].filter((x): x is string => !!x);
+  }
   const p = identifyPrompt({ emberName: item.name, brandGuess: item.brandGuess, spokenAs: item.spokenAs, transcript });
   const imgs = [item.imageDataUrl, ...nearby].filter((x): x is string => !!x).filter((x, i, a) => a.indexOf(x) === i).slice(0, 3);
   const parts: ContentPart[] = [
