@@ -41,12 +41,15 @@ Chill, conversational, about 185 words. Let the video breathe between lines.
 - **Switch to Priya:** On her side: "Alex's Muse talked with yours." She can read the whole conversation, and Alex's
   budget just shows up as "a private number".
 - **She taps Going:** A roommate search just turned into Saturday plans. And honestly, that's what gets Gen Z back on
-  Facebook. Not making it cool. Making it the place you actually meet people.
+  Facebook. Not making it "cool" for existing friends, but making it the place you actually meet people.
 
 ## 5. Selling, LIVE (2:40-3:40) A
-*Stanford Free & For Sale, Ask Muse, chip "Selling some stuff before I move out", answer the follow-up, upload
-`~/Downloads/Selling_catalog_items.MOV`, Catalog items.* Backup if anything breaks: play `recordings/selling.mp4`.
-- Same engine, the other thing everyone does on Facebook. This part's live. I filmed my desk and talked over it.
+*Switch to the app: Stanford Free & For Sale, Ask Muse.* Backup if anything breaks: play `recordings/selling.mp4`.
+- **Transition (while switching):** But a roommate's a once-a-year thing. The stuff you're on Facebook for every
+  week is smaller, like getting rid of everything when you move out. So let's do that one live.
+- *Tap "Selling some stuff before I move out", answer Muse's question.* I filmed my desk on my phone and just talked
+  over it.
+- *Upload `~/Downloads/Selling_catalog_items.MOV`, tap Catalog items.*
 - **Muse Ember** watches the frames *and* listens. Here's the word-for-word transcript; it lists only what I said
   I'm selling and notes what it saw that I didn't mention.
 - Each item goes to **Muse Spark**, in parallel, with its clearest frame and the frames around it. I said "this Canon
