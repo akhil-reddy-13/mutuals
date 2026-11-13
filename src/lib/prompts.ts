@@ -24,7 +24,7 @@ AUDIO: the user talked while filming. Their words are authoritative:
 - Use the exact brand, model or edition they state as brand_guess (e.g. "Fujifilm X100V, silver").
 - If they say a price or condition, use it. Match spoken references ("this table", "that one") to what is on screen
   at that point in the video, using frame order as the timeline.
-- People talk casually. A count ("these three chairs") means separate items. "X with the Y" or "X and its Y"
+- People talk casually. A count of DIFFERENT things ("these two desks") means separate items, but IDENTICAL things named as a group ("all eight of these pillows") are ONE item, e.g. "Set of 8 white pillows", priced for the set. "X with the Y" or "X and its Y"
   (e.g. "the guitar with its case") is ONE bundle item. Ignore everything they don't mention (food, cables,
   clutter, the room itself).
 - If they name a product generically ("this phone", "the bike"), add what you can see (size, color, model guess)

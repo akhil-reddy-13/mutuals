@@ -402,7 +402,9 @@ try {
       await clips[name].run();
       console.log(DRY ? `✓ ${name} cached (${((Date.now() - t0) / 1000).toFixed(0)} s)` : `✓ ${name}  ${((Date.now() - t0) / 1000).toFixed(0)} s  ->  ${path.relative(ROOT, file)}`);
     } catch (e) {
-      console.log(`✗ ${name}: ${e instanceof Error ? e.message.split("\n")[0] : e}  (partial clip kept: ${path.relative(ROOT, file)})`);
+      const shot = path.join(OUT, `${name}-error.png`);
+      await page.screenshot({ path: shot }).catch(() => {});
+      console.log(`✗ ${name}: ${e instanceof Error ? e.message.split("\n")[0] : e}  (screenshot: ${path.relative(ROOT, shot)}${DRY ? "" : `, partial clip kept: ${path.relative(ROOT, file)}`})`);
     } finally {
       await rec.stop();
       await page.close();
