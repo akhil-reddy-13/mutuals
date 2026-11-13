@@ -1,5 +1,8 @@
 "use client";
-// The Muse chat sheet, opened from a Group's composer with that Group as context (handoff decisions 1, 2, 4b).
+// The Muse chat, with one Group as context (handoff decisions 1, 2, 4b). Two layouts, same conversation:
+//   variant "sheet" (default): the side sheet opened from a Group's composer.
+//   variant "page": the full-page chat on the Muse page (components/muse/MusePage.tsx).
+// Both save under the same key, so a chat started in a Group continues on the Muse page and back.
 // One conversation carries the whole hero flow: ask -> follow-ups -> visibility-tagged prefs -> room video ->
 // opt-in question -> live matching (streamed) -> shortlist -> Messenger handoff.
 import { useRouter } from "next/navigation";
@@ -21,7 +24,11 @@ import type { Ask, Group, Item, Match, MuseReach, Preference, RoomDetails, User 
 export interface MuseSheetProps {
   me: Pick<User, "id" | "name" | "avatarUrl" | "museGroups">;
   group: Pick<Group, "id" | "name">;
-  onClose: () => void;
+  /** Sheet only: closes the sheet. */
+  onClose?: () => void;
+  variant?: "sheet" | "page";
+  /** Page only: shown under the header (the Group picker). */
+  headerExtra?: React.ReactNode;
 }
 
 type Card = "prefs" | "video" | "intake" | "matching" | "shortlist" | "homes" | "reach";
@@ -84,8 +91,11 @@ const REACH_TEXT: Record<MuseReach, string> = {
   everyone: "everyone nearby",
 };
 
-export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
+export default function MuseSheet({ me, group, onClose, variant = "sheet", headerExtra }: MuseSheetProps) {
   const router = useRouter();
+  const page = variant === "page";
+  // The page centres the conversation in a readable column; the sheet is already narrow.
+  const column = page ? "mx-auto w-full max-w-[720px]" : "";
   const first = firstName(me.name);
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
@@ -507,33 +517,45 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
   const firstAgent = cands.find((c) => c.mode === "agent_to_agent")?.id;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 md:items-end md:justify-end md:bg-transparent md:pr-4" onClick={onClose}>
+    <div
+      className={page ? "flex h-full min-h-0 w-full flex-col" : "fixed inset-0 z-50 flex items-end justify-center bg-black/40 md:items-end md:justify-end md:bg-transparent md:pr-4"}
+      onClick={page ? undefined : onClose}
+    >
       <div
-        role="dialog"
+        role={page ? undefined : "dialog"}
         aria-label="Muse"
         onClick={(e) => e.stopPropagation()}
-        className="sheet-up flex h-[94dvh] w-full flex-col overflow-hidden rounded-t-2xl bg-white shadow-fb-lg md:h-[min(720px,calc(100dvh-72px))] md:w-[420px] md:rounded-t-xl md:border md:border-fb-divider"
+        className={
+          page
+            ? "flex min-h-0 flex-1 flex-col overflow-hidden bg-white"
+            : "sheet-up flex h-[94dvh] w-full flex-col overflow-hidden rounded-t-2xl bg-white shadow-fb-lg md:h-[min(720px,calc(100dvh-72px))] md:w-[420px] md:rounded-t-xl md:border md:border-fb-divider"
+        }
       >
         {/* Header */}
-        <header className="flex items-center gap-3 border-b border-fb-divider px-3 py-2.5">
-          <MuseMark size={36} />
-          <div className="min-w-0 flex-1">
-            <div className="text-[15px] font-bold leading-tight">Muse</div>
-            <div className="truncate text-[12px] text-fb-muted">Private · {group.name}</div>
+        <header className="border-b border-fb-divider">
+          <div className={`flex items-center gap-3 px-3 py-2.5 ${column}`}>
+            <MuseMark size={36} />
+            <div className="min-w-0 flex-1">
+              <div className="text-[15px] font-bold leading-tight">Muse</div>
+              <div className="truncate text-[12px] text-fb-muted">Private · {group.name}</div>
+            </div>
+            {ask && (
+              <button onClick={startOver} className="rounded-full px-3 py-1.5 text-[13px] font-semibold text-fb-blue hover:bg-fb-blue-soft">
+                New ask
+              </button>
+            )}
+            {!page && (
+              <button onClick={onClose} className="fb-icon-btn h-9 w-9" aria-label="Close">
+                <CloseIcon size={20} />
+              </button>
+            )}
           </div>
-          {ask && (
-            <button onClick={startOver} className="rounded-full px-3 py-1.5 text-[13px] font-semibold text-fb-blue hover:bg-fb-blue-soft">
-              New ask
-            </button>
-          )}
-          <button onClick={onClose} className="fb-icon-btn h-9 w-9" aria-label="Close">
-            <CloseIcon size={20} />
-          </button>
+          {page && headerExtra && <div className={column}>{headerExtra}</div>}
         </header>
 
         {/* Body */}
         <div ref={bodyRef} className="flex-1 overflow-y-auto overscroll-contain px-3 py-3">
-          <div className="flex flex-col gap-2.5">
+          <div className={`flex flex-col gap-2.5 ${column}`}>
             {msgs.map((m) =>
               m.role === "user" ? (
                 <div key={m.id} className="rise flex justify-end">
@@ -685,7 +707,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
             e.preventDefault();
             send(input);
           }}
-          className="flex items-center gap-2 border-t border-fb-divider px-3 py-2"
+          className={page ? `flex items-center gap-2 px-3 pb-4 pt-2 ${column}` : "flex items-center gap-2 border-t border-fb-divider px-3 py-2"}
         >
           <button type="button" className="fb-icon-btn h-9 w-9 bg-transparent text-fb-blue" aria-label="Video" onClick={() => push({ role: "muse", text: ask?.type === "item" ? "Show me what you're selling whenever you're ready." : "Show me the room whenever you're ready.", card: "video" })} disabled={!ask || !canShowVideo(ask)}>
             <VideoCamIcon size={22} />
@@ -694,8 +716,8 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder={ask ? "Reply to Muse…" : "Tell Muse what you need…"}
-            className="h-10 flex-1 rounded-full bg-fb-bg px-4 text-[15px] outline-none placeholder:text-fb-muted"
-            autoFocus
+            className={`flex-1 rounded-full bg-fb-bg px-4 text-[15px] outline-none placeholder:text-fb-muted ${page ? "h-12 md:px-5" : "h-10"}`}
+            autoFocus={!page}
           />
           <button type="submit" disabled={!input.trim() || thinking} className="fb-icon-btn h-9 w-9 bg-transparent text-fb-blue disabled:opacity-40" aria-label="Send">
             <SendIcon size={22} />
