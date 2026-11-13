@@ -1,5 +1,5 @@
-// The sound effects, made in code (no sample files): a received-message ding, a sent swoosh, pops, whooshes, a scroll
-// swish, a chime for a fit and a low hit for the logo. stage.html says when each one plays (window.stage.cues()), and
+// The sound effects, made in code (no sample files): a bubble when a message comes in or goes out, one whoosh out of
+// the skit, and a chime for a fit. stage.html says when each one plays (window.stage.cues()), and
 // render.mjs lays this track under the video.
 //
 //   node scripts/video/sfx.mjs   -> scripts/video/out/sfx-sampler.wav (every sound once, to listen to)
@@ -48,32 +48,24 @@ function noise(o, at, dur, amp, path, k = 1.5, seed = 1) {
   }
 }
 
+// A bubble: a sine whose pitch rises fast as it dies away, the way a drop or a message bubble "bloops".
+const bloop = (o, at, f0, f1, dur, amp, decay) => sweep(o, at, f0, f1, dur, amp, decay);
+
 const SOUNDS = {
-  // a message arrives: two quick bell notes, up a fourth
+  // a message comes in: a round bubble, then a smaller one just after
   recv: (o, at, v, p) => {
-    tone(o, at, 1174.7 * p, 0.35, 0.16 * v, 0.12);
-    tone(o, at + Math.round(0.085 * SR), 1568 * p, 0.6, 0.16 * v, 0.22);
+    bloop(o, at, 520 * p, 1250 * p, 0.07, 0.45 * v, 0.045);
+    bloop(o, at + Math.round(0.05 * SR), 820 * p, 1700 * p, 0.05, 0.12 * v, 0.03);
   },
-  // a message goes out: a short rising swoosh
+  // a message goes out: a quicker, brighter bubble with a breath of air
   sent: (o, at, v, p) => {
-    noise(o, at, 0.26, 0.5 * v, [600 * p, 2600 * p, 4200 * p], 2, 7);
-    sweep(o, at + Math.round(0.05 * SR), 700 * p, 1900 * p, 0.14, 0.05 * v, 0.06);
+    bloop(o, at, 700 * p, 1900 * p, 0.05, 0.4 * v, 0.035);
+    noise(o, at, 0.12, 0.12 * v, [2500, 5000], 2, 7);
   },
-  // a card lands
-  pop: (o, at, v, p) => sweep(o, at, 950 * p, 380 * p, 0.09, 0.26 * v, 0.045),
-  // a scene change
+  // out of the skit: one soft whoosh
   whoosh: (o, at, v, p) => noise(o, at, 0.75, 0.55 * v, [220 * p, 900 * p, 2400 * p, 700 * p], 1.6, 3),
-  // the wall starts scrolling: a soft, long swish
-  scroll: (o, at, v, p) => noise(o, at, 1.1, 0.35 * v, [1800 * p, 3200 * p, 2400 * p], 2.2, 11),
   // a fit: three notes, rising
   chime: (o, at, v, p) => [1046.5, 1318.5, 1568].forEach((f, k) => tone(o, at + Math.round(k * 0.065 * SR), f * p, 1.0, 0.09 * v, 0.4, [1, 0.18])),
-  // the logo: a low hit with a little shimmer
-  hit: (o, at, v, p) => {
-    sweep(o, at, 120 * p, 46 * p, 0.9, 0.38 * v, 0.32);
-    noise(o, at, 0.18, 0.4 * v, [3000, 900], 1, 5);
-    tone(o, at + Math.round(0.03 * SR), 2093 * p, 1.4, 0.03 * v, 0.6, [1]);
-    tone(o, at + Math.round(0.03 * SR), 3136 * p, 1.4, 0.02 * v, 0.5, [1]);
-  },
 };
 
 /** The whole effects track: mono samples, `duration` seconds long. */

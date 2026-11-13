@@ -478,14 +478,12 @@ const BUILD = {
       if (P("logo")) {
         const ring = el("div", "lring", S.under); ring.style.left = 960 - 75 + "px"; ring.style.top = (capP ? 300 : 340) + "px";
         const wm = el("div", "wordmark", S.under, "Mutuals"); wm.style.top = (capP ? 480 : 520) + "px";
-        cue(P("logo").t, "hit");
         add(ring, P("logo").t, "pop"); add(wm, P("logo").t + 0.3, "rise");
         if (capP) { const c = el("div", "gcap", S.under, fmt(capP.text)); c.style.top = "700px"; add(c, capP.t + 0.2, "rise"); }
         continue;
       }
       if (P("chapter")) {
         const ch = P("chapter");
-        cue(ch.t - 0.15, "whoosh", 0.7);
         const num = el("div", "chnum grad", S.under, esc(ch.parts[0] ?? ""));
         const ttl = el("div", "chttl", S.under, fmt(ch.parts[1] ?? ""));
         add(num, ch.t, "rise", { dist: 30 }); add(ttl, ch.t + 0.25, "rise");
@@ -516,7 +514,6 @@ const BUILD = {
         const num = el("div", "num grad", S.under); num.style.left = "250px"; num.style.top = "150px";
         const tx = el("div", "stattxt", S.under, `${esc(text)}<div class="src">${esc(source)}</div>`); tx.style.left = "1060px"; tx.style.top = "400px";
         const m = String(value).match(/^([^\d]*)([\d.]+)(.*)$/);
-        cue(stat.t, "pop", 0.8);
         add(num, stat.t, "rise", { count: m ? { pre: m[1], n: Number(m[2]), post: m[3] } : null });
         add(tx, stat.t + 0.35, "rise");
         const on = m ? Math.round(Number(m[2])) : 0;
@@ -566,7 +563,6 @@ const BUILD = {
           const c = el("div", "act", S.under, `<div class="ico">${esc(m ? m[1] : "")}</div><div class="lbl">${esc(m ? m[2] : main)}</div>${sub ? `<div class="where">${esc(sub)}</div>` : ""}`);
           c.style.left = x0 + k * (w + gap) + "px"; c.style.top = area.top + Math.max(0, (area.bottom - area.top - 400) / 2) + "px";
           add(c, at(k), "rise", { dist: 34 });
-          cue(at(k), "pop", 0.7, 1 + k * 0.06);
         });
       } else if (D.type === "post") {
         const [text, group, members] = D.parts;
@@ -574,7 +570,6 @@ const BUILD = {
         const c = el("div", "post", S.under, `<div class="phd"><img src="${BASE}${who?.avatar ?? ""}"><div><b>${esc(who?.name ?? "You")}</b><span>${esc(group ?? "")} · Just now</span></div></div><div class="pbody">${(text ?? "").replace(/~(.+?)~/g, '<mark>$1</mark>')}</div><div class="pft">${esc(members ?? "")}</div>`);
         c.style.left = 960 - 470 + "px"; c.style.top = area.top + Math.max(10, (area.bottom - area.top - c.offsetHeight) / 2 - 30) + "px";
         add(c, D.t + 0.1, "rise", { dist: 30 });
-        cue(D.t + 0.1, "pop", 0.7);
         // highlights fade in one by one
         [...c.querySelectorAll("mark")].forEach((mk, k) => add(mk, D.t + 1.0 + k * 0.45, "mark"));
       } else if (D.type === "agents") {
@@ -684,7 +679,6 @@ const BUILD = {
           y += BH + 64;
         }
         const contentH = y, viewH = 1080 - viewTop;
-        if (contentH > viewH) cue(D.t + 2.2, "scroll", 0.6);
         add(wall, D.t, "fn", { fn: (t) => {
           const endT = S.end - 1.0;
           const sc = Math.max(0, contentH - viewH + 40) * soft(prog(t, D.t + 2.2, Math.max(1, endT - D.t - 2.2)));
@@ -757,7 +751,6 @@ const BUILD = {
           return { e, at: D.t + 0.9 + k * ((narrowAt - D.t - 2.2) / TAGS.length) };
         });
         const h1 = el("div", "chd", g, fmt(D.parts[0] ?? "")), h2 = el("div", "chd", g, fmt(D.parts[1] ?? ""));
-        cue(narrowAt, "whoosh", 0.7);
         cue(narrowAt + 1.7 + 1.5, "chime", 0.8); // the few faces get their checks
         add(g, D.t, "fn", { fn: (t) => {
           const fallAt = narrowAt + 1.7;
@@ -790,7 +783,6 @@ const BUILD = {
         const c = el("div", "fun", S.under, `<div class="fhd"><div class="fav"><img src="${BASE}${p.avatar ?? ""}"></div><div><div class="fnm">${esc(p.name ?? "")}</div><div class="fsb">${esc(p.line ?? "")}</div></div></div><div class="flab">Fun facts</div><div class="chips">${facts.map((f) => `<span class="chip">${ico(f)} ${esc(f)}</span>`).join("")}</div><div class="fopt"><span>Let Muse use my profile, interests and posts</span><i class="sw"><b></b></i></div>`);
         c.style.left = 960 - 430 + "px"; c.style.top = area.top + Math.max(0, (area.bottom - area.top - 600) / 2) + "px";
         add(c, D.t + 0.1, "rise", { dist: 30 });
-        cue(D.t + 0.1, "pop", 0.7);
         [...c.querySelectorAll(".chip")].forEach((ch, k) => add(ch, D.t + 0.7 + k * 0.3, "rise", { dist: 12, din: 0.5 }));
         const sw = c.querySelector(".sw"), knob = c.querySelector(".sw b");
         add(c, D.t, "fn", { fn: (t) => {
@@ -932,7 +924,7 @@ const BUILD = {
         html = `<div class="cm me"><div class="vid${tall ? " tall" : ""}">${thumb}<div class="pl"></div><div class="ln">${esc(dur ?? m.text)}</div></div></div>`;
       } else html = `<div class="cm them">${label[m.who] ? `<div class="who">${label[m.who]}</div>` : ""}<div class="row">${ring}<div class="b">${fmt(m.text)}</div></div></div>`;
       const wrap = el("div", "", S.pin, html);
-      cue(m.t, m.type === "item" ? "pop" : m.who === "me" || m.who === "video" ? "sent" : "recv", m.type === "item" ? 0.7 : 1);
+      cue(m.t, m.who === "me" || m.who === "video" ? "sent" : "recv", m.type === "item" ? 0.7 : 1);
       return { t: m.t, e: wrap };
     });
     // how far the chat has scrolled once each message is in (the latest stays in view)

@@ -126,12 +126,6 @@ async function renderRange(browser, from, to, file, label) {
 }
 
 async function main() {
-  if (arg("audio-only", false)) {
-    if (!fs.existsSync(SILENT) || !fs.existsSync(CUES)) throw new Error("render the video once first (out/silent.mp4, out/cues.json)");
-    writeWav(SFX, soundtrack(JSON.parse(fs.readFileSync(CUES, "utf8")), tl.duration));
-    withAudio(SILENT, path.join(OUT, "mutuals-demo.mp4"), 0, tl.duration);
-    return console.log("re-mixed the sound onto scripts/video/out/mutuals-demo.mp4");
-  }
   const server = await serve();
   const browser = await puppeteer.launch({
     executablePath: CHROME,
@@ -141,6 +135,18 @@ async function main() {
     args: ["--hide-scrollbars", "--font-render-hinting=none", "--disable-lcd-text"],
   });
   try {
+    // the effects track, from stage.html's cues
+    const cuePage = await openStage(browser);
+    const cues = await cuePage.evaluate(() => window.stage.cues());
+    await cuePage.close();
+    fs.writeFileSync(CUES, JSON.stringify(cues));
+    writeWav(SFX, soundtrack(cues, tl.duration));
+    console.log(`${cues.length} sound effects`);
+    if (arg("audio-only", false)) {
+      if (!fs.existsSync(SILENT)) throw new Error("render the video once first (out/silent.mp4)");
+      withAudio(SILENT, path.join(OUT, "mutuals-demo.mp4"), 0, tl.duration);
+      return console.log("re-mixed the sound onto scripts/video/out/mutuals-demo.mp4");
+    }
     const stills = arg("stills", null);
     if (stills) {
       const dir = path.join(OUT, "stills");
@@ -153,12 +159,6 @@ async function main() {
       console.log(`stills -> scripts/video/out/stills/`);
       return;
     }
-    const cuePage = await openStage(browser);
-    const cues = await cuePage.evaluate(() => window.stage.cues());
-    await cuePage.close();
-    fs.writeFileSync(CUES, JSON.stringify(cues));
-    writeWav(SFX, soundtrack(cues, tl.duration));
-    console.log(`${cues.length} sound effects`);
     const total = Math.round(tl.duration * FPS);
     const a = Math.max(0, Math.round(Number(arg("from", 0)) * FPS));
     const b = Math.min(total, Math.round(Number(arg("to", tl.duration)) * FPS));
