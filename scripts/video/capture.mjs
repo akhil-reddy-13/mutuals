@@ -36,6 +36,14 @@ const PHONE = { w: 390, h: 776, dsf: 3 };
 
 const { plan, globals } = loadPlan(SCRIPT);
 const groups = JSON.parse(fs.readFileSync(path.join(ROOT, "seed/groups.json"), "utf8"));
+const users = JSON.parse(fs.readFileSync(path.join(ROOT, "seed/users.json"), "utf8"));
+/** Who the video is about, for the fun-fact card and the diagrams (from the seed profile, only shared interests). */
+function personaCard(id) {
+  const u = users.find((x) => x.id === id);
+  if (!u) return null;
+  const line = (u.bio ?? "").split(/(?<=\.)\s+/).slice(0, 2).map((x) => x.replace(/\s*\(.*?\)/g, "").replace(/\.$/, "")).join(" · ");
+  return { name: u.name, avatar: u.avatarUrl, line, interests: u.interests.filter((i) => i.shareForConnection).map((i) => i.value) };
+}
 
 // ---------------------------------------------------------------- narration timing (no audio in the video)
 // Each line is read by macOS `say` only to know how long it takes; scenes are paced to the narration so a real
@@ -160,8 +168,8 @@ const museReplies = () =>
   page.$$eval("[role=dialog] .bubble-in", (els) => els.filter((e) => !e.querySelector(".dot") && e.innerText.trim()).length).catch(() => 0);
 /** Jamie types in the big message box on the right (pass 2 draws it); the message flies into the phone and is sent. */
 async function compose(text) {
-  const typeDur = 0.4 + text.length * 0.032;
-  const flight = 0.85;
+  const typeDur = 0.35 + text.length * 0.017;
+  const flight = 0.6;
   const ev = log({ type: "compose", text, typeDur, flight });
   await wait(typeDur + flight - 0.15);
   const before = await museReplies();
@@ -185,7 +193,7 @@ async function compose(text) {
     { timeout: 180_000, polling: 150 },
     before,
   );
-  await wait(0.7);
+  await wait(0.5);
 }
 async function go(urlPath) {
   await page.goto(`${APP}${urlPath}`, { waitUntil: "networkidle2", timeout: 120_000 });
@@ -508,7 +516,8 @@ async function main() {
   const duration = out[out.length - 1].end;
   fs.writeFileSync(
     path.join(OUT, "timeline.json"),
-    JSON.stringify({ version: 2, script: path.relative(ROOT, SCRIPT), capturedAt: new Date().toISOString(), app: APP, phone: PHONE, duration, outro: transition, scenes: out.map((s) => Object.fromEntries(Object.entries(s).filter(([k]) => k !== "wallStart" && k !== "wallEnd"))), frames: timelineFrames }, null, 1),
+    JSON.stringify({ version: 2, script: path.relative(ROOT, SCRIPT), capturedAt: new Date().toISOString(), app: APP, phone: PHONE, duration, outro: transition,
+      persona: personaCard(PERSONA), people: users.filter((u) => u.id !== PERSONA).map((u) => ({ name: u.name, avatar: u.avatarUrl })), scenes: out.map((s) => Object.fromEntries(Object.entries(s).filter(([k]) => k !== "wallStart" && k !== "wallEnd"))), frames: timelineFrames }, null, 1),
   );
   console.log(`\ncaptured ${timelineFrames.length} app frames, ${duration.toFixed(1)}s of video -> scripts/video/out/timeline.json`);
 }

@@ -4,10 +4,10 @@
 // at exactly 1/30 s apart: no dropped or repeated frames, no matter how busy the machine is. Several pages render
 // ranges of the video in parallel; the pieces are joined without re-encoding.
 //
-//   node scripts/video/render.mjs                    -> scripts/video/out/mutuals-demo.mp4 (1080p, 30 fps, silent)
+//   node scripts/video/render.mjs                    -> scripts/video/out/mutuals-demo.mp4 (1080p, 60 fps, silent)
 //   node scripts/video/render.mjs --stills 12,40.5   -> scripts/video/out/stills/ (PNG frames at those seconds)
 //   node scripts/video/render.mjs --from 55 --to 90  -> just that stretch (out/preview.mp4)
-// Options: --fps 30, --workers 4.
+// Options: --fps 60, --workers 4.
 import { execFileSync, spawn } from "child_process";
 import fs from "fs";
 import http from "http";
@@ -27,7 +27,7 @@ const arg = (n, d) => {
   const i = process.argv.indexOf(`--${n}`);
   return i < 0 ? d : process.argv[i + 1] && !process.argv[i + 1].startsWith("--") ? process.argv[i + 1] : true;
 };
-const FPS = Number(arg("fps", 30));
+const FPS = Number(arg("fps", 60));
 const WORKERS = Number(arg("workers", 4));
 const PORT = 3102;
 const tl = JSON.parse(fs.readFileSync(path.join(OUT, "timeline.json"), "utf8"));
@@ -65,7 +65,7 @@ async function renderRange(browser, from, to, file, label) {
   const t0 = Date.now();
   for (let i = from; i < to; i++) {
     await page.evaluate((t) => window.stage.render(t), i / FPS);
-    const buf = await page.screenshot({ type: "jpeg", quality: 93, optimizeForSpeed: true });
+    const buf = await page.screenshot({ type: "jpeg", quality: 97, optimizeForSpeed: true });
     if (!ff.stdin.write(buf)) await once(ff.stdin, "drain");
     if ((i - from) % 300 === 299) console.log(`  ${label}: ${i - from + 1}/${to - from} frames (${((Date.now() - t0) / (i - from + 1)).toFixed(0)} ms/frame)`);
   }

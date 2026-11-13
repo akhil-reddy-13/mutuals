@@ -55,6 +55,20 @@ function onScreen(note) {
       return `ON SCREEN: ${parts.map(q).join(", ")}. Each one blurs behind a lock.`;
     case "logo":
       return "ON SCREEN: The Mutuals logo.";
+    case "activities":
+      return `ON SCREEN: Cards in a row: ${parts.map((x) => q(x.replace(/^\S+\s+/, "").replace(" / ", ", on "))).join(", ")}.`;
+    case "post": {
+      const marks = [...(parts[0] ?? "").matchAll(/~(.+?)~/g)].map((m) => q(m[1]));
+      return `ON SCREEN: A Facebook post in ${inline(parts[1] ?? "a Group")}: ${q((parts[0] ?? "").replace(/~/g, ""))}${marks.length ? ` The private parts light up: ${marks.join(", ")}.` : ""}${parts[2] ? ` ${inline(parts[2])}.` : ""}`;
+    }
+    case "agents":
+      return "ON SCREEN: One Muse reaches a crowd of people. Most fall away. A few light up green.";
+    case "chapter":
+      return `ON SCREEN: Chapter ${inline(parts[0] ?? "")}. ${inline(parts[1] ?? "")}${parts[2] ? `. ${inline(parts[2])}` : ""}`;
+    case "funcard":
+      return "ON SCREEN: A card of fun facts from the profile: interests, one by one. The switch \"Let Muse use my profile, interests and posts\" turns on.";
+    case "reach":
+      return `ON SCREEN: Rings around one person, one for each place Muse looks: ${parts.map(q).join(", ")}. People appear on them.`;
     case "models":
       return "ON SCREEN: Three cards. Muse Spark, Muse Wonder, Muse Ember.";
     case "network":

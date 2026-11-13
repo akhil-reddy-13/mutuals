@@ -25,7 +25,7 @@
       radial-gradient(820px 720px at 104% 108%, rgba(199, 160, 255, .5), transparent 70%),
       radial-gradient(620px 520px at 74% -10%, rgba(255, 211, 224, .45), transparent 70%),
       var(--bg); }
-  .glass { position: absolute; border-radius: 50%; will-change: transform;
+  .glass { position: absolute; border-radius: 50%;
     background: radial-gradient(circle at 32% 28%, rgba(255,255,255,.95), rgba(255,255,255,.4) 24%, rgba(255,255,255,.06) 62%);
     border: 1.5px solid rgba(255,255,255,.8); box-shadow: inset 0 -10px 26px rgba(120,150,255,.14), 0 10px 30px rgba(60,80,160,.07); }
 
@@ -33,12 +33,12 @@
   .scene.dark { background: radial-gradient(1400px 900px at 30% 25%, #3b3346 0%, #17141d 55%, #0b0a0f 100%); color: #fff; }
 
   /* text */
-  .h { position: absolute; font-weight: 700; letter-spacing: -.025em; line-height: 1.04; will-change: transform, opacity; }
-  .cap { position: absolute; color: var(--muted); line-height: 1.35; will-change: transform, opacity; }
+  .h { position: absolute; font-weight: 700; letter-spacing: -.025em; line-height: 1.04; }
+  .cap { position: absolute; color: var(--muted); line-height: 1.35; }
   .grad { background: var(--muse); -webkit-background-clip: text; background-clip: text; color: transparent; }
 
   /* phone */
-  #phone { position: absolute; left: 0; top: 0; width: 451px; height: 912px; transform-origin: 0 0; will-change: transform, opacity; }
+  #phone { position: absolute; left: 0; top: 0; width: 451px; height: 912px; transform-origin: 0 0; }
   #bezel { position: absolute; inset: 0; border-radius: 74px; padding: 15px;
     background: linear-gradient(145deg, #3a3a3e, #8a8a90 18%, #2c2c30 40%, #6d6d72 70%, #2a2a2e);
     box-shadow: 0 60px 120px rgba(30, 40, 90, .26), 0 18px 40px rgba(0,0,0,.16), inset 0 0 0 1.5px rgba(255,255,255,.25); }
@@ -60,31 +60,32 @@
   .stepline { width: 40px; height: 2px; background: #d2d2d7; }
 
   /* cards lifted out of the app */
-  .card { position: absolute; left: 0; top: 0; transform-origin: 0 0; border-radius: 22px; overflow: hidden; background: #fff; will-change: transform, opacity;
+  .card { position: absolute; left: 0; top: 0; transform-origin: 0 0; border-radius: 22px; overflow: hidden; background: #fff;
     box-shadow: 0 40px 90px rgba(30,40,90,.22), 0 8px 24px rgba(0,0,0,.10); }
   .card img { display: block; width: 100%; height: 100%; }
 
   /* compose box */
-  .compose { position: absolute; height: 112px; border-radius: 30px; background: rgba(255,255,255,.88); border: 1.5px solid rgba(255,255,255,.95);
-    box-shadow: 0 30px 70px rgba(30,40,90,.16), 0 4px 14px rgba(0,0,0,.05); display: flex; align-items: center; gap: 22px; padding: 0 22px 0 26px; will-change: transform, opacity; }
+  .compose { position: absolute; height: 178px; border-radius: 32px; background: rgba(255,255,255,.9); border: 1.5px solid rgba(255,255,255,.95);
+    box-shadow: 0 30px 70px rgba(30,40,90,.14), 0 4px 14px rgba(0,0,0,.05); display: flex; align-items: flex-start; gap: 22px; padding: 26px 24px 26px 26px; }
   .compose .ring { width: 54px; height: 54px; border-radius: 50%; background: var(--muse); flex: none; display: flex; align-items: center; justify-content: center; }
   .compose .ring::after { content: ""; width: 32px; height: 32px; border-radius: 50%; background: #fff; }
-  .compose .txt { flex: 1; font-size: 32px; line-height: 1.25; color: var(--ink); white-space: nowrap; overflow: hidden; display: flex; justify-content: flex-start; }
+  .compose .txt { flex: 1; font-size: 30px; line-height: 1.3; color: var(--ink); white-space: normal; overflow: hidden; height: 117px; padding-top: 8px; }
   .compose .txt .ph { color: #a1a1a6; }
-  .compose .txt .inner { white-space: nowrap; }
-  .compose .caret { display: inline-block; width: 3px; height: 38px; background: var(--blue); margin-left: 2px; vertical-align: -6px; border-radius: 2px; }
+  .compose .txt .inner { white-space: normal; }
+  .compose .caret { display: inline-block; width: 3px; height: 34px; background: var(--blue); margin-left: 2px; vertical-align: -6px; border-radius: 2px; }
+  .compose .send { align-self: flex-end; }
   .compose .send { width: 66px; height: 66px; border-radius: 50%; background: var(--muse); flex: none; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 24px rgba(160,51,255,.3); }
   .compose .send svg { width: 30px; height: 30px; }
   .fly { position: absolute; left: 0; top: 0; transform-origin: 0 0; background: #0866ff; color: #fff; font-size: 34px; line-height: 1.33; padding: 18px 27px;
-    border-radius: 41px; border-bottom-right-radius: 9px; will-change: transform, opacity; box-shadow: 0 20px 50px rgba(8,102,255,.25); }
+    border-radius: 41px; border-bottom-right-radius: 9px; box-shadow: 0 20px 50px rgba(8,102,255,.25); }
 
   .tap { position: absolute; width: 60px; height: 60px; border-radius: 50%; border: 3px solid rgba(255,255,255,.95); background: rgba(255,255,255,.28);
-    box-shadow: 0 0 0 2px rgba(8,102,255,.3), 0 6px 20px rgba(0,0,0,.18); will-change: transform, opacity; }
+    box-shadow: 0 0 0 2px rgba(8,102,255,.3), 0 6px 20px rgba(0,0,0,.18); }
 
   /* Muse network */
-  .net { position: absolute; left: 0; top: 0; width: 800px; height: 640px; transform-origin: 400px 320px; will-change: transform, opacity; }
+  .net { position: absolute; left: 0; top: 0; width: 800px; height: 640px; transform-origin: 400px 320px; }
   .net svg { position: absolute; inset: 0; overflow: visible; }
-  .node { position: absolute; width: 150px; margin-left: -75px; text-align: center; will-change: transform, opacity; }
+  .node { position: absolute; width: 150px; margin-left: -75px; text-align: center; }
   .node .av { position: relative; width: 112px; height: 112px; margin: 0 auto; border-radius: 50%; padding: 5px; background: rgba(255,255,255,.85);
     box-shadow: 0 16px 40px rgba(30,40,90,.15); border: 1.5px solid rgba(255,255,255,.95); }
   .node.me .av { width: 150px; height: 150px; padding: 7px; background: var(--muse); }
@@ -97,7 +98,6 @@
     color: #fff; font-size: 21px; font-weight: 800; border: 3px solid #fff; }
   .dots { position: absolute; left: 50%; top: -34px; background: #fff; border-radius: 18px; padding: 8px 12px; display: flex; gap: 5px; box-shadow: 0 6px 18px rgba(0,0,0,.1); }
   .dots b { width: 8px; height: 8px; border-radius: 50%; background: #8e8e93; }
-  .packet { position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: var(--muse); box-shadow: 0 0 12px rgba(160,51,255,.55); }
 
   /* graphics */
   .statement { position: absolute; left: 160px; width: 1600px; text-align: center; font-size: 104px; line-height: 1.05; font-weight: 700; letter-spacing: -.03em; }
@@ -107,7 +107,7 @@
   .src { font-size: 20px; color: var(--muted); margin-top: 22px; font-weight: 400; }
   .dot { position: absolute; width: 34px; height: 34px; border-radius: 50%; background: #e3e3e8; }
   .dot.on { background: var(--muse); box-shadow: 0 4px 12px rgba(160,51,255,.28); }
-  .msg { position: absolute; font-size: 46px; padding: 22px 34px; border-radius: 38px; max-width: 680px; white-space: nowrap; box-shadow: 0 14px 40px rgba(30,40,90,.09); will-change: transform, opacity, filter; }
+  .msg { position: absolute; font-size: 46px; padding: 22px 34px; border-radius: 38px; max-width: 680px; white-space: nowrap; box-shadow: 0 14px 40px rgba(30,40,90,.09); }
   .msg.them { background: #e9e9eb; color: #111; border-bottom-left-radius: 9px; }
   .msg.me { background: var(--blue); color: #fff; border-bottom-right-radius: 9px; }
   .msg.secret { background: rgba(255,255,255,.85); color: #111; border: 1.5px solid rgba(255,255,255,.95); font-size: 56px; }
@@ -120,6 +120,47 @@
   .model .d { width: 54px; height: 54px; border-radius: 50%; background: var(--muse); margin-bottom: 22px; }
   .model h3 { margin: 0; font-size: 50px; letter-spacing: -.02em; }
   .model p { margin: 12px 0 0; font-size: 30px; color: var(--muted); line-height: 1.35; }
+
+  /* outline graphics */
+  .chnum { position: absolute; left: 0; width: 1920px; top: 300px; text-align: center; font-size: 200px; font-weight: 800; letter-spacing: -.05em; line-height: 1; }
+  .chttl { position: absolute; left: 0; width: 1920px; top: 540px; text-align: center; font-size: 96px; font-weight: 700; letter-spacing: -.03em; }
+  .chsub { position: absolute; left: 0; width: 1920px; top: 680px; text-align: center; font-size: 38px; color: var(--muted); }
+  .act { position: absolute; width: 420px; height: 400px; border-radius: 40px; background: rgba(255,255,255,.85); border: 1.5px solid rgba(255,255,255,.95);
+    box-shadow: 0 30px 70px rgba(30,40,90,.12); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; }
+  .act .ico { font-size: 120px; line-height: 1; }
+  .act .lbl { font-size: 44px; font-weight: 700; letter-spacing: -.02em; }
+  .act .where { font-size: 26px; color: var(--muted); font-weight: 600; padding: 6px 18px; border-radius: 999px; background: #eef0f4; }
+  .post { position: absolute; width: 940px; border-radius: 28px; background: #fff; box-shadow: 0 30px 80px rgba(30,40,90,.14); padding: 34px 40px 30px; }
+  .post .phd { display: flex; align-items: center; gap: 18px; }
+  .post .phd img { width: 72px; height: 72px; border-radius: 50%; }
+  .post .phd b { display: block; font-size: 30px; }
+  .post .phd span { font-size: 22px; color: var(--muted); }
+  .post .pbody { margin-top: 22px; font-size: 38px; line-height: 1.42; }
+  .post mark { color: inherit; background: linear-gradient(90deg, rgba(255,92,135,.32), rgba(160,51,255,.28)) no-repeat 0 85% / 0% 42%; padding: 0 2px; }
+  .post .pft { margin-top: 22px; padding-top: 18px; border-top: 1.5px solid #e4e6eb; font-size: 26px; color: var(--muted); font-weight: 600; }
+  .anode { position: absolute; width: 96px; text-align: center; }
+  .anode .av { position: relative; width: 96px; height: 96px; border-radius: 50%; padding: 4px; background: rgba(255,255,255,.9); box-shadow: 0 12px 30px rgba(30,40,90,.14); }
+  .anode .av img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
+  .anode.me { width: 180px; } .anode.me .av { width: 180px; height: 180px; padding: 8px; background: var(--muse); }
+  .anode .nm { margin-top: 12px; font-size: 26px; font-weight: 700; white-space: nowrap; }
+  .anode .badge { width: 34px; height: 34px; font-size: 19px; }
+  .fun { position: absolute; width: 860px; border-radius: 40px; background: rgba(255,255,255,.9); border: 1.5px solid rgba(255,255,255,.95); box-shadow: 0 40px 90px rgba(30,40,90,.15); padding: 44px 48px 40px; }
+  .fun .fhd { display: flex; align-items: center; gap: 28px; }
+  .fun .fav { width: 132px; height: 132px; border-radius: 50%; padding: 6px; background: var(--muse); }
+  .fun .fav img { width: 100%; height: 100%; border-radius: 50%; display: block; object-fit: cover; }
+  .fun .fnm { font-size: 54px; font-weight: 800; letter-spacing: -.02em; }
+  .fun .fsb { font-size: 28px; color: var(--muted); margin-top: 4px; }
+  .fun .flab { margin-top: 34px; font-size: 22px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+  .fun .chips { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 14px; }
+  .fun .chip { display: inline-block; font-size: 32px; font-weight: 600; padding: 12px 24px; border-radius: 999px; background: #f1ecff; color: #5a2db8; }
+  .fun .fopt { margin-top: 34px; padding-top: 26px; border-top: 1.5px solid #e4e6eb; display: flex; align-items: center; justify-content: space-between; font-size: 28px; color: var(--ink); }
+  .fun .sw { position: relative; width: 70px; height: 42px; border-radius: 999px; background: #d1d1d6; flex: none; }
+  .fun .sw b { position: absolute; left: 4px; top: 4px; width: 34px; height: 34px; border-radius: 50%; background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,.2); }
+  .rring { position: absolute; border-radius: 50%; border: 2px solid rgba(160,51,255,.22); background: radial-gradient(circle, rgba(255,255,255,.0) 60%, rgba(160,51,255,.05)); }
+  .sweep { position: absolute; border-radius: 50%; background: conic-gradient(from 0deg, rgba(160,51,255,.0) 0deg, rgba(160,51,255,.14) 50deg, rgba(160,51,255,0) 60deg); }
+  .rlab { position: absolute; width: 180px; text-align: center; font-size: 22px; font-weight: 700; color: #5a2db8; background: rgba(255,255,255,.9); border-radius: 999px; padding: 6px 12px; box-shadow: 0 4px 14px rgba(0,0,0,.06); }
+  .rdot { position: absolute; width: 52px; height: 52px; border-radius: 50%; padding: 3px; background: #fff; box-shadow: 0 6px 16px rgba(30,40,90,.15); }
+  .rdot img { width: 100%; height: 100%; border-radius: 50%; display: block; object-fit: cover; }
 
   /* live action storyboard */
   .vf { position: absolute; inset: 70px 90px; }
@@ -249,14 +290,14 @@ window.stage = {
       let pos = sc.kind === "feature" ? "away" : side ? "left" : "center";
       const first = evs.find((e) => e.type === "phone" && e.t <= sc.start + 0.05);
       if (first) pos = first.pos;
-      phoneKeys.push({ t: sc.start, state: layoutState(pos), d: 1.0, jump: !prevApp && pos !== "away" });
+      phoneKeys.push({ t: sc.start, state: layoutState(pos), d: 1.3, jump: !prevApp && pos !== "away" });
       lastPos = pos;
       for (const e of evs) {
         if (e.type === "phone" && e.t > sc.start + 0.05) {
           lastPos = e.pos;
-          phoneKeys.push({ t: e.t, state: layoutState(e.pos), d: 1.1 });
-        } else if (e.type === "zoom") phoneKeys.push({ t: e.t, state: zoomState(e.rect, lastPos === "center" ? "center" : "left"), d: 1.3 });
-        else if (e.type === "unzoom") phoneKeys.push({ t: e.t, state: layoutState(lastPos), d: 1.1 });
+          phoneKeys.push({ t: e.t, state: layoutState(e.pos), d: 1.5 });
+        } else if (e.type === "zoom") phoneKeys.push({ t: e.t, state: zoomState(e.rect, lastPos === "center" ? "center" : "left"), d: 1.6 });
+        else if (e.type === "unzoom") phoneKeys.push({ t: e.t, state: layoutState(lastPos), d: 1.4 });
       }
       // a zoom always lets go before the scene ends
       const lastZoom = [...evs].reverse().find((e) => e.type === "zoom" || e.type === "unzoom");
@@ -273,7 +314,9 @@ window.stage = {
       if (S.tIn === "cut" && i > 0 && isApp(sc) && isApp(tl.scenes[i - 1])) S.dIn = 0.55;
       for (const e of sc.events) if (e.type === "steps") steps = e.list;
       S.steps = steps;
+      u.style.display = o.style.display = "block"; // so text can be measured while laying out
       BUILD[sc.kind](S);
+      u.style.display = o.style.display = "none";
       scenes.push(S);
     }
     // images: wait for every pop and avatar before frame 0
@@ -286,90 +329,203 @@ window.stage = {
 // ------------------------------------------------------------------ builders (DOM per scene, styled every frame in RENDER)
 const BUILD = {
   graphics(S) {
+    // Beats: each starter replaces what was on screen. A diagram right after a SUPER joins it (statement on top).
+    const STARTERS = ["super", "logo", "stat", "models", "bubbles", "secrets", "activities", "post", "agents", "chapter", "funcard", "reach"];
+    const DIAGRAMS = ["models", "bubbles", "secrets", "activities", "post", "agents", "funcard", "reach"];
     const beats = [];
     let cur = null;
     for (const e of S.events) {
-      if (["super", "logo", "stat", "models", "bubbles", "secrets"].includes(e.type)) {
-        // a statement after a logo or another statement starts a new beat; a logo joins a lone caption
-        cur = { t: e.t, parts: [] };
-        beats.push(cur);
-      }
-      if (["super", "caption", "logo", "stat", "models", "bubbles", "secrets"].includes(e.type)) {
-        if (!cur) beats.push((cur = { t: e.t, parts: [] }));
-        cur.parts.push(e);
-      }
+      if (!STARTERS.includes(e.type) && e.type !== "caption") continue;
+      const joins = cur && DIAGRAMS.includes(e.type) && cur.parts.length && cur.parts.every((p) => p.type === "super" || p.type === "caption");
+      if (STARTERS.includes(e.type) && !joins) beats.push((cur = { t: e.t, parts: [] }));
+      if (!cur) beats.push((cur = { t: e.t, parts: [] }));
+      cur.parts.push(e);
     }
-    // a caption right after a logo belongs to it; a statement followed by a caption stays together
-    S.beats = beats.map((b, i) => ({ ...b, end: beats[i + 1]?.t ?? null }));
+    S.beats = beats.map((b, i) => ({ ...b, end: beats[i + 1]?.t ?? null, els: [] }));
     for (const b of S.beats) {
-      b.els = [];
-      const sup = b.parts.find((p) => p.type === "super");
-      const capP = b.parts.find((p) => p.type === "caption");
-      const logo = b.parts.find((p) => p.type === "logo");
-      const stat = b.parts.find((p) => p.type === "stat");
-      const models = b.parts.find((p) => p.type === "models");
-      const bubbles = b.parts.find((p) => p.type === "bubbles");
-      const secrets = b.parts.find((p) => p.type === "secrets");
-      // vertical layout of this beat (fixed at build time, so nothing reflows mid-animation)
-      let y = 540;
-      if (logo) {
+      const P = (type) => b.parts.find((p) => p.type === type);
+      const sup = P("super"), capP = P("caption");
+      const diagram = b.parts.find((p) => DIAGRAMS.includes(p.type));
+      const add = (e, t, kind, extra = {}) => b.els.push({ e, t, kind, ...extra });
+      let areaTop = 120;
+      if (P("logo")) {
         const ring = el("div", "lring", S.under); ring.style.left = 960 - 75 + "px"; ring.style.top = (capP ? 300 : 340) + "px";
         const wm = el("div", "wordmark", S.under, "Mutuals"); wm.style.top = (capP ? 480 : 520) + "px";
-        b.els.push({ e: ring, t: logo.t, kind: "pop" }, { e: wm, t: logo.t + 0.3, kind: "rise" });
-        if (capP) { const c = el("div", "gcap", S.under, fmt(capP.text)); c.style.top = "700px"; b.els.push({ e: c, t: capP.t + 0.2, kind: "rise" }); }
+        add(ring, P("logo").t, "pop"); add(wm, P("logo").t + 0.3, "rise");
+        if (capP) { const c = el("div", "gcap", S.under, fmt(capP.text)); c.style.top = "700px"; add(c, capP.t + 0.2, "rise"); }
+        continue;
+      }
+      if (P("chapter")) {
+        const ch = P("chapter");
+        const num = el("div", "chnum grad", S.under, esc(ch.parts[0] ?? ""));
+        const ttl = el("div", "chttl", S.under, fmt(ch.parts[1] ?? ""));
+        add(num, ch.t, "rise", { dist: 30 }); add(ttl, ch.t + 0.25, "rise");
+        if (ch.parts[2]) { const sub = el("div", "chsub", S.under, fmt(ch.parts[2])); add(sub, ch.t + 0.45, "rise"); }
         continue;
       }
       if (sup) {
         const s = el("div", "statement", S.under, fmt(sup.text));
-        const lines = Math.ceil(plain(sup.text).length / 26);
-        const hgt = lines * 110;
-        y = capP ? 470 - hgt / 2 : 540 - hgt / 2;
-        s.style.top = y + "px";
-        b.els.push({ e: s, t: sup.t, kind: "rise" });
-        if (capP) { const c = el("div", "gcap", S.under, fmt(capP.text)); c.style.top = y + hgt + 40 + "px"; b.els.push({ e: c, t: capP.t + 0.2, kind: "rise" }); }
-        continue;
+        if (diagram) {
+          s.style.fontSize = "74px"; s.style.top = "84px";
+          add(s, sup.t, "rise");
+          areaTop = 84 + s.offsetHeight + 30;
+          if (capP) { const c = el("div", "gcap", S.under, fmt(capP.text)); c.style.top = areaTop - 10 + "px"; c.style.fontSize = "34px"; add(c, capP.t + 0.2, "rise"); areaTop += c.offsetHeight + 20; }
+        } else {
+          const hgt = s.offsetHeight;
+          const y = capP ? 470 - hgt / 2 : 540 - hgt / 2;
+          s.style.top = y + "px";
+          add(s, sup.t, "rise");
+          if (capP) { const c = el("div", "gcap", S.under, fmt(capP.text)); c.style.top = y + hgt + 40 + "px"; add(c, capP.t + 0.2, "rise"); }
+        }
+      } else if (capP && diagram && diagram.type !== "models") {
+        const c = el("div", "gcap", S.under, fmt(capP.text)); c.style.top = "880px"; add(c, capP.t + 0.3, "rise");
       }
+      const area = { top: areaTop, bottom: 1010 };
+      const stat = P("stat");
       if (stat) {
         const [value, text, source] = [stat.parts[0], stat.parts[1] ?? "", stat.parts[2] ?? ""];
         const num = el("div", "num grad", S.under); num.style.left = "250px"; num.style.top = "150px";
         const tx = el("div", "stattxt", S.under, `${esc(text)}<div class="src">${esc(source)}</div>`); tx.style.left = "1060px"; tx.style.top = "400px";
         const m = String(value).match(/^([^\d]*)([\d.]+)(.*)$/);
-        b.els.push({ e: num, t: stat.t, kind: "rise", count: m ? { pre: m[1], n: Number(m[2]), post: m[3] } : null, text: value }, { e: tx, t: stat.t + 0.35, kind: "rise" });
+        add(num, stat.t, "rise", { count: m ? { pre: m[1], n: Number(m[2]), post: m[3] } : null });
+        add(tx, stat.t + 0.35, "rise");
         const on = m ? Math.round(Number(m[2])) : 0;
         for (let k = 0; k < 100; k++) {
           const d = el("div", "dot" + (k < on ? " on" : ""), S.under);
           d.style.left = 262 + (k % 10) * 52 + "px"; d.style.top = 460 + Math.floor(k / 10) * 52 + "px";
-          b.els.push({ e: d, t: stat.t + 0.25 + k * 0.012, kind: "dot" });
+          add(d, stat.t + 0.25 + k * 0.012, "dot");
         }
-        continue;
       }
-      if (models) {
+      if (!diagram) continue;
+      const D = diagram;
+      if (D.type === "models") {
         const list = [["Muse Spark", "Each person's agent. Parses the ask, negotiates, drafts openers and listings."], ["Muse Wonder", "The referee, once per conversation. Spots the rare real connection."], ["Muse Ember", "Watches and listens to video, reads posts, writes the digest."]];
         list.forEach((m, k) => {
           const c = el("div", "model", S.under, `<div class="d"></div><h3>${esc(m[0])}</h3><p>${esc(m[1])}</p>`);
-          c.style.left = 960 - 780 + k * 532 + "px"; c.style.top = (capP ? 330 : 380) + "px";
-          b.els.push({ e: c, t: models.t + k * 0.22, kind: "rise" });
+          c.style.left = 960 - 780 + k * 532 + "px"; c.style.top = Math.max(area.top, 330) + "px";
+          add(c, D.t + k * 0.22, "rise");
         });
-        if (capP) { const c = el("div", "gcap", S.under, fmt(capP.text)); c.style.top = "780px"; b.els.push({ e: c, t: capP.t + 0.3, kind: "rise" }); }
-        continue;
-      }
-      if (bubbles) {
-        const spots = [[150, 140], [1170, 110], [300, 400], [1260, 360], [140, 700], [1130, 650], [660, 230], [700, 860], [560, 540], [1440, 860]];
-        bubbles.parts.forEach((txt, k) => {
-          const m = el("div", "msg " + (k % 3 === 2 ? "me" : "them"), S.under, esc(txt));
-          m.style.left = spots[k % spots.length][0] + "px"; m.style.top = spots[k % spots.length][1] + "px";
-          b.els.push({ e: m, t: bubbles.t + 0.15 + k * 0.33, kind: "float", k });
+        if (capP && !sup) { const c = el("div", "gcap", S.under, fmt(capP.text)); c.style.top = "780px"; add(c, capP.t + 0.3, "rise"); }
+      } else if (D.type === "bubbles") {
+        // scattered over the frame below the statement; each one has its own spot
+        const n = D.parts.length;
+        D.parts.forEach((txt, k) => {
+          const col = k % 3, row = Math.floor(k / 3), rows = Math.ceil(n / 3);
+          const x = 140 + col * 560 + ((k * 97) % 140);
+          const y = area.top + 20 + (row * (area.bottom - area.top - 120)) / Math.max(1, rows - 1 || 1) + ((k * 53) % 40);
+          const m = el("div", "msg " + (k % 4 === 3 ? "me" : "them"), S.under, esc(txt));
+          m.style.left = x + "px"; m.style.top = Math.min(y, area.bottom - 110) + "px";
+          add(m, D.t + 0.15 + k * 0.22, "float", { k });
         });
-        continue;
-      }
-      if (secrets) {
-        const spots = [[220, 300], [1040, 230], [580, 640]];
-        secrets.parts.forEach((txt, k) => {
+      } else if (D.type === "secrets") {
+        const spots = [[220, area.top + 70], [1040, area.top + 10], [580, area.top + 360]];
+        D.parts.forEach((txt, k) => {
           const m = el("div", "msg secret", S.under, esc(txt));
           m.style.left = spots[k % 3][0] + "px"; m.style.top = spots[k % 3][1] + "px";
           const lock = el("div", "lock", S.under, LOCK_SVG);
-          b.els.push({ e: m, t: secrets.t + 0.2 + k * 0.4, kind: "secret", lockAt: secrets.t + 1.8 + k * 0.3, lock, k });
+          add(m, D.t + 0.2 + k * 0.4, "secret", { lockAt: D.t + 1.8 + k * 0.3, lock, k });
         });
+      } else if (D.type === "activities") {
+        const n = D.parts.length, w = 420, gap = 48, x0 = 960 - (n * w + (n - 1) * gap) / 2;
+        D.parts.forEach((p, k) => {
+          const [main, sub] = p.split(" / ");
+          const m = main.match(/^(\S+)\s+(.*)$/);
+          const c = el("div", "act", S.under, `<div class="ico">${esc(m ? m[1] : "")}</div><div class="lbl">${esc(m ? m[2] : main)}</div>${sub ? `<div class="where">${esc(sub)}</div>` : ""}`);
+          c.style.left = x0 + k * (w + gap) + "px"; c.style.top = area.top + Math.max(0, (area.bottom - area.top - 400) / 2) + "px";
+          add(c, D.t + 0.2 + k * 0.3, "rise", { dist: 34 });
+        });
+      } else if (D.type === "post") {
+        const [text, group, members] = D.parts;
+        const who = TL.persona;
+        const c = el("div", "post", S.under, `<div class="phd"><img src="${BASE}${who?.avatar ?? ""}"><div><b>${esc(who?.name ?? "You")}</b><span>${esc(group ?? "")} · Just now</span></div></div><div class="pbody">${(text ?? "").replace(/~(.+?)~/g, '<mark>$1</mark>')}</div><div class="pft">${esc(members ?? "")}</div>`);
+        c.style.left = 960 - 470 + "px"; c.style.top = area.top + Math.max(10, (area.bottom - area.top - c.offsetHeight) / 2 - 30) + "px";
+        add(c, D.t + 0.1, "rise", { dist: 30 });
+        // highlights fade in one by one
+        [...c.querySelectorAll("mark")].forEach((mk, k) => add(mk, D.t + 1.0 + k * 0.45, "mark"));
+      } else if (D.type === "agents") {
+        // Jamie's Muse on the left, a crowd on the right; it reaches all of them, most fall away, a few fit
+        const people = (TL.people ?? []).slice(0, 12);
+        const g = el("div", "", S.under);
+        g.style.cssText = `position:absolute;left:0;top:0;width:1920px;height:1080px`;
+        const me = { x: 560, y: (area.top + area.bottom - 70) / 2 };
+        const pts = people.map((p, k) => ({ ...p, x: 1180 + (k % 4) * 150, y: area.top + 40 + Math.floor(k / 4) * ((area.bottom - area.top - 230) / 2), fit: [1, 6, 10].includes(k) }));
+        g.innerHTML = `<svg width="1920" height="1080" style="position:absolute;inset:0;overflow:visible"><defs><linearGradient id="ag${S.i}" x1="0" x2="1"><stop offset="0" stop-color="#0866ff"/><stop offset=".55" stop-color="#a033ff"/><stop offset="1" stop-color="#ff5c87"/></linearGradient></defs>${pts
+          .map((p, k) => `<line data-k="${k}" x1="${me.x}" y1="${me.y}" x2="${p.x}" y2="${p.y + 48}" stroke="url(#ag${S.i})" stroke-width="3" stroke-linecap="round"/><line data-f="${k}" x1="${me.x}" y1="${me.y}" x2="${p.x}" y2="${p.y + 48}" stroke="#fff" stroke-width="3" stroke-dasharray="2 20" stroke-linecap="round"/>`)
+          .join("")}</svg>`;
+        const meEl = el("div", "anode me", g, `<div class="av"><img src="${BASE}${TL.persona?.avatar ?? ""}"></div><div class="nm">${esc((TL.persona?.name ?? "You").split(" ")[0])}'s Muse</div>`);
+        meEl.style.left = me.x - 90 + "px"; meEl.style.top = me.y - 90 + "px";
+        const nodes = pts.map((p, k) => {
+          const d = el("div", "anode", g, `<div class="av"><img src="${BASE}${p.avatar}"><div class="badge" style="background:#31a24c">✓</div></div>`);
+          d.style.left = p.x - 48 + "px"; d.style.top = p.y + "px";
+          return { ...p, d, line: g.querySelector(`line[data-k="${k}"]`), flow: g.querySelector(`line[data-f="${k}"]`) };
+        });
+        add(g, D.t, "fn", { fn: (t, o) => {
+          style(meEl, o * env(t, D.t, 0.6), 0, 0);
+          const cut = D.t + 2.4;
+          nodes.forEach((n, k) => {
+            const a = D.t + 0.4 + k * 0.08;
+            const fall = n.fit ? 0 : soft(prog(t, cut + (k % 5) * 0.08, 0.8));
+            const len = Math.hypot(n.x - me.x, n.y + 48 - me.y);
+            n.line.setAttribute("stroke-dasharray", `${len}`);
+            n.line.setAttribute("stroke-dashoffset", (len * (1 - out(prog(t, a, 0.7)))).toFixed(1));
+            n.line.setAttribute("opacity", (o * (0.85 - 0.75 * fall)).toFixed(3));
+            n.flow.setAttribute("opacity", (o * 0.8 * out(prog(t, a + 0.5, 0.5)) * (1 - fall) * (n.fit ? 1 : 1 - soft(prog(t, cut, 0.4)))).toFixed(3));
+            n.flow.setAttribute("stroke-dashoffset", (-t * 70).toFixed(2));
+            style(n.d, o * env(t, a, 0.5) * (1 - 0.78 * fall), 0, (1 - out(prog(t, a, 0.5))) * 14);
+            const fitQ = n.fit ? out(prog(t, cut + 0.3, 0.6)) : 0;
+            n.d.querySelector(".av").style.boxShadow = `0 0 0 ${(5 * fitQ).toFixed(1)}px rgba(49,162,76,${(0.35 * fitQ).toFixed(3)}), 0 12px 30px rgba(30,40,90,.14)`;
+            style(n.d.querySelector(".badge"), fitQ, 0, 0, lerp(0.8, 1, fitQ));
+          });
+        } });
+      } else if (D.type === "funcard") {
+        const p = TL.persona ?? {};
+        const ico = (s) => (/run/i.test(s) ? "🏃" : /bake|bread|sourdough/i.test(s) ? "🍞" : /chicago|city|new to/i.test(s) ? "🏙️" : /music|band|show/i.test(s) ? "🎵" : /cat|dog/i.test(s) ? "🐾" : "✨");
+        const facts = [...(p.interests ?? []), ...(p.work ? [p.work] : [])];
+        const c = el("div", "fun", S.under, `<div class="fhd"><div class="fav"><img src="${BASE}${p.avatar ?? ""}"></div><div><div class="fnm">${esc(p.name ?? "")}</div><div class="fsb">${esc(p.line ?? "")}</div></div></div><div class="flab">Fun facts</div><div class="chips">${facts.map((f) => `<span class="chip">${ico(f)} ${esc(f)}</span>`).join("")}</div><div class="fopt"><span>Let Muse use my profile, interests and posts</span><i class="sw"><b></b></i></div>`);
+        c.style.left = 960 - 430 + "px"; c.style.top = area.top + Math.max(0, (area.bottom - area.top - 600) / 2) + "px";
+        add(c, D.t + 0.1, "rise", { dist: 30 });
+        [...c.querySelectorAll(".chip")].forEach((ch, k) => add(ch, D.t + 0.7 + k * 0.3, "rise", { dist: 12, din: 0.5 }));
+        const sw = c.querySelector(".sw"), knob = c.querySelector(".sw b");
+        add(c, D.t, "fn", { fn: (t) => {
+          const q = soft(prog(t, D.t + 0.5 + facts.length * 0.3 + 0.3, 0.5));
+          sw.style.background = `rgba(${Math.round(lerp(209, 49, q))}, ${Math.round(lerp(209, 162, q))}, ${Math.round(lerp(214, 76, q))}, 1)`;
+          knob.style.transform = `translateX(${(q * 26).toFixed(2)}px)`;
+        } });
+      } else if (D.type === "reach") {
+        // rings around Jamie: each ring a place Muse looks; people appear on them; a soft sweep goes round
+        const g = el("div", "", S.under);
+        g.style.cssText = "position:absolute;left:0;top:0;width:1920px;height:1080px";
+        const maxR = (area.bottom - area.top) / 2 + 10;
+        const cx = 960, cy = (area.top + area.bottom) / 2 + 30;
+        const radii = [0.4, 0.6, 0.8, 1].map((f) => Math.round(maxR * f));
+        const people = (TL.people ?? []).slice(0, 14);
+        g.innerHTML = `<div class="sweep"></div>${radii.map((r) => `<div class="rring" style="left:${cx - r}px;top:${cy - r}px;width:${2 * r}px;height:${2 * r}px"></div>`).join("")}`;
+        const sweep = g.querySelector(".sweep");
+        Object.assign(sweep.style, { left: cx - radii[3] + "px", top: cy - radii[3] + "px", width: 2 * radii[3] + "px", height: 2 * radii[3] + "px" });
+        const rings = [...g.querySelectorAll(".rring")];
+        const labels = D.parts.map((txt, k) => {
+          const l = el("div", "rlab", g, esc(txt));
+          l.style.left = cx - l.offsetWidth / 2 + "px"; l.style.top = cy - radii[k] - l.offsetHeight / 2 + "px";
+          return l;
+        });
+        const meEl = el("div", "anode me", g, `<div class="av"><img src="${BASE}${TL.persona?.avatar ?? ""}"></div>`);
+        meEl.style.left = cx - 90 + "px"; meEl.style.top = cy - 90 + "px";
+        const dots = people.map((p, k) => {
+          // around each ring, evenly, leaving the top (where its label sits) clear
+          const ring = k % 4, idx = Math.floor(k / 4), per = Math.ceil(people.length / 4);
+          const ang = -Math.PI / 2 + 0.55 + ((2 * Math.PI - 1.1) * (idx + 0.5)) / per + (ring % 2 ? 0.35 : 0);
+          const d = el("div", "rdot", g, `<img src="${BASE}${p.avatar}">`);
+          d.style.left = cx + Math.cos(ang) * radii[ring] - 26 + "px"; d.style.top = cy + Math.sin(ang) * radii[ring] - 26 + "px";
+          return { d, at: D.t + 1.0 + k * 0.22 + ring * 0.1 };
+        });
+        add(g, D.t, "fn", { fn: (t, o) => {
+          style(meEl, o * env(t, D.t, 0.6), 0, 0);
+          rings.forEach((r, k) => style(r, o * env(t, D.t + 0.15 + k * 0.25, 0.7), 0, 0, lerp(0.85, 1, out(prog(t, D.t + 0.15 + k * 0.25, 0.9)))));
+          labels.forEach((l, k) => style(l, o * env(t, D.t + 0.5 + k * 0.25, 0.6), 0, (1 - out(prog(t, D.t + 0.5 + k * 0.25, 0.6))) * 10));
+          dots.forEach((x) => style(x.d, o * env(t, x.at, 0.5), 0, 0, lerp(0.7, 1, out(prog(t, x.at, 0.5)))));
+          sweep.style.opacity = (o * 0.9 * env(t, D.t + 0.6, 0.8)).toFixed(3);
+          sweep.style.transform = `rotate(${((t - D.t) * 60).toFixed(2)}deg)`;
+        } });
       }
     }
   },
@@ -397,9 +553,17 @@ const BUILD = {
 
 function buildApp(S) {
   const u = S.under, o = S.over;
+  S.awayAt = S.events.find((e) => e.type === "phone" && e.pos === "away")?.t ?? (S.kind === "feature" ? S.start : null);
   // headline + caption (the right column, or across the top in a FEATURE scene)
-  S.heads = S.events.filter((e) => e.type === "super").map((e) => ({ e: el("div", "h", u, fmt(e.text)), t: e.t }));
-  S.caps = S.events.filter((e) => e.type === "caption").map((e) => ({ e: el("div", "cap", u, fmt(e.text)), t: e.t }));
+  const across = S.kind === "feature" || S.awayAt != null;
+  const topCopy = (cls, html, top, size) => {
+    if (!across) return null;
+    const e = el("div", cls, u, html);
+    Object.assign(e.style, { left: "160px", width: "1600px", top: top + "px", textAlign: "center", fontSize: size + "px" });
+    return e;
+  };
+  S.heads = S.events.filter((e) => e.type === "super").map((e) => ({ e: el("div", "h", u, fmt(e.text)), top: topCopy("h", fmt(e.text), 92, 80), t: e.t }));
+  S.caps = S.events.filter((e) => e.type === "caption").map((e) => ({ e: el("div", "cap", u, fmt(e.text)), top: topCopy("cap", fmt(e.text), 200, 32), t: e.t }));
   // stepper
   if (S.steps.length && S.kind === "phone" && S.events.some((e) => e.type === "step")) {
     const st = el("div", "", u);
@@ -454,16 +618,15 @@ function buildApp(S) {
     })];
     S.netSvg.innerHTML = `<svg width="800" height="640" style="position:absolute;inset:0;overflow:visible"><defs><linearGradient id="g${S.i}" x1="0" x2="1"><stop offset="0" stop-color="#0866ff"/><stop offset=".55" stop-color="#a033ff"/><stop offset="1" stop-color="#ff5c87"/></linearGradient></defs>${placed
       .slice(1)
-      .map((n) => `<line data-id="${n.id}" x1="400" y1="${meY + 40}" x2="${n.x}" y2="${n.y + 56}" stroke="url(#g${S.i})" stroke-width="4" stroke-linecap="round"/>`)
+      .map((n) => `<line data-id="${n.id}" x1="400" y1="${meY + 40}" x2="${n.x}" y2="${n.y + 56}" stroke="url(#g${S.i})" stroke-width="4" stroke-linecap="round"/><line data-flow="${n.id}" x1="400" y1="${meY + 40}" x2="${n.x}" y2="${n.y + 56}" stroke="#ffffff" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 22" opacity="0"/>`)
       .join("")}</svg>`;
     for (const n of placed) {
       const d = el("div", "node" + (n.me ? " me" : ""), S.net, `<div class="av"><img src="${BASE}${n.avatar}"><div class="badge"></div>${n.me ? "" : '<div class="dots"><b></b><b></b><b></b></div>'}</div><div class="nm">${esc(n.label)}</div><div class="st"><span class="a"></span><span class="b"></span></div>`);
       d.style.left = n.x + "px";
       d.style.top = n.y + "px";
-      S.nodes.set(n.id, { ...n, el: d, line: S.netSvg.querySelector(`line[data-id="${n.id}"]`), packet: n.me ? null : el("div", "packet", S.net) });
+      S.nodes.set(n.id, { ...n, el: d, line: S.netSvg.querySelector(`line[data-id="${n.id}"]`), flow: S.netSvg.querySelector(`line[data-flow="${n.id}"]`) });
     }
   }
-  S.awayAt = S.events.find((e) => e.type === "phone" && e.pos === "away")?.t ?? (S.kind === "feature" ? S.start : null);
 }
 
 // ------------------------------------------------------------------ frame lookup
@@ -569,7 +732,7 @@ const RENDER = {
       for (const it of b.els) {
         const e = it.e;
         if (it.kind === "rise") {
-          const r = RISE(it.t, t, end);
+          const r = RISE(it.t, t, end, it.dist ?? 26, it.din ?? 0.75);
           style(e, r.o, 0, r.y);
           if (it.count) {
             const k = out(prog(t, it.t, 1.5));
@@ -577,13 +740,16 @@ const RENDER = {
           }
         } else if (it.kind === "pop") {
           const o = env(t, it.t, 0.9, end, 0.45);
-          style(e, o, 0, 0, lerp(0.9, 1, out(prog(t, it.t, 0.9))));
+          style(e, o, 0, 0, lerp(0.92, 1, out(prog(t, it.t, 0.9))));
         } else if (it.kind === "dot") {
           const o = env(t, it.t, 0.35, end, 0.45);
-          style(e, o, 0, 0, lerp(0.6, 1, out(prog(t, it.t, 0.35))));
+          style(e, o, 0, 0, lerp(0.7, 1, out(prog(t, it.t, 0.35))));
         } else if (it.kind === "float") {
           const r = RISE(it.t, t, end, 22, 0.6);
-          style(e, r.o, 0, r.y + Math.sin(t * 0.8 + it.k) * 5);
+          style(e, r.o, 0, r.y + Math.sin(t * 0.7 + it.k) * 4);
+        } else if (it.kind === "mark") {
+          const q = soft(prog(t, it.t, 0.6));
+          e.style.backgroundSize = `${(q * 100).toFixed(1)}% 100%`;
         } else if (it.kind === "secret") {
           const r = RISE(it.t, t, end, 22, 0.6);
           const bl = soft(prog(t, it.lockAt, 0.7));
@@ -594,6 +760,11 @@ const RENDER = {
           it.lock.style.top = rect.y + rect.h / 2 - 37 + "px";
           const lo = env(t, it.lockAt + 0.15, 0.6, end, 0.45);
           style(it.lock, lo, 0, 0, lerp(0.85, 1, out(prog(t, it.lockAt + 0.15, 0.6))));
+        } else if (it.kind === "fn") {
+          const o = env(t, it.t, 0.01, end, 0.45);
+          e.style.opacity = o.toFixed(4);
+          e.style.visibility = o <= 0.001 ? "hidden" : "visible";
+          if (o > 0.001) it.fn(t, 1);
         }
       }
     }
@@ -615,30 +786,32 @@ const RENDER = {
 
 function renderApp(S, t) {
   const ph = phoneAt(t);
-  const away = S.kind === "feature" ? 1 : S.awayAt != null ? soft(prog(t, S.awayAt + 0.45, 1.15)) : 0;
+  const away = S.kind === "feature" ? 1 : S.awayAt != null ? soft(prog(t, S.awayAt + 0.5, 1.3)) : 0;
   // the column to the right of the phone; with the phone gone, text moves to the top and spans the frame
   const phoneRight = ph.x + ph.k * PW;
   const colL = clamp(phoneRight + 90, 1000, 1200);
-  const L = lerp(colL, 160, away), Wd = lerp(1840 - colL, 1600, away);
-  // headline(s): each replaces the last
+  const L = colL, Wd = 1840 - colL;
+  // headline(s): each replaces the last. One copy sits beside the phone, one across the top; they crossfade when the
+  // phone leaves, so the text never reflows or jumps mid-move.
   S.heads.forEach((h, k) => {
     const end = S.heads[k + 1]?.t ?? null;
     const r = RISE(h.t, t, end);
-    h.e.style.left = L + "px";
-    h.e.style.width = Wd + "px";
-    h.e.style.top = lerp(140, 96, away) + "px";
-    h.e.style.fontSize = lerp(76, 80, away) + "px";
-    h.e.style.textAlign = away > 0.5 ? "center" : "left";
-    style(h.e, r.o, 0, r.y);
+    h.e.style.left = colL + "px";
+    h.e.style.width = 1840 - colL + "px";
+    h.e.style.top = "140px";
+    h.e.style.fontSize = "76px";
+    style(h.e, r.o * (1 - away), 0, r.y);
+    if (h.top) style(h.top, r.o * away, 0, r.y);
   });
   const headH = S.heads.length ? S.heads[0].e.offsetHeight : 0;
   S.caps.forEach((c, k) => {
     const r = RISE(c.t, t, S.caps[k + 1]?.t ?? null);
-    c.e.style.left = L + "px";
-    c.e.style.width = Math.min(Wd, 820) + "px";
+    c.e.style.left = colL + "px";
+    c.e.style.width = Math.min(1840 - colL, 820) + "px";
     c.e.style.fontSize = "30px";
-    c.e.style.top = lerp(140, 96, away) + headH + 22 + "px";
-    style(c.e, r.o, 0, r.y);
+    c.e.style.top = 140 + headH + 22 + "px";
+    style(c.e, r.o * (1 - away), 0, r.y);
+    if (c.top) style(c.top, r.o * away, 0, r.y);
   });
   // stepper
   if (S.stepEls) {
@@ -660,7 +833,7 @@ function renderApp(S, t) {
   // compose box + the message flying into the phone
   if (S.box) {
     const first = S.composes[0];
-    const boxTop = lerp(140, 96, away) + headH + 70;
+    const boxTop = 140 + headH + 64;
     const boxW = Math.min(Wd, 780);
     S.box.style.left = L + "px";
     S.box.style.top = boxTop + "px";
@@ -677,36 +850,35 @@ function renderApp(S, t) {
         txt = c.text.slice(0, Math.round(c.text.length * clamp((t - c.t) / Math.max(0.2, c.typeDur - 0.25))));
       }
     }
-    const blink = typing || (t * 1.6) % 1 < 0.55;
-    S.boxText.innerHTML = txt ? `${esc(txt)}<span class="caret"></span>` : `<span class="ph">Message Muse</span>${blink ? '<span class="caret" style="margin-left:-2px"></span>' : ""}`;
-    // keep the end of a long line in view while typing
-    const box = S.box.querySelector(".txt");
-    const overflow = Math.max(0, S.boxText.scrollWidth - box.clientWidth);
-    S.boxText.style.transform = `translateX(${-overflow}px)`;
+    // caret: solid while typing, otherwise a slow soft pulse (no hard on/off). The text wraps in place, so nothing
+    // slides sideways as it's typed.
+    const caretO = typing ? 1 : 0.25 + 0.75 * (0.5 + 0.5 * Math.cos(t * 2 * Math.PI * 0.9));
+    const caret = `<span class="caret" style="opacity:${caretO.toFixed(3)}"></span>`;
+    S.boxText.innerHTML = txt ? `${esc(txt)}${caret}` : `<span class="ph">Message Muse</span>${caret}`;
+    const box = S.boxText;
     // the send button presses gently when a message goes
     let press = 0;
     for (const c of S.composes) press = Math.max(press, Math.sin(Math.PI * prog(t, c.t + c.typeDur - 0.12, 0.3)));
     S.box.querySelector(".send").style.transform = `scale(${(1 - press * 0.07).toFixed(3)})`;
-    // flights
+    // the sent message drops softly into its place in the chat, then hands over to the app's own bubble
     S.composes.forEach((c, k) => {
       const f = S.flies[k];
       const tSend = c.t + c.typeDur, tLand = tSend + c.flight;
-      const q = prog(t, tSend, c.flight);
-      if (t < tSend || t > tLand + 0.45 || !c.target) { style(f, 0); return; }
-      const fw = f.offsetWidth, fh = f.offsetHeight;
-      // from: the text spot in the box; to: where the app draws the sent bubble (in phone coordinates)
-      const from = { x: L + 100, y: boxTop + 56 - fh / 2 };
+      if (t < tSend || t > tLand + 0.5 || !c.target) { style(f, 0); return; }
+      const fw = f.offsetWidth;
       const end = toStage(ph, c.target.x, c.target.y);
-      const sEnd = (ph.k * S0 * c.target.width) / fw;
-      const e = inOut(q);
-      // a gentle arc: a quadratic curve through a point above the straight line
-      const mid = { x: (from.x + end.x) / 2, y: Math.min(from.y, end.y) - 120 };
-      const x = (1 - e) * (1 - e) * from.x + 2 * (1 - e) * e * mid.x + e * e * end.x;
-      const y = (1 - e) * (1 - e) * from.y + 2 * (1 - e) * e * mid.y + e * e * end.y;
-      const s = lerp(1, sEnd, e);
-      const o = Math.min(out(prog(t, tSend, 0.18)), 1 - soft(prog(t, tLand - 0.05, 0.35)));
-      style(f, o, x, y, s);
+      const sc = (ph.k * S0 * c.target.width) / fw;
+      const q = out(prog(t, tSend, c.flight));
+      const o = Math.min(soft(prog(t, tSend, 0.3)), 1 - soft(prog(t, tLand, 0.4)));
+      style(f, o, end.x, end.y - 70 * (1 - q), sc);
     });
+    // the box lets go of the text as it's sent
+    let fade = 1;
+    for (const c of S.composes) {
+      const tSend = c.t + c.typeDur;
+      if (t >= tSend && t < tSend + 0.3) fade = 1 - soft(prog(t, tSend, 0.25));
+    }
+    box.style.opacity = fade.toFixed(3);
   }
   // taps: a soft ring that fades
   for (const tp of S.taps) {
@@ -720,7 +892,7 @@ function renderApp(S, t) {
   if (S.pops.length) {
     if (S.kind === "feature" || away > 0.5) {
       const n = S.pops.length;
-      const top = lerp(140, 96, away) + headH + 60;
+      const top = 92 + (S.heads[0]?.top?.offsetHeight ?? 90) + (S.caps.length ? 64 : 34);
       const availH = 1020 - top, availW = 1640, gap = 56;
       // tall cards show their top part (the part that matters) so the row can be big
       const CROP = 560;
@@ -728,13 +900,16 @@ function renderApp(S, t) {
       let sc = Math.min(2.2, ...nat.map((d) => availH / d.h));
       const totalW = (s) => nat.reduce((a, d) => a + d.w * s, 0) + gap * (n - 1);
       if (totalW(sc) > availW) sc = (availW - gap * (n - 1)) / nat.reduce((a, d) => a + d.w, 0);
-      let x = 960 - totalW(sc) / 2;
+      // The cards on screen stay centred: when the next one arrives, the row glides over to make room.
+      const rowW = (m) => nat.slice(0, m).reduce((a, d) => a + d.w * sc, 0) + gap * (m - 1);
+      let x = 960 - rowW(1) / 2;
+      for (let m = 2; m <= n; m++) x -= ((rowW(m) - rowW(m - 1)) / 2) * inOut(prog(t, S.pops[m - 1].t - 0.15, 0.9));
       S.pops.forEach((p, k) => {
         const w = nat[k].w * sc, h = nat[k].h * sc;
         const y = top + (availH - h) / 2;
         const o = env(t, p.t, 0.8);
         const rise = (1 - out(prog(t, p.t, 0.9))) * 40;
-        const drift = 1 + 0.015 * prog(t, p.t, Math.max(1, S.end - p.t));
+        const drift = 1; // no slow zoom on cards: rescaling text every frame shimmers
         p.el.style.width = w + "px";
         p.el.style.height = h + "px";
         p.img.style.height = (nat[k].full * sc) + "px";
@@ -743,7 +918,7 @@ function renderApp(S, t) {
         x += w + gap;
       });
     } else {
-      let y = lerp(140, 96, away) + headH + 70;
+      let y = 140 + headH + 70;
       S.pops.forEach((p) => {
         const w = Math.min(Math.max(520, p.rect.width * S0 * 1.6), 660, 1820 - L);
         const h = (w * p.rect.height) / p.rect.width;
@@ -810,17 +985,17 @@ function renderApp(S, t) {
       b2.className = "b" + (phase === "fit" ? " fitc" : "");
       a.style.opacity = (1 - q).toFixed(3);
       b2.style.opacity = q.toFixed(3);
-      // typing dots + a packet travelling along the line while the Muses talk
-      const talking = phase === "talking" ? soft(prog(t, s.since, 0.3)) : phase === "reaching" ? 0 : 1 - soft(prog(t, s.since, 0.3));
+      // while the Muses talk: soft typing dots, and light flowing along the line toward whoever is listening
+      const talking = phase === "talking" ? soft(prog(t, s.since, 0.4)) : phase === "reaching" ? 0 : 1 - soft(prog(t, s.since, 0.4));
       const dots = nd.el.querySelector(".dots");
       dots.style.opacity = (talking * o).toFixed(3);
       dots.style.transform = "translateX(-50%)";
-      [...dots.children].forEach((d, k) => (d.style.opacity = (0.3 + 0.7 * Math.max(0, Math.sin(t * 6 - k * 0.9))).toFixed(3)));
-      const per = 1.1, ph2 = ((t + nd.x * 0.003) % per) / per;
-      const fromMe = s?.speaker === "me";
-      const A = fromMe ? { x: 400, y: 510 } : { x: nd.x, y: nd.y + 56 }, B = fromMe ? { x: nd.x, y: nd.y + 56 } : { x: 400, y: 510 };
-      const e = inOut(ph2);
-      style(nd.packet, talking * Math.sin(Math.PI * ph2), lerp(A.x, B.x, e) - 7 + 7, lerp(A.y, B.y, e));
+      [...dots.children].forEach((d, k) => (d.style.opacity = (0.45 + 0.55 * (0.5 + 0.5 * Math.sin(t * 3.2 - k * 0.9))).toFixed(3)));
+      if (nd.flow) {
+        const fromMe = s?.speaker === "me";
+        nd.flow.setAttribute("opacity", (0.85 * talking).toFixed(3));
+        nd.flow.setAttribute("stroke-dashoffset", ((fromMe ? -1 : 1) * t * 70).toFixed(2));
+      }
     }
   }
 }

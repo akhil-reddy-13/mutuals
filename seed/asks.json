@@ -773,5 +773,122 @@
     ],
     "createdAt": "2026-11-11T13:00:00Z",
     "status": "draft"
+  },
+  {
+    "id": "ask_theo_camera",
+    "userId": "theo",
+    "groupId": "g_ffs",
+    "type": "item",
+    "side": "seeking",
+    "summary": "Looking for a compact camera for shows, ideally a Canon or Sony",
+    "preferences": [
+      {
+        "id": "theo_cam_budget",
+        "topic": "budget",
+        "value": "Up to $600",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "theo_cam_ceiling",
+        "topic": "budget_ceiling",
+        "value": "Could stretch to $650 for a G7 X",
+        "importance": "high",
+        "visibility": "match_only",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "theo_cam_pickup",
+        "topic": "pickup",
+        "value": "Can pick up on campus this week",
+        "importance": "medium",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "theo_cam_pay",
+        "topic": "payment",
+        "value": "Venmo",
+        "importance": "low",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      }
+    ],
+    "createdAt": "2026-11-11T15:00:00Z",
+    "status": "draft"
+  },
+  {
+    "id": "ask_maya_fridge",
+    "userId": "maya",
+    "groupId": "g_ffs",
+    "type": "item",
+    "side": "seeking",
+    "summary": "Need a mini fridge for my dorm next year",
+    "preferences": [
+      {
+        "id": "maya_fr_budget",
+        "topic": "budget",
+        "value": "Around $70",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "maya_fr_pickup",
+        "topic": "pickup",
+        "value": "Can pick up by June 8, I have a cart",
+        "importance": "medium",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "maya_fr_cond",
+        "topic": "condition",
+        "value": "Works and is clean",
+        "importance": "medium",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      }
+    ],
+    "createdAt": "2026-11-11T16:00:00Z",
+    "status": "draft"
+  },
+  {
+    "id": "ask_dev_lamp",
+    "userId": "dev",
+    "groupId": "g_ffs",
+    "type": "item",
+    "side": "seeking",
+    "summary": "Want a desk lamp for my room, cheap",
+    "preferences": [
+      {
+        "id": "dev_lamp_budget",
+        "topic": "budget",
+        "value": "Under $20",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "dev_lamp_pickup",
+        "topic": "pickup",
+        "value": "Roble, anytime",
+        "importance": "low",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      }
+    ],
+    "createdAt": "2026-11-11T17:00:00Z",
+    "status": "draft"
   }
 ]

@@ -46,6 +46,12 @@ Contact: docs/VIDEO.md
     [[secrets a | b | c]]           bubbles that blur behind a lock
     [[logo]]                        the Mutuals mark
     [[models]]                      the three Muse model cards
+    [[activities 🛋️ Buy a couch / Marketplace | ...]]   cards in a row: emoji, label, and a small line after " / "
+    [[post text | Group | footer]]  a Facebook post by our persona; ~words~ in the text get highlighted one by one
+    [[agents]]                      our persona's Muse reaching everyone; most fall away, a few fit
+    [[chapter 01 | Title | line]]   a chapter card
+    [[funcard]]                     the fun-fact card Muse makes from the persona's profile (seed/users.json)
+    [[reach a | b | c | d]]         rings around our persona, one per place Muse looks, people appearing on them
     [[hold 1.5]]                    let the current narration line finish, then hold 1.5 seconds more
     [[voice NAME: Voice]]           macOS voice used to time a character's lines (say -v '?' lists them)
     [[rate NAME: 215]]              how fast that character talks (words per minute), for timing
@@ -62,92 +68,208 @@ Contact: docs/VIDEO.md
 [[voice JAMIE: Eddy (English (US))]]
 [[rate RILEY: 215]]
 [[rate JAMIE: 215]]
+[[rate NARRATOR: 210]]
 
 FADE IN:
 
-# ACT ONE: JAMIE
+# COLD OPEN
 
 INT. JAMIE'S DORM ROOM, STANFORD - NIGHT #1#
 
-Half-packed boxes. A laptop open to an offer letter: SWE Intern, Chicago, starts June 15. JAMIE (20) scrolls their phone. RILEY (20), their roommate, flops onto the other bed.
+Half-packed boxes. An offer letter on the laptop: SWE Intern, Chicago, starts June 15. JAMIE (20) is typing a post in a Facebook housing Group. RILEY (20) leans over.
 
 RILEY
-Yo, there's a new feature on Facebook. Check it out.
+Posting your budget to three thousand strangers?
 
 JAMIE
-(not looking up)
-Bro, nobody uses Facebook anymore. I'm on Insta, Snap, Beli, Hinge. Not tryna use another app.
+I don't know anyone there. And I have to sell all this.
 
 RILEY
-Aren't you tryna get housing this summer? For that McDonald's SWE internship?
-
-JAMIE
-I don't know anyone in Chicago. I was just gonna post on Marketplace and pray someone saves me.
-
-RILEY
-That's so chopped. Everyone who DMs me ghosts, or has no posts and no profile picture.
-(tosses Jamie the phone)
-Just set your Muse on it. Look.
+Just ask your Muse.
 
 SMASH CUT TO:
 
-# ACT TWO: THE PROBLEM
+# THE PROBLEM
 
-INT. MOTION GRAPHICS - THE NUMBERS #2#
+INT. MOTION GRAPHICS - WHY WE OPEN FACEBOOK #2#
 
-[[stat 23% | of Facebook users aged 18 to 34 use Marketplace every day. More than any other age group. | Capital One Shopping Research, Facebook Marketplace statistics]]
+SUPER: We still open Facebook to ~get things done~.
+
+[[activities 🛋️ Buy a couch / Marketplace | 💡 Sell a lamp / Marketplace | 🏠 Find a roommate / Housing Groups]]
 
 NARRATOR (V.O.)
-Young people already come to Facebook to get real things done. Almost a quarter of us are on Marketplace every day.
+Young adults still open Facebook for practical things. A couch, a lamp, a roommate.
 
 DISSOLVE TO:
 
-INT. MOTION GRAPHICS - THE FIRST CONVERSATION #3#
+INT. MOTION GRAPHICS - THE NUMBERS #3#
 
-[[bubbles is this still available? | what's your budget? | when can you move in? | any pets?? | are you even real | seen 3 days ago | sorry, it's taken | hello?]]
+[[stat 23% | of 18 to 34 year olds use Marketplace every day. The most of any age group. | Capital One Shopping Research, Facebook Marketplace statistics]]
 
 NARRATOR (V.O.)
-But the first conversation is the worst part. The same questions, with strangers, over and over.
+A quarter of us use Marketplace every day. It's where people who have what you need are nearby.
 
 DISSOLVE TO:
 
-INT. MOTION GRAPHICS - THE THINGS YOU'D NEVER POST #4#
+INT. MOTION GRAPHICS - THE MESSAGES #4#
 
-[[secrets my real max is $1,300 | I'm up at 5:30 every day | I'm allergic to cats]]
+SUPER: Then come the ~messages~.
+
+[[bubbles is this still available? | is this still available? | would you take $40? | can you do Thursday? | still available?? | lowest you'd go? | seen 3 days ago | is this still available?]]
 
 NARRATOR (V.O.)
-And the things that decide it are the things nobody wants to post.
+Is this still available, eleven times. Haggling. Pickup times.
 
-[[hold 1.2]]
+DISSOLVE TO:
+
+INT. MOTION GRAPHICS - THE POST #5#
+
+SUPER: For people, it's ~worse~.
+
+[[post Looking for a room near the West Loop this summer! ~Budget $1,100, can stretch to $1,300.~ ~I'm up at 5:30 every day.~ ~Allergic to cats.~ DM me! | Chicago Summer Interns 2027 | 3,120 members can see this]]
+
+NARRATOR (V.O.)
+For a roommate it's worse. Your budget, habits and dealbreakers, posted to three thousand strangers.
 
 BUBBLE WIPE TO:
 
-# ACT THREE: MUTUALS
+# MUTUALS
 
-INT. MOTION GRAPHICS - TITLE #5#
+INT. MOTION GRAPHICS - TITLE #6#
 
 [[logo]]
 
-CAPTION: Your Muse talks to their Muse. You only have the conversations worth having.
+CAPTION: Your Muse talks to their Muse. You only talk to people who fit.
 
 NARRATOR (V.O.)
-So we built Mutuals. Your Muse talks to their Muse, so you only have the conversations worth having.
+We already ask Muse everything. So we built Mutuals.
+
+[[hold 0.3]]
+
+SUPER: Your Muse has the ~first conversation~.
+
+[[agents]]
+
+NARRATOR (V.O.)
+Your Muse checks with their Muse first. You only talk to people who fit.
 
 DISSOLVE TO:
 
-# ACT FOUR: HOW IT WORKS
+# 01 BUYING AND SELLING
 
-INT. PHONE SCREEN - CHICAGO SUMMER INTERNS 2027 #6#
+INT. MOTION GRAPHICS - CHAPTER ONE #7#
 
-[[steps Tell | Match | Meet]]
-[[step 1]]
-
-SUPER: Tell your Muse what you'd ~never post~.
-
-Jamie opens "Chicago Summer Interns 2027" and taps "Ask Muse privately". Jamie types each message in the box beside the phone. When it's sent, it flies into the chat.
+[[chapter 01 | Buying and selling | Film it. Muse lists it and finds the buyers.]]
 
 NARRATOR (V.O.)
-Inside a Facebook Group, Jamie tells their Muse what they need. Even the stuff they'd never post.
+Buying and selling.
+
+[[hold 0.5]]
+
+DISSOLVE TO:
+
+INT. PHONE SCREEN - STANFORD FREE & FOR SALE #8#
+
+SUPER: Film it. Just ~say what's for sale~.
+
+Jamie opens "Stanford Free & For Sale" and taps "Ask Muse privately".
+
+JAMIE
+(typing)
+Moving out of my dorm before Chicago, I want to sell my camera, my desk lamp and my mini fridge
+
+Jamie taps "Video", uploads "room.mp4", and taps "Catalog items".
+
+NARRATOR (V.O.)
+Muse Ember watches the video, listens, and writes down what Jamie said.
+
+The camera zooms in on "What I heard".
+
+DISSOLVE TO:
+
+INT. FEATURE - WHAT YOU'RE SELLING #9#
+
+SUPER: Spark names each one, ~down to the model~.
+
+Jamie waits for "identified each item". "Canon PowerShot" pops out.
+
+NARRATOR (V.O.)
+Spark names each one from its clearest frame, with a used price range.
+
+"Also in your video" pops out. Jamie taps "on Marketplace". "Listed on Marketplace" pops out.
+
+DISSOLVE TO:
+
+INT. PHONE SCREEN - FINDING BUYERS #10#
+
+SUPER: Then it finds the ~buyers~.
+
+NARRATOR (V.O.)
+Once it's listed, Jamie's Muse checks with every Muse that's looking for one.
+
+Jamie taps "Yes, check".
+
+[[network]]
+[[phone away]]
+
+The Muses talk. Jamie waits for "You decide who to talk to".
+
+DISSOLVE TO:
+
+INT. FEATURE - THE BUYERS #11#
+
+SUPER: Fifty identical DMs become ~one small detail~.
+
+Jamie scrolls to "between the stated budget and asking price". "between the stated budget and asking price" pops out.
+
+NARRATOR (V.O.)
+Three buyers fit. Each one is down to a single detail, like a price or where to meet.
+
+Jamie scrolls to "Meet at Roble lobby". "Meet at Roble lobby" pops out.
+
+DISSOLVE TO:
+
+# 02 FINDING PEOPLE
+
+INT. MOTION GRAPHICS - CHAPTER TWO #12#
+
+[[chapter 02 | Finding people | Roommates, friends, someone to go with.]]
+
+NARRATOR (V.O.)
+Finding people.
+
+[[hold 0.5]]
+
+DISSOLVE TO:
+
+INT. MOTION GRAPHICS - YOUR FUN FACTS #13#
+
+SUPER: It starts with ~you~.
+
+[[funcard]]
+
+NARRATOR (V.O.)
+Opt in, and Muse turns your profile and posts into fun facts.
+
+[[hold 0.4]]
+
+SUPER: Then it looks for ~overlap~.
+
+[[reach This Group | Followers | Nearby | Your school]]
+
+NARRATOR (V.O.)
+Then it looks where you choose. A Group, followers, nearby, or school.
+
+DISSOLVE TO:
+
+INT. PHONE SCREEN - CHICAGO SUMMER INTERNS 2027 #14#
+
+SUPER: Tell it what you'd ~never post~.
+
+Jamie opens "Chicago Summer Interns 2027" and taps "Ask Muse privately".
+
+NARRATOR (V.O.)
+For a roommate, Jamie tells Muse what they'd never post.
 
 JAMIE
 (typing)
@@ -161,152 +283,73 @@ JAMIE
 (typing)
 I'm up at 5:30 for the gym before work, I'm allergic to cats so that's a dealbreaker, no smoking. Never share anything about my visa status.
 
-CUT TO:
-
-INT. PHONE SCREEN - JAMIE'S INTRO CARD - CONTINUOUS #7#
-
-[[step 1]]
-
 SUPER: Public. Match only. ~Never shared.~
 
-NARRATOR (V.O.)
-Every fact gets a tag. Public goes on the card. Match only is used to check fit, and never shown. Never shared never even reaches the model.
+The camera zooms in on "Budget ceiling".
 
-Muse turns the chat into an intro card. The camera zooms in on "Budget ceiling". "Budget ceiling" pops out, then "Visa status" pops out.
+NARRATOR (V.O.)
+Match only checks fit. Never shared never leaves.
 
 [[zoom out]]
 
 CUT TO:
 
-INT. PHONE SCREEN - THE MUSE NETWORK - CONTINUOUS #8#
-
-[[step 2]]
+INT. PHONE SCREEN - THE MUSE NETWORK - CONTINUOUS #15#
 
 SUPER: Your Muse has the ~awkward first conversation~.
-
-NARRATOR (V.O.)
-Jamie's Muse takes that card to every Muse in the Group. All at once.
 
 Jamie taps "Yes, check".
 
 [[network]]
 [[phone away]]
 
-The phone slides away and the Muse network takes the stage: Jamie's Muse in the middle, everyone it's talking to around it.
-
 NARRATOR (V.O.)
-Two Muse Spark agents talk it through, and Muse Wonder referees. Jamie's real ceiling never leaves the comparison.
+Jamie's Muse talks to every Muse in the Group at once, and keeps checking as people join.
 
-The Muses talk. Jamie waits for "people fit".
+The Muses talk. Jamie waits for "You decide who to talk to".
 
 DISSOLVE TO:
 
-INT. FEATURE - THE SHORTLIST #9#
+INT. FEATURE - THE SHORTLIST #16#
 
-SUPER: Only the conversations ~worth having~.
+SUPER: Only the people ~who fit~.
 
-Jamie scrolls to "Why it fits". Nora's card: "Why it fits" pops out.
+Jamie scrolls to "Why it fits". "Why it fits" pops out.
 
 NARRATOR (V.O.)
-Nora fits, with one thing to talk about. Dana isn't on Muse, so Jamie's Muse read her post. Diego has a cat, so the Muses stopped early.
+Nora fits. Diego has a cat, so the Muses stopped early.
 
-Jamie scrolls to "From their post in the Group". "From their post in the Group" pops out. Jamie scrolls to "Your Muse stopped early". "Your Muse stopped early" pops out.
+Jamie scrolls to "Your Muse stopped early". "Your Muse stopped early" pops out.
 
 DISSOLVE TO:
 
-INT. FEATURE - MORE THAN A LEASE #10#
+INT. FEATURE - MORE THAN A LEASE #17#
 
-SUPER: More than a ~lease~.
+SUPER: Then a reason to ~meet~.
 
 Jamie scrolls to "More than a lease". "More than a lease" pops out.
 
 NARRATOR (V.O.)
-When there's real overlap, Muse nudges them closer. They both run on Saturdays, and both bake sourdough.
+They both run on Saturdays, and there's a run club this weekend.
 
 Jamie taps "Go together", then taps "Going". "Lakefront Run Club" pops out.
 
-NARRATOR (V.O.)
-There's already a run club. Now they're both going.
+[[hold 1.0]]
 
 DISSOLVE TO:
 
-INT. PHONE SCREEN - MESSENGER #11#
+# SATURDAY
 
-[[step 3]]
+EXT. LAKEFRONT TRAIL, CHICAGO - SATURDAY, 7 A.M. #18#
 
-SUPER: The agents ~never~ message anyone.
-
-Jamie opens "the full shortlist" and taps "Message Nora".
+Sunrise over Lake Michigan. Jamie and Nora jog past Ohio Street Beach with the Lakefront Run Club.
 
 NARRATOR (V.O.)
-The agents never message anyone. Jamie gets a draft, makes it theirs, and sends it.
-
-The camera zooms in on "Drafted by your Muse". Jamie taps "Send".
+A room, and a running buddy.
 
 DISSOLVE TO:
 
-# ACT FIVE: MOVING OUT
-
-INT. PHONE SCREEN - STANFORD FREE & FOR SALE #12#
-
-SUPER: Film it. Say ~what's for sale~.
-
-Jamie opens "Stanford Free & For Sale" and taps "Ask Muse privately".
-
-NARRATOR (V.O.)
-Moving out works the same way. Jamie films the desk and just talks.
-
-JAMIE
-(typing)
-Moving out of my dorm before Chicago, I want to sell my camera, my desk lamp and my mini fridge
-
-Jamie taps "Video", uploads "room.mp4", and taps "Catalog items".
-
-NARRATOR (V.O.)
-Muse Ember watches and listens, and writes down exactly what Jamie said.
-
-The camera zooms in on "What I heard".
-
-DISSOLVE TO:
-
-INT. FEATURE - THE LISTING #13#
-
-SUPER: Spark names it. ~One tap lists it.~
-
-Jamie waits for "identified each item", scrolls to "Canon PowerShot", and "Canon PowerShot" pops out.
-
-NARRATOR (V.O.)
-Muse Spark names each item, down to the model, with a fair price. One tap, and it's listed.
-
-Jamie taps "on Marketplace" and opens "the listing". "Details" pops out.
-
-DISSOLVE TO:
-
-# ACT SIX: UNDER THE HOOD
-
-INT. MOTION GRAPHICS - HOW IT'S BUILT #14#
-
-[[models]]
-
-CAPTION: Never-shared facts never reach a prompt. Private numbers are compared in code, not by a model.
-
-NARRATOR (V.O.)
-Spark negotiates. Wonder referees. Ember sees and listens. And privacy lives in code.
-
-CUT TO:
-
-# ACT SEVEN: SATURDAY
-
-EXT. LAKEFRONT TRAIL, CHICAGO - SATURDAY, 7 A.M. #15#
-
-Sunrise over Lake Michigan. Jamie and Nora jog past Ohio Street Beach with the Lakefront Run Club. Nora is carrying a loaf of sourdough, for some reason.
-
-NARRATOR (V.O.)
-Jamie found a room. And on Saturdays, a running buddy.
-
-DISSOLVE TO:
-
-INT. MOTION GRAPHICS - END CARD #16#
+INT. MOTION GRAPHICS - END CARD #19#
 
 SUPER: You might have zero mutuals on Facebook today.
 
@@ -322,6 +365,6 @@ CAPTION: Mutuals builds them for you.
 NARRATOR (V.O.)
 Mutuals builds them for you.
 
-[[hold 1.2]]
+[[hold 0.7]]
 
 FADE OUT.

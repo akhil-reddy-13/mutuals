@@ -7,9 +7,9 @@
 //
 // Needs the app running (production build, so pages load instantly):
 //   NEXT_DIST_DIR=.next-demo npx next build
-//   NEXT_DIST_DIR=.next-demo MUSE_REPLAY_DELAY_MS=900 npx next start -p 3001 -H 127.0.0.1
+//   NEXT_DIST_DIR=.next-demo MUSE_REPLAY_DELAY_MS=700 npx next start -p 3001 -H 127.0.0.1
 //
-// Outputs: scripts/video/out/mutuals-demo.mp4 (1080p30, silent), docs/video/mutuals-demo.mp4 (720p, committed),
+// Outputs: scripts/video/out/mutuals-demo.mp4 (1080p60, silent), docs/video/mutuals-demo.mp4 (720p, committed),
 // docs/video/mutuals-screenplay.pdf (each scene's timecode in this cut), scripts/video/out/scratch-vo.wav.
 import { execFileSync } from "child_process";
 import path from "path";
@@ -31,7 +31,7 @@ if (!has("--pdf-only")) {
     const app = i >= 0 ? args[i + 1] : "http://127.0.0.1:3001";
     const ok = await fetch(app).then((r) => r.ok).catch(() => false);
     if (!ok) {
-      console.error(`The app isn't running at ${app}. Start it first:\n  NEXT_DIST_DIR=.next-demo npx next build\n  NEXT_DIST_DIR=.next-demo MUSE_REPLAY_DELAY_MS=900 npx next start -p 3001 -H 127.0.0.1`);
+      console.error(`The app isn't running at ${app}. Start it first:\n  NEXT_DIST_DIR=.next-demo npx next build\n  NEXT_DIST_DIR=.next-demo MUSE_REPLAY_DELAY_MS=700 npx next start -p 3001 -H 127.0.0.1`);
       process.exit(1);
     }
     if (!has("--skip-dry")) {

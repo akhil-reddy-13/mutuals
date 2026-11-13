@@ -46,7 +46,7 @@ Two passes, so nothing has to be smooth in real time:
 ```bash
 cd scripts/video && npm install && cd ../..          # once: puppeteer-core (uses your Chrome), pdf-lib
 NEXT_DIST_DIR=.next-demo npx next build               # production build of the app
-NEXT_DIST_DIR=.next-demo MUSE_REPLAY_DELAY_MS=900 npx next start -p 3001 -H 127.0.0.1
+NEXT_DIST_DIR=.next-demo MUSE_REPLAY_DELAY_MS=700 npx next start -p 3001 -H 127.0.0.1
 node scripts/video/make.mjs                           # dry run -> capture -> render -> PDF -> 720p preview
 ```
 
