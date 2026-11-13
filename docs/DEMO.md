@@ -32,7 +32,7 @@ Both phones start on **Home** (a normal-looking feed). Phone A goes **Groups →
 | 0:45 | "Meta described a Muse network for friends and family. We built the part for people you haven't met yet, inside the Groups you're already in." | Tap **Ask Muse privately** in the composer. |
 | 1:00 | "You tell your Muse the stuff you'd never post." | Type line 1, 2, 3. Point at the badges: **Public**, **Kept private**, **Never shared**. Tap one badge to show it cycles, then tap it back (a changed badge re-runs matching live). |
 | 1:45 | "Film the room. Ten seconds." | Record video (or Use photos). Room facts + leftover items appear. |
-| 2:15 | "Now the part no search box can do. Muse is the friend who knows everyone." | Tap **Yes, check**. "Checking with N people's Muses…" Watch Priya's stream. Point at the lock chips: kept-private facts are used, never shown. Point at Priya's Muse saying "a private number". |
+| 2:15 | "Now the part no search box can do. Muse is the friend who knows everyone." | Pick **People in my Groups** ("this is the privacy choice: who my Muse may talk to"). "Checking with N people's Muses…" Watch Priya's stream. Point at the lock chips: kept-private facts are used, never shown. Point at Priya's Muse saying "a private number". |
 | 2:50 | Read Muse's line: "I found three people who fit. Priya's the best one, but you two should talk about weeknight noise." "Jordan: dealbreaker. Casey has no Muse, so mine read her post and drafted a reply." | Scroll the shortlist: every card leads with the person. Open **What my Muse shared with Priya**. |
 | 3:15 | "Then you talk. Muse never messages anyone for you." | Tap **Message Priya**. The opener already carries the context (the room, the noise question). Send. |
 | 3:30 | **Phone B:** "Priya got a notification. Her view shows the same summary, never Alex's numbers." | Phone B: Notifications → the match → Messenger. Reply by hand. Phone A sees it (2s poll). |
@@ -104,7 +104,7 @@ Recreate it exactly:
    - tap the chip **Looking for a room**
    - `$1200; first two weeks of June.`
    - `I'm pretty clean and don't want a messy roomate; otherwise idc`  (keep the typo: inputs must match exactly)
-   - tap **Yes, check**
+   - pick **People in my Groups** (older builds: **Yes, check**)
 3. On Priya's card: **More than a lease** → **Go together** → the Event → **Going**.
 4. **Prove the Muses talked:** avatar menu → switch to **Priya Shah**. Her Home's first card is **"Alex's Muse talked
    with yours in Stanford Housing '27"** (also in her Notifications). Tap it: both Muses side by side, every message

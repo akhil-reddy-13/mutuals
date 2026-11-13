@@ -46,6 +46,11 @@ muse client ✅ → seed loader ✅ → intake API → ask parsing → `runNegot
 | Seed, pitch, video | `seed/*`, `README.md`, Devpost, demo script | _TBD_ |
 
 ## Status / handoff (update as you go)
+- ✅ **Agent-to-agent is the thesis; make it provable.** `/muse/talk/[negotiationId]` renders a Muse-to-Muse conversation from either side (other side's private values redacted, 404 for anyone else). The other person sees "X's Muse talked with yours" on Home + Notifications. Selling homes also run a real per-buyer negotiation (price/pickup).
+- ✅ **Opt-in = privacy choice** "Who can my Muse talk to?" (`Ask.museReach`: network | groups | everyone, `lib/reach.ts`), live counts per option, saved as the default; nobody in reach -> Muse offers the next wider one.
+- ✅ Badges have real read state (`thread.readAt`, `User.notificationsSeenAt`, `components/MarkSeen.tsx`).
+- ✅ **Saved runs:** `npm run snapshot -- save|restore|list`. `june-room-weekend-runs` is the reference connection moment (`docs/SAVED_RUN.md`). Prompt changes make live re-runs differ; restore still reproduces it.
+- ⏭️ Before submitting: rotate the key, delete `.env`, make the repo public. Test `MOCK_MUSE=true npm run demo:start` once on the demo Mac.
 - ✅ **People-first update (Nov 12, read `docs/PRD.md` §0.5 first).** Results are people, not listings; Muse speaks first person; no jargon in user-facing copy (agents/negotiation/multiplayer/platform). Home's first screen is the roommate example. Copy (headline/subhead/tagline/footer) lives in PRD §0.5.
 - ✅ Selling routes items to people: `lib/homes.ts` (Ember via `modelFor("homes")`) → `HomesCard` ("2 of these already have a home"), buyers seeded in Stanford Free & For Sale (Maya, Dev, June, Theo). Buyer side sees "Alex is selling X and their Muse thought of you".
 - ✅ "I need X": item asks match the opposite side only; Muse asks one friend-like question; `npm run demo -- need` (tent → Marcus + Yosemite carpool).
