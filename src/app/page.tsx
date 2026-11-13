@@ -6,7 +6,7 @@ import Avatar from "@/components/Avatar";
 import { MuseMark, PhotoIcon, PlusIcon, SmileIcon, VideoCamIcon } from "@/components/icons";
 import PostCard from "@/components/PostCard";
 import { allUsers, asksForUser, getAsk, getGroup, getUser, matchesForAsk, matchesInvolving, seed } from "@/lib/db";
-import { firstName } from "@/lib/format";
+import { firstName, fitLevel } from "@/lib/format";
 import { currentUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
@@ -22,7 +22,7 @@ export default async function Home() {
   const latestMatched = asksForUser(me.id)
     .filter((a) => a.status === "matched")
     .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))[0];
-  const fits = latestMatched ? matchesForAsk(latestMatched.id).filter((m) => m.verdict.compatible) : [];
+  const fits = latestMatched ? matchesForAsk(latestMatched.id).filter((m) => fitLevel(m.verdict) === "fit") : [];
   const matchedGroup = latestMatched ? getGroup(latestMatched.groupId) : undefined;
   // Someone else's Muse reached out to mine (I'm the candidate): the proof that Muses talk to each other.
   const reachedMe = matchesInvolving(me.id)

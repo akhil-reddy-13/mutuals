@@ -399,6 +399,113 @@ SCRIPTS[pair("alex", "marcus")] = {
   },
 };
 
+// The middle of the range for Alex's room: two "could work" and one "long shot" (no dealbreakers, real trade-offs).
+SCRIPTS[pair("alex", "june")] = {
+  A: [
+    ALEX_OPEN,
+    {
+      message:
+        "Rent can meet June's range. The 15th is two weeks into the lease, so the first half of September would need prorating. On the cat: Alex's only firm rule is no dogs, so an indoor cat could work, but it's worth a real conversation before anyone signs.",
+      disclosed: ["alex_rent_floor", "alex_movein", "alex_pets"],
+      positions: { rent: "can meet June's range", move_in: "Sept 1 lease, open to prorating", pets: "no dogs; a cat is open" },
+      satisfied: true,
+    },
+  ],
+  B: [
+    {
+      message:
+        "June is looking from September 15 and prefers the Inner Sunset, but the Mission is fine. She's bringing her indoor cat, Mochi. Her budget is a little under the posted rent. She's a heavy sleeper and keeps things tidy.",
+      disclosed: ["june_movein", "june_area", "june_pets", "june_budget", "june_sleep", "june_clean"],
+      positions: { move_in: "September 15", pets: "indoor cat", rent: "a little under posted" },
+      satisfied: false,
+    },
+    {
+      message: "June could start the 15th with the first half of September prorated, and Mochi stays in her room when guests are over. Rent in the overlap works for her.",
+      disclosed: ["june_movein", "june_pets"],
+      positions: { move_in: "Sept 15, prorated", pets: "cat stays in her room with guests" },
+      satisfied: true,
+    },
+  ],
+  verdict: {
+    compatible: true,
+    score: 0.58,
+    fits: ["Budgets overlap", "Schedules work out", "Both tidy"],
+    disagreements: ["June has an indoor cat", "June moves in two weeks after the lease starts"],
+    compromise: "Prorate the first half of September, and meet Mochi before deciding.",
+    summary_for_humans: "Could work if the cat and the half month are okay. One thing to talk about: June's cat.",
+  },
+};
+SCRIPTS[pair("alex", "kai")] = {
+  A: [
+    ALEX_OPEN,
+    {
+      message:
+        "Rent only works at the bottom of Alex's range, so there's no room to move on either side. The bigger question is the living room: Alex is happy to share it but not as a full-time office. Daily schedules are pretty different too.",
+      disclosed: ["alex_rent_floor", "alex_sleep"],
+      positions: { rent: "only at the bottom of the range", living_room: "shared, not a full-time office" },
+      satisfied: false,
+    },
+  ],
+  B: [
+    {
+      message:
+        "Kai can start September 1. The budget is firm and a bit under the posted rent. Kai works from home full-time and would want the living room as a daytime office. Up early, quiet at night. Rarely has guests, no pets.",
+      disclosed: ["kai_movein", "kai_budget", "kai_wfh", "kai_sleep", "kai_guests", "kai_pets"],
+      positions: { move_in: "September 1", rent: "firm, under posted", living_room: "daytime office" },
+      satisfied: false,
+    },
+    {
+      message: "Kai could take calls from the bedroom and use the living room on weekday mornings only. The budget can't move.",
+      disclosed: ["kai_wfh", "kai_budget"],
+      positions: { living_room: "weekday mornings only", rent: "can't move" },
+      satisfied: true,
+    },
+  ],
+  verdict: {
+    compatible: true,
+    score: 0.48,
+    fits: ["September 1 works", "Budgets meet, just barely", "No pets, few guests"],
+    disagreements: ["Kai wants the living room as a daytime office", "Different daily schedules", "No give on rent"],
+    compromise: "Living room as Kai's office on weekday mornings only, and quiet mornings and late nights on both sides.",
+    summary_for_humans: "Could work with give on both sides. One thing to talk about: the living room during the day.",
+  },
+};
+SCRIPTS[pair("alex", "rosa")] = {
+  A: [
+    ALEX_OPEN,
+    {
+      message:
+        "Mid-October means about six weeks of an empty room, and the lease is 12 months, so a 6-month start is hard. Weekends would need a plan, and a second couch is a question for the shared space.",
+      disclosed: ["alex_movein", "alex_guests"],
+      positions: { move_in: "Sept 1 lease", lease: "12 months", furniture: "living room already set up" },
+      satisfied: false,
+    },
+  ],
+  B: [
+    {
+      message:
+        "Rosa is looking from mid-October and wants a 6-month lease to start. Rent as posted is fine. She's bringing a full bedroom set and a couch. Her partner is over a lot of weekends. Relaxed about cleaning, no pets.",
+      disclosed: ["rosa_movein", "rosa_lease", "rosa_budget", "rosa_furniture", "rosa_guests", "rosa_clean", "rosa_pets"],
+      positions: { move_in: "mid-October", lease: "6 months to start", rent: "fine as posted" },
+      satisfied: false,
+    },
+    {
+      message: "Rosa can't move before October. She could sign for the full year if the first month is lower, and the couch can go in storage.",
+      disclosed: ["rosa_movein", "rosa_lease", "rosa_furniture"],
+      positions: { lease: "full year with a lower first month", furniture: "couch to storage" },
+      satisfied: false,
+    },
+  ],
+  verdict: {
+    compatible: true,
+    score: 0.34,
+    fits: ["Rent works as posted", "No pets on either side"],
+    disagreements: ["Rosa moves in about six weeks after the lease starts", "Rosa wants a shorter lease", "Weekend guests need a plan", "Where Rosa's couch goes"],
+    compromise: "Rosa signs the full lease with a lower first month, and you agree on weekend guests.",
+    summary_for_humans: "A long shot on dates and lease length. One thing to talk about: the October move-in.",
+  },
+};
+
 const GENERIC_TURN = (name: string, round: number, satisfied: boolean): AgentTurnOutput => ({
   message:
     round === 1
@@ -460,7 +567,7 @@ export function mockConnection(aId: string, bId: string): ConnectionOutput {
     return {
       suggest: true,
       confidence: 0.76,
-      reason: "You're both into indie shows and both new to SF this fall.",
+      reason: "You two are new in town and into the same indie shows.",
       activity: "Pre-show drinks before beabadoobee",
       event_id: "evt_bea_preshow",
     };
@@ -468,7 +575,7 @@ export function mockConnection(aId: string, bId: string): ConnectionOutput {
     return {
       suggest: true,
       confidence: 0.82,
-      reason: "You're both new to SF this fall and both run weekend mornings.",
+      reason: "You two are new in SF and run on weekend mornings.",
       activity: "Saturday morning run along the Embarcadero",
       event_id: "evt_weekend_runs",
     };

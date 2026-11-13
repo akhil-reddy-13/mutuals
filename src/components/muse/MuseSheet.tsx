@@ -13,7 +13,7 @@ import ReachCard from "./ReachCard";
 import LiveMatching, { type LiveCandidate, type MatchModelLabels } from "./LiveMatching";
 import PrefChips from "./PrefChips";
 import VideoCapture from "./VideoCapture";
-import { firstName, topLabel } from "@/lib/format";
+import { firstName, fitLevel } from "@/lib/format";
 import type { MatchEvent } from "@/lib/match";
 import { canShowVideo, sheetCopy } from "@/lib/sheetCopy";
 import type { Ask, Group, Item, Match, MuseReach, Preference, RoomDetails, User } from "@/lib/types";
@@ -409,23 +409,31 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
       } else if (e.type === "done") {
         es.close();
         setMatches(e.matches);
-        const fits = e.matches.filter((m) => m.verdict.compatible);
-        const nofit = e.matches.length - fits.length;
-        const oneSided = fits.filter((m) => m.mode === "one_sided").length;
-        const connected = fits.find((m) => m.connection?.suggest);
+        // Everyone without a dealbreaker is shown; "fit" is the top level, the rest could work (see format.fitLevel).
+        const shown = e.matches.filter((m) => m.verdict.compatible);
+        const fits = shown.filter((m) => fitLevel(m.verdict) === "fit");
+        const maybes = shown.length - fits.length;
+        const nofit = e.matches.length - shown.length;
+        const oneSided = shown.filter((m) => m.mode === "one_sided").length;
+        const connected = shown.find((m) => m.connection?.suggest);
         const connectedName = connected ? candsRef.current.find((c) => c.id === connected.candidateId)?.name : undefined;
         const skipped = (e.failed ?? []).map((id) => candsRef.current.find((c) => c.id === id)?.name).filter((n): n is string => !!n);
-        // Muse's voice: "I found two people who fit. Priya's the better one, but you two should talk about noise."
+        // Muse's voice: "I found two people who fit, and three more who could work. Priya's the better one, but…"
         const best = fits.find((m) => m.mode === "agent_to_agent") ?? fits[0];
         const bestName = best ? firstName(candsRef.current.find((c) => c.id === best.candidateId)?.name ?? "") : "";
         const topic = best?.verdict.summaryForHumans.match(/one thing to talk about:\s*([^.]+)/i)?.[1]?.trim();
-        const count = (n: number) => (n === 1 ? "one person" : n === 2 ? "two people" : n === 3 ? "three people" : `${n} people`);
+        const num = (n: number) => ["no", "one", "two", "three", "four", "five", "six"][n] ?? String(n);
+        const count = (n: number) => `${num(n)} ${n === 1 ? "person" : "people"}`;
         push({
           role: "muse",
           text:
-            (fits.length === 0
+            (shown.length === 0
               ? `Nobody here fits yet${nofit ? ` (I checked ${count(nofit)})` : ""}. I'll keep an eye out.`
-              : `I found ${count(fits.length)} who ${fits.length === 1 ? "fits" : "fit"}.` +
+              : fits.length === 0
+                ? `Nobody's a clean fit, but ${count(maybes)} could work.` +
+                  (oneSided ? ` ${oneSided === 1 ? "One of them" : `${oneSided} of them`} posted without Muse on, so I drafted a reply you can send.` : "") +
+                  ` You decide who to message. I won't message anyone.`
+              : `I found ${count(fits.length)} who ${fits.length === 1 ? "fits" : "fit"}${maybes ? `, and ${num(maybes)} more who could work` : ""}.` +
                 (fits.length > 1 && bestName ? ` ${bestName}'s the ${fits.length === 2 ? "better" : "best"} one${topic ? `, but you two should talk about ${topic.toLowerCase()}` : ""}.` : topic && bestName ? ` You and ${bestName} should talk about ${topic.toLowerCase()}.` : "") +
                 (oneSided ? ` ${oneSided === 1 ? "One of them" : `${oneSided} of them`} posted without Muse on, so I drafted a reply you can send.` : "") +
                 (skipped.length ? ` I couldn't reach ${skipped.map(firstName).join(" and ")} this time.` : "") +
@@ -464,7 +472,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
             const n = ms.reduce((k, x) => k + (x.routedItems?.length ?? 0), 0);
             push({ role: "muse", text: n ? `${n} of your things already have a home.` : "Nobody here is looking for these yet.", card: "homes" });
           } else {
-            push({ role: "muse", text: `${ms.filter((x) => x.verdict.compatible).length} people fit. Here's the shortlist.`, card: "shortlist" });
+            push({ role: "muse", text: `${ms.filter((x) => fitLevel(x.verdict) === "fit").length} people fit. Here's the shortlist.`, card: "shortlist" });
           }
           router.refresh();
           return;
@@ -642,10 +650,14 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
                   )}
                   {m.card === "shortlist" && matches && (
                     <div className="flex flex-col gap-2.5">
-                      {matches.map((mt) => {
-                        const c = candById[mt.candidateId];
-                        return c ? <MatchCard key={mt.id} match={mt} candidate={c} viewerId={me.id} event={events[mt.id] ?? null} compact label={mt === matches.find((x) => x.verdict.compatible) ? topLabel(mt) : undefined} /> : null;
-                      })}
+                      {(() => {
+                        // Same pick as the full shortlist page, and it leads the list there too.
+                        const best = matches.find((x) => fitLevel(x.verdict) === "fit" && x.mode === "agent_to_agent") ?? matches.find((x) => fitLevel(x.verdict) === "fit");
+                        return (best ? [best, ...matches.filter((x) => x !== best)] : matches).map((mt) => {
+                          const c = candById[mt.candidateId];
+                          return c ? <MatchCard key={mt.id} match={mt} candidate={c} event={events[mt.id] ?? null} compact groupName={group.name} label={mt === best ? "Best match" : undefined} /> : null;
+                        });
+                      })()}
                       <a href={`/groups/${group.id}/muse/${ask?.id}`} className="text-center text-[13px] font-semibold text-fb-blue hover:underline">
                         Open the full shortlist
                       </a>
@@ -689,7 +701,6 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
             <SendIcon size={22} />
           </button>
         </form>
-        <p className="bg-white px-3 pb-2 text-center text-[11px] text-fb-muted md:pb-2">Muse pre-negotiates and drafts. You decide and you send.</p>
       </div>
     </div>
   );

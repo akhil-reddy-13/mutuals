@@ -1,9 +1,9 @@
 "use client";
 // Connection potential (PRD §3.5): activity-based, double opt-in, usually a Facebook Event. Shown rarely.
-// One slim row inside the match card (not a card in a card), so cards in a grid row stay close in height.
+// Stacked when narrow (inside a match card, phone); text left and the event right when there's room (page banner).
 import Link from "next/link";
 import { useState } from "react";
-import { CalendarIcon, MuseMark, XSmallIcon } from "./icons";
+import { XSmallIcon } from "./icons";
 import type { ConnectionSuggestion } from "@/lib/types";
 
 export interface EventInfo {
@@ -19,7 +19,7 @@ export default function ConnectionCard({
   connection,
   event,
   otherFirst,
-  title = "More than a lease",
+  title = "New connection",
 }: {
   connection: ConnectionSuggestion;
   event: EventInfo | null;
@@ -30,34 +30,30 @@ export default function ConnectionCard({
   if (dismissed) return null;
   const href = event ? `/events/${event.id}?with=${encodeURIComponent(otherFirst)}` : null;
   return (
-    // Stacked when narrow (inside a card, phone); text left, event right when there's room (page banner).
-    <div className="@container muse-gradient rounded-lg p-[1.5px]">
-      <div className="relative flex flex-col gap-2 rounded-[6.5px] bg-white px-3 py-2.5 @2xl:flex-row @2xl:items-center @2xl:gap-6 @2xl:px-4 @2xl:py-3 @2xl:pr-12">
-        <button onClick={() => setDismissed(true)} className="fb-icon-btn absolute right-2 top-2 h-6 w-6 bg-transparent text-fb-muted @2xl:top-1/2 @2xl:-translate-y-1/2" aria-label="Not now">
-          <XSmallIcon size={14} />
+    <div className="@container rounded-2xl border border-fb-divider bg-fb-card">
+      <div className="relative flex flex-col gap-3 p-4 @2xl:flex-row @2xl:items-center @2xl:gap-6 @2xl:px-5 @2xl:pr-14">
+        <button onClick={() => setDismissed(true)} className="fb-icon-btn absolute right-2.5 top-2.5 h-8 w-8 bg-transparent text-fb-muted @2xl:top-1/2 @2xl:-translate-y-1/2" aria-label="Not now">
+          <XSmallIcon size={16} />
         </button>
-        <div className="min-w-0 pr-7 @2xl:flex-1 @2xl:pr-0">
-          <div className="flex items-center gap-1.5">
-            <MuseMark size={14} />
-            <span className="text-[13px] font-semibold muse-text">{title}</span>
-          </div>
-          <p className="mt-0.5 text-[15px] font-semibold leading-5">{connection.reason}</p>
+        <div className="min-w-0 pr-8 @2xl:flex-1 @2xl:pr-0">
+          <span className="inline-block rounded-full bg-fb-accent px-2.5 py-0.5 text-[12px] font-bold text-[#050505]">{title}</span>
+          <p className="mt-1.5 text-[17px] font-bold leading-[22px] tracking-tight">{connection.reason}</p>
         </div>
         {event && href ? (
-          <div className="flex items-center gap-2.5 @2xl:w-[400px] @2xl:shrink-0">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#ffd36e] to-[#ff8a5c] text-xl">{event.coverEmoji}</span>
+          <div className="flex items-center gap-3 @2xl:w-[380px] @2xl:shrink-0">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-fb-bg text-[22px]">{event.coverEmoji}</span>
             <Link href={href} className="min-w-0 flex-1 hover:underline">
-              <span className="block truncate text-[14px] font-semibold">{event.name}</span>
-              <span className="flex items-center gap-1 text-[12px] text-fb-muted">
-                <CalendarIcon size={12} /> {event.when} · {event.going} going
+              <span className="block truncate text-[15px] font-semibold leading-5">{event.name}</span>
+              <span className="block truncate text-[13px] text-fb-muted">
+                {event.when} · {event.going} going
               </span>
             </Link>
-            <Link href={href} className="fb-btn-soft h-9 shrink-0 px-3">
+            <Link href={href} className="fb-btn-soft h-9 shrink-0 rounded-full px-4">
               Go together
             </Link>
           </div>
         ) : (
-          connection.activity && <p className="mt-0.5 text-[14px] text-fb-muted">{connection.activity}</p>
+          connection.activity && <p className="text-[15px] text-fb-muted">{connection.activity}</p>
         )}
       </div>
     </div>

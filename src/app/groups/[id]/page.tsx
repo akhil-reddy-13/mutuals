@@ -3,11 +3,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Avatar from "@/components/Avatar";
 import GroupCover from "@/components/GroupCover";
-import { CameraIcon, ChevronDown, GlobeIcon, LockIcon, MoreIcon, MuseMark, PhotoIcon, PlusIcon, SearchIcon, SparkleIcon } from "@/components/icons";
+import { AnonIcon, CameraIcon, ChevronDown, EyeIcon, FeelingIcon, GlobeIcon, InfoIcon, LockIcon, MoreIcon, MuseMark, PinIcon, PlusIcon, PollIcon, SearchIcon, ShareIcon } from "@/components/icons";
 import MuseLauncher from "@/components/MuseLauncher";
 import PostCard from "@/components/PostCard";
 import { asksForUser, getAsk, getGroup, getUser, matchesForAsk, matchesInvolving, postsInGroup } from "@/lib/db";
-import { firstName } from "@/lib/format";
+import { firstName, fitLevel } from "@/lib/format";
 import { compactCount } from "@/lib/format";
 import { sortMatches } from "@/lib/match";
 import { currentUser } from "@/lib/session";
@@ -21,6 +21,13 @@ export default async function GroupPage({ params }: { params: Promise<{ id: stri
   const me = await currentUser();
   const posts = postsInGroup(id);
   const members = group.memberIds.map((m) => getUser(m)!).filter(Boolean);
+  // Where the Group is "based" for the About column: the members' most common city.
+  const location = (() => {
+    const counts = new Map<string, number>();
+    for (const u of members) counts.set(u.city, (counts.get(u.city) ?? 0) + 1);
+    const top = [...counts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0];
+    return top ? `${top}, ${top === "Chicago" ? "Illinois" : "California"}` : null;
+  })();
   const admins = group.adminIds.map((a) => getUser(a)!).filter(Boolean);
   const museMembers = members.filter((u) => u.museEnabled && u.museGroups.includes(id));
   const myAsk = asksForUser(me.id)
@@ -28,14 +35,15 @@ export default async function GroupPage({ params }: { params: Promise<{ id: stri
     .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))[0];
   const matches = myAsk ? sortMatches(matchesForAsk(myAsk.id)) : [];
   const matchByAuthor = new Map(matches.map((m) => [m.candidateId, m]));
-  const fits = matches.filter((m) => m.verdict.compatible);
+  const fits = matches.filter((m) => fitLevel(m.verdict) === "fit"); // the shortlist title counts the same way
   const media = posts.filter((p) => p.imageUrl).slice(0, 6);
   // The other side of a match: someone else's Muse checked with mine in this Group.
   const talkedToMe = matchesInvolving(me.id)
     .filter((m) => m.candidateId === me.id && m.mode === "agent_to_agent" && m.verdict.compatible && getAsk(m.askId)?.groupId === id)
     .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
     .slice(0, 1);
-  const tabs = ["Discussion", "Featured", "Members", "Events", "Media", "Files"];
+  const tabs = ["About", "Discussion", "Featured", "Members", "Events", "Media", "Files"];
+  const activeTab = "Discussion";
 
   return (
     <div className="mx-auto max-w-[1100px] pb-24 md:pb-10">
@@ -67,26 +75,36 @@ export default async function GroupPage({ params }: { params: Promise<{ id: stri
               <button className="fb-btn-primary">
                 <PlusIcon size={18} /> Invite
               </button>
+              <span className="hidden md:contents">
+                <button className="fb-btn-secondary">
+                  <ShareIcon size={18} /> Share
+                </button>
+              </span>
               <button className="fb-btn-secondary">
                 Joined <ChevronDown size={16} />
               </button>
+              <span className="hidden md:contents">
+                <button className="fb-btn-secondary w-10 px-0" aria-label="More">
+                  <ChevronDown size={18} />
+                </button>
+              </span>
             </div>
           </div>
           <div className="mt-3 flex items-center border-t border-fb-divider">
             <div className="no-scrollbar flex flex-1 overflow-x-auto">
-              {tabs.map((t, i) => (
-                <button key={t} className={`relative shrink-0 px-4 py-3.5 text-[15px] font-semibold ${i === 0 ? "text-fb-blue" : "text-fb-muted hover:bg-fb-hover"} rounded-md`}>
+              {tabs.map((t) => (
+                <button key={t} className={`relative shrink-0 px-4 py-3.5 text-[15px] font-semibold ${t === activeTab ? "text-fb-blue" : "text-fb-muted hover:bg-fb-hover"} rounded-md`}>
                   {t}
-                  {i === 0 && <span className="absolute inset-x-0 bottom-0 h-[3px] rounded-t bg-fb-blue" />}
+                  {t === activeTab && <span className="absolute inset-x-0 bottom-0 h-[3px] rounded-t bg-fb-blue" />}
                 </button>
               ))}
             </div>
             <div className="hidden gap-2 md:flex">
-              <button className="fb-icon-btn h-9 w-9">
-                <MoreIcon size={20} />
-              </button>
-              <button className="fb-icon-btn h-9 w-9">
+              <button className="fb-icon-btn h-9 w-9" aria-label="Search this group">
                 <SearchIcon size={18} />
+              </button>
+              <button className="fb-icon-btn h-9 w-9" aria-label="More">
+                <MoreIcon size={20} />
               </button>
             </div>
           </div>
@@ -103,9 +121,9 @@ export default async function GroupPage({ params }: { params: Promise<{ id: stri
             </div>
             <div className="mt-3 flex border-t border-fb-divider pt-2">
               {[
-                ["Anonymous post", <SparkleIcon key="a" size={22} className="text-fb-blue" />],
-                ["Photo/video", <PhotoIcon key="p" size={22} className="text-fb-green" />],
-                ["Poll", <MoreIcon key="m" size={22} className="text-fb-amber" />],
+                ["Anonymous post", <AnonIcon key="a" size={24} className="text-fb-blue" />],
+                ["Feeling/activity", <FeelingIcon key="f" size={24} className="text-fb-yellow" />],
+                ["Poll", <PollIcon key="m" size={24} className="text-fb-orange" />],
               ].map(([label, icon]) => (
                 <button key={label as string} className="flex flex-1 items-center justify-center gap-1.5 rounded-md px-1 py-2 text-[13px] font-semibold text-fb-muted hover:bg-fb-hover md:text-[14px]">
                   {icon as React.ReactNode}
@@ -168,6 +186,20 @@ export default async function GroupPage({ params }: { params: Promise<{ id: stri
             );
           })}
 
+          <section className="fb-card hidden items-center justify-between px-4 py-3 md:flex">
+            <span className="flex items-center gap-2 text-[17px] font-bold">
+              Featured <InfoIcon size={18} className="text-fb-muted" />
+            </span>
+            <button className="fb-icon-btn h-8 w-8" aria-label="Expand featured">
+              <ChevronDown size={18} />
+            </button>
+          </section>
+          <div className="hidden items-center justify-between px-1 md:flex">
+            <button className="flex items-center gap-1 text-[15px] font-semibold text-fb-muted">
+              Most relevant <ChevronDown size={16} />
+            </button>
+          </div>
+
           {posts.map((p) => {
             const author = getUser(p.authorId)!;
             return (
@@ -199,6 +231,19 @@ export default async function GroupPage({ params }: { params: Promise<{ id: stri
                 </div>
               </div>
             </div>
+            <div className="mt-3 flex gap-3 text-[15px]">
+              <EyeIcon size={20} className="mt-0.5 shrink-0 text-fb-muted" />
+              <div>
+                <div className="font-semibold">Visible</div>
+                <div className="text-[13px] text-fb-muted">Anyone can find this group.</div>
+              </div>
+            </div>
+            {location && (
+              <div className="mt-3 flex gap-3 text-[15px]">
+                <PinIcon size={20} className="mt-0.5 shrink-0 text-fb-muted" />
+                <div className="font-semibold">{location}</div>
+              </div>
+            )}
           </section>
           <section className="fb-card p-4">
             <div className="flex items-center gap-2">

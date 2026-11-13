@@ -22,7 +22,11 @@ export function compactCount(n: number) {
   return String(n);
 }
 
-/** The top card's chip: "Best match" only when move-in dates line up; otherwise "Closest fit" (never "not a fit"). */
-export function topLabel(m: { verdict: { dateGapMonths?: number } }): string {
-  return (m.verdict.dateGapMonths ?? 0) >= 2 ? "Closest fit" : "Best match";
+/** The referee's score as a level people read; the UI never shows the number. compatible=false is only a
+ *  declared dealbreaker or money, so every compatible match lands on fit / could work / long shot. */
+export type FitLevel = "fit" | "could_work" | "long_shot" | "no";
+export function fitLevel(v: { compatible: boolean; score: number }): FitLevel {
+  if (!v.compatible) return "no";
+  return v.score >= 0.65 ? "fit" : v.score >= 0.45 ? "could_work" : "long_shot";
 }
+export const FIT_LABEL: Record<FitLevel, string> = { fit: "Fits", could_work: "Could work", long_shot: "Long shot", no: "Not a fit" };
