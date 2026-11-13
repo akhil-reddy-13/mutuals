@@ -17,14 +17,16 @@ voiceover. The skit and the selling clip keep their own sound.
 ## Sound
 
 - **The footage's own sound:** the skit and the selling clip.
-- **Effects** (`scripts/video/sfx.mjs`, made in code, no sample files): a ding when a message comes in, a swoosh when
-  one goes out, pops as cards land, whooshes out of the skit, into each chapter and as the crowd narrows, one swish as
-  the conversation wall scrolls, chimes for fits, and a low hit on the logo. `stage.html` places them (`cue(...)`), so
-  they move with the picture. `node scripts/video/sfx.mjs` writes `out/sfx-sampler.wav` to hear each one.
-- **Music:** put the song in `scripts/video/assets/music/` (any audio file; the folder is git-ignored, so the song never
-  goes in the repo) and run `node scripts/video/render.mjs --audio-only && node scripts/video/make.mjs --finish`. It
-  plays from the end of the skit, fades in and out, and drops to 15% under the selling clip. `--music-volume 0.2` and
-  `--music-from 30` (start 30 s into the song) tune it.
+- **Effects** (`scripts/video/sfx.mjs`, made in code, no sample files): a bubble when a message comes in or goes
+  out (the Muse chat, the overload flurry, Spark's item cards), one whoosh out of the skit, and chimes for fits.
+  `stage.html` places them (`cue(...)`), so they move with the picture. `node scripts/video/sfx.mjs` writes
+  `out/sfx-sampler.wav` to hear each one.
+- **Music:** Earrings (Malcolm Todd). Put the mp3 in `scripts/video/assets/music/` (git-ignored: the song never goes in
+  the repo). It drops in with the Mutuals logo at 1:01, from the song's first "extra extra" (1:37.2), at 15% as
+  background; it dips further under the selling clip and loops back once, on the beat, to reach the end card. The
+  settings are at the top of `render.mjs` (`--music-from`, `--music-volume` override them).
+- **Sound-only changes** (effects, music) need no re-render:
+  `node scripts/video/render.mjs --audio-only && node scripts/video/make.mjs --finish` (about 30 seconds).
 
 ## Clips (scene 8 and any new slot)
 

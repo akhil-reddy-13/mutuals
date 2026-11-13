@@ -8,7 +8,7 @@
 //   node scripts/video/render.mjs --stills 12,40.5   -> scripts/video/out/stills/ (PNG frames at those seconds)
 //   node scripts/video/render.mjs --from 55 --to 90  -> just that stretch (out/preview.mp4)
 //   node scripts/video/render.mjs --audio-only       -> re-mix the sound onto the last render (seconds, no frames)
-// Options: --fps 60, --workers 4, --music-volume 0.2, --music-from 0 (where in the song to start).
+// Options: --fps 60, --workers 4, --music-volume, --music-from (seconds into the song; defaults below).
 //
 // Sound: the footage's own audio (skit, selling clip), the effects track (sfx.mjs, timed by stage.html's cues) and,
 // if there's a file in scripts/video/assets/music/, that song under the animated part, ducked under the clips.
@@ -41,6 +41,11 @@ const MEDIA = path.join(OUT, "media");
 const SILENT = path.join(OUT, "silent.mp4");
 const SFX = path.join(OUT, "sfx.wav");
 const CUES = path.join(OUT, "cues.json");
+// the song we use (Earrings, Malcolm Todd): it drops in with the Mutuals logo, from its first "extra extra" (1:37.2),
+// low, as background. It loops back once, 6 of its 5.99 s phrases, so the loop stays on the beat.
+const MUSIC_FROM = Number(arg("music-from", 97.2));
+const MUSIC_VOLUME = Number(arg("music-volume", 0.15));
+const MUSIC_LOOP_BACK = 6 * 5.99;
 
 // ---------------------------------------------------------------- filmed footage and clip slots
 // Each [[film]] and each filled [[clip]] is cut into JPEG frames once (out/media/<key>/), and the stage shows the
@@ -54,9 +59,10 @@ function probe(file) {
     out = String(e.stderr);
   }
   const fps = Number(out.match(/,\s*([\d.]+)\s*fps/)?.[1] ?? 30);
+  const [, hh, mm, ss] = out.match(/Duration: (\d+):(\d+):([\d.]+)/) ?? [0, 0, 0, 0];
   const [, w, h] = out.match(/Video:.*?, (\d+)x(\d+)/) ?? [0, 16, 9];
   const turned = /rotation of -?90/.test(out);
-  return { fps: Math.min(60, fps || 30), audio: /Stream #.*Audio:/.test(out), portrait: turned ? +w > +h : +h > +w };
+  return { fps: Math.min(60, fps || 30), audio: /Stream #.*Audio:/.test(out), portrait: turned ? +w > +h : +h > +w, dur: +hh * 3600 + +mm * 60 + +ss };
 }
 function prepareMedia() {
   for (const e of media()) {
@@ -209,13 +215,21 @@ function withAudio(video, final, from, dur) {
   }
   const song = music();
   if (song) {
-    // from the end of the skit to the end; fades in and out, and dips under the clips (the selling video) so their voices carry
-    const S = (tl.scenes.find((s) => s.kind !== "film")?.start ?? 0) - 0.3, E = tl.duration;
+    // in with the first Mutuals logo (else right after the skit) to the end, dipping under the clips (the selling
+    // video) so their voices carry
+    const logo = tl.scenes.flatMap((s) => s.events).find((e) => e.type === "logo");
+    const S = logo?.t ?? (tl.scenes.find((s) => s.kind !== "film")?.start ?? 0) - 0.3, E = tl.duration;
     const ducks = tl.scenes.flatMap((s) => s.events.filter((e) => e.type === "clip" && e.dur)).map((e) => `(1-0.85*clip(min((t-${(e.t - 0.8).toFixed(2)})/0.8,(${(e.t + e.dur + 0.8).toFixed(2)}-t)/0.8),0,1))`);
-    const vol = [`${Number(arg("music-volume", 0.2))}`, `clip((t-${S.toFixed(2)})/1.5,0,1)`, `clip((${E.toFixed(2)}-t)/2.5,0,1)`, ...ducks].join("*");
+    const vol = [`${MUSIC_VOLUME}`, `clip((t-${S.toFixed(2)})/0.15,0,1)`, `clip((${E.toFixed(2)}-t)/2.5,0,1)`, ...ducks].join("*");
     const ms = Math.round(Math.max(0, S) * 1000);
+    const total = probe(song).dur, need = E - S, n = inputs.length / 2 + 1;
     inputs.push("-i", song);
-    parts.push(`[${inputs.length / 2}:a]${st(`atrim=start=${Number(arg("music-from", 0))},asetpts=PTS-STARTPTS,adelay=${ms}|${ms},volume='${vol}':eval=frame,atrim=start=${from.toFixed(3)},asetpts=PTS-STARTPTS`)}[a${parts.length}]`);
+    // too short from MUSIC_FROM: play on until just before the song's own ending, then cross-fade back MUSIC_LOOP_BACK
+    const xf = 1.5, cut = total - 8;
+    const src = total - MUSIC_FROM >= need
+      ? `[${n}:a]aresample=48000,atrim=start=${MUSIC_FROM},asetpts=PTS-STARTPTS[mraw]`
+      : `[${n}:a]aresample=48000,asplit[m1][m2];[m1]atrim=start=${MUSIC_FROM}:end=${cut.toFixed(2)},asetpts=PTS-STARTPTS[p1];[m2]atrim=start=${Math.max(0, cut - xf - MUSIC_LOOP_BACK).toFixed(2)},asetpts=PTS-STARTPTS[p2];[p1][p2]acrossfade=d=${xf}[mraw]`;
+    parts.push(`${src};[mraw]${st(`adelay=${ms}|${ms},volume='${vol}':eval=frame,atrim=start=${from.toFixed(3)},asetpts=PTS-STARTPTS`)}[a${parts.length}]`);
     console.log(`music: ${path.basename(song)}`);
   }
   if (!parts.length) return fs.copyFileSync(video, final);
