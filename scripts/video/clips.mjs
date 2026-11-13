@@ -232,7 +232,7 @@ async function alexRoommateToRun() {
   } else {
     await tap("Skip for now", { timeout: 20_000 }).catch(() => {});
   }
-  await tap("People in my Groups", { timeout: 60_000 }); // the privacy choice
+  await tap("Yes, check", { timeout: 60_000 }); // uses the reach set in Muse settings
   await waitText("I found", 240_000);
   await slowScroll(2400, 14); // the Muses talking, then the shortlist
   await tap("Open the full shortlist");
@@ -311,7 +311,7 @@ const clips = {
       await tap("Catalog items", { timeout: 120_000 });
       await waitText("identified each item", 180_000).catch(() => {});
       await slowScroll(900, 6);
-      await tap("People in my Groups", { timeout: 60_000 });
+      await tap("Yes, check", { timeout: 60_000 });
       await waitText("already", 240_000);
       await slowScroll(1800, 12);
       await pause(2500);
@@ -339,7 +339,7 @@ const clips = {
       await waitReply(before);
       await type("Yosemite, Dec 6. Yeah honestly down to go with people. I'd spend like $40, could do $60 for a good one but keep that private");
       await type("pickup anywhere in SF").catch(() => {});
-      await tap("People in my Groups", { timeout: 60_000 });
+      await tap("Yes, check", { timeout: 60_000 });
       await waitText("I found", 240_000);
       await slowScroll(1800, 12);
       await pause(2500);

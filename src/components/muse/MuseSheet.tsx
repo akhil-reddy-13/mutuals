@@ -9,7 +9,6 @@ import MatchCard from "../MatchCard";
 import type { EventInfo } from "../ConnectionCard";
 import IntakeCard from "./IntakeCard";
 import HomesCard from "./HomesCard";
-import ReachCard from "./ReachCard";
 import LiveMatching, { type LiveCandidate, type MatchModelLabels } from "./LiveMatching";
 import PrefChips from "./PrefChips";
 import VideoCapture from "./VideoCapture";
@@ -19,7 +18,7 @@ import { canShowVideo, sheetCopy } from "@/lib/sheetCopy";
 import type { Ask, Group, Item, Match, MuseReach, Preference, RoomDetails, User } from "@/lib/types";
 
 export interface MuseSheetProps {
-  me: Pick<User, "id" | "name" | "avatarUrl" | "museGroups">;
+  me: Pick<User, "id" | "name" | "avatarUrl" | "museGroups"> & Partial<Pick<User, "museReach">>;
   group: Pick<Group, "id" | "name">;
   onClose: () => void;
 }
@@ -32,7 +31,7 @@ interface Msg {
   card?: Card;
   // A name, not a callback, so the chat can be saved and resumed.
   // Serializable so the chat survives a reload (chat memory). "move" re-asks in another Group.
-  actions?: { label: string; primary?: boolean; act: "check" | "notnow" | "move" | "broaden"; groupId?: string; groupName?: string; reach?: MuseReach }[];
+  actions?: { label: string; primary?: boolean; act: "check" | "notnow" | "move" | "broaden" | "settings"; groupId?: string; groupName?: string; reach?: MuseReach }[];
   chips?: string[];
 }
 
@@ -260,8 +259,10 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
     const id = push({
       role: "muse",
       text: sheetCopy.optIn(group.name, isSelling(askRef.current)),
-      card: "reach",
-      actions: [{ label: "Not now", act: "notnow" }],
+      actions: [
+        { label: "Yes, check", primary: true, act: "check" },
+        { label: "Not now", act: "notnow" },
+      ],
     });
     return id;
   }
@@ -351,7 +352,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
     const selling = isSelling(cur);
     push({
       role: "muse",
-      text: `On it. Checking with ${REACH_TEXT[reach ?? cur.museReach ?? "groups"]}${selling ? " for anyone who needs these" : ""}. You can watch.`,
+      text: `On it. Checking with ${REACH_TEXT[reach ?? cur.museReach ?? me.museReach ?? "groups"]}${selling ? " for anyone who needs these" : ""}. You can watch.`,
       card: "matching",
     });
     // Selling: route exactly what the seller approved (Spark's model names, their edits), not Ember's first pass.
@@ -383,7 +384,7 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
         setMatches([]);
         const best = e.broaden;
         const what = cur.type === "roommate" || cur.type === "sublet" ? "a room" : "this";
-        const here = REACH_TEXT[reach ?? cur.museReach ?? "groups"];
+        const here = REACH_TEXT[reach ?? cur.museReach ?? me.museReach ?? "groups"];
         push({
           role: "muse",
           text: best
@@ -442,6 +443,13 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
           card: "shortlist",
         });
         router.refresh();
+      } else if (e.type === "error" && e.message === "MUSE_OFF") {
+        es.close();
+        push({
+          role: "muse",
+          text: "Talking to other people's Muses is off in your Muse settings. Turn it on and I'll check right away.",
+          actions: [{ label: "Muse settings", primary: true, act: "settings" }],
+        });
       } else if (e.type === "error") {
         es.close();
         push({ role: "muse", text: `I lost the connection while checking (${e.message}). Tap Ask Muse again to retry.` });
@@ -521,6 +529,9 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
             <div className="text-[15px] font-bold leading-tight">Muse</div>
             <div className="truncate text-[12px] text-fb-muted">Private · {group.name}</div>
           </div>
+          <a href="/muse/settings" className="rounded-full px-2.5 py-1.5 text-[13px] font-semibold text-fb-muted hover:bg-fb-hover" title="Who your Muse can talk to">
+            Settings
+          </a>
           {ask && (
             <button onClick={startOver} className="rounded-full px-3 py-1.5 text-[13px] font-semibold text-fb-blue hover:bg-fb-blue-soft">
               New ask
@@ -569,7 +580,9 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
                                 ? () => void startMatching()
                                 : a.act === "broaden"
                                   ? () => void startMatching(a.reach)
-                                  : a.act === "move"
+                                  : a.act === "settings"
+                                    ? () => router.push("/muse/settings")
+                                    : a.act === "move"
                                     ? () => void moveTo(a.groupId!, a.groupName!)
                                     : notNow,
                             )
@@ -625,16 +638,18 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
                   )}
                   {m.card === "matching" && (
                     <div className="ml-8">
-                      {cands.length === 0 ? (matches ? null : <div className="h-14 rounded-xl shimmer" />) : <LiveMatching cands={cands} meName={first} defaultOpen={firstAgent} models={matchModels} />}
-                    </div>
-                  )}
-                  {m.card === "reach" && ask && (
-                    <div className="ml-8">
-                      <ReachCard
-                        askId={ask.id}
-                        disabled={used.has(m.id)}
-                        onPick={(r) => runAction(m.id, () => void startMatching(r))}
-                      />
+                      {cands.length === 0 ? (
+                        matches ? null : (
+                          <div className="flex items-center gap-2.5 rounded-xl border border-fb-divider bg-white px-3 py-2.5 text-[14px] text-fb-muted">
+                            <span className="flex items-center gap-1">
+                              <span className="dot h-2 w-2 rounded-full bg-fb-blue" />
+                              <span className="dot h-2 w-2 rounded-full bg-fb-blue" />
+                              <span className="dot h-2 w-2 rounded-full bg-fb-blue" />
+                            </span>
+                            Reaching out to the Muses of {REACH_TEXT[ask?.museReach ?? me.museReach ?? "groups"]}…
+                          </div>
+                        )
+                      ) : <LiveMatching cands={cands} meName={first} defaultOpen={firstAgent} models={matchModels} />}
                     </div>
                   )}
                   {m.card === "homes" && matches && (

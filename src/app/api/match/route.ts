@@ -2,7 +2,7 @@
 // POST { askId }  -> { matches: Match[] } (same work, no stream; used by scripts).
 // Candidates run in parallel; see lib/match.ts.
 import { NextResponse } from "next/server";
-import { getAsk, optIntoGroup, saveAsk, updateUser } from "@/lib/db";
+import { getAsk, getUser, optIntoGroup, saveAsk, updateUser } from "@/lib/db";
 import { runMatching } from "@/lib/match";
 
 export const dynamic = "force-dynamic";
@@ -18,6 +18,17 @@ export async function GET(req: Request) {
     ask = { ...ask, museReach: reachParam };
     saveAsk(ask);
     updateUser(ask.userId, { museReach: reachParam });
+  } else if (ask && !ask.museReach) {
+    // No explicit choice on this ask: use the person's Muse settings.
+    ask = { ...ask, museReach: getUser(ask.userId)?.museReach ?? "groups" };
+    saveAsk(ask);
+  }
+  const owner = ask ? getUser(ask.userId) : undefined;
+  if (ask && owner && !owner.museEnabled) {
+    const enc = new TextEncoder();
+    return new Response(enc.encode(`data: ${JSON.stringify({ type: "error", message: "MUSE_OFF" })}\n\n`), {
+      headers: { "Content-Type": "text/event-stream", "Cache-Control": "no-cache" },
+    });
   }
   if (!ask) return new Response("unknown ask", { status: 404 });
   optIntoGroup(ask.userId, ask.groupId); // starting a search is the opt-in for this Group

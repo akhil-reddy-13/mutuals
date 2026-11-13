@@ -10,11 +10,11 @@ export const sheetCopy = {
   prefsIntro:
     "Here's what I'll look for. Tap a tag to change who sees what: Public can show on your card, Kept private I only use to check fit, Never shared stays with me.",
   updated: "Updated.",
-  // Followed by the "Who can my Muse talk to?" card (components/muse/ReachCard.tsx).
+  // Who Muse may talk to is a one-time choice in Muse settings (/muse/settings), not asked per chat.
   optIn: (_groupName: string, selling: boolean) =>
     selling
-      ? `Want me to check with other people's Muses and see who'd want these? I'll work out price and pickup with theirs, only say what's in your list, and you'll see everything I share. Who should I check with?`
-      : `Want me to check with other people's Muses? I only share what you said was OK, and you'll see everything I say. Who should I check with?`,
+      ? `Want me to check with other people's Muses and see who'd want these? I'll work out price and pickup with theirs, only say what's in your list, and you'll see everything I share.`
+      : `Want me to check with other people's Muses? I only share what you said was OK, and you'll see everything I say.`,
 };
 
 /** The video step only makes sense when there's something to film: a room you're offering or items you're selling. */

@@ -131,7 +131,7 @@ export default async function GroupPage({ params }: { params: Promise<{ id: stri
                 </button>
               ))}
             </div>
-            <MuseLauncher me={{ id: me.id, name: me.name, avatarUrl: me.avatarUrl, museGroups: me.museGroups }} group={{ id: group.id, name: group.name }} />
+            <MuseLauncher me={{ id: me.id, name: me.name, avatarUrl: me.avatarUrl, museGroups: me.museGroups, museReach: me.museReach }} group={{ id: group.id, name: group.name }} />
           </section>
 
           {myAsk && (

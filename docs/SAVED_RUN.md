@@ -19,7 +19,7 @@ search turned into a low-pressure plan to *do something together*. Keep it as th
 1. Tap the chip **Looking for a room**
 2. Type `$1200; first two weeks of June.`
 3. Type `I'm pretty clean and don't want a messy roomate; otherwise idc` (keep the typo)
-4. Pick **People in my Groups** (older builds: **Yes, check**)
+4. Tap **Yes, check** (Muse settings → Who can my Muse talk to? = People in my Groups, the default)
 
 Muse asked: "What's your budget and when do you need to move in? I'll keep that private." then
 "What about schedule, guests, cleanliness, and pets — anything I should know? I'll keep that private."

@@ -149,11 +149,12 @@ Big asks (roommates) bring people in. Small weekly asks (rides, study partners, 
 
 ### 3.1 Opt-in and reach
 
-> **As built (Nov 12):** no settings page. The opt-in is a card in the chat, "Who can my Muse talk to?", with three
-> options and a live count for each: **People I'm connected with** (friends + friends of friends), **People in my
-> Groups** (recommended; members of my Groups who turned Muse on there), **Everyone nearby** (same verified school or
-> city). Saved per ask (`Ask.museReach`) and as the person's default (`User.museReach`). If nobody is in reach, Muse
-> offers the next wider option. Private preferences stay private in every option. The original design is below.
+> **As built (Nov 12):** one **Muse settings** page (`/muse/settings`, linked from the Muse chat header, the Muse
+> page and Home): **Let my Muse talk to other people's Muses** (on/off), **Who can my Muse talk to?** (People I'm
+> connected with · People in my Groups, recommended · Everyone nearby), and **Suggest things to do together** (on/off).
+> Set once, used by every ask (`User.museReach`, saved onto each ask as `Ask.museReach`). The chat only asks "Want me
+> to check with other people's Muses?" (Yes, check / Not now). If nobody is in reach, Muse offers the next wider
+> option. Private preferences stay private in every option. The original design is below.
 
 - **One toggle:** "Let my Muse talk to other Muses."
 - **One reach setting**, with a sensible default:

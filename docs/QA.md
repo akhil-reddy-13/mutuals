@@ -95,7 +95,7 @@ our answer and the product would work this way. Never claim a Decision is built.
 
 ## Where does it search? Who can my Muse talk to?
 
-- **Built:** You choose when you opt in, per ask, with a live count of how many people's Muses each option reaches:
+- **Built:** A one-time choice in **Muse settings** (`/muse/settings`), used by every ask:
   **People I'm connected with** (friends + friends of friends, most private), **People in my Groups** (recommended:
   members of your Groups who turned Muse on), **Everyone nearby** (your school or city, widest). Your last choice is the
   default next time. If nobody's in reach, Muse offers the next wider option. Private preferences stay private in

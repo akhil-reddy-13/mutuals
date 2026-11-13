@@ -24,7 +24,7 @@ Video of the room. "Ten seconds of video. Muse Ember pulls the room details and 
 
 ## 2:00 Behind the scenes (60s)
 
-Pick **People in my Groups** (point at the three options: connected, my Groups, everyone nearby; that's the privacy choice). "Now the part a search box can't do. My Muse is talking to Priya's Muse, Jordan's Muse and Sam's Muse at the same time. Two Muse Ember calls per round, one referee call at the end, every candidate in parallel."
+Tap **Yes, check** ("who my Muse may talk to is one setting: connected, my Groups or everyone nearby"). "Now the part a search box can't do. My Muse is talking to Priya's Muse, Jordan's Muse and Sam's Muse at the same time. Two Muse Ember calls per round, one referee call at the end, every candidate in parallel."
 
 Point at the lock chips. "Those locks are kept-private facts. Priya's Muse knows my real floor is lower than my asking rent. Priya never will."
 

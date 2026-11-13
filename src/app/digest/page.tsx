@@ -25,10 +25,13 @@ export default async function DigestPage() {
       <section className="fb-card rounded-none p-4 md:rounded-[8px]">
         <div className="flex items-center gap-3">
           <MuseMark size={44} />
-          <div>
+          <div className="min-w-0 flex-1">
             <h1 className="text-[22px] font-bold leading-tight">Muse</h1>
             <div className="text-[13px] text-fb-muted">Your Muse, inside your Groups</div>
           </div>
+          <Link href="/muse/settings" className="fb-btn-secondary h-9 px-3 text-[14px]">
+            Settings
+          </Link>
         </div>
         <p className="mt-3 text-[15px] leading-5">
           Open any Group and tap <b>Ask Muse</b>. Your Muse checks with other members&apos; Muses on the things you&apos;d never post, then hands you a shortlist. You decide who to talk to.
