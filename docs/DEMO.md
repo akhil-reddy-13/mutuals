@@ -38,7 +38,7 @@ Both phones start on **Home** (a normal-looking feed). Phone A goes **Groups →
 | 3:30 | **Phone B:** "Priya got a notification. Her view shows the same summary, never Alex's numbers." | Phone B: Notifications → the match → Messenger. Reply by hand. Phone A sees it (2s poll). |
 | 4:00 | "Most exchanges stay exchanges. Sam got no suggestion. Priya did." | Back on A: the **New connection with Priya** banner under the cards (in the Muse chat: inside Priya's card) → **Go together** → the Event. Tap **Going**. |
 | 4:20 | "A marketplace finds you stuff. Your Muse finds you people, and the stuff is just the reason to meet." | Stanford Free & For Sale → Ask Muse → "Selling some stuff before I move out" → upload the pre-run video (you talking over your stuff). Ember heard you, Spark named each model (Canon G7 X Mark II). **Yes** → "2 of these already have a home": June (Japan trip) and Theo (BART commute). |
-| 4:45 | "Same engine, every small ask." | Open **Muse** (left rail) → digest: skill swap, plus one, SFO ride. |
+| 4:45 | "Same engine, every small ask." | Open **Muse** (left rail) → the full-page Muse chat; the **Today** panel on the right shows skill swap, plus one, SFO ride. |
 | 4:50 | "You might have zero mutuals on Facebook today. Mutuals builds them for you." | Closing slide. |
 
 ## If something breaks

@@ -1,4 +1,4 @@
-// POST { groupId, askId?, conversation: {role:"user"|"muse", text}[] }
+// POST { groupId, askId?, conversation: {role:"user"|"muse", text}[] }   groupId "auto" = from the Muse page: Muse picks the Group (asks.homeGroupFor)
 //   -> { ask, followUp: string|null, ready: boolean, remembered: string[] }   (Spark, prompts.askParsePrompt, schemas.AskParseSchema)
 //      remembered = pref ids carried over from the user's earlier asks and not yet confirmed (asks.rememberedPrefs)
 // PATCH { askId, preferences?, roomDetails?, items?, summary? } -> { ask }   (chip edits, intake results)

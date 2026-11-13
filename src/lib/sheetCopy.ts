@@ -6,6 +6,8 @@ import type { Ask } from "./types";
 export const sheetCopy = {
   greeting: (first: string, groupName: string) =>
     `Hey ${first}. What do you need in ${groupName}? Tell me the stuff you wouldn't post, too. I keep that between us.`,
+  // The Muse page: one chat across all my Groups, so no Group in the greeting.
+  greetingAnywhere: (first: string) => `Hey ${first}. What do you need? Tell me the stuff you wouldn't post, too. I keep that between us.`,
   moreDetail: "Tell me a bit more.",
   prefsIntro:
     "Here's what I'll look for. Tap a tag to change who sees what: Public can show on your card, Kept private I only use to check fit, Never shared stays with me.",

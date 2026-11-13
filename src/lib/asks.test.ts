@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { guessSide, resolveSide } from "./asks";
+import { guessSide, homeGroupFor, resolveSide } from "./asks";
+import { getUser } from "./db";
 
 describe("guessSide (fallback when the model doesn't say)", () => {
   it("seekers skip the video step", () => {
@@ -21,5 +22,22 @@ describe("resolveSide (clear offering phrasing beats the model)", () => {
   it("otherwise trusts the model", () => {
     expect(resolveSide("seeking", undefined, "new dorm for this summer")).toBe("seeking");
     expect(resolveSide("offering", undefined, "Selling some stuff before I move out")).toBe("offering");
+  });
+});
+
+// The Muse page is one chat across all my Groups; each ask is filed in the Group where people could answer it.
+describe("homeGroupFor", () => {
+  const alex = getUser("alex")!;
+  it("files a plus-one where the people going are", () => {
+    expect(homeGroupFor(alex, "plus_one", "seeking")).toBe("g_sfgrads");
+  });
+  it("files a room in the housing Group", () => {
+    expect(homeGroupFor(alex, "roommate", "offering")).toBe("g_housing27");
+  });
+  it("stays where it is once that Group has people", () => {
+    expect(homeGroupFor(alex, "roommate", "offering", "g_housing27")).toBe("g_housing27");
+  });
+  it("falls back to the current Group when nobody anywhere matches", () => {
+    expect(homeGroupFor(alex, "skill_swap", "seeking", "g_ffs")).toBe("g_ffs");
   });
 });

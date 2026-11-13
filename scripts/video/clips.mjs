@@ -51,7 +51,9 @@ const CLIPS = wanted.length ? wanted : KNOWN;
 
 let page;
 // --pace 0.75 = 25% less waiting between steps (default). 1 = the original, slower pace.
-const PACE = Number(arg("pace", "0.75"));
+// --dry: run every step fast with no recording, just to fill the Muse cache so the real recording replays instantly.
+const DRY = flag("dry");
+const PACE = DRY ? 0.05 : Number(arg("pace", "0.75"));
 const pause = (ms) => new Promise((r) => setTimeout(r, ms * PACE));
 /** Run a page step; if a navigation tears down the page mid-step, wait for the new page and try again. */
 async function steady(fn, tries = 4) {
@@ -158,7 +160,7 @@ async function sendMessage(line) {
       e.dispatchEvent(new Event("input", { bubbles: true }));
     });
     await pause(300);
-    await input.type(line, { delay: 20 });
+    await input.type(line, { delay: DRY ? 0 : 20 });
     await pause(500);
   }
   await tapSel('[aria-label="Send"]');
@@ -180,7 +182,7 @@ async function type(line) {
   const b = await input.boundingBox();
   await page.evaluate((x, y) => window.__moveCur?.(x, y), b.x + 40, b.y + b.height / 2);
   await input.focus();
-  await input.type(line, { delay: 18 });
+  await input.type(line, { delay: DRY ? 0 : 18 });
   await pause(400);
   await input.press("Enter");
   await waitReply(before);
@@ -221,7 +223,8 @@ const DEMO_LINES = [
 async function alexRoommateToRun() {
   await go("/");
   await pause(1800); // the first screen: "Skip the fifty awkward messages"
-  await tap("Try it");
+  await tap("Try Muse");
+  await tap("Stanford Housing '27");
   await tap("Ask Muse");
   for (const line of DEMO_LINES) await type(line);
   if (ROOM_VIDEO && fs.existsSync(ROOM_VIDEO)) {
@@ -374,17 +377,17 @@ try {
       continue;
     }
     await go("/");
-    const rec = await page.screencast({ path: raw, ffmpegPath: FFMPEG, fps: 30 });
+    const rec = DRY ? { stop: async () => {} } : await page.screencast({ path: raw, ffmpegPath: FFMPEG, fps: 30 });
     const t0 = Date.now();
     try {
       await clips[name].run();
-      console.log(`✓ ${name}  ${((Date.now() - t0) / 1000).toFixed(0)} s  ->  ${path.relative(ROOT, file)}`);
+      console.log(DRY ? `✓ ${name} cached (${((Date.now() - t0) / 1000).toFixed(0)} s)` : `✓ ${name}  ${((Date.now() - t0) / 1000).toFixed(0)} s  ->  ${path.relative(ROOT, file)}`);
     } catch (e) {
       console.log(`✗ ${name}: ${e instanceof Error ? e.message.split("\n")[0] : e}  (partial clip kept: ${path.relative(ROOT, file)})`);
     } finally {
       await rec.stop();
       await page.close();
-      try {
+      if (!DRY) try {
         const vf = SPEED !== 1 ? ["-filter:v", `setpts=PTS/${SPEED}`] : [];
         execFileSync(FFMPEG, ["-loglevel", "error", "-y", "-i", raw, ...vf, "-c:v", "libx264", "-pix_fmt", "yuv420p", "-preset", "veryfast", "-crf", "20", "-movflags", "+faststart", file]);
         fs.unlinkSync(raw);

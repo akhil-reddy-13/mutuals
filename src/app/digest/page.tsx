@@ -1,8 +1,7 @@
-// Muse page: today's digest of people in your Groups who need something you can help with (breadth beat, PRD §5.3).
-// Ember writes the cards from seeded asks; served from the mock offline.
-import Link from "next/link";
-import Avatar from "@/components/Avatar";
-import { MuseMark } from "@/components/icons";
+// Muse page: one clean chat with Muse across all your Groups (same chat component as the Group side sheet), with today's digest of
+// people in your Groups who need something you can help with alongside it (breadth beat, PRD §5.3).
+// Ember writes the digest cards from seeded asks; served from the mock offline.
+import MusePage, { type TodayCard } from "@/components/muse/MusePage";
 import { allAsks, getGroup, getUser } from "@/lib/db";
 import { digestCards } from "@/lib/digest";
 import { mockDigest } from "@/lib/mocks";
@@ -18,65 +17,29 @@ export default async function DigestPage() {
   try {
     cards = await digestCards(me);
   } catch {}
-  const groupsWithMuse = me.groups.map((g) => getGroup(g)!).filter(Boolean);
+  const groups = me.groups.map((g) => getGroup(g)!).filter(Boolean);
+  const asks = allAsks();
+
+  const today: TodayCard[] = cards.map((c) => {
+    const g = getGroup(asks.find((a) => c.related_user_ids.includes(a.userId) && me.groups.includes(a.groupId))?.groupId ?? "") ?? groups[0];
+    return {
+      label: LABEL[c.type] ?? c.type,
+      title: c.title,
+      body: c.body,
+      groupId: g?.id ?? "",
+      groupName: g?.name ?? "",
+      people: c.related_user_ids
+        .map((id) => getUser(id))
+        .filter((u): u is NonNullable<typeof u> => !!u)
+        .map((u) => ({ id: u.id, name: u.name, avatarUrl: u.avatarUrl })),
+    };
+  });
 
   return (
-    <div className="mx-auto max-w-[680px] pb-24 md:py-4">
-      <section className="fb-card rounded-none p-4 md:rounded-[8px]">
-        <div className="flex items-center gap-3">
-          <MuseMark size={44} />
-          <div className="min-w-0 flex-1">
-            <h1 className="text-[22px] font-bold leading-tight">Muse</h1>
-            <div className="text-[13px] text-fb-muted">Your Muse, inside your Groups</div>
-          </div>
-          <Link href="/muse/settings" className="fb-btn-secondary h-9 px-3 text-[14px]">
-            Settings
-          </Link>
-        </div>
-        <p className="mt-3 text-[15px] leading-5">
-          Open any Group and tap <b>Ask Muse</b>. Your Muse checks with other members&apos; Muses on the things you&apos;d never post, then hands you a shortlist. You decide who to talk to.
-        </p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {groupsWithMuse.map((g) => (
-            <Link key={g.id} href={`/groups/${g.id}`} className="fb-btn-secondary h-8 text-[13px]">
-              {g.coverEmoji} {g.name}
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <h2 className="px-4 pb-2 pt-4 text-[17px] font-bold md:px-0">Today in your Groups</h2>
-      <div className="flex flex-col gap-3">
-        {cards.map((c, i) => {
-          const people = c.related_user_ids.map((id) => getUser(id)).filter(Boolean);
-          const g = getGroup(allAsks().find((a) => c.related_user_ids.includes(a.userId))?.groupId ?? "g_ffs");
-          return (
-            <section key={i} className="fb-card rounded-none p-4 md:rounded-[8px]">
-              <div className="text-[12px] font-semibold uppercase tracking-wide muse-text">{LABEL[c.type] ?? c.type}</div>
-              <h3 className="mt-1 text-[17px] font-bold leading-tight">{c.title}</h3>
-              <p className="mt-1 text-[15px] text-fb-muted">{c.body}</p>
-              <div className="mt-3 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="flex -space-x-2">
-                    {people.map((u) => (
-                      <Avatar key={u!.id} src={u!.avatarUrl} name={u!.name} size={28} ring />
-                    ))}
-                  </div>
-                  <span className="text-[13px] text-fb-muted">{g?.name}</span>
-                </div>
-                <Link href={`/groups/${g?.id ?? "g_ffs"}`} className="fb-btn-soft h-8 text-[13px]">
-                  Ask Muse
-                </Link>
-              </div>
-            </section>
-          );
-        })}
-      </div>
-      <p className="px-4 pt-5 text-center text-[13px] text-fb-muted md:px-0">
-        A marketplace finds you stuff. Your Muse finds you people, and the stuff is just the reason to meet.
-        <br />
-        You might have zero mutuals on Facebook today. Mutuals builds them for you.
-      </p>
-    </div>
+    <MusePage
+      me={{ id: me.id, name: me.name, avatarUrl: me.avatarUrl, museGroups: me.museGroups }}
+      groups={groups.map((g) => ({ id: g.id, name: g.name }))}
+      today={today.filter((t) => t.groupId)}
+    />
   );
 }
