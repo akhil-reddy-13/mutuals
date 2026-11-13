@@ -22,9 +22,9 @@ voiceover. The skit and the selling clip keep their own sound.
   `stage.html` places them (`cue(...)`), so they move with the picture. `node scripts/video/sfx.mjs` writes
   `out/sfx-sampler.wav` to hear each one.
 - **Music:** Earrings (Malcolm Todd). Put the mp3 in `scripts/video/assets/music/` (git-ignored: the song never goes in
-  the repo). It drops in with the Mutuals logo at 1:01, from the song's first "extra extra" (1:37.2), at 15% as
-  background; it dips further under the selling clip and loops back once, on the beat, to reach the end card. The
-  settings are at the top of `render.mjs` (`--music-from`, `--music-volume` override them).
+  the repo). It comes in after the skit, timed so the song's first "extra extra" (1:37.2) lands on the Mutuals logo at
+  1:01, at 5% as background; it dips further under the selling clip and loops back once, on the beat, to reach the end
+  card. The settings are at the top of `render.mjs` (`--music-on-logo`, `--music-volume` override them).
 - **Sound-only changes** (effects, music) need no re-render:
   `node scripts/video/render.mjs --audio-only && node scripts/video/make.mjs --finish` (about 30 seconds).
 
