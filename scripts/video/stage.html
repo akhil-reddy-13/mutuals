@@ -1,0 +1,829 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Mutuals stage</title>
+<!--
+  Pass 2 of the demo video. render.mjs loads the timeline that capture.mjs wrote and calls stage.render(t) for every
+  frame. Nothing here runs on its own clock: every position, opacity and blur is a function of t, so frames come out
+  identical every time and motion is perfectly even. Easing is ease-in-out or ease-out only (no springs, no overshoot).
+-->
+<style>
+  :root {
+    --blue: #0866ff; --purple: #a033ff; --pink: #ff5c87; --ink: #1d1d1f; --muted: #6e6e73; --bg: #f5f5f7;
+    --muse: linear-gradient(135deg, #0866ff 0%, #a033ff 55%, #ff5c87 100%);
+    --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); font-family: var(--font); color: var(--ink); }
+  .abs { position: absolute; left: 0; top: 0; }
+  .full { position: absolute; inset: 0; }
+
+  /* background: static soft colour, a few slow glass bubbles */
+  #bg { background:
+      radial-gradient(900px 760px at 6% -6%, rgba(127, 176, 255, .55), transparent 70%),
+      radial-gradient(820px 720px at 104% 108%, rgba(199, 160, 255, .5), transparent 70%),
+      radial-gradient(620px 520px at 74% -10%, rgba(255, 211, 224, .45), transparent 70%),
+      var(--bg); }
+  .glass { position: absolute; border-radius: 50%; will-change: transform;
+    background: radial-gradient(circle at 32% 28%, rgba(255,255,255,.95), rgba(255,255,255,.4) 24%, rgba(255,255,255,.06) 62%);
+    border: 1.5px solid rgba(255,255,255,.8); box-shadow: inset 0 -10px 26px rgba(120,150,255,.14), 0 10px 30px rgba(60,80,160,.07); }
+
+  .scene { position: absolute; inset: 0; display: none; }
+  .scene.dark { background: radial-gradient(1400px 900px at 30% 25%, #3b3346 0%, #17141d 55%, #0b0a0f 100%); color: #fff; }
+
+  /* text */
+  .h { position: absolute; font-weight: 700; letter-spacing: -.025em; line-height: 1.04; will-change: transform, opacity; }
+  .cap { position: absolute; color: var(--muted); line-height: 1.35; will-change: transform, opacity; }
+  .grad { background: var(--muse); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+  /* phone */
+  #phone { position: absolute; left: 0; top: 0; width: 451px; height: 912px; transform-origin: 0 0; will-change: transform, opacity; }
+  #bezel { position: absolute; inset: 0; border-radius: 74px; padding: 15px;
+    background: linear-gradient(145deg, #3a3a3e, #8a8a90 18%, #2c2c30 40%, #6d6d72 70%, #2a2a2e);
+    box-shadow: 0 60px 120px rgba(30, 40, 90, .26), 0 18px 40px rgba(0,0,0,.16), inset 0 0 0 1.5px rgba(255,255,255,.25); }
+  #screen { width: 421px; height: 882px; border-radius: 60px; overflow: hidden; background: #fff; position: relative; box-shadow: 0 0 0 4px #0b0b0c; }
+  #status { height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 8px 36px 0 44px; font-size: 17px; font-weight: 600; background: #fff; position: relative; }
+  #status .island { position: absolute; left: 50%; top: 11px; width: 122px; height: 34px; margin-left: -61px; background: #0b0b0c; border-radius: 20px; }
+  #status .icons { display: flex; gap: 7px; align-items: center; font-size: 15px; }
+  #status .bat { width: 26px; height: 13px; border: 2px solid #111; border-radius: 4px; position: relative; }
+  #status .bat::after { content: ""; position: absolute; inset: 1px; right: 5px; background: #111; border-radius: 1px; }
+  .shotl { position: absolute; left: 0; top: 0; display: block; width: 421.2px; height: 838.08px; }
+
+  /* stepper */
+  #stepper { position: absolute; top: 30px; left: 0; width: 1920px; display: flex; justify-content: center; align-items: center; gap: 14px; }
+  .step { position: relative; display: flex; align-items: center; gap: 10px; padding: 9px 20px 9px 10px; border-radius: 999px; font-size: 21px; font-weight: 600; color: var(--muted);
+    background: rgba(255,255,255,.78); border: 1px solid rgba(255,255,255,.95); box-shadow: 0 2px 10px rgba(0,0,0,.05); overflow: hidden; }
+  .step .on { position: absolute; inset: 0; background: var(--muse); border-radius: 999px; }
+  .step i, .step span { position: relative; }
+  .step i { font-style: normal; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #e8e8ed; color: var(--muted); font-size: 17px; }
+  .stepline { width: 40px; height: 2px; background: #d2d2d7; }
+
+  /* cards lifted out of the app */
+  .card { position: absolute; left: 0; top: 0; transform-origin: 0 0; border-radius: 22px; overflow: hidden; background: #fff; will-change: transform, opacity;
+    box-shadow: 0 40px 90px rgba(30,40,90,.22), 0 8px 24px rgba(0,0,0,.10); }
+  .card img { display: block; width: 100%; height: 100%; }
+
+  /* compose box */
+  .compose { position: absolute; height: 112px; border-radius: 30px; background: rgba(255,255,255,.88); border: 1.5px solid rgba(255,255,255,.95);
+    box-shadow: 0 30px 70px rgba(30,40,90,.16), 0 4px 14px rgba(0,0,0,.05); display: flex; align-items: center; gap: 22px; padding: 0 22px 0 26px; will-change: transform, opacity; }
+  .compose .ring { width: 54px; height: 54px; border-radius: 50%; background: var(--muse); flex: none; display: flex; align-items: center; justify-content: center; }
+  .compose .ring::after { content: ""; width: 32px; height: 32px; border-radius: 50%; background: #fff; }
+  .compose .txt { flex: 1; font-size: 32px; line-height: 1.25; color: var(--ink); white-space: nowrap; overflow: hidden; display: flex; justify-content: flex-start; }
+  .compose .txt .ph { color: #a1a1a6; }
+  .compose .txt .inner { white-space: nowrap; }
+  .compose .caret { display: inline-block; width: 3px; height: 38px; background: var(--blue); margin-left: 2px; vertical-align: -6px; border-radius: 2px; }
+  .compose .send { width: 66px; height: 66px; border-radius: 50%; background: var(--muse); flex: none; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 24px rgba(160,51,255,.3); }
+  .compose .send svg { width: 30px; height: 30px; }
+  .fly { position: absolute; left: 0; top: 0; transform-origin: 0 0; background: #0866ff; color: #fff; font-size: 34px; line-height: 1.33; padding: 18px 27px;
+    border-radius: 41px; border-bottom-right-radius: 9px; will-change: transform, opacity; box-shadow: 0 20px 50px rgba(8,102,255,.25); }
+
+  .tap { position: absolute; width: 60px; height: 60px; border-radius: 50%; border: 3px solid rgba(255,255,255,.95); background: rgba(255,255,255,.28);
+    box-shadow: 0 0 0 2px rgba(8,102,255,.3), 0 6px 20px rgba(0,0,0,.18); will-change: transform, opacity; }
+
+  /* Muse network */
+  .net { position: absolute; left: 0; top: 0; width: 800px; height: 640px; transform-origin: 400px 320px; will-change: transform, opacity; }
+  .net svg { position: absolute; inset: 0; overflow: visible; }
+  .node { position: absolute; width: 150px; margin-left: -75px; text-align: center; will-change: transform, opacity; }
+  .node .av { position: relative; width: 112px; height: 112px; margin: 0 auto; border-radius: 50%; padding: 5px; background: rgba(255,255,255,.85);
+    box-shadow: 0 16px 40px rgba(30,40,90,.15); border: 1.5px solid rgba(255,255,255,.95); }
+  .node.me .av { width: 150px; height: 150px; padding: 7px; background: var(--muse); }
+  .node .av img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
+  .node .nm { margin-top: 10px; font-size: 22px; font-weight: 700; }
+  .node .st { position: relative; height: 24px; margin-top: 2px; font-size: 18px; color: var(--muted); }
+  .node .st span { position: absolute; left: 0; right: 0; }
+  .node .st .fitc { color: #1e7a34; font-weight: 600; }
+  .badge { position: absolute; right: -2px; bottom: 2px; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 21px; font-weight: 800; border: 3px solid #fff; }
+  .dots { position: absolute; left: 50%; top: -34px; background: #fff; border-radius: 18px; padding: 8px 12px; display: flex; gap: 5px; box-shadow: 0 6px 18px rgba(0,0,0,.1); }
+  .dots b { width: 8px; height: 8px; border-radius: 50%; background: #8e8e93; }
+  .packet { position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: var(--muse); box-shadow: 0 0 12px rgba(160,51,255,.55); }
+
+  /* graphics */
+  .statement { position: absolute; left: 160px; width: 1600px; text-align: center; font-size: 104px; line-height: 1.05; font-weight: 700; letter-spacing: -.03em; }
+  .gcap { position: absolute; left: 260px; width: 1400px; text-align: center; font-size: 40px; color: var(--muted); line-height: 1.3; }
+  .num { position: absolute; font-size: 300px; font-weight: 800; letter-spacing: -.05em; line-height: .9; }
+  .stattxt { position: absolute; font-size: 48px; font-weight: 600; line-height: 1.22; width: 680px; }
+  .src { font-size: 20px; color: var(--muted); margin-top: 22px; font-weight: 400; }
+  .dot { position: absolute; width: 34px; height: 34px; border-radius: 50%; background: #e3e3e8; }
+  .dot.on { background: var(--muse); box-shadow: 0 4px 12px rgba(160,51,255,.28); }
+  .msg { position: absolute; font-size: 46px; padding: 22px 34px; border-radius: 38px; max-width: 680px; white-space: nowrap; box-shadow: 0 14px 40px rgba(30,40,90,.09); will-change: transform, opacity, filter; }
+  .msg.them { background: #e9e9eb; color: #111; border-bottom-left-radius: 9px; }
+  .msg.me { background: var(--blue); color: #fff; border-bottom-right-radius: 9px; }
+  .msg.secret { background: rgba(255,255,255,.85); color: #111; border: 1.5px solid rgba(255,255,255,.95); font-size: 56px; }
+  .lock { position: absolute; width: 74px; height: 74px; border-radius: 50%; background: var(--muse); display: flex; align-items: center; justify-content: center; box-shadow: 0 12px 30px rgba(160,51,255,.35); }
+  .lock svg { width: 34px; height: 34px; }
+  .lring { position: absolute; width: 150px; height: 150px; border-radius: 50%; background: var(--muse); box-shadow: 0 30px 70px rgba(160,51,255,.3); }
+  .lring::after { content: ""; position: absolute; left: 27px; top: 27px; width: 96px; height: 96px; border-radius: 50%; background: var(--bg); }
+  .wordmark { position: absolute; left: 0; width: 1920px; text-align: center; font-size: 172px; font-weight: 800; letter-spacing: -.045em; line-height: 1; }
+  .model { position: absolute; width: 500px; padding: 42px 40px 38px; border-radius: 36px; background: rgba(255,255,255,.8); border: 1.5px solid rgba(255,255,255,.95); box-shadow: 0 20px 60px rgba(30,40,90,.11); }
+  .model .d { width: 54px; height: 54px; border-radius: 50%; background: var(--muse); margin-bottom: 22px; }
+  .model h3 { margin: 0; font-size: 50px; letter-spacing: -.02em; }
+  .model p { margin: 12px 0 0; font-size: 30px; color: var(--muted); line-height: 1.35; }
+
+  /* live action storyboard */
+  .vf { position: absolute; inset: 70px 90px; }
+  .vf i { position: absolute; width: 60px; height: 60px; border: 3px solid rgba(255,255,255,.5); }
+  .vf i:nth-child(1) { left: 0; top: 0; border-right: 0; border-bottom: 0; } .vf i:nth-child(2) { right: 0; top: 0; border-left: 0; border-bottom: 0; }
+  .vf i:nth-child(3) { left: 0; bottom: 0; border-right: 0; border-top: 0; } .vf i:nth-child(4) { right: 0; bottom: 0; border-left: 0; border-top: 0; }
+  .kicker { position: absolute; left: 150px; top: 150px; font-size: 26px; letter-spacing: .16em; text-transform: uppercase; color: #c9b8ff; font-weight: 700; }
+  .action { position: absolute; left: 150px; top: 210px; width: 1300px; font-size: 36px; line-height: 1.45; color: rgba(255,255,255,.7); font-style: italic; }
+  .sbtag { position: absolute; left: 150px; bottom: 104px; font-size: 18px; letter-spacing: .16em; text-transform: uppercase; color: rgba(255,255,255,.4); }
+  .rec { position: absolute; right: 130px; top: 104px; display: flex; align-items: center; gap: 10px; font-size: 20px; letter-spacing: .12em; color: rgba(255,255,255,.75); font-weight: 600; }
+  .rec b { width: 14px; height: 14px; border-radius: 50%; background: #ff3b30; }
+  .line { position: absolute; left: 220px; width: 1480px; bottom: 200px; text-align: center; }
+  .line .who { font-size: 24px; letter-spacing: .2em; font-weight: 700; text-transform: uppercase; margin-bottom: 14px; }
+  .line .paren { font-size: 28px; color: rgba(255,255,255,.55); font-style: italic; margin-bottom: 8px; }
+  .line .say { font-size: 58px; line-height: 1.25; font-weight: 600; letter-spacing: -.01em; }
+
+  #veil { position: absolute; inset: 0; background: #000; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="bg" class="full"></div>
+<div id="glass" class="full"></div>
+<div id="under" class="full"></div>
+<div id="phone"><div id="bezel"><div id="screen">
+  <div id="status"><span>9:41</span><span class="island"></span><span class="icons">5G <span class="bat"></span></span></div>
+  <div style="position:relative;width:421.2px;height:838.08px"><img id="shot0" class="shotl" alt=""><img id="shot" class="shotl" alt=""></div>
+</div></div></div>
+<div id="over" class="full"></div>
+<div id="veil"></div>
+
+<script>
+// ------------------------------------------------------------------ helpers
+const W = 1920, H = 1080, S0 = 1.08, BEZ = 15, STATUS = 44, PW = 451, PH = 912;
+const clamp = (v, a = 0, b = 1) => Math.max(a, Math.min(b, v));
+const lerp = (a, b, p) => a + (b - a) * p;
+const inOut = (p) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
+const out = (p) => 1 - Math.pow(1 - p, 3);
+const soft = (p) => 0.5 - Math.cos(Math.PI * p) / 2; // sine in-out, the gentlest
+const prog = (t, t0, d) => (d <= 0 ? (t >= t0 ? 1 : 0) : clamp((t - t0) / d));
+/** 0 before `a`, eases to 1 over `din`; eases back to 0 from `b` over `dout` (if b given). */
+const env = (t, a, din, b, dout) => Math.min(out(prog(t, a, din)), b == null ? 1 : 1 - inOut(prog(t, b, dout)));
+const el = (tag, cls, parent, html) => {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (html != null) e.innerHTML = html;
+  (parent ?? document.body).appendChild(e);
+  return e;
+};
+const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]);
+const fmt = (s) => esc(s).replace(/~(.+?)~/g, '<span class="grad">$1</span>').replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/\*(.+?)\*/g, "<i>$1</i>");
+const plain = (s) => String(s).replace(/[~*]/g, "");
+const style = (e, o, tx = 0, ty = 0, s = 1, extra = "") => {
+  e.style.opacity = o.toFixed(4);
+  e.style.transform = `translate(${tx.toFixed(2)}px, ${ty.toFixed(2)}px) scale(${s.toFixed(4)})${extra}`;
+  e.style.visibility = o <= 0.001 ? "hidden" : "visible";
+};
+const SEND_SVG = '<svg viewBox="0 0 24 24" fill="#fff"><path d="M3.4 20.4 21 12 3.4 3.6 3.4 10.2 15 12 3.4 13.8z"/></svg>';
+const LOCK_SVG = '<svg viewBox="0 0 24 24" fill="#fff"><path d="M17 9V7a5 5 0 0 0-10 0v2H5v12h14V9h-2zm-8 0V7a3 3 0 0 1 6 0v2H9z"/></svg>';
+
+// ------------------------------------------------------------------ state built in load()
+let TL, BASE, FR = [], scenes = [], phoneKeys = [], stepsByScene = new Map();
+const TD = { cut: 0.5, smash: 0.45, dissolve: 0.9, match: 0.6, wipe: 1.25, fade: 1.3 };
+const kindOf = (t = "") => (/BUBBLE|WIPE|IRIS/.test(t) ? "wipe" : /SMASH/.test(t) ? "smash" : /MATCH/.test(t) ? "match" : /DISSOLVE/.test(t) ? "dissolve" : /FADE/.test(t) ? "fade" : "cut");
+const isApp = (s) => s.kind === "phone" || s.kind === "feature";
+
+// background glass bubbles (positions are a function of t)
+const GLASS = Array.from({ length: 14 }, (_, i) => ({ size: 34 + ((i * 37) % 100), x: (i * 131 + 40) % 1880, y0: (i * 271) % 1300, speed: 9 + ((i * 7) % 10), sway: 10 + (i % 4) * 6, ph: i * 1.7 }));
+const glassEls = GLASS.map((g) => {
+  const e = el("div", "glass", document.getElementById("glass"));
+  e.style.width = e.style.height = g.size + "px";
+  return e;
+});
+
+// ------------------------------------------------------------------ phone camera
+const LAYOUT = {
+  center: { cx: 960, cy: 540 },
+  left: { cx: 620, cy: 540 },
+  right: { cx: 1300, cy: 540 },
+};
+function layoutState(pos) {
+  if (pos === "away") return { x: -PW - 80, y: 540 - PH / 2, k: 1, op: 0 };
+  const L = LAYOUT[pos] ?? LAYOUT.left;
+  return { x: L.cx - PW / 2, y: L.cy - PH / 2, k: 1, op: 1 };
+}
+function zoomState(rect, pos) {
+  const L = LAYOUT[pos] ?? LAYOUT.left;
+  const fx = rect.x + rect.width / 2, fy = rect.y + rect.height / 2;
+  const maxW = pos === "center" ? 1000 : 620;
+  // in the left layout the zoomed screen must end before the text column (x ~1090)
+  const room = pos === "center" ? 9 : (1090 - L.cx) / (PW - BEZ - fx * S0);
+  const k = clamp(Math.min(maxW / (rect.width * S0), room, 2.0), 1.25, 2.0);
+  const cy = clamp(540, 120 + (rect.height * S0 * k) / 2, 960 - (rect.height * S0 * k) / 2);
+  return { x: L.cx - k * (BEZ + fx * S0), y: cy - k * (BEZ + STATUS + fy * S0), k, op: 1 };
+}
+/** The phone's state at time t: keyframes eased one after another (a new move starts from wherever the last one is). */
+function phoneAt(t) {
+  let seg = { from: layoutState("center"), to: layoutState("center"), t0: 0, d: 0 };
+  const val = (s, tt) => {
+    const p = inOut(prog(tt, s.t0, s.d));
+    return { x: lerp(s.from.x, s.to.x, p), y: lerp(s.from.y, s.to.y, p), k: lerp(s.from.k, s.to.k, p), op: lerp(s.from.op, s.to.op, p) };
+  };
+  for (const kf of phoneKeys) {
+    if (kf.t > t) break;
+    seg = { from: kf.jump ? kf.state : val(seg, kf.t), to: kf.state, t0: kf.t, d: kf.jump ? 0 : kf.d };
+  }
+  return val(seg, t);
+}
+const toStage = (s, px, py) => ({ x: s.x + s.k * (BEZ + px * S0), y: s.y + s.k * (BEZ + STATUS + py * S0) });
+
+// ------------------------------------------------------------------ load
+window.stage = {
+  async load(tl, base) {
+    TL = tl;
+    BASE = base;
+    FR = tl.frames;
+    const under = document.getElementById("under"), over = document.getElementById("over");
+    // phone keyframes
+    let lastPos = "left";
+    let prevApp = false;
+    for (const sc of tl.scenes) {
+      const evs = sc.events;
+      if (!isApp(sc)) {
+        prevApp = false;
+        continue;
+      }
+      const side = evs.some((e) => ["super", "caption", "pop", "compose", "net"].includes(e.type));
+      let pos = sc.kind === "feature" ? "away" : side ? "left" : "center";
+      const first = evs.find((e) => e.type === "phone" && e.t <= sc.start + 0.05);
+      if (first) pos = first.pos;
+      phoneKeys.push({ t: sc.start, state: layoutState(pos), d: 1.0, jump: !prevApp && pos !== "away" });
+      lastPos = pos;
+      for (const e of evs) {
+        if (e.type === "phone" && e.t > sc.start + 0.05) {
+          lastPos = e.pos;
+          phoneKeys.push({ t: e.t, state: layoutState(e.pos), d: 1.1 });
+        } else if (e.type === "zoom") phoneKeys.push({ t: e.t, state: zoomState(e.rect, lastPos === "center" ? "center" : "left"), d: 1.3 });
+        else if (e.type === "unzoom") phoneKeys.push({ t: e.t, state: layoutState(lastPos), d: 1.1 });
+      }
+      // a zoom always lets go before the scene ends
+      const lastZoom = [...evs].reverse().find((e) => e.type === "zoom" || e.type === "unzoom");
+      if (lastZoom?.type === "zoom") phoneKeys.push({ t: Math.max(lastZoom.t + 1.4, sc.end - 1.1), state: layoutState(lastPos), d: 1.1 });
+      prevApp = true;
+    }
+    phoneKeys.sort((a, b) => a.t - b.t);
+    // scenes
+    let steps = [];
+    for (const [i, sc] of tl.scenes.entries()) {
+      const u = el("div", "scene" + (sc.kind === "live" ? " dark" : ""), under);
+      const o = el("div", "scene", over);
+      const S = { ...sc, i, under: u, over: o, items: [], tIn: kindOf(sc.transitionIn), dIn: i === 0 ? 1.1 : TD[kindOf(sc.transitionIn)] };
+      if (S.tIn === "cut" && i > 0 && isApp(sc) && isApp(tl.scenes[i - 1])) S.dIn = 0.55;
+      for (const e of sc.events) if (e.type === "steps") steps = e.list;
+      S.steps = steps;
+      BUILD[sc.kind](S);
+      scenes.push(S);
+    }
+    // images: wait for every pop and avatar before frame 0
+    await Promise.all([...document.images].map((im) => (im.complete ? Promise.resolve() : im.decode().catch(() => {}))));
+    return { scenes: scenes.length, duration: tl.duration };
+  },
+  render,
+};
+
+// ------------------------------------------------------------------ builders (DOM per scene, styled every frame in RENDER)
+const BUILD = {
+  graphics(S) {
+    const beats = [];
+    let cur = null;
+    for (const e of S.events) {
+      if (["super", "logo", "stat", "models", "bubbles", "secrets"].includes(e.type)) {
+        // a statement after a logo or another statement starts a new beat; a logo joins a lone caption
+        cur = { t: e.t, parts: [] };
+        beats.push(cur);
+      }
+      if (["super", "caption", "logo", "stat", "models", "bubbles", "secrets"].includes(e.type)) {
+        if (!cur) beats.push((cur = { t: e.t, parts: [] }));
+        cur.parts.push(e);
+      }
+    }
+    // a caption right after a logo belongs to it; a statement followed by a caption stays together
+    S.beats = beats.map((b, i) => ({ ...b, end: beats[i + 1]?.t ?? null }));
+    for (const b of S.beats) {
+      b.els = [];
+      const sup = b.parts.find((p) => p.type === "super");
+      const capP = b.parts.find((p) => p.type === "caption");
+      const logo = b.parts.find((p) => p.type === "logo");
+      const stat = b.parts.find((p) => p.type === "stat");
+      const models = b.parts.find((p) => p.type === "models");
+      const bubbles = b.parts.find((p) => p.type === "bubbles");
+      const secrets = b.parts.find((p) => p.type === "secrets");
+      // vertical layout of this beat (fixed at build time, so nothing reflows mid-animation)
+      let y = 540;
+      if (logo) {
+        const ring = el("div", "lring", S.under); ring.style.left = 960 - 75 + "px"; ring.style.top = (capP ? 300 : 340) + "px";
+        const wm = el("div", "wordmark", S.under, "Mutuals"); wm.style.top = (capP ? 480 : 520) + "px";
+        b.els.push({ e: ring, t: logo.t, kind: "pop" }, { e: wm, t: logo.t + 0.3, kind: "rise" });
+        if (capP) { const c = el("div", "gcap", S.under, fmt(capP.text)); c.style.top = "700px"; b.els.push({ e: c, t: capP.t + 0.2, kind: "rise" }); }
+        continue;
+      }
+      if (sup) {
+        const s = el("div", "statement", S.under, fmt(sup.text));
+        const lines = Math.ceil(plain(sup.text).length / 26);
+        const hgt = lines * 110;
+        y = capP ? 470 - hgt / 2 : 540 - hgt / 2;
+        s.style.top = y + "px";
+        b.els.push({ e: s, t: sup.t, kind: "rise" });
+        if (capP) { const c = el("div", "gcap", S.under, fmt(capP.text)); c.style.top = y + hgt + 40 + "px"; b.els.push({ e: c, t: capP.t + 0.2, kind: "rise" }); }
+        continue;
+      }
+      if (stat) {
+        const [value, text, source] = [stat.parts[0], stat.parts[1] ?? "", stat.parts[2] ?? ""];
+        const num = el("div", "num grad", S.under); num.style.left = "250px"; num.style.top = "150px";
+        const tx = el("div", "stattxt", S.under, `${esc(text)}<div class="src">${esc(source)}</div>`); tx.style.left = "1060px"; tx.style.top = "400px";
+        const m = String(value).match(/^([^\d]*)([\d.]+)(.*)$/);
+        b.els.push({ e: num, t: stat.t, kind: "rise", count: m ? { pre: m[1], n: Number(m[2]), post: m[3] } : null, text: value }, { e: tx, t: stat.t + 0.35, kind: "rise" });
+        const on = m ? Math.round(Number(m[2])) : 0;
+        for (let k = 0; k < 100; k++) {
+          const d = el("div", "dot" + (k < on ? " on" : ""), S.under);
+          d.style.left = 262 + (k % 10) * 52 + "px"; d.style.top = 460 + Math.floor(k / 10) * 52 + "px";
+          b.els.push({ e: d, t: stat.t + 0.25 + k * 0.012, kind: "dot" });
+        }
+        continue;
+      }
+      if (models) {
+        const list = [["Muse Spark", "Each person's agent. Parses the ask, negotiates, drafts openers and listings."], ["Muse Wonder", "The referee, once per conversation. Spots the rare real connection."], ["Muse Ember", "Watches and listens to video, reads posts, writes the digest."]];
+        list.forEach((m, k) => {
+          const c = el("div", "model", S.under, `<div class="d"></div><h3>${esc(m[0])}</h3><p>${esc(m[1])}</p>`);
+          c.style.left = 960 - 780 + k * 532 + "px"; c.style.top = (capP ? 330 : 380) + "px";
+          b.els.push({ e: c, t: models.t + k * 0.22, kind: "rise" });
+        });
+        if (capP) { const c = el("div", "gcap", S.under, fmt(capP.text)); c.style.top = "780px"; b.els.push({ e: c, t: capP.t + 0.3, kind: "rise" }); }
+        continue;
+      }
+      if (bubbles) {
+        const spots = [[150, 140], [1170, 110], [300, 400], [1260, 360], [140, 700], [1130, 650], [660, 230], [700, 860], [560, 540], [1440, 860]];
+        bubbles.parts.forEach((txt, k) => {
+          const m = el("div", "msg " + (k % 3 === 2 ? "me" : "them"), S.under, esc(txt));
+          m.style.left = spots[k % spots.length][0] + "px"; m.style.top = spots[k % spots.length][1] + "px";
+          b.els.push({ e: m, t: bubbles.t + 0.15 + k * 0.33, kind: "float", k });
+        });
+        continue;
+      }
+      if (secrets) {
+        const spots = [[220, 300], [1040, 230], [580, 640]];
+        secrets.parts.forEach((txt, k) => {
+          const m = el("div", "msg secret", S.under, esc(txt));
+          m.style.left = spots[k % 3][0] + "px"; m.style.top = spots[k % 3][1] + "px";
+          const lock = el("div", "lock", S.under, LOCK_SVG);
+          b.els.push({ e: m, t: secrets.t + 0.2 + k * 0.4, kind: "secret", lockAt: secrets.t + 1.8 + k * 0.3, lock, k });
+        });
+      }
+    }
+  },
+  live(S) {
+    const u = S.under;
+    el("div", "vf", u, "<i></i><i></i><i></i><i></i>");
+    el("div", "rec", u, "<b></b>REC");
+    el("div", "sbtag", u, "Storyboard · we film this scene live");
+    const loc = S.heading.replace(/^(INT\.?\/EXT|INT|EXT|EST|I\/E)[.\s]+/i, "").split(/\s+-\s+/);
+    el("div", "kicker", u, esc(loc.join(" · ")));
+    S.action = el("div", "action", u, esc(S.events.find((e) => e.type === "describe")?.text ?? ""));
+    S.lines = S.events.filter((e) => e.type === "line").map((e, k, all) => {
+      const colors = { RILEY: "#ffb020", JAMIE: "#7fb0ff" };
+      const d = el("div", "line", u, `<div class="who" style="color:${colors[e.who] ?? "#ff9ac0"}">${esc(e.who)}</div>${e.paren ? `<div class="paren">${esc(e.paren)}</div>` : ""}<div class="say">${fmt(e.text)}</div>`);
+      return { e: d, t: e.t, end: all[k + 1]?.t ?? null };
+    });
+  },
+  phone(S) {
+    buildApp(S);
+  },
+  feature(S) {
+    buildApp(S);
+  },
+};
+
+function buildApp(S) {
+  const u = S.under, o = S.over;
+  // headline + caption (the right column, or across the top in a FEATURE scene)
+  S.heads = S.events.filter((e) => e.type === "super").map((e) => ({ e: el("div", "h", u, fmt(e.text)), t: e.t }));
+  S.caps = S.events.filter((e) => e.type === "caption").map((e) => ({ e: el("div", "cap", u, fmt(e.text)), t: e.t }));
+  // stepper
+  if (S.steps.length && S.kind === "phone" && S.events.some((e) => e.type === "step")) {
+    const st = el("div", "", u);
+    st.id = "";
+    st.style.cssText = "position:absolute;top:30px;left:0;width:1920px;display:flex;justify-content:center;align-items:center;gap:14px;";
+    S.stepEls = S.steps.map((name, k) => {
+      if (k) el("div", "stepline", st);
+      const p = el("div", "step", st, `<div class="on"></div><i>${k + 1}</i><span>${esc(name)}</span>`);
+      return p;
+    });
+    S.stepChanges = S.events.filter((e) => e.type === "step").map((e) => ({ t: e.t, n: e.n }));
+  }
+  // compose box
+  S.composes = S.events.filter((e) => e.type === "compose");
+  if (S.composes.length) {
+    S.box = el("div", "compose", u, `<div class="ring"></div><div class="txt"><span class="inner"></span></div><div class="send">${SEND_SVG}</div>`);
+    S.boxText = S.box.querySelector(".inner");
+    S.flies = S.composes.map((c) => {
+      const f = el("div", "fly", o, esc(c.text));
+      const w = c.target ? c.target.width * (34 / 15) : 560;
+      f.style.width = Math.min(760, w) + "px";
+      return f;
+    });
+  }
+  // taps
+  S.taps = S.events.filter((e) => e.type === "tap").map((e) => ({ ...e, el: el("div", "tap", o) }));
+  // pops (cards)
+  S.pops = S.events.filter((e) => e.type === "pop" && e.file).map((e) => {
+    const c = el("div", "card", o);
+    c.style.borderRadius = Math.max(10, (e.radius || 12) * S0) + "px";
+    const img = el("img", "", c);
+    img.src = `${BASE}/pops/${e.file}`;
+    // a card cut off by the screen edge fades out instead of ending on a hard line
+    if (e.clipped) c.style.webkitMaskImage = c.style.maskImage = "linear-gradient(#000 78%, transparent)";
+    return { ...e, el: c, img };
+  });
+  // network
+  S.nets = S.events.filter((e) => e.type === "net");
+  if (S.nets.length) {
+    S.net = el("div", "net", u);
+    S.netSvg = el("div", "", S.net);
+    S.netSvg.style.cssText = "position:absolute;inset:0";
+    S.nodes = new Map();
+    const all = new Map();
+    for (const n of S.nets) for (const x of n.nodes) if (!all.has(x.id)) all.set(x.id, { ...x, first: n.t });
+    const ids = [...all.keys()];
+    const meY = 470;
+    const me = { id: "me", label: S.nets[0].me.label, avatar: S.nets[0].me.avatar, me: true, x: 400, y: meY, first: S.nets[0].t };
+    const placed = [me, ...ids.map((id, k) => {
+      const a = (Math.PI * (k + 0.5)) / ids.length;
+      return { ...all.get(id), x: 400 - Math.cos(a) * 340, y: 330 - Math.sin(a) * 250 + 20 };
+    })];
+    S.netSvg.innerHTML = `<svg width="800" height="640" style="position:absolute;inset:0;overflow:visible"><defs><linearGradient id="g${S.i}" x1="0" x2="1"><stop offset="0" stop-color="#0866ff"/><stop offset=".55" stop-color="#a033ff"/><stop offset="1" stop-color="#ff5c87"/></linearGradient></defs>${placed
+      .slice(1)
+      .map((n) => `<line data-id="${n.id}" x1="400" y1="${meY + 40}" x2="${n.x}" y2="${n.y + 56}" stroke="url(#g${S.i})" stroke-width="4" stroke-linecap="round"/>`)
+      .join("")}</svg>`;
+    for (const n of placed) {
+      const d = el("div", "node" + (n.me ? " me" : ""), S.net, `<div class="av"><img src="${BASE}${n.avatar}"><div class="badge"></div>${n.me ? "" : '<div class="dots"><b></b><b></b><b></b></div>'}</div><div class="nm">${esc(n.label)}</div><div class="st"><span class="a"></span><span class="b"></span></div>`);
+      d.style.left = n.x + "px";
+      d.style.top = n.y + "px";
+      S.nodes.set(n.id, { ...n, el: d, line: S.netSvg.querySelector(`line[data-id="${n.id}"]`), packet: n.me ? null : el("div", "packet", S.net) });
+    }
+  }
+  S.awayAt = S.events.find((e) => e.type === "phone" && e.pos === "away")?.t ?? (S.kind === "feature" ? S.start : null);
+}
+
+// ------------------------------------------------------------------ frame lookup
+function frameIndexAt(t) {
+  let lo = 0, hi = FR.length - 1, best = 0;
+  while (lo <= hi) {
+    const mid = (lo + hi) >> 1;
+    if (FR[mid].t <= t) { best = mid; lo = mid + 1; } else hi = mid - 1;
+  }
+  return best;
+}
+
+// ------------------------------------------------------------------ render one frame
+const shotSrc = {};
+async function setShot(id, src) {
+  if (shotSrc[id] === src) return;
+  shotSrc[id] = src;
+  const img = document.getElementById(id);
+  img.src = src;
+  await img.decode().catch(() => {});
+}
+async function render(t) {
+  // background bubbles drift up slowly
+  GLASS.forEach((g, k) => {
+    const y = ((g.y0 - g.speed * t) % 1400 + 1400) % 1400 - 160;
+    const x = g.x + Math.sin(t * 0.25 + g.ph) * g.sway;
+    glassEls[k].style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`;
+  });
+
+  // which scenes are on screen, and how much
+  let j = scenes.findIndex((s) => t < s.end);
+  if (j < 0) j = scenes.length - 1;
+  const cur = scenes[j], prev = scenes[j - 1];
+  const p = j === 0 ? 1 : prog(t, cur.start, cur.dIn);
+  const show = new Map();
+  if (prev && p < 1) {
+    if (cur.tIn === "wipe") { show.set(prev, { op: 1, mask: null }); show.set(cur, { op: 1, mask: soft(p) }); }
+    else if (cur.tIn === "fade") { show.set(p < 0.5 ? prev : cur, { op: 1, mask: null }); }
+    else {
+      // the old shot clears out before the new one settles in, so two headlines never sit on top of each other
+      show.set(prev, { op: 1 - soft(clamp(p / 0.6)), mask: null });
+      show.set(cur, { op: soft(clamp((p - 0.3) / 0.7)), mask: null });
+    }
+  } else show.set(cur, { op: 1, mask: null });
+
+  for (const s of scenes) {
+    const v = show.get(s);
+    const on = !!v;
+    s.under.style.display = on ? "block" : "none";
+    s.over.style.display = on ? "block" : "none";
+    if (!on) continue;
+    for (const c of [s.under, s.over]) {
+      c.style.opacity = v.op.toFixed(4);
+      if (v.mask != null) {
+        const r = lerp(0, 1350, v.mask);
+        const m = `radial-gradient(circle at 50% 50%, #000 ${Math.max(0, r - 260).toFixed(0)}px, transparent ${r.toFixed(0)}px)`;
+        c.style.webkitMaskImage = c.style.maskImage = m;
+      } else c.style.webkitMaskImage = c.style.maskImage = "none";
+    }
+    RENDER[s.kind](s, t, v);
+  }
+
+  // veil: fade in at the start, fade out at the end, dips to black for FADE transitions
+  let veil = 0;
+  if (j === 0) veil = 1 - soft(prog(t, 0, 1.1));
+  if (prev && cur.tIn === "fade" && p < 1) veil = p < 0.5 ? soft(p * 2) : 1 - soft((p - 0.5) * 2);
+  if (/FADE/.test(TL.outro ?? "")) veil = Math.max(veil, soft(prog(t, TL.duration - 1.3, 1.3)));
+  document.getElementById("veil").style.opacity = veil.toFixed(4);
+
+  // phone: one camera across all app scenes
+  const ph = phoneAt(t);
+  let phoneOp = 0;
+  for (const [s, v] of show) if (isApp(s)) phoneOp += v.op * ph.op * (v.mask != null ? soft(clamp(v.mask * 1.4)) : 1);
+  const phone = document.getElementById("phone");
+  phone.style.opacity = clamp(phoneOp).toFixed(4);
+  phone.style.visibility = phoneOp > 0.001 ? "visible" : "hidden";
+  phone.style.transform = `translate(${ph.x.toFixed(2)}px, ${ph.y.toFixed(2)}px) scale(${ph.k.toFixed(4)})`;
+  if (phoneOp > 0.001 && FR.length) {
+    // The app changes in steps (a sheet opens, a message sends): when a new screen follows a still one, it fades in
+    // over 0.18 s instead of popping. Continuous motion (scrolling, typing) is shown frame by frame.
+    const i = frameIndexAt(t);
+    const f = FR[i], before = FR[i - 1];
+    const sudden = before && f.t - before.t > 0.25;
+    const q = sudden ? soft(prog(t, f.t, 0.18)) : 1;
+    await setShot("shot", `${BASE}/frames/${f.file}`);
+    if (q < 1) await setShot("shot0", `${BASE}/frames/${before.file}`);
+    document.getElementById("shot").style.opacity = q.toFixed(3);
+    document.getElementById("shot0").style.visibility = q < 1 ? "visible" : "hidden";
+  }
+  STATE.phone = ph;
+}
+const STATE = { phone: null };
+
+// ------------------------------------------------------------------ per-kind rendering
+const RISE = (b, t, end, dist = 26, din = 0.75) => {
+  const o = env(t, b, din, end, 0.45);
+  return { o, y: (1 - out(prog(t, b, din))) * dist };
+};
+const RENDER = {
+  graphics(S, t) {
+    for (const b of S.beats) {
+      const end = b.end;
+      for (const it of b.els) {
+        const e = it.e;
+        if (it.kind === "rise") {
+          const r = RISE(it.t, t, end);
+          style(e, r.o, 0, r.y);
+          if (it.count) {
+            const k = out(prog(t, it.t, 1.5));
+            e.textContent = `${it.count.pre}${Math.round(it.count.n * k)}${it.count.post}`;
+          }
+        } else if (it.kind === "pop") {
+          const o = env(t, it.t, 0.9, end, 0.45);
+          style(e, o, 0, 0, lerp(0.9, 1, out(prog(t, it.t, 0.9))));
+        } else if (it.kind === "dot") {
+          const o = env(t, it.t, 0.35, end, 0.45);
+          style(e, o, 0, 0, lerp(0.6, 1, out(prog(t, it.t, 0.35))));
+        } else if (it.kind === "float") {
+          const r = RISE(it.t, t, end, 22, 0.6);
+          style(e, r.o, 0, r.y + Math.sin(t * 0.8 + it.k) * 5);
+        } else if (it.kind === "secret") {
+          const r = RISE(it.t, t, end, 22, 0.6);
+          const bl = soft(prog(t, it.lockAt, 0.7));
+          style(e, r.o, 0, r.y);
+          e.style.filter = bl > 0.001 ? `blur(${(bl * 9).toFixed(2)}px)` : "none";
+          const rect = { x: parseFloat(e.style.left), y: parseFloat(e.style.top), w: e.offsetWidth, h: e.offsetHeight };
+          it.lock.style.left = rect.x + rect.w / 2 - 37 + "px";
+          it.lock.style.top = rect.y + rect.h / 2 - 37 + "px";
+          const lo = env(t, it.lockAt + 0.15, 0.6, end, 0.45);
+          style(it.lock, lo, 0, 0, lerp(0.85, 1, out(prog(t, it.lockAt + 0.15, 0.6))));
+        }
+      }
+    }
+  },
+  live(S, t) {
+    style(S.action, env(t, S.start + 0.2, 0.8), 0, 0);
+    for (const l of S.lines) {
+      const o = env(t, l.t, 0.35, l.end != null ? l.end - 0.3 : null, 0.3);
+      style(l.e, o, 0, (1 - out(prog(t, l.t, 0.35))) * 10);
+    }
+  },
+  phone(S, t) {
+    renderApp(S, t);
+  },
+  feature(S, t) {
+    renderApp(S, t);
+  },
+};
+
+function renderApp(S, t) {
+  const ph = phoneAt(t);
+  const away = S.kind === "feature" ? 1 : S.awayAt != null ? soft(prog(t, S.awayAt + 0.45, 1.15)) : 0;
+  // the column to the right of the phone; with the phone gone, text moves to the top and spans the frame
+  const phoneRight = ph.x + ph.k * PW;
+  const colL = clamp(phoneRight + 90, 1000, 1200);
+  const L = lerp(colL, 160, away), Wd = lerp(1840 - colL, 1600, away);
+  // headline(s): each replaces the last
+  S.heads.forEach((h, k) => {
+    const end = S.heads[k + 1]?.t ?? null;
+    const r = RISE(h.t, t, end);
+    h.e.style.left = L + "px";
+    h.e.style.width = Wd + "px";
+    h.e.style.top = lerp(140, 96, away) + "px";
+    h.e.style.fontSize = lerp(76, 80, away) + "px";
+    h.e.style.textAlign = away > 0.5 ? "center" : "left";
+    style(h.e, r.o, 0, r.y);
+  });
+  const headH = S.heads.length ? S.heads[0].e.offsetHeight : 0;
+  S.caps.forEach((c, k) => {
+    const r = RISE(c.t, t, S.caps[k + 1]?.t ?? null);
+    c.e.style.left = L + "px";
+    c.e.style.width = Math.min(Wd, 820) + "px";
+    c.e.style.fontSize = "30px";
+    c.e.style.top = lerp(140, 96, away) + headH + 22 + "px";
+    style(c.e, r.o, 0, r.y);
+  });
+  // stepper
+  if (S.stepEls) {
+    let active = 0, changed = S.start, prevActive = 0;
+    for (const c of S.stepChanges) if (c.t <= t) { prevActive = active; active = c.n; changed = c.t; }
+    const q = soft(prog(t, changed, 0.6));
+    S.stepEls.forEach((p, k) => {
+      const n = k + 1;
+      const was = n === prevActive ? 1 : 0, is = n === active ? 1 : 0;
+      const on = lerp(was, is, q);
+      p.querySelector(".on").style.opacity = on.toFixed(3);
+      p.style.color = on > 0.5 ? "#fff" : "#6e6e73";
+      const i = p.querySelector("i");
+      const done = n < active ? 1 : 0;
+      i.style.background = on > 0.5 ? "rgba(255,255,255,.25)" : done ? "#1d1d1f" : "#e8e8ed";
+      i.style.color = on > 0.5 || done ? "#fff" : "#6e6e73";
+    });
+  }
+  // compose box + the message flying into the phone
+  if (S.box) {
+    const first = S.composes[0];
+    const boxTop = lerp(140, 96, away) + headH + 70;
+    const boxW = Math.min(Wd, 780);
+    S.box.style.left = L + "px";
+    S.box.style.top = boxTop + "px";
+    S.box.style.width = boxW + "px";
+    const lastLand = S.composes[S.composes.length - 1];
+    const bo = env(t, first.t - 0.4, 0.6, lastLand.t + lastLand.typeDur + lastLand.flight + 1.2, 0.6);
+    style(S.box, bo, 0, (1 - out(prog(t, first.t - 0.4, 0.6))) * 20);
+    // typing
+    let txt = "", typing = false;
+    for (const c of S.composes) {
+      const tSend = c.t + c.typeDur;
+      if (t >= c.t && t < tSend) {
+        typing = true;
+        txt = c.text.slice(0, Math.round(c.text.length * clamp((t - c.t) / Math.max(0.2, c.typeDur - 0.25))));
+      }
+    }
+    const blink = typing || (t * 1.6) % 1 < 0.55;
+    S.boxText.innerHTML = txt ? `${esc(txt)}<span class="caret"></span>` : `<span class="ph">Message Muse</span>${blink ? '<span class="caret" style="margin-left:-2px"></span>' : ""}`;
+    // keep the end of a long line in view while typing
+    const box = S.box.querySelector(".txt");
+    const overflow = Math.max(0, S.boxText.scrollWidth - box.clientWidth);
+    S.boxText.style.transform = `translateX(${-overflow}px)`;
+    // the send button presses gently when a message goes
+    let press = 0;
+    for (const c of S.composes) press = Math.max(press, Math.sin(Math.PI * prog(t, c.t + c.typeDur - 0.12, 0.3)));
+    S.box.querySelector(".send").style.transform = `scale(${(1 - press * 0.07).toFixed(3)})`;
+    // flights
+    S.composes.forEach((c, k) => {
+      const f = S.flies[k];
+      const tSend = c.t + c.typeDur, tLand = tSend + c.flight;
+      const q = prog(t, tSend, c.flight);
+      if (t < tSend || t > tLand + 0.45 || !c.target) { style(f, 0); return; }
+      const fw = f.offsetWidth, fh = f.offsetHeight;
+      // from: the text spot in the box; to: where the app draws the sent bubble (in phone coordinates)
+      const from = { x: L + 100, y: boxTop + 56 - fh / 2 };
+      const end = toStage(ph, c.target.x, c.target.y);
+      const sEnd = (ph.k * S0 * c.target.width) / fw;
+      const e = inOut(q);
+      // a gentle arc: a quadratic curve through a point above the straight line
+      const mid = { x: (from.x + end.x) / 2, y: Math.min(from.y, end.y) - 120 };
+      const x = (1 - e) * (1 - e) * from.x + 2 * (1 - e) * e * mid.x + e * e * end.x;
+      const y = (1 - e) * (1 - e) * from.y + 2 * (1 - e) * e * mid.y + e * e * end.y;
+      const s = lerp(1, sEnd, e);
+      const o = Math.min(out(prog(t, tSend, 0.18)), 1 - soft(prog(t, tLand - 0.05, 0.35)));
+      style(f, o, x, y, s);
+    });
+  }
+  // taps: a soft ring that fades
+  for (const tp of S.taps) {
+    const q = prog(t, tp.t, 0.6);
+    if (q <= 0 || q >= 1) { style(tp.el, 0); continue; }
+    const pt = toStage(ph, tp.x, tp.y);
+    const o = Math.sin(Math.PI * q) * 0.9 * ph.op;
+    style(tp.el, o, pt.x - 30, pt.y - 30, lerp(0.85, 1.2, out(q)));
+  }
+  // cards: in a PHONE scene they lift out of the phone into the column; in a FEATURE scene they sit in a row
+  if (S.pops.length) {
+    if (S.kind === "feature" || away > 0.5) {
+      const n = S.pops.length;
+      const top = lerp(140, 96, away) + headH + 60;
+      const availH = 1020 - top, availW = 1640, gap = 56;
+      // tall cards show their top part (the part that matters) so the row can be big
+      const CROP = 560;
+      const nat = S.pops.map((p) => ({ w: p.rect.width, h: Math.min(p.rect.height, CROP), full: p.rect.height }));
+      let sc = Math.min(2.2, ...nat.map((d) => availH / d.h));
+      const totalW = (s) => nat.reduce((a, d) => a + d.w * s, 0) + gap * (n - 1);
+      if (totalW(sc) > availW) sc = (availW - gap * (n - 1)) / nat.reduce((a, d) => a + d.w, 0);
+      let x = 960 - totalW(sc) / 2;
+      S.pops.forEach((p, k) => {
+        const w = nat[k].w * sc, h = nat[k].h * sc;
+        const y = top + (availH - h) / 2;
+        const o = env(t, p.t, 0.8);
+        const rise = (1 - out(prog(t, p.t, 0.9))) * 40;
+        const drift = 1 + 0.015 * prog(t, p.t, Math.max(1, S.end - p.t));
+        p.el.style.width = w + "px";
+        p.el.style.height = h + "px";
+        p.img.style.height = (nat[k].full * sc) + "px";
+        if (nat[k].full > nat[k].h + 2 || p.clipped) p.el.style.webkitMaskImage = p.el.style.maskImage = "linear-gradient(#000 80%, transparent)";
+        style(p.el, o, x - (w * (drift - 1)) / 2, y + rise, drift);
+        x += w + gap;
+      });
+    } else {
+      let y = lerp(140, 96, away) + headH + 70;
+      S.pops.forEach((p) => {
+        const w = Math.min(Math.max(520, p.rect.width * S0 * 1.6), 660, 1820 - L);
+        const h = (w * p.rect.height) / p.rect.width;
+        // it starts exactly where it sat on the phone when it was captured
+        const at = phoneAt(p.t);
+        const start = toStage(at, p.rect.x, p.rect.y);
+        const w0 = p.rect.width * S0 * at.k;
+        const q = inOut(prog(t, p.t, 0.95));
+        const x = lerp(start.x, L, q), yy = lerp(start.y, y, q), ww = lerp(w0, w, q);
+        p.el.style.width = ww + "px";
+        p.el.style.height = (ww * p.rect.height) / p.rect.width + "px";
+        style(p.el, t < p.t ? 0 : Math.min(1, out(prog(t, p.t, 0.25))), x, yy);
+        p.el.style.boxShadow = `0 ${(10 + 30 * q).toFixed(0)}px ${(30 + 60 * q).toFixed(0)}px rgba(30,40,90,${(0.12 + 0.12 * q).toFixed(3)})`;
+        y += h + 26;
+      });
+    }
+  }
+  // the Muse network
+  if (S.net) {
+    const first = S.nets[0].t;
+    const cx = lerp(Math.max(colL, 1010) + 400, 960, away), cy = lerp(650, 610, away), sc = lerp(1, 1.22, away);
+    S.net.style.opacity = env(t, first, 0.6).toFixed(3);
+    S.net.style.transform = `translate(${(cx - 400).toFixed(1)}px, ${(cy - 320).toFixed(1)}px) scale(${sc.toFixed(4)})`;
+    // the state each node is in at time t, and when it got there
+    const stateAt = new Map();
+    for (const n of S.nets) {
+      if (n.t > t) break;
+      for (const x of n.nodes) {
+        const prevS = stateAt.get(x.id);
+        if (!prevS || prevS.phase !== x.phase) stateAt.set(x.id, { phase: x.phase, since: n.t, prev: prevS?.phase ?? null, speaker: x.speaker, oneSided: x.oneSided });
+        else prevS.speaker = x.speaker;
+      }
+    }
+    for (const [id, nd] of S.nodes) {
+      const app = nd.me ? first : nd.first;
+      const o = env(t, app, 0.6);
+      style(nd.el, o, -0, (1 - out(prog(t, app, 0.6))) * 16);
+      if (nd.me) continue;
+      const s = stateAt.get(id);
+      if (nd.line) {
+        const len = Math.hypot(nd.x - 400, nd.y + 56 - 510);
+        nd.line.setAttribute("stroke-dasharray", `${len}`);
+        nd.line.setAttribute("stroke-dashoffset", `${(len * (1 - out(prog(t, app + 0.1, 0.7)))).toFixed(1)}`);
+        const gray = s?.phase === "nofit" ? soft(prog(t, s.since, 0.6)) : 0;
+        nd.line.setAttribute("opacity", (0.9 - gray * 0.55).toFixed(3));
+      }
+      const phase = s?.phase ?? "reaching";
+      const fitQ = phase === "fit" ? out(prog(t, s.since, 0.5)) : 0;
+      const noQ = phase === "nofit" ? soft(prog(t, s.since, 0.6)) : 0;
+      nd.el.querySelector(".av img").style.filter = noQ > 0.001 ? `grayscale(${noQ.toFixed(3)}) opacity(${(1 - noQ * 0.45).toFixed(3)})` : "none";
+      nd.el.querySelector(".nm").style.color = noQ > 0.5 ? "#8e8e93" : "#1d1d1f";
+      nd.el.querySelector(".av").style.boxShadow = `0 0 0 ${(6 * fitQ).toFixed(1)}px rgba(49,162,76,${(0.25 * fitQ).toFixed(3)}), 0 16px 40px rgba(30,40,90,.15)`;
+      const badge = nd.el.querySelector(".badge");
+      const bq = Math.max(fitQ, noQ);
+      badge.textContent = phase === "fit" ? "✓" : phase === "nofit" ? "✕" : "";
+      badge.style.background = phase === "fit" ? "#31a24c" : "#8e8e93";
+      style(badge, bq, 0, 0, lerp(0.8, 1, bq));
+      // status text crossfade
+      const label = (ph) => (ph === "fit" ? (s?.oneSided ? "Fits · from her post" : "Fits") : ph === "nofit" ? "Not a fit" : ph === "talking" ? (s?.oneSided ? "Reading her post" : "Talking") : "Reaching…");
+      const [a, b2] = [nd.el.querySelector(".st .a"), nd.el.querySelector(".st .b")];
+      const q = s ? soft(prog(t, s.since, 0.4)) : 1;
+      a.textContent = label(s?.prev ?? "reaching");
+      b2.textContent = label(phase);
+      b2.className = "b" + (phase === "fit" ? " fitc" : "");
+      a.style.opacity = (1 - q).toFixed(3);
+      b2.style.opacity = q.toFixed(3);
+      // typing dots + a packet travelling along the line while the Muses talk
+      const talking = phase === "talking" ? soft(prog(t, s.since, 0.3)) : phase === "reaching" ? 0 : 1 - soft(prog(t, s.since, 0.3));
+      const dots = nd.el.querySelector(".dots");
+      dots.style.opacity = (talking * o).toFixed(3);
+      dots.style.transform = "translateX(-50%)";
+      [...dots.children].forEach((d, k) => (d.style.opacity = (0.3 + 0.7 * Math.max(0, Math.sin(t * 6 - k * 0.9))).toFixed(3)));
+      const per = 1.1, ph2 = ((t + nd.x * 0.003) % per) / per;
+      const fromMe = s?.speaker === "me";
+      const A = fromMe ? { x: 400, y: 510 } : { x: nd.x, y: nd.y + 56 }, B = fromMe ? { x: nd.x, y: nd.y + 56 } : { x: 400, y: 510 };
+      const e = inOut(ph2);
+      style(nd.packet, talking * Math.sin(Math.PI * ph2), lerp(A.x, B.x, e) - 7 + 7, lerp(A.y, B.y, e));
+    }
+  }
+}
+</script>
+</body>
+</html>

@@ -7,24 +7,28 @@ Contact: docs/VIDEO.md
 
 /*
   THIS SCREENPLAY IS THE VIDEO.
-  Edit it, then run:  node scripts/video/make.mjs   (re-records the video and re-renders the PDF)
+  Edit it, then run:  node scripts/video/make.mjs   (re-captures the app, re-renders every frame, re-renders the PDF)
 
   Scene headings pick the kind of shot:
     INT./EXT. <a real place> - <time>        live action. A storyboard frame until we film it.
     INT. PHONE SCREEN - <screen>             the real app on the phone.
+    INT. FEATURE - <name>                    the app keeps running, but no phone: the pieces that "pop out" sit
+                                             big on screen, side by side, under the SUPER.
     INT. MOTION GRAPHICS - <name>            type, numbers and bubbles. No phone.
 
   Dialogue:
-    NARRATOR (V.O.)                          voiceover, captioned at the bottom.
-    JAMIE / RILEY / anyone                   in live action: spoken lines (placeholder voices until we film).
-    JAMIE  + (typing)  in a PHONE SCREEN     Jamie types that line into Muse. Muse's reply is real.
+    NARRATOR (V.O.)                          narration. No audio and no captions in the video (we record the real
+                                             voiceover later); each line still sets how long its shot holds.
+    JAMIE / RILEY / anyone                   in live action: the line, shown in the storyboard frame.
+    JAMIE  + (typing)  in a PHONE SCREEN     Jamie types the line in the message box beside the phone; when it's
+                                             sent it flies into the chat. Muse's reply is real.
 
-  Action lines in PHONE SCREEN scenes. Anything in "quotes" after these words happens on the phone, in order:
-    opens "..."        a Group by name, "the full shortlist", or a path like "/digest"
+  Action lines in PHONE SCREEN and FEATURE scenes. The quoted thing after these words happens, in order:
+    opens "..."        a Group by name, "the full shortlist", "the listing", or a path like "/digest"
     taps "..."         the button or link with that text
     scrolls to "..."   brings that text into view
-    "..." pops out     that piece of the app lifts out of the phone, enlarged
-    zooms in on "..."  the camera pushes in on it
+    "..." pops out     the card around that text lifts out of the phone (or, in a FEATURE scene, joins the row)
+    zooms in on "..."  the camera pushes in on the block around that text
     uploads "..."      a video from scripts/video/assets/ into Muse's video step
     waits for "..."    holds until that text appears
   Other words are just for us. They don't do anything.
@@ -35,22 +39,22 @@ Contact: docs/VIDEO.md
   Notes in [[double brackets]]:
     [[steps Tell | Match | Meet]]   the "How it works" stepper; [[step 2]] lights up step 2
     [[network]]                     the Muse network: Jamie's Muse and everyone it's talking to, live
+    [[phone away]]                  the phone slides out (also: [[phone left]], [[phone center]])
+    [[zoom out]]                    the camera pulls back after a zoom
     [[stat 23% | text | source]]    a big number that counts up, with a bubble chart
-    [[bubbles a | b | c]]           chat bubbles pop in all over the screen
+    [[bubbles a | b | c]]           chat bubbles float in all over the screen
     [[secrets a | b | c]]           bubbles that blur behind a lock
     [[logo]]                        the Mutuals mark
     [[models]]                      the three Muse model cards
-    [[hold 1.5]]                    let the current line finish, then hold 1.5 seconds more
-    [[voice NAME: Voice]]           which macOS voice reads a character (say -v '?' lists them)
-    [[rate NAME: 215]]              how fast that character talks (words per minute)
-    [[music path/to/track.mp3]]     background music, ducked under the voices
-    [[captions off]]                no narration captions
+    [[hold 1.5]]                    let the current narration line finish, then hold 1.5 seconds more
+    [[voice NAME: Voice]]           macOS voice used to time a character's lines (say -v '?' lists them)
+    [[rate NAME: 215]]              how fast that character talks (words per minute), for timing
 
-  Transitions: CUT TO:  DISSOLVE TO:  SMASH CUT TO:  MATCH CUT TO:  BUBBLE WIPE TO:  FADE OUT.
+  Transitions: CUT TO: (a quick soft cut)  DISSOLVE TO:  SMASH CUT TO:  MATCH CUT TO:  BUBBLE WIPE TO:  FADE OUT.
   Scene numbers (#4#) are optional. Sections (# ACT ONE) are just structure.
 
-  Timing is script order: narration plays over whatever comes after it, and the next narration line waits for the one
-  before. Put a scene's SUPER and narration ahead of the actions they should play over.
+  Timing is script order: narration runs over whatever comes after it, and the next narration line waits for the
+  one before. Put a scene's SUPER and narration ahead of the actions they should play over.
 */
 
 [[voice NARRATOR: Samantha]]
@@ -140,7 +144,7 @@ INT. PHONE SCREEN - CHICAGO SUMMER INTERNS 2027 #6#
 
 SUPER: Tell your Muse what you'd ~never post~.
 
-Jamie opens "Chicago Summer Interns 2027" and taps "Ask Muse privately".
+Jamie opens "Chicago Summer Interns 2027" and taps "Ask Muse privately". Jamie types each message in the box beside the phone. When it's sent, it flies into the chat.
 
 NARRATOR (V.O.)
 Inside a Facebook Group, Jamie tells their Muse what they need. Even the stuff they'd never post.
@@ -168,14 +172,15 @@ SUPER: Public. Match only. ~Never shared.~
 NARRATOR (V.O.)
 Every fact gets a tag. Public goes on the card. Match only is used to check fit, and never shown. Never shared never even reaches the model.
 
-Muse turns the chat into an intro card. "Budget ceiling" pops out, then "Visa status" pops out.
+Muse turns the chat into an intro card. The camera zooms in on "Budget ceiling". "Budget ceiling" pops out, then "Visa status" pops out.
+
+[[zoom out]]
 
 CUT TO:
 
 INT. PHONE SCREEN - THE MUSE NETWORK - CONTINUOUS #8#
 
 [[step 2]]
-[[network]]
 
 SUPER: Your Muse has the ~awkward first conversation~.
 
@@ -184,31 +189,32 @@ Jamie's Muse takes that card to every Muse in the Group. All at once.
 
 Jamie taps "Yes, check".
 
+[[network]]
+[[phone away]]
+
+The phone slides away and the Muse network takes the stage: Jamie's Muse in the middle, everyone it's talking to around it.
+
 NARRATOR (V.O.)
 Two Muse Spark agents talk it through, and Muse Wonder referees. Jamie's real ceiling never leaves the comparison.
 
 The Muses talk. Jamie waits for "people fit".
 
-CUT TO:
+DISSOLVE TO:
 
-INT. PHONE SCREEN - THE SHORTLIST - CONTINUOUS #9#
-
-[[step 2]]
+INT. FEATURE - THE SHORTLIST #9#
 
 SUPER: Only the conversations ~worth having~.
 
-Jamie scrolls to "Why it fits". "One thing to talk about" pops out.
+Jamie scrolls to "Why it fits". Nora's card: "Why it fits" pops out.
 
 NARRATOR (V.O.)
 Nora fits, with one thing to talk about. Dana isn't on Muse, so Jamie's Muse read her post. Diego has a cat, so the Muses stopped early.
 
-Jamie scrolls to "From their post in the Group", then scrolls to "Your Muse stopped early".
+Jamie scrolls to "From their post in the Group". "From their post in the Group" pops out. Jamie scrolls to "Your Muse stopped early". "Your Muse stopped early" pops out.
 
-MATCH CUT TO:
+DISSOLVE TO:
 
-INT. PHONE SCREEN - MORE THAN A LEASE - CONTINUOUS #10#
-
-[[step 3]]
+INT. FEATURE - MORE THAN A LEASE #10#
 
 SUPER: More than a ~lease~.
 
@@ -217,12 +223,12 @@ Jamie scrolls to "More than a lease". "More than a lease" pops out.
 NARRATOR (V.O.)
 When there's real overlap, Muse nudges them closer. They both run on Saturdays, and both bake sourdough.
 
-Jamie taps "Go together", then taps "Going".
+Jamie taps "Go together", then taps "Going". "Lakefront Run Club" pops out.
 
 NARRATOR (V.O.)
 There's already a run club. Now they're both going.
 
-CUT TO:
+DISSOLVE TO:
 
 INT. PHONE SCREEN - MESSENGER #11#
 
@@ -235,7 +241,7 @@ Jamie opens "the full shortlist" and taps "Message Nora".
 NARRATOR (V.O.)
 The agents never message anyone. Jamie gets a draft, makes it theirs, and sends it.
 
-Muse has drafted the opener. Jamie taps "Send".
+The camera zooms in on "Drafted by your Muse". Jamie taps "Send".
 
 DISSOLVE TO:
 
@@ -257,20 +263,28 @@ Moving out of my dorm before Chicago, I want to sell my camera, my desk lamp and
 Jamie taps "Video", uploads "room.mp4", and taps "Catalog items".
 
 NARRATOR (V.O.)
-Muse Ember watches and listens. Muse Spark names each item, down to the model, with a fair price.
+Muse Ember watches and listens, and writes down exactly what Jamie said.
 
-Jamie waits for "identified each item" and scrolls to "Canon PowerShot". "Canon PowerShot" pops out.
+The camera zooms in on "What I heard".
 
-Jamie taps "on Marketplace".
+DISSOLVE TO:
+
+INT. FEATURE - THE LISTING #13#
+
+SUPER: Spark names it. ~One tap lists it.~
+
+Jamie waits for "identified each item", scrolls to "Canon PowerShot", and "Canon PowerShot" pops out.
 
 NARRATOR (V.O.)
-One tap, and it's listed.
+Muse Spark names each item, down to the model, with a fair price. One tap, and it's listed.
+
+Jamie taps "on Marketplace" and opens "the listing". "Details" pops out.
 
 DISSOLVE TO:
 
 # ACT SIX: UNDER THE HOOD
 
-INT. MOTION GRAPHICS - HOW IT'S BUILT #13#
+INT. MOTION GRAPHICS - HOW IT'S BUILT #14#
 
 [[models]]
 
@@ -283,7 +297,7 @@ CUT TO:
 
 # ACT SEVEN: SATURDAY
 
-EXT. LAKEFRONT TRAIL, CHICAGO - SATURDAY, 7 A.M. #14#
+EXT. LAKEFRONT TRAIL, CHICAGO - SATURDAY, 7 A.M. #15#
 
 Sunrise over Lake Michigan. Jamie and Nora jog past Ohio Street Beach with the Lakefront Run Club. Nora is carrying a loaf of sourdough, for some reason.
 
@@ -292,7 +306,7 @@ Jamie found a room. And on Saturdays, a running buddy.
 
 DISSOLVE TO:
 
-INT. MOTION GRAPHICS - END CARD #15#
+INT. MOTION GRAPHICS - END CARD #16#
 
 SUPER: You might have zero mutuals on Facebook today.
 

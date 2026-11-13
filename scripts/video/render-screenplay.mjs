@@ -22,8 +22,10 @@ const SHOW_NOTES = !!arg("notes", false);
 const CHROME = process.env.CHROME_PATH ?? "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome";
 
 const doc = parseFountain(fs.readFileSync(SCRIPT, "utf8"));
-const timesFile = path.join(HERE, "out", "scenes.json");
-const times = fs.existsSync(timesFile) ? JSON.parse(fs.readFileSync(timesFile, "utf8")) : null;
+// Timecodes come from the last capture (the render draws the video on exactly that timeline).
+const timesFile = path.join(HERE, "out", "timeline.json");
+const tl = fs.existsSync(timesFile) ? JSON.parse(fs.readFileSync(timesFile, "utf8")) : null;
+const times = tl ? { recordedAt: tl.capturedAt, scenes: tl.scenes } : null;
 const tc = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 const timeOf = (n) => times?.scenes.find((s) => String(s.number) === String(n));
 
@@ -57,6 +59,8 @@ function onScreen(note) {
       return "ON SCREEN: Three cards. Muse Spark, Muse Wonder, Muse Ember.";
     case "network":
       return "ON SCREEN: The Muse network, live. Jamie's Muse in the middle, everyone it is talking to around it, each one turning into Fits or Not a fit.";
+    case "phone":
+      return /away/i.test(argText) ? "ON SCREEN: The phone slides away." : null;
     case "steps":
       steps = parts;
       return null;

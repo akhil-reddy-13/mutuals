@@ -8,6 +8,8 @@ import { timeAgo } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
+const PLACE: Record<string, string> = { "San Francisco": "San Francisco, CA", Stanford: "Stanford, CA", Chicago: "Chicago, IL" };
+
 export default async function ListingPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const l = getListing(id);
@@ -32,7 +34,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
         <div className="flex-1 p-4">
           <h1 className="text-[24px] font-bold leading-tight">{l.title}</h1>
           <div className="mt-1 text-[20px] font-semibold">${l.priceUsd}</div>
-          <div className="mt-1 text-[13px] text-fb-muted">Listed {timeAgo(l.createdAt)} in San Francisco, CA</div>
+          <div className="mt-1 text-[13px] text-fb-muted">Listed {timeAgo(l.createdAt)} in {PLACE[seller.city] ?? seller.city}</div>
           <div className="mt-3 grid grid-cols-3 gap-2">
             <button className="fb-btn-primary col-span-1">
               <MessengerIcon size={18} /> Message
