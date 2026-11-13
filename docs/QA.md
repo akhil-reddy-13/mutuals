@@ -26,7 +26,10 @@ our answer and the product would work this way. Never claim a Decision is built.
 - **Built:** Every preference is tagged **Public**, **Kept private** or **Never shared**. Never-shared facts are removed
   in code before any prompt is built (tested). Private numbers are compared in code (`budgetsOverlap`), and every
   sentence a human sees is scanned so a private number or time can't be printed. "What my Muse shared" shows every
-  line your Muse said. Facts like "doesn't drink" are protected by prompt instructions, not by code. Say so if asked.
+  line your Muse said. Wording facts like "night owl" or "partner stays over" are covered twice: the prompts say
+  "name the topic, never the fact", and a code check (`leakedPrivateFacts`) swaps any card line that echoes a private
+  fact for a topic-level one ("Quiet hours: worth talking through"). That check matches words, so it's a strong
+  backstop, not a proof. Say so if asked.
 
 ## Can someone fake an ask to fish for private info?
 
@@ -71,17 +74,44 @@ our answer and the product would work this way. Never claim a Decision is built.
 ## Is the demo live or faked?
 
 - Live. Every result comes from a real Muse call. Rehearsed inputs replay from a response cache so the stage demo is
-  instant, and `MOCK_MUSE=true` is an offline fallback we only use if the wifi dies. The seed people are fictional.
+  instant (on stage we add a ~1.5 s pause per cached reply so it reads at a human pace; a new input, like a video we
+  haven't run, goes to Muse live). `MOCK_MUSE=true` is an offline fallback we only use if the wifi dies. The seed
+  people and what they're looking for are fictional.
 
 ## What if Muse gets an item wrong?
 
 - **Built:** Each item shows a confidence level and why Spark thinks so. Every field (name, model, price, condition)
-  is editable, and items you didn't mention are off by default.
+  is editable, and items you didn't mention are off by default. Ember first picks the frame where each item is
+  clearest, so the listing photo shows the right thing, and Spark sees that frame plus the ones around it.
 
 ## How is it different from Marketplace?
 
 - Marketplace finds you stuff. Muse finds you people, and the stuff is the reason to meet: "2 of these already have a
   home", sent to June (Japan trip) and Theo (BART commute), each with why.
+
+## How does Muse know June wants a camera? How much do their Muses tell mine?
+
+- **June told her own Muse first.** Weeks earlier she said "going to Japan over winter break, want a compact camera
+  that beats my phone." That became a saved *looking for* ask, and she has Muse on for her Groups. In the demo these
+  buyer asks are seeded; in the product they're whatever people have already told their Muse. She never posted.
+- **What her Muse shares with mine** (`lib/homes.ts`, built through `agentContext`): what she's looking for, her
+  Public and Kept private facts, her short bio, and only the interests she marked shareable. Never: her Never shared
+  facts (removed in code), her other chats or profile, or anyone who hasn't turned Muse on.
+
+  | June told her Muse | Tag |
+  |---|---|
+  | Compact camera, pocket-sized, better than a phone in low light | Public |
+  | Budget around $350 | Public |
+  | Would stretch to $480 for a really good one | Kept private |
+  | Leaves Dec 18 | Public |
+- **How it gets to the card:** (1) my video becomes items (Ember lists, Spark names the exact model); (2) my Muse
+  sees the items and what each nearby buyer's Muse shared, and decides who each item is *for*, the way a friend
+  would (it's allowed to say nobody); (3) for each pairing the two Muses talk price, condition and pickup ("See the
+  conversation between your Muses"); (4) money is compared **in code**: her $480 is never shown to me, the card just
+  says "A bit over what June wants to spend, so talk price", and her number reads "a private number".
+- **One line:** "June told her Muse she wants a camera for Japan. When I listed mine, my Muse asked the Muses of
+  people in my Groups what they're looking for. Each one only shares what its person allowed, and private numbers are
+  compared in code as a yes or no."
 
 ## Isn't the connection part creepy?
 
