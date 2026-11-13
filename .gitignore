@@ -45,3 +45,6 @@ next-env.d.ts
 
 # muse response cache (local dev). Commit snapshots to seed/cache/ instead if needed for demo.
 .cache/
+
+# demo screen recordings (scripts/video/clips.mjs)
+/recordings/

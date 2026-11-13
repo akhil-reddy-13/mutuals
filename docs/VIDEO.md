@@ -12,6 +12,29 @@ replayed from the cache at live pace). Still placeholders: the live-action scene
 them), the voices (macOS text-to-speech), and the desk video in the selling scene (Muse Image stills with a spoken
 narration).
 
+## Screen-recorded clips (laptop size, for the parts we record instead of demoing live)
+
+`npm run clips` drives the real app in Chrome and saves MP4s to `recordings/` (gitignored), with a visible cursor.
+Pre-run the inputs first (`npm run warm`, plus `npm run warm -- --video <file>` for any video) so Muse replies
+are fast; everything shown is a real Muse response.
+
+| Clip | What it shows |
+|---|---|
+| `friends` | **The centerpiece.** Alex's roommate search → privacy choice → the Muses talk → Priya's **More than a lease** → Go together → Going → Alex messages Priya → switch to Priya → "Alex's Muse talked with yours" → the conversation → she replies → the Event shows Alex going → she taps Going too |
+| `roommate` | Just Alex's side, through Going |
+| `proof` | Just Priya's side of the Muse conversation (run after `roommate`) |
+| `selling` | Desk video → Ember heard you → Spark names the models → "N of these already have a home" |
+| `selling-proof` | June's side of the camera haggle (run after `selling`) |
+| `tent` | "I need a tent" → one friend-like question → Marcus + the Yosemite carpool |
+
+```bash
+npm run clips                                   # all
+npm run clips -- friends --room-video ~/Downloads/hotel.MOV   # with the room video
+npm run clips -- selling --video ~/Downloads/IMG_6396.MOV
+npm run clips -- friends --headed               # watch it drive the browser
+```
+When it's done it restores the saved run (`june-room-weekend-runs`), so the app is ready for the live demo.
+
 ## The story
 
 The arc follows Standard Response (Cal Hacks 13.0) and DotSight: one real person and one real moment, the problem

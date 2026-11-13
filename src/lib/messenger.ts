@@ -4,7 +4,7 @@ import { getMatch, getNegotiation, getPost, getThread, getUser, newId, saveMatch
 import { mockOpener } from "./mocks";
 import { museText, modelFor } from "./muse";
 import { openerPrompt } from "./prompts";
-import { leakedPrivateFacts, redactPrivateValues } from "./privacy";
+import { leakedPrivateFacts, publicSummary, redactPrivateValues } from "./privacy";
 import { getAsk } from "./db";
 import type { MessengerThread } from "./types";
 
@@ -37,7 +37,11 @@ export async function openThreadForMatch(matchId: string, senderId: string): Pro
       // Selling: name the exact items so the opener carries context, never "is this still available?".
       askSummary: match.routedItems?.length
         ? `${ask.userId === senderId ? "selling" : "buying"} ${match.routedItems.map((i) => i.model || i.name).join(" and ")} (${match.routedItems.map((i) => `$${i.suggestedPriceUsd}`).join(", ")})`
-        : ask.summary,
+        : ask.userId === senderId
+          ? ask.summary
+          : // The matched person is replying to someone else's ask: say whose it is, or the opener comes out as if
+            // they own the room ("the second bedroom in my 2BR") when it's the asker's.
+            `${recipient.name.split(" ")[0]}'s ask, which ${sender.name.split(" ")[0]} is replying to (it's ${recipient.name.split(" ")[0]}'s, not ${sender.name.split(" ")[0]}'s): ${publicSummary(ask)}`,
       summaryForHumans: match.verdict.summaryForHumans,
       recipientPrivate: recipientPrivate.filter((p) => p.visibility === "match_only").map((p) => p.value).join("; "),
     });
