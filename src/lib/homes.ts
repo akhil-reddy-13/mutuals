@@ -80,10 +80,18 @@ export async function runHomes(ask: Ask, emit: (e: MatchEvent) => void): Promise
     buyers: buyerBlock || "(nobody is looking right now)",
     sellerShares: me.interests.filter((i) => i.shareForConnection).map((i) => i.value).join(", ") || "(nothing)",
   });
-  const out =
-    items.length && buyers.length
-      ? await museJSON({ model: modelFor("homes"), system: p.system, user: p.user, schema: HomesSchema, mock: mockHomes(items, buyers) })
-      : { homes: [] };
+  const route = (second = false) =>
+    museJSON({
+      model: modelFor("homes"),
+      system: p.system,
+      user: second ? `${p.user}\n\nLook again, item by item: for each person, is any of these exactly or roughly what they asked for?` : p.user,
+      schema: HomesSchema,
+      mock: mockHomes(items, buyers),
+    });
+  let out = items.length && buyers.length ? await route() : { homes: [] };
+  // Ember sometimes returns no homes when there clearly are some (a camera, and June wants a camera). One more
+  // look, item by item, before telling the seller nobody needs anything.
+  if (items.length && buyers.length && out.homes.length === 0) out = await route(true);
 
   // Validate: known buyers and items only, each item at most once.
   const used = new Set<string>();
