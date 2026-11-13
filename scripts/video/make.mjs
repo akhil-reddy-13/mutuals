@@ -10,9 +10,10 @@
 //   NEXT_DIST_DIR=.next-demo npx next build
 //   NEXT_DIST_DIR=.next-demo MUSE_REPLAY_DELAY_MS=700 npx next start -p 3001 -H 127.0.0.1
 //
-// Outputs: scripts/video/out/mutuals-demo.mp4 (1080p60, silent), docs/video/mutuals-demo.mp4 (720p, committed),
+// Outputs: docs/video/mutuals-demo-1080p60.mp4 (1080p60, silent), docs/video/mutuals-demo.mp4 (720p preview),
 // docs/video/mutuals-screenplay.pdf (each scene's timecode in this cut), scripts/video/out/scratch-vo.wav.
 import { execFileSync } from "child_process";
+import fs from "fs";
 import path from "path";
 import { createRequire } from "module";
 import { fileURLToPath } from "url";
@@ -54,5 +55,7 @@ if (!has("--pdf-only")) {
     "-vf", "scale=1280:-2:flags=lanczos", "-c:v", "libx264", "-preset", "slow", "-crf", "24", "-pix_fmt", "yuv420p", "-movflags", "+faststart",
     path.join(ROOT, "docs", "video", "mutuals-demo.mp4"),
   ], { stdio: "inherit" });
-  console.log("done: scripts/video/out/mutuals-demo.mp4 (1080p), docs/video/mutuals-demo.mp4 (720p), docs/video/mutuals-screenplay.pdf");
+  // the full-quality cut goes in the repo too, next to the preview
+  fs.copyFileSync(path.join(HERE, "out", "mutuals-demo.mp4"), path.join(ROOT, "docs", "video", "mutuals-demo-1080p60.mp4"));
+  console.log("done: docs/video/mutuals-demo-1080p60.mp4 (full quality), docs/video/mutuals-demo.mp4 (720p), docs/video/mutuals-screenplay.pdf");
 }

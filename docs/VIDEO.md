@@ -1,7 +1,7 @@
 # Demo video
 
-- **Watch:** [`docs/video/mutuals-demo.mp4`](video/mutuals-demo.mp4) (draft cut, 2:28, 720p preview, no audio yet). The
-  full 1080p60 file is `scripts/video/out/mutuals-demo.mp4` after a render.
+- **Watch:** [`docs/video/mutuals-demo-1080p60.mp4`](video/mutuals-demo-1080p60.mp4) (draft cut, 2:28, 1080p at 60fps,
+  no audio yet), or the smaller 720p preview [`docs/video/mutuals-demo.mp4`](video/mutuals-demo.mp4).
 - **Read:** [`docs/video/mutuals-screenplay.pdf`](video/mutuals-screenplay.pdf), the screenplay with each scene's
   timecode in the video.
 - **Edit:** [`docs/video/mutuals.fountain`](video/mutuals.fountain). **The screenplay is the video.** Change what Jamie
