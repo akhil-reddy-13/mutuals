@@ -7,7 +7,7 @@ import { AnonIcon, CameraIcon, ChevronDown, EyeIcon, FeelingIcon, GlobeIcon, Inf
 import MuseLauncher from "@/components/MuseLauncher";
 import PostCard from "@/components/PostCard";
 import { asksForUser, getAsk, getGroup, getUser, matchesForAsk, matchesInvolving, postsInGroup } from "@/lib/db";
-import { firstName } from "@/lib/format";
+import { firstName, fitLevel } from "@/lib/format";
 import { compactCount } from "@/lib/format";
 import { sortMatches } from "@/lib/match";
 import { currentUser } from "@/lib/session";
@@ -35,7 +35,7 @@ export default async function GroupPage({ params }: { params: Promise<{ id: stri
     .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))[0];
   const matches = myAsk ? sortMatches(matchesForAsk(myAsk.id)) : [];
   const matchByAuthor = new Map(matches.map((m) => [m.candidateId, m]));
-  const fits = matches.filter((m) => m.verdict.compatible);
+  const fits = matches.filter((m) => fitLevel(m.verdict) === "fit"); // the shortlist title counts the same way
   const media = posts.filter((p) => p.imageUrl).slice(0, 6);
   // The other side of a match: someone else's Muse checked with mine in this Group.
   const talkedToMe = matchesInvolving(me.id)

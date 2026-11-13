@@ -180,6 +180,10 @@ export function saveMatch(m: Match) {
 export function getNegotiation(id: string) {
   return rt().negotiations.find((n) => n.id === id);
 }
+/** Every stored negotiation, last-saved last (a running one moves to the end on each turn). Demo dashboard only. */
+export function allNegotiations(): Negotiation[] {
+  return rt().negotiations;
+}
 export function saveNegotiation(n: Negotiation) {
   const r = rt();
   r.negotiations = [...r.negotiations.filter((x) => x.id !== n.id), n];

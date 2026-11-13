@@ -4,7 +4,7 @@
 import { useState } from "react";
 import Avatar from "../Avatar";
 import { CheckIcon, ChevronDown, GlobeIcon, LockIcon, MuseMark, XSmallIcon } from "../icons";
-import { firstName, topicLabel } from "@/lib/format";
+import { firstName, fitLevel, topicLabel } from "@/lib/format";
 import type { ConnectionSuggestion, Match, NegotiationTurn } from "@/lib/types";
 
 /** Which Muse model did each job, as labels ("Muse Ember"). Comes from the match stream so it follows `modelFor`. */
@@ -71,6 +71,7 @@ export default function LiveMatching({ cands, meName, defaultOpen, models }: { c
       {cands.map((c) => {
         const done = !!c.match || !!c.failed;
         const fit = c.match?.verdict.compatible;
+        const maybe = !!c.match && fit && fitLevel(c.match.verdict) !== "fit"; // could work or long shot
         const isOpen = open[c.id] ?? false;
         return (
           <div key={c.id} className="overflow-hidden rounded-xl border border-fb-divider bg-white">
@@ -95,8 +96,8 @@ export default function LiveMatching({ cands, meName, defaultOpen, models }: { c
                       Couldn&apos;t reach {firstName(c.name)}&apos;s Muse this time
                     </span>
                   ) : done ? (
-                    <span className={`inline-flex items-center gap-1 font-semibold ${fit ? "text-fb-green" : "text-fb-muted"}`}>
-                      {fit ? <CheckIcon size={12} /> : <XSmallIcon size={12} />}
+                    <span className={`inline-flex items-center gap-1 font-semibold ${maybe ? "text-[#7a5200]" : fit ? "text-fb-green" : "text-fb-muted"}`}>
+                      {maybe ? <span className="h-2 w-2 shrink-0 rounded-full bg-fb-amber" /> : fit ? <CheckIcon size={12} /> : <XSmallIcon size={12} />}
                       {c.match!.verdict.summaryForHumans}
                     </span>
                   ) : c.turns.length === 0 ? (

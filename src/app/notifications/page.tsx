@@ -4,7 +4,7 @@ import Link from "next/link";
 import Avatar from "@/components/Avatar";
 import { CalendarIcon, FriendsIcon, GroupsIcon, MuseMark } from "@/components/icons";
 import { getAsk, getGroup, getUser, matchesInvolving } from "@/lib/db";
-import { firstName, timeAgo } from "@/lib/format";
+import { firstName, fitLevel, timeAgo } from "@/lib/format";
 import { currentUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
@@ -33,7 +33,8 @@ export default async function NotificationsPage() {
     const ask = getAsk(askId);
     const group = ask && getGroup(ask.groupId);
     if (!ask || !group) continue;
-    const fits = ms.filter((m) => m.verdict.compatible);
+    const shown = ms.filter((m) => m.verdict.compatible);
+    const fits = shown.filter((m) => fitLevel(m.verdict) === "fit");
     const names = fits.map((m) => firstName(getUser(m.candidateId)!.name));
     items.push({
       id: `ask_${askId}`,
@@ -41,7 +42,7 @@ export default async function NotificationsPage() {
       avatar: "muse",
       text: (
         <>
-          Your Muse found <b>{fits.length} {fits.length === 1 ? "person" : "people"}</b> in <b>{group.name}</b> who fit your ask{names.length ? `: ${names.join(", ")}` : ""}. {ms.length - fits.length > 0 && `${ms.length - fits.length} didn't.`}
+          Your Muse found <b>{fits.length} {fits.length === 1 ? "person" : "people"}</b> in <b>{group.name}</b> who fit your ask{names.length ? `: ${names.join(", ")}` : ""}. {shown.length > fits.length && `${shown.length - fits.length} more could work. `}{ms.length > shown.length && `${ms.length - shown.length} didn't.`}
         </>
       ),
       at: ms.map((m) => m.createdAt).sort().at(-1)!,
@@ -72,7 +73,7 @@ export default async function NotificationsPage() {
             </>
           ) : (
             <>
-              <b>{asker.name}</b>&apos;s Muse checked with yours in <b>{group.name}</b>. {m.verdict.compatible ? <>Looks like a fit: {m.verdict.summaryForHumans}</> : "Not a fit, so nothing to do."}
+              <b>{asker.name}</b>&apos;s Muse checked with yours in <b>{group.name}</b>. {fitLevel(m.verdict) === "fit" ? <>Looks like a fit: {m.verdict.summaryForHumans}</> : m.verdict.compatible ? <>Could work: {m.verdict.summaryForHumans}</> : "Not a fit, so nothing to do."}
             </>
           )}
         </>

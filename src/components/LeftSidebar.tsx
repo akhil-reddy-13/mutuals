@@ -3,11 +3,13 @@ import Link from "next/link";
 import Avatar from "./Avatar";
 import GroupCover from "./GroupCover";
 import { getGroup } from "@/lib/db";
-import { AdsIcon, BookmarkIcon, CalendarIcon, ChevronDown, FeedIcon, FriendsIcon, GroupsIcon, MarketplaceIcon, MemoriesIcon, MuseMark, VideoIcon } from "./icons";
+import { AdsIcon, BookmarkIcon, CalendarIcon, ChevronDown, FeedIcon, FriendsIcon, GroupsIcon, MarketplaceIcon, MemoriesIcon, MessengerIcon, MuseMark, VideoIcon } from "./icons";
 import type { User } from "@/lib/types";
 
-const ITEMS: { label: string; href: string; icon: React.ReactNode }[] = [
+const ITEMS: { label: string; href: string; icon: React.ReactNode; tag?: string }[] = [
   { label: "Muse", href: "/digest", icon: <MuseMark size={36} /> },
+  // Demo only: every Muse-to-Muse conversation in one grid, for showing the agents talking.
+  { label: "Muse conversations", href: "/conversations", icon: <MessengerIcon size={30} className="text-fb-blue" />, tag: "Demo" },
   { label: "Friends", href: "#", icon: <FriendsIcon size={36} className="text-fb-blue" /> },
   { label: "Memories", href: "#", icon: <MemoriesIcon size={36} className="text-fb-blue" /> },
   { label: "Saved", href: "#", icon: <BookmarkIcon size={36} className="text-fb-purple" /> },
@@ -30,6 +32,7 @@ export default function LeftSidebar({ me }: { me: User }) {
         <Link key={it.label} href={it.href} className="flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-[#e4e6e9]">
           <span className="flex h-9 w-9 items-center justify-center">{it.icon}</span>
           <span className="text-[15px] font-medium">{it.label}</span>
+          {it.tag && <span className="rounded-full bg-fb-chip px-2 py-0.5 text-[11px] font-bold text-fb-muted">{it.tag}</span>}
         </Link>
       ))}
       <button className="flex items-center gap-3 rounded-lg px-2 py-2 text-left hover:bg-[#e4e6e9]">

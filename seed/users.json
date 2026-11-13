@@ -267,10 +267,13 @@
     "avatarUrl": "/avatars/rosa.jpg",
     "schoolVerified": false,
     "city": "San Francisco",
-    "groups": [],
+    "groups": [
+      "g_sfgrads",
+      "g_housing27"
+    ],
     "friends": [],
     "museEnabled": true,
-    "connectionSuggestionsOptIn": true,
+    "connectionSuggestionsOptIn": false,
     "interests": [
       {
         "value": "vintage clothes",
@@ -282,7 +285,9 @@
       }
     ],
     "bio": "",
-    "museGroups": []
+    "museGroups": [
+      "g_housing27"
+    ]
   },
   {
     "id": "kai",
@@ -290,10 +295,14 @@
     "avatarUrl": "/avatars/kai.jpg",
     "schoolVerified": false,
     "city": "San Francisco",
-    "groups": [],
+    "groups": [
+      "g_sfgrads",
+      "g_runners",
+      "g_housing27"
+    ],
     "friends": [],
     "museEnabled": true,
-    "connectionSuggestionsOptIn": true,
+    "connectionSuggestionsOptIn": false,
     "interests": [
       {
         "value": "vintage clothes",
@@ -305,7 +314,9 @@
       }
     ],
     "bio": "",
-    "museGroups": []
+    "museGroups": [
+      "g_housing27"
+    ]
   },
   {
     "id": "nina",
@@ -366,11 +377,13 @@
     "schoolVerified": true,
     "city": "San Francisco",
     "groups": [
-      "g_ffs"
+      "g_ffs",
+      "g_housing27",
+      "g_runners"
     ],
     "friends": [],
     "museEnabled": true,
-    "connectionSuggestionsOptIn": true,
+    "connectionSuggestionsOptIn": false,
     "interests": [
       {
         "value": "vintage clothes",
@@ -383,7 +396,8 @@
     ],
     "bio": "Film photography nerd. Japan trip over winter break.",
     "museGroups": [
-      "g_ffs"
+      "g_ffs",
+      "g_housing27"
     ]
   },
   {

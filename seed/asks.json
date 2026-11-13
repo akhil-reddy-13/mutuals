@@ -281,7 +281,7 @@
       {
         "id": "sam_movein",
         "topic": "move_in",
-        "value": "Mid-September, flexible",
+        "value": "September 1 works, flexible on dates",
         "importance": "medium",
         "visibility": "public",
         "source": "stated",
@@ -1010,5 +1010,212 @@
     ],
     "createdAt": "2026-11-11T13:00:00Z",
     "status": "draft"
+  },
+  {
+    "id": "ask_june",
+    "userId": "june",
+    "groupId": "g_housing27",
+    "type": "roommate",
+    "side": "seeking",
+    "summary": "Room in SF from mid-September, bringing my cat",
+    "preferences": [
+      {
+        "id": "june_budget",
+        "topic": "budget",
+        "value": "Up to $1,300/mo",
+        "importance": "high",
+        "visibility": "match_only",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "june_movein",
+        "topic": "move_in",
+        "value": "September 15",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "june_area",
+        "topic": "neighborhood",
+        "value": "Prefers Inner Sunset, open to the Mission",
+        "importance": "medium",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "june_pets",
+        "topic": "pets",
+        "value": "Has an indoor cat, Mochi",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "june_sleep",
+        "topic": "sleep_schedule",
+        "value": "Heavy sleeper, earplugs",
+        "importance": "low",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "june_clean",
+        "topic": "cleanliness",
+        "value": "Tidy",
+        "importance": "low",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      }
+    ],
+    "createdAt": "2026-11-10T20:00:00Z",
+    "status": "matching"
+  },
+  {
+    "id": "ask_kai",
+    "userId": "kai",
+    "groupId": "g_housing27",
+    "type": "roommate",
+    "side": "seeking",
+    "summary": "Room in SF from September 1, I work from home",
+    "preferences": [
+      {
+        "id": "kai_budget",
+        "topic": "budget",
+        "value": "Up to $1,200/mo, firm",
+        "importance": "high",
+        "visibility": "match_only",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "kai_movein",
+        "topic": "move_in",
+        "value": "September 1",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "kai_wfh",
+        "topic": "work_from_home",
+        "value": "Works from home full-time, would use the living room as a daytime office",
+        "importance": "medium",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "kai_sleep",
+        "topic": "sleep_schedule",
+        "value": "Up at 6 for runs, quiet nights",
+        "importance": "medium",
+        "visibility": "match_only",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "kai_guests",
+        "topic": "guests",
+        "value": "Rarely has guests",
+        "importance": "low",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "kai_pets",
+        "topic": "pets",
+        "value": "No pets",
+        "importance": "low",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      }
+    ],
+    "createdAt": "2026-11-10T20:00:00Z",
+    "status": "matching"
+  },
+  {
+    "id": "ask_rosa",
+    "userId": "rosa",
+    "groupId": "g_housing27",
+    "type": "roommate",
+    "side": "seeking",
+    "summary": "Room in SF from mid-October, short lease to start",
+    "preferences": [
+      {
+        "id": "rosa_budget",
+        "topic": "budget",
+        "value": "$1,300 to $1,400/mo",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "rosa_movein",
+        "topic": "move_in",
+        "value": "Mid-October",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "rosa_lease",
+        "topic": "lease",
+        "value": "Wants a 6-month lease to start",
+        "importance": "high",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "rosa_guests",
+        "topic": "guests",
+        "value": "Partner stays over most weekends",
+        "importance": "medium",
+        "visibility": "match_only",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "rosa_furniture",
+        "topic": "furniture",
+        "value": "Bringing a full bedroom set and a couch",
+        "importance": "medium",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "rosa_clean",
+        "topic": "cleanliness",
+        "value": "Relaxed about cleaning",
+        "importance": "low",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      },
+      {
+        "id": "rosa_pets",
+        "topic": "pets",
+        "value": "No pets",
+        "importance": "low",
+        "visibility": "public",
+        "source": "stated",
+        "confirmed": true
+      }
+    ],
+    "createdAt": "2026-11-10T20:00:00Z",
+    "status": "matching"
   }
 ]

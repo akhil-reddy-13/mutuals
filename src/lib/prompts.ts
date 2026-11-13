@@ -170,6 +170,15 @@ Money was compared privately in code: ${a.budgetOverlap === null ? "unknown" : a
 Rules: if a declared dealbreaker conflicts, compatible = false and compromise = null. Any other conflict (schedules,
 quiet hours, cleanliness, guests) is a disagreement: keep compatible = true and propose a concrete compromise.
 A clash the agents settled with a compromise STILL goes in "disagreements": the humans have to confirm it.
+"score" is how much both people would have to give for this to work. Sort the trade-offs still open in the transcript
+into SOFT (habits a compromise covers: quiet hours, sleep schedules, cleanliness, guests) and HARD (move-in dates two
+or more weeks apart, a budget that only works at one side's limit, daily use of a shared room such as a home office in
+the living room, a pet the other side never agreed to, a different lease length). Then pick the band:
+0.85-1: no trade-offs, or one soft one with an easy fix (headphones, a cleaning schedule).
+0.65-0.85: one or two soft trade-offs with a compromise on the table, nothing hard.
+0.45-0.65: exactly one hard trade-off, or three or more soft ones.
+Below 0.45: two or more hard trade-offs, or move-in dates a month or more apart, or a different lease length.
+compatible = false ONLY for a declared dealbreaker or money; a low score alone never makes it false.
 PRIVATE facts (match_only): use them to judge fit, but every field you write is shown to BOTH people, so never state
 one. Say the topic lines up or differs ("ride home works out", "different plans for drinks"), never the fact itself
 ("Theo doesn't drink", "Priya starts at 7am"):
@@ -198,7 +207,9 @@ Most exchanges should stay exchanges. Only suggest doing something together if t
 interests both people chose to share, something that would feel natural, not forced. Prefer an existing Facebook Event.
 Return ONLY JSON:
 { "suggest": bool, "confidence": 0-1, "reason": string|null, "activity": string|null, "event_id": string|null }
-Suggest an activity (never "be friends"). reason is one sentence addressed to both of them ("You're both…").`,
+Suggest an activity (never "be friends"). reason is what a friend would text to point it out: one casual line, under
+12 words, that reads right for either of them, naming the specific thing they share. Start with "You two" or the
+thing itself. Never "You're both", never "both", no em dashes, no exclamation marks, no "perfect" or "great".`,
   user: `${a.aName} shares: ${a.aInterests}
 ${a.bName} shares: ${a.bInterests}
 Match verdict: ${a.verdict}
