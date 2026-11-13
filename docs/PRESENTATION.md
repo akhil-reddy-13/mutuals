@@ -26,30 +26,30 @@ the reason you already open it painless.
 So we built **Mutuals**. *Your Muse talks to their Muse, so you only talk to the people who actually fit.* Akhil?
 
 ## 4. Roommate demo, `friends.mp4` + live voiceover (1:15-2:40) A
-- **Opens Stanford Housing, Ask Muse:** This is Alex. He signed a 2BR in the Mission and needs a roommate. Instead of
-  posting, he opens Muse inside the Group and tells it everything, including what he'd *never* post.
-- **Three lines + tags:** His real floor is $1,200 even though he's asking $1,350. He's a night owl, his partner stays
-  over some weekends, and health stuff stays private. Muse tags every fact Public, Kept private or Never shared, and
-  "Never shared" is removed in code before any model sees it.
-- **Yes, check; seven Muses talking:** Alex's Muse opens a real conversation with the Muse of every person in his
-  Groups looking for a room. Seven at once, each a separate Muse that only knows its own person. They negotiate rent,
-  move-in and quiet hours, and budgets are compared in code as a yes or no, so nobody's real number crosses over.
-- **Muse's verdict:** *"I found three people who fit. Priya's the best one, but you two should talk about…"*
-- **Shortlist, See why:** Every result is a *person*, not a listing: verified Stanford, shared Groups, what lines up,
-  the one thing to talk about, and a compromise the Muses already proposed.
-- **Message Priya:** Muse never messages anyone for you. It drafts the opener with real context, and Alex hits send.
-- **More than a lease, Go together:** Priya and Alex are both new to SF and both run weekend mornings. Muse doesn't
-  say "be friends"; it suggests an *activity*: the New in SF weekend run. Most matches never get this. Sam fit too
-  and got nothing.
-- **Switch to Priya, "Alex's Muse talked with yours":** The proof the Muses really talked. Priya reads the whole
-  conversation from her side. Alex's private budget shows as "a private number", and she sees which of *her* facts
-  her Muse used.
-- **She taps Going:** A roommate search just became Saturday plans.
+Chill, conversational, about 185 words. Let the video breathe between lines.
+- **Ask Muse:** This is Alex. He's got a two-bedroom in the Mission and needs a roommate. Instead of posting to a
+  bunch of strangers, he just tells his Muse.
+- **Lines typed, tags appear:** Including the stuff he'd never post, like his real budget, or that he's a night owl.
+  Muse tags every fact, and anything marked "Never shared" gets removed in code before a model ever sees it.
+- **Yes, check:** Then his Muse goes and talks to the Muses of seven people looking for a room. All at once. Rent,
+  move-in, quiet hours. Budgets are just a yes or no, so nobody's real number gets out.
+- **Verdict:** And it comes back like a friend would: "Priya's the best one, but you two should talk about weeknight
+  noise."
+- **Shortlist, Message Priya:** People, not listings. Muse drafts the first message, and Alex hits send.
+- **More than a lease, Go together:** Here's our favorite part. They're both new to SF and both run on weekends, so
+  Muse suggests the New in SF weekend run. Most matches get nothing.
+- **Switch to Priya:** On her side: "Alex's Muse talked with yours." She can read the whole conversation, and Alex's
+  budget just shows up as "a private number".
+- **She taps Going:** A roommate search just turned into Saturday plans. And honestly, that's what gets Gen Z back on
+  Facebook. Not making it "cool" for existing friends, but making it the place you actually meet people.
 
 ## 5. Selling, LIVE (2:40-3:40) A
-*Stanford Free & For Sale, Ask Muse, chip "Selling some stuff before I move out", answer the follow-up, upload
-`~/Downloads/Selling_catalog_items.MOV`, Catalog items.* Backup if anything breaks: play `recordings/selling.mp4`.
-- Same engine, the other thing everyone does on Facebook. This part's live. I filmed my desk and talked over it.
+*Switch to the app: Stanford Free & For Sale, Ask Muse.* Backup if anything breaks: play `recordings/selling.mp4`.
+- **Transition (while switching):** But you don't look for a roommate every week. What you do every week is way
+  smaller, like selling the random stuff on your desk you don't use anymore. Let's do that one live.
+- *Tap "Selling some stuff before I move out", answer Muse's question.* I filmed my desk on my phone and just talked
+  over it.
+- *Upload `~/Downloads/Selling_catalog_items.MOV`, tap Catalog items.*
 - **Muse Ember** watches the frames *and* listens. Here's the word-for-word transcript; it lists only what I said
   I'm selling and notes what it saw that I didn't mention.
 - Each item goes to **Muse Spark**, in parallel, with its clearest frame and the frames around it. I said "this Canon
