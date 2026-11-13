@@ -689,7 +689,6 @@ export default function MuseSheet({ me, group, onClose }: MuseSheetProps) {
             <SendIcon size={22} />
           </button>
         </form>
-        <p className="bg-white px-3 pb-2 text-center text-[11px] text-fb-muted md:pb-2">Muse pre-negotiates and drafts. You decide and you send.</p>
       </div>
     </div>
   );

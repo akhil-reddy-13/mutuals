@@ -219,6 +219,38 @@ export const StopIcon = (p: P) => (
 
 /** The Meta AI / Muse mark: a gradient ring. */
 /** The Muse mark (public/muse-mark.png, transparent). Rendered as an image so it looks the same everywhere. */
+/** Group composer: "Anonymous post" (incognito hat + glasses). */
+export const AnonIcon = (p: P) => (
+  <svg {...base(p)}>
+    <path d="M7.2 3.5h9.6a1 1 0 0 1 .97.76L18.9 9H5.1l1.13-4.74a1 1 0 0 1 .97-.76zM3 9.75h18a.75.75 0 0 1 0 1.5H3a.75.75 0 0 1 0-1.5z" />
+    <path fillRule="evenodd" d="M8.25 12.5a3.75 3.75 0 1 0 0 7.5 3.75 3.75 0 0 0 0-7.5zm0 1.8a1.95 1.95 0 1 1 0 3.9 1.95 1.95 0 0 1 0-3.9zm7.5-1.8a3.75 3.75 0 1 0 0 7.5 3.75 3.75 0 0 0 0-7.5zm0 1.8a1.95 1.95 0 1 1 0 3.9 1.95 1.95 0 0 1 0-3.9zM11 15.4h2v1.2h-2z" />
+  </svg>
+);
+/** Group composer: "Feeling/activity" (filled smiley; pass text-fb-yellow). */
+export const FeelingIcon = (p: P) => (
+  <svg {...base(p)}>
+    <circle cx="12" cy="12" r="10" />
+    <circle cx="8.6" cy="9.8" r="1.5" fill="#fff" />
+    <circle cx="15.4" cy="9.8" r="1.5" fill="#fff" />
+    <path d="M7.3 13.6c.9 2.3 2.6 3.5 4.7 3.5s3.8-1.2 4.7-3.5" fill="none" stroke="#fff" strokeWidth="1.9" strokeLinecap="round" />
+  </svg>
+);
+/** Group composer: "Poll" (filled circle with bars; pass text-fb-amber). */
+export const PollIcon = (p: P) => (
+  <svg {...base(p)}>
+    <circle cx="12" cy="12" r="10" />
+    <rect x="6.9" y="11" width="2.4" height="6.2" rx=".7" fill="#fff" />
+    <rect x="10.8" y="6.8" width="2.4" height="10.4" rx=".7" fill="#fff" />
+    <rect x="14.7" y="9.2" width="2.4" height="8" rx=".7" fill="#fff" />
+  </svg>
+);
+/** About column: "Visible". */
+export const EyeIcon = (p: P) => (
+  <svg {...base(p)}>
+    <path d="M12 5C7 5 3.1 8.1 1.3 11.6a.9.9 0 0 0 0 .8C3.1 15.9 7 19 12 19s8.9-3.1 10.7-6.6a.9.9 0 0 0 0-.8C20.9 8.1 17 5 12 5zm0 12.5c-4 0-7.2-2.4-8.9-5.5C4.8 8.9 8 6.5 12 6.5s7.2 2.4 8.9 5.5c-1.7 3.1-4.9 5.5-8.9 5.5zM12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm0 1.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5z" />
+  </svg>
+);
+
 export function MuseMark({ size = 24, className = "" }: { size?: number; className?: string }) {
   return (
     <span className={`inline-flex shrink-0 items-center justify-center ${className}`} style={{ width: size, height: size }}>
