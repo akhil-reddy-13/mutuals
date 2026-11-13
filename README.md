@@ -12,6 +12,9 @@ Instagram is for people you already know. Facebook is for people you need to mee
 
 No posting required. No Facebook friends required: your school or city is enough.
 
+**In one line:** your Muse talks to other people's Muses (real agent-to-agent conversations, each Muse knowing only
+its own person) so the screening and logistics happen before any human says hello.
+
 ## Why this, why now
 
 Meta has described a Muse network where your Muse works with your friends' and family's Muses. Young adults have few Facebook friends. We built the part for people you have not met yet, matched on the preferences people keep private, living in the Groups they already use.
@@ -26,7 +29,7 @@ Meta has described a Muse network where your Muse works with your friends' and f
 | You say | Muse comes back with |
 |---|---|
 | "Need a roommate for my Mission 2BR from Sept" (+ a room video) | "I found two people who fit. Priya's the better one, but you two should talk about weeknight noise." Fits, disagreements, a compromise, then Messenger. |
-| "Selling some stuff before I move out" (+ a video where you talk over your stuff) | "2 of these already have a home": the Canon G7 X → June (Japan trip in December), the Poly earbuds → Theo (BART commute). The rest is offered to everyone nearby. |
+| "Selling some stuff before I move out" (+ a video where you talk over your stuff) | Ember hears what you're selling, Spark names each exact model ("this Canon camera" → Canon PowerShot G7 X Mark II). Then "2 of these already have a home": the G7 X → June (Japan trip in December), the Poly earbuds → Theo (BART commute), and your Muse and theirs work out price and pickup ("Meet on campus, $425"). The rest is offered to everyone nearby. |
 | "Need a tent for a camping trip" | One friend-like question ("Is this for a trip? Want people to go with too?"), then Marcus (has a tent, driving to Yosemite Dec 6) and a carpool to join. |
 
 ## The hero flow (what the demo shows)
@@ -34,11 +37,20 @@ Meta has described a Muse network where your Muse works with your friends' and f
 1. **Group page.** Stanford Housing '27. Casey's ISO post, Jordan's dog post, the usual.
 2. **Ask Muse.** Three lines of chat. Every preference comes back tagged **Public**, **Kept private** or **Never shared**. Tap a badge to change it.
 3. **Film the room.** Ten seconds. Muse Ember returns room facts and the leftover items the next person might want.
-4. **"Want me to check with other Muses in this group?"** That question is the opt-in. It is scoped to the Group.
+4. **"Who can my Muse talk to?"** The opt-in is an explicit choice, with a live count for each option: **People I'm connected with** (friends and friends of friends, most private), **People in my Groups** (recommended), **Everyone nearby** (your school or city). Private preferences stay private in every option; this only decides who Muse checks with.
 5. **Watch the negotiation.** Every candidate runs in parallel. Alex's Muse and Priya's Muse settle rent, dates, furniture and quiet hours in two rounds. A referee call writes the verdict. Jordan's Muse brings a dog; Alex's Muse stops early. Casey has no Muse; Ember reads her post and drafts a reply.
 6. **Shortlist.** Why it fits, where you'd disagree, the proposed compromise, trust signals (verified school, shared Groups, mutual friends), and **What my Muse shared**.
 7. **Message Priya.** The opener is drafted. Alex edits and sends. Priya replies from her own phone.
 8. **More than a lease.** Both new to SF, both run weekend mornings. Muse suggests an existing Event: New in SF: Weekend Runs. Sam, who also fit, gets no suggestion. Most exchanges stay exchanges.
+9. **Proof the Muses really talked.** Switch to Priya (avatar menu). Her Home's first card: **"Alex's Muse talked with yours in Stanford Housing '27."** It opens the whole Muse-to-Muse conversation from her side: both Muses side by side, every message, Alex's private budget shown as "a private number", what they concluded, and which of *her* preferences her Muse used. Nobody messaged Priya. Then she taps **Message Alex**.
+
+## Proof it's really agent-to-agent
+
+Each conversation is stored once and rendered from whichever side opens it (`/muse/talk/[negotiationId]`). Your
+Muse's messages appear in full; the other Muse's appear with **their** private values redacted. Only the two
+people in the conversation can open it (anyone else gets a 404). The other person learns about it through their
+Home feed and Notifications, never through a message from you. The same page exists for selling: switch to June
+and watch her Muse and Alex's haggle the camera from $450 to $425.
 
 ## Screenshots
 
@@ -59,6 +71,10 @@ Meta has described a Muse network where your Muse works with your friends' and f
 | **Public** | Can appear on your match card | |
 | **Kept private** | Your Muse uses it to check fit. Never shown to the other person. | Prompts are built only from `privacy.agentContext()`. Money is compared in code (`budgetsOverlap`) and every string a human sees goes through `redactPrivateValues()`, so no private number or time can be printed. The live view shows disclosed facts as locked chips. |
 | **Never shared** | Never enters any Muse's context | `agentContext()` drops it before the prompt exists. The model cannot leak what it was never given. |
+
+Two more guards on everything a human sees:
+- **Private phrases, not just numbers** (`leakedPrivateFacts`): if a model echoes the words of a kept-private fact ("night owl", "partner stays over") into a match card or an opener, it's swapped for a topic-level line.
+- **Ask titles** (`publicSummary`): the one-line summary Muse writes for your ask can't show your private numbers to anyone else (home cards, the other side's shortlist, the digest).
 
 Every outgoing message your Muse sends is logged and visible to you under **What my Muse shared**. `src/lib/privacy.test.ts` covers all of this and must stay green.
 
@@ -84,8 +100,8 @@ Code does only two things the model does not: sealed comparisons of private numb
 ```
 Group composer ─► Muse sheet ─► POST /api/asks (Ember)  ─► POST /api/intake (Ember) ─► /api/identify (Spark, per item)
                                        │
-                                       ▼  "Want me to check with other Muses here?"
-                              GET /api/match?askId  (SSE)
+                                       ▼  "Who can my Muse talk to?"  (connected · my Groups · everyone nearby)
+                              GET /api/match?askId&reach  (SSE)
                  ┌─────────────────────┼─────────────────────┐
          agent-to-agent         agent-to-agent          one-sided
    Ember A ⇄ Ember B ×2    Ember A ⇄ Ember B ×2     Ember reads post
@@ -120,11 +136,20 @@ npm run demo        # hero matching from the terminal, with a leak check on ever
 npm run demo -- need        # "I need a tent": friend-like question, people + a plan (also: plus_one, ride)
 npm run demo:build && npm run demo:start   # production build for the demo Mac (~100x faster pages)
 npm run warm        # pre-run every hero call so the response cache is hot before going on stage
+npm run warm -- --video <file>             # also pre-run the exact video you'll upload on stage
+npm run snapshot -- save|restore|list <name>  # save a run you like and bring it back word for word
 npm test            # privacy tests
 npm run typecheck
 ```
 
-`docs/DEMO.md` has the timed script and the exact lines to type. `docs/VIDEO.md` is the demo video (script, personas, how it is recorded). `docs/PRD.md` is the full spec.
+| Doc | What's in it |
+|---|---|
+| `docs/DEMO.md` | Timed live-demo script and the exact lines to type |
+| `docs/SAVED_RUN.md` | The saved "June room → run together" run: inputs, results, connection card, Muse transcript, how to restore |
+| `docs/QA.md` | Q&A decisions (does Muse keep searching? privacy, fake asks, models, speed), built vs. decided |
+| `docs/VIDEO.md` | The demo video: screenplay, personas, how it's recorded |
+| `docs/PITCH.md` | Talk track |
+| `docs/PRD.md` | Full spec; §0.5 is the positioning and design rules |
 
 ## Honesty about what is live
 
@@ -133,14 +158,16 @@ Every core call goes through `src/lib/muse.ts` and hits the Meta Model API when 
 ## Repo layout
 
 ```
-src/lib/        muse.ts (client, cache, mock) · privacy.ts · negotiation.ts · match.ts · connection.ts
-                asks.ts · intake.ts · messenger.ts · listing.ts · reach.ts · db.ts · prompts.ts · schemas.ts · mocks.ts
-src/app/        groups/[id] (the Group + Muse sheet) · groups/[id]/muse/[askId] (shortlist) · notifications
+src/lib/        muse.ts (client, role map, cache, mock) · privacy.ts · negotiation.ts · match.ts · connection.ts
+                reach.ts (who Muse may talk to) · homes.ts (items → people) · identify.ts · intake.ts · media.ts (ffmpeg)
+                asks.ts · messenger.ts · listing.ts · digest.ts · sheetCopy.ts · db.ts · prompts.ts · schemas.ts · mocks.ts
+src/app/        groups/[id] (the Group + Muse sheet) · groups/[id]/muse/[askId] (shortlist) · muse/talk/[id] (Muse ⇄ Muse) · notifications
                 messenger/[threadId] · events/[id] · marketplace/[id] · digest · api/*
 src/components/ FbShell, LeftSidebar, NavTabs (Facebook chrome) · muse/* (sheet, live matching, video capture)
                 MatchCard, ConnectionCard, PostCard, ThreadView
 seed/           users, groups, posts, events, asks (Alex, Priya, Jordan, Sam, Casey + background personas)
-scripts/        muse-smoke.ts · run-demo.ts · warm-cache.ts
+scripts/        muse-smoke.ts · run-demo.ts · warm-cache.ts · snapshot.mjs · gen-images.ts · video/ (demo video recorder)
+snapshots/      saved runs (cached responses + demo state), e.g. june-room-weekend-runs
 ```
 
 ## Team
