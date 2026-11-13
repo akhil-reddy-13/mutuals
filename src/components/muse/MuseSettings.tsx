@@ -102,7 +102,7 @@ export default function MuseSettings({ initial, groups: initialGroups }: { initi
       <section className={`fb-card rounded-none p-4 md:rounded-[8px] ${s.museEnabled ? "" : "pointer-events-none opacity-50"}`}>
         <Row
           title="Suggest things to do together"
-          body="When you and someone you matched with share a real interest, Muse may suggest an activity, like an open Event. Only if you both have this on."
+          body="When you and someone you matched with share a real interest, Muse may suggest an activity, like an open Event."
           control={<Switch on={s.connectionSuggestionsOptIn} onChange={(v) => save({ connectionSuggestionsOptIn: v })} label="Suggest things to do together" />}
         />
       </section>
