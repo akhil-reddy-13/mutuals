@@ -7,7 +7,12 @@
 //   node scripts/video/render.mjs                    -> scripts/video/out/mutuals-demo.mp4 (1080p, 60 fps, silent)
 //   node scripts/video/render.mjs --stills 12,40.5   -> scripts/video/out/stills/ (PNG frames at those seconds)
 //   node scripts/video/render.mjs --from 55 --to 90  -> just that stretch (out/preview.mp4)
-// Options: --fps 60, --workers 4.
+//   node scripts/video/render.mjs --audio-only       -> re-mix the sound onto the last render (seconds, no frames)
+// Options: --fps 60, --workers 4, --music-volume 0.2, --music-from 0 (where in the song to start).
+//
+// Sound: the footage's own audio (skit, selling clip), the effects track (sfx.mjs, timed by stage.html's cues) and,
+// if there's a file in scripts/video/assets/music/, that song under the animated part, ducked under the clips.
+// The music folder is git-ignored: we don't commit songs we don't have the rights to.
 import { execFileSync, spawn } from "child_process";
 import fs from "fs";
 import http from "http";
@@ -16,6 +21,7 @@ import { once } from "events";
 import { createRequire } from "module";
 import { fileURLToPath } from "url";
 import puppeteer from "puppeteer-core";
+import { soundtrack, writeWav } from "./sfx.mjs";
 
 const require = createRequire(import.meta.url);
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -32,6 +38,9 @@ const WORKERS = Number(arg("workers", 4));
 const PORT = 3102;
 const tl = JSON.parse(fs.readFileSync(path.join(OUT, "timeline.json"), "utf8"));
 const MEDIA = path.join(OUT, "media");
+const SILENT = path.join(OUT, "silent.mp4");
+const SFX = path.join(OUT, "sfx.wav");
+const CUES = path.join(OUT, "cues.json");
 
 // ---------------------------------------------------------------- filmed footage and clip slots
 // Each [[film]] and each filled [[clip]] is cut into JPEG frames once (out/media/<key>/), and the stage shows the
@@ -117,6 +126,12 @@ async function renderRange(browser, from, to, file, label) {
 }
 
 async function main() {
+  if (arg("audio-only", false)) {
+    if (!fs.existsSync(SILENT) || !fs.existsSync(CUES)) throw new Error("render the video once first (out/silent.mp4, out/cues.json)");
+    writeWav(SFX, soundtrack(JSON.parse(fs.readFileSync(CUES, "utf8")), tl.duration));
+    withAudio(SILENT, path.join(OUT, "mutuals-demo.mp4"), 0, tl.duration);
+    return console.log("re-mixed the sound onto scripts/video/out/mutuals-demo.mp4");
+  }
   const server = await serve();
   const browser = await puppeteer.launch({
     executablePath: CHROME,
@@ -138,6 +153,12 @@ async function main() {
       console.log(`stills -> scripts/video/out/stills/`);
       return;
     }
+    const cuePage = await openStage(browser);
+    const cues = await cuePage.evaluate(() => window.stage.cues());
+    await cuePage.close();
+    fs.writeFileSync(CUES, JSON.stringify(cues));
+    writeWav(SFX, soundtrack(cues, tl.duration));
+    console.log(`${cues.length} sound effects`);
     const total = Math.round(tl.duration * FPS);
     const a = Math.max(0, Math.round(Number(arg("from", 0)) * FPS));
     const b = Math.min(total, Math.round(Number(arg("to", tl.duration)) * FPS));
@@ -151,7 +172,7 @@ async function main() {
     const list = path.join(OUT, "segs.txt");
     fs.writeFileSync(list, segs.map((s) => `file '${s.file}'`).join("\n"));
     const final = path.join(OUT, partial ? "preview.mp4" : "mutuals-demo.mp4");
-    const silent = path.join(OUT, "silent.mp4");
+    const silent = partial ? path.join(OUT, "silent-preview.mp4") : SILENT;
     execFileSync(FFMPEG, ["-hide_banner", "-loglevel", "error", "-y", "-f", "concat", "-safe", "0", "-i", list, "-c", "copy", "-movflags", "+faststart", silent]);
     withAudio(silent, final, a / FPS, (b - a) / FPS);
     for (const s of segs) fs.rmSync(s.file, { force: true });
@@ -164,18 +185,42 @@ async function main() {
   }
 }
 
-/** The footage's own sound (the skit, a filled clip slot) laid on the video at its place; silent everywhere else. */
+/** The song in scripts/video/assets/music/, if there is one. */
+function music() {
+  const dir = path.join(HERE, "assets", "music");
+  const f = fs.existsSync(dir) && fs.readdirSync(dir).find((x) => /\.(mp3|m4a|aac|wav|aiff?|flac|ogg|mp4|mov)$/i.test(x));
+  return f ? path.join(dir, f) : null;
+}
+
+/** The video's sound: the footage's own audio at its place, the effects, and the song (if any) under the animated
+ *  part, ducked to 15% while a clip plays. The silent video is kept for --audio-only. */
 function withAudio(video, final, from, dur) {
+  const st = (x) => `aresample=48000,aformat=channel_layouts=stereo,${x}`;
   const tracks = media().filter((e) => e.audio && e.src && e.t + (e.dur ?? 0) > from && e.t < from + dur);
-  if (!tracks.length) return fs.renameSync(video, final);
-  const inputs = tracks.flatMap((e) => ["-i", e.src]);
-  const parts = tracks.map((e, i) => {
+  const inputs = [], parts = [];
+  tracks.forEach((e, i) => {
     const skip = Math.max(0, from - e.t), delay = Math.round(Math.max(0, e.t - from) * 1000), len = (e.dur ?? 0) - skip;
-    return `[${i + 1}:a]atrim=start=${skip.toFixed(3)},asetpts=PTS-STARTPTS,aresample=48000,afade=t=out:st=${Math.max(0, len - 0.6).toFixed(3)}:d=0.6,adelay=${delay}|${delay}[a${i}]`;
+    inputs.push("-i", e.src);
+    parts.push(`[${i + 1}:a]${st(`atrim=start=${skip.toFixed(3)},asetpts=PTS-STARTPTS,afade=t=out:st=${Math.max(0, len - 0.6).toFixed(3)}:d=0.6,adelay=${delay}|${delay}`)}[a${parts.length}]`);
   });
-  const filter = `${parts.join(";")};${tracks.map((_, i) => `[a${i}]`).join("")}amix=inputs=${tracks.length}:normalize=0,apad[out]`;
+  if (fs.existsSync(SFX)) {
+    inputs.push("-i", SFX);
+    parts.push(`[${inputs.length / 2}:a]${st(`atrim=start=${from.toFixed(3)},asetpts=PTS-STARTPTS`)}[a${parts.length}]`);
+  }
+  const song = music();
+  if (song) {
+    // from the end of the skit to the end; fades in and out, and dips under the clips (the selling video) so their voices carry
+    const S = (tl.scenes.find((s) => s.kind !== "film")?.start ?? 0) - 0.3, E = tl.duration;
+    const ducks = tl.scenes.flatMap((s) => s.events.filter((e) => e.type === "clip" && e.dur)).map((e) => `(1-0.85*clip(min((t-${(e.t - 0.8).toFixed(2)})/0.8,(${(e.t + e.dur + 0.8).toFixed(2)}-t)/0.8),0,1))`);
+    const vol = [`${Number(arg("music-volume", 0.2))}`, `clip((t-${S.toFixed(2)})/1.5,0,1)`, `clip((${E.toFixed(2)}-t)/2.5,0,1)`, ...ducks].join("*");
+    const ms = Math.round(Math.max(0, S) * 1000);
+    inputs.push("-i", song);
+    parts.push(`[${inputs.length / 2}:a]${st(`atrim=start=${Number(arg("music-from", 0))},asetpts=PTS-STARTPTS,adelay=${ms}|${ms},volume='${vol}':eval=frame,atrim=start=${from.toFixed(3)},asetpts=PTS-STARTPTS`)}[a${parts.length}]`);
+    console.log(`music: ${path.basename(song)}`);
+  }
+  if (!parts.length) return fs.copyFileSync(video, final);
+  const filter = `${parts.join(";")};${parts.map((_, i) => `[a${i}]`).join("")}amix=inputs=${parts.length}:normalize=0,alimiter=limit=0.95,apad[out]`;
   execFileSync(FFMPEG, ["-hide_banner", "-loglevel", "error", "-y", "-i", video, ...inputs, "-filter_complex", filter, "-map", "0:v", "-map", "[out]", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k", "-t", dur.toFixed(3), "-movflags", "+faststart", final]);
-  fs.rmSync(video, { force: true });
 }
 
 /** The narration timing as a scratch track (macOS voices), for whoever records the real voiceover. Not in the video. */

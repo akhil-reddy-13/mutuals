@@ -10,9 +10,21 @@
   `node scripts/video/make.mjs`: it re-captures the app, re-renders every frame and re-renders the PDF to match.
 
 Everything shown from the app is the real app, and every model output is a real Muse response (run live once, replayed
-from the cache). The video has no audio: the narration lines in the screenplay set how long each shot holds, and
+from the cache). There's no narration in the video yet: the narration lines in the screenplay set how long each shot holds, and
 `scripts/video/out/scratch-vo.wav` is a text-to-speech scratch track at those timings for whoever records the real
 voiceover. The skit and the selling clip keep their own sound.
+
+## Sound
+
+- **The footage's own sound:** the skit and the selling clip.
+- **Effects** (`scripts/video/sfx.mjs`, made in code, no sample files): a ding when a message comes in, a swoosh when
+  one goes out, pops as cards land, whooshes out of the skit, into each chapter and as the crowd narrows, one swish as
+  the conversation wall scrolls, chimes for fits, and a low hit on the logo. `stage.html` places them (`cue(...)`), so
+  they move with the picture. `node scripts/video/sfx.mjs` writes `out/sfx-sampler.wav` to hear each one.
+- **Music:** put the song in `scripts/video/assets/music/` (any audio file; the folder is git-ignored, so the song never
+  goes in the repo) and run `node scripts/video/render.mjs --audio-only && node scripts/video/make.mjs --finish`. It
+  plays from the end of the skit, fades in and out, and drops to 15% under the selling clip. `--music-volume 0.2` and
+  `--music-from 30` (start 30 s into the song) tune it.
 
 ## Clips (scene 8 and any new slot)
 

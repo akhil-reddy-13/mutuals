@@ -12,6 +12,8 @@
   :root {
     --blue: #0866ff; --purple: #a033ff; --pink: #ff5c87; --ink: #1d1d1f; --muted: #6e6e73; --bg: #f5f5f7;
     --muse: linear-gradient(135deg, #0866ff 0%, #a033ff 55%, #ff5c87 100%);
+    --meta-text: linear-gradient(90deg, #0064e0 0%, #0082fb 60%, #00a2ff 100%); /* Meta's logo blues */
+    --meta-text-dark: linear-gradient(90deg, #1f8fff 0%, #4fb0ff 55%, #9fd6ff 100%);
     --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
   }
   * { box-sizing: border-box; }
@@ -35,7 +37,7 @@
   /* text */
   .h { position: absolute; font-weight: 700; letter-spacing: -.025em; line-height: 1.04; }
   .cap { position: absolute; color: var(--muted); line-height: 1.35; }
-  .grad { background: var(--muse); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .grad { background: var(--meta-text); -webkit-background-clip: text; background-clip: text; color: transparent; }
 
   /* phone */
   #phone { position: absolute; left: 0; top: 0; width: 451px; height: 912px; transform-origin: 0 0; }
@@ -195,7 +197,7 @@
   .slot .f { font-size: 22px; color: rgba(255,255,255,.5); font-family: ui-monospace, Menlo, monospace; }
   .shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(10,8,14,.0) 30%, rgba(10,8,14,.55) 70%), linear-gradient(180deg, rgba(10,8,14,.55), rgba(10,8,14,0) 30%); }
   .oh { position: absolute; left: 96px; top: 84px; width: 1040px; font-size: 76px; font-weight: 700; letter-spacing: -.025em; line-height: 1.05; color: #fff; text-shadow: 0 4px 30px rgba(0,0,0,.45); }
-  .oh .grad { background: linear-gradient(135deg, #7db4ff 0%, #c99bff 55%, #ff9cbc 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .oh .grad { background: var(--meta-text-dark); -webkit-background-clip: text; background-clip: text; color: transparent; }
   .panel { position: absolute; left: 1220px; top: 70px; width: 640px; height: 940px; border-radius: 40px; background: rgba(255,255,255,.96); overflow: hidden;
     box-shadow: 0 40px 100px rgba(0,0,0,.45), 0 0 0 1.5px rgba(255,255,255,.6); }
   .panel .phd { height: 104px; display: flex; align-items: center; gap: 18px; padding: 0 30px; border-bottom: 1.5px solid #e4e6eb; }
@@ -274,7 +276,7 @@
     padding: 8px 16px; border-radius: 999px; box-shadow: 0 8px 24px rgba(0,0,0,.35); }
   .ctag::before { content: "⚠︎ "; color: #ffb020; }
   .chd { position: absolute; left: 160px; width: 1600px; top: 62px; text-align: center; font-size: 74px; font-weight: 700; letter-spacing: -.03em; line-height: 1.06; color: #fff; }
-  .chd .grad { background: linear-gradient(135deg, #7db4ff 0%, #c99bff 55%, #ff9cbc 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .chd .grad { background: var(--meta-text-dark); -webkit-background-clip: text; background-clip: text; color: transparent; }
   .chk { position: absolute; right: -4px; bottom: -4px; width: 28px; height: 28px; border-radius: 50%; background: #31a24c; color: #fff; font-size: 16px; font-weight: 800; display: flex; align-items: center; justify-content: center; border: 3px solid #fff; }
 
   /* the reach radar: your Muse's agents at work */
@@ -318,6 +320,9 @@ const el = (tag, cls, parent, html) => {
   return e;
 };
 const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]);
+// sound cues: what makes a sound, and when; render.mjs turns them into the effects track (scripts/video/sfx.mjs)
+const CUES = [];
+const cue = (t, s, v = 1, p = 1) => Number.isFinite(t) && CUES.push({ t: +t.toFixed(3), s, v, p });
 const fmt = (s) => esc(s).replace(/\s+\/\/\s+/g, "<br>").replace(/~(.+?)~/g, '<span class="grad">$1</span>').replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/\*(.+?)\*/g, "<i>$1</i>");
 const plain = (s) => String(s).replace(/[~*]/g, "");
 const style = (e, o, tx = 0, ty = 0, s = 1, extra = "") => {
@@ -392,6 +397,7 @@ const toStage = (s, px, py) => ({ x: s.x + s.k * (BEZ + px * S0), y: s.y + s.k *
 
 // ------------------------------------------------------------------ load
 window.stage = {
+  cues: () => CUES,
   async load(tl, base) {
     TL = tl;
     BASE = base;
@@ -431,6 +437,7 @@ window.stage = {
       const u = el("div", "scene" + (sc.kind === "live" ? " dark" : "") + (sc.kind === "film" || sc.kind === "overlay" ? ` ${sc.kind}` : ""), under);
       const o = el("div", "scene", over);
       const S = { ...sc, i, under: u, over: o, items: [], tIn: kindOf(sc.transitionIn), dIn: i === 0 ? 1.1 : TD[kindOf(sc.transitionIn)] };
+      if (i > 0 && tl.scenes[i - 1].kind === "film") cue(sc.start - 0.3, "whoosh", 0.8); // out of the skit
       if (S.tIn === "cut" && i > 0 && isApp(sc) && isApp(tl.scenes[i - 1])) S.dIn = 0.55;
       for (const e of sc.events) if (e.type === "steps") steps = e.list;
       S.steps = steps;
@@ -471,12 +478,14 @@ const BUILD = {
       if (P("logo")) {
         const ring = el("div", "lring", S.under); ring.style.left = 960 - 75 + "px"; ring.style.top = (capP ? 300 : 340) + "px";
         const wm = el("div", "wordmark", S.under, "Mutuals"); wm.style.top = (capP ? 480 : 520) + "px";
+        cue(P("logo").t, "hit");
         add(ring, P("logo").t, "pop"); add(wm, P("logo").t + 0.3, "rise");
         if (capP) { const c = el("div", "gcap", S.under, fmt(capP.text)); c.style.top = "700px"; add(c, capP.t + 0.2, "rise"); }
         continue;
       }
       if (P("chapter")) {
         const ch = P("chapter");
+        cue(ch.t - 0.15, "whoosh", 0.7);
         const num = el("div", "chnum grad", S.under, esc(ch.parts[0] ?? ""));
         const ttl = el("div", "chttl", S.under, fmt(ch.parts[1] ?? ""));
         add(num, ch.t, "rise", { dist: 30 }); add(ttl, ch.t + 0.25, "rise");
@@ -507,6 +516,7 @@ const BUILD = {
         const num = el("div", "num grad", S.under); num.style.left = "250px"; num.style.top = "150px";
         const tx = el("div", "stattxt", S.under, `${esc(text)}<div class="src">${esc(source)}</div>`); tx.style.left = "1060px"; tx.style.top = "400px";
         const m = String(value).match(/^([^\d]*)([\d.]+)(.*)$/);
+        cue(stat.t, "pop", 0.8);
         add(num, stat.t, "rise", { count: m ? { pre: m[1], n: Number(m[2]), post: m[3] } : null });
         add(tx, stat.t + 0.35, "rise");
         const on = m ? Math.round(Number(m[2])) : 0;
@@ -556,6 +566,7 @@ const BUILD = {
           const c = el("div", "act", S.under, `<div class="ico">${esc(m ? m[1] : "")}</div><div class="lbl">${esc(m ? m[2] : main)}</div>${sub ? `<div class="where">${esc(sub)}</div>` : ""}`);
           c.style.left = x0 + k * (w + gap) + "px"; c.style.top = area.top + Math.max(0, (area.bottom - area.top - 400) / 2) + "px";
           add(c, at(k), "rise", { dist: 34 });
+          cue(at(k), "pop", 0.7, 1 + k * 0.06);
         });
       } else if (D.type === "post") {
         const [text, group, members] = D.parts;
@@ -563,6 +574,7 @@ const BUILD = {
         const c = el("div", "post", S.under, `<div class="phd"><img src="${BASE}${who?.avatar ?? ""}"><div><b>${esc(who?.name ?? "You")}</b><span>${esc(group ?? "")} · Just now</span></div></div><div class="pbody">${(text ?? "").replace(/~(.+?)~/g, '<mark>$1</mark>')}</div><div class="pft">${esc(members ?? "")}</div>`);
         c.style.left = 960 - 470 + "px"; c.style.top = area.top + Math.max(10, (area.bottom - area.top - c.offsetHeight) / 2 - 30) + "px";
         add(c, D.t + 0.1, "rise", { dist: 30 });
+        cue(D.t + 0.1, "pop", 0.7);
         // highlights fade in one by one
         [...c.querySelectorAll("mark")].forEach((mk, k) => add(mk, D.t + 1.0 + k * 0.45, "mark"));
       } else if (D.type === "agents") {
@@ -617,6 +629,7 @@ const BUILD = {
           m.style.left = clamp(x, 40, 1880 - w) + "px"; m.style.top = clamp(y, top, area.bottom - h) + "px";
           const at = D.t + 0.25 + 3.1 * Math.pow(k / Math.max(1, n - 1), 0.62);
           times.push(at);
+          if (k % 2 === 0 || k > n - 5) cue(at, "recv", 0.75, 0.94 + rnd(k, 6) * 0.14); // enough to feel the pile-up
           add(m, at, "flur", { k });
         });
         add(notif, D.t + 0.2, "fn", { fn: (t, o) => {
@@ -671,6 +684,7 @@ const BUILD = {
           y += BH + 64;
         }
         const contentH = y, viewH = 1080 - viewTop;
+        if (contentH > viewH) cue(D.t + 2.2, "scroll", 0.6);
         add(wall, D.t, "fn", { fn: (t) => {
           const endT = S.end - 1.0;
           const sc = Math.max(0, contentH - viewH + 40) * soft(prog(t, D.t + 2.2, Math.max(1, endT - D.t - 2.2)));
@@ -743,6 +757,8 @@ const BUILD = {
           return { e, at: D.t + 0.9 + k * ((narrowAt - D.t - 2.2) / TAGS.length) };
         });
         const h1 = el("div", "chd", g, fmt(D.parts[0] ?? "")), h2 = el("div", "chd", g, fmt(D.parts[1] ?? ""));
+        cue(narrowAt, "whoosh", 0.7);
+        cue(narrowAt + 1.7 + 1.5, "chime", 0.8); // the few faces get their checks
         add(g, D.t, "fn", { fn: (t) => {
           const fallAt = narrowAt + 1.7;
           dark.style.opacity = env(t, D.t, 0.9).toFixed(3);
@@ -774,6 +790,7 @@ const BUILD = {
         const c = el("div", "fun", S.under, `<div class="fhd"><div class="fav"><img src="${BASE}${p.avatar ?? ""}"></div><div><div class="fnm">${esc(p.name ?? "")}</div><div class="fsb">${esc(p.line ?? "")}</div></div></div><div class="flab">Fun facts</div><div class="chips">${facts.map((f) => `<span class="chip">${ico(f)} ${esc(f)}</span>`).join("")}</div><div class="fopt"><span>Let Muse use my profile, interests and posts</span><i class="sw"><b></b></i></div>`);
         c.style.left = 960 - 430 + "px"; c.style.top = area.top + Math.max(0, (area.bottom - area.top - 600) / 2) + "px";
         add(c, D.t + 0.1, "rise", { dist: 30 });
+        cue(D.t + 0.1, "pop", 0.7);
         [...c.querySelectorAll(".chip")].forEach((ch, k) => add(ch, D.t + 0.7 + k * 0.3, "rise", { dist: 12, din: 0.5 }));
         const sw = c.querySelector(".sw"), knob = c.querySelector(".sw b");
         add(c, D.t, "fn", { fn: (t) => {
@@ -820,6 +837,7 @@ const BUILD = {
           k, dot: dots[k], fit: fitSet.has(k), t0: T0 + j * 0.32, line: lines.querySelector(`line[data-a="${k}"]`),
           orb: el("div", "orb", g), talk: el("div", "rtalk", g, "<b></b><b></b><b></b>"), chk: el("div", "rchk", g, "✓"),
         }));
+        agents.filter((a) => a.fit).forEach((a, j) => cue(a.t0 + 2.5, "chime", 0.5, 1 + j * 0.12));
         const meTag = el("div", "rmuse", g, '<span class="mring sm"></span><span>Your Muse, talking to theirs</span>');
         meTag.style.left = cx - meTag.offsetWidth / 2 + "px"; meTag.style.top = cy + 104 + "px";
         add(g, D.t, "fn", { fn: (t, o) => {
@@ -914,6 +932,7 @@ const BUILD = {
         html = `<div class="cm me"><div class="vid${tall ? " tall" : ""}">${thumb}<div class="pl"></div><div class="ln">${esc(dur ?? m.text)}</div></div></div>`;
       } else html = `<div class="cm them">${label[m.who] ? `<div class="who">${label[m.who]}</div>` : ""}<div class="row">${ring}<div class="b">${fmt(m.text)}</div></div></div>`;
       const wrap = el("div", "", S.pin, html);
+      cue(m.t, m.type === "item" ? "pop" : m.who === "me" || m.who === "video" ? "sent" : "recv", m.type === "item" ? 0.7 : 1);
       return { t: m.t, e: wrap };
     });
     // how far the chat has scrolled once each message is in (the latest stays in view)
