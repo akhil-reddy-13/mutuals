@@ -1,5 +1,7 @@
 # Mutuals — Product Requirements & Build Context
 
+> *Written at the start of the hackathon to plan the build. Some details changed along the way; the README describes what shipped.*
+
 > **Do things with people you can trust.**
 > Your Muse handles the tedious, awkward parts of social life with other people's Muses — finding the right person, screening, logistics — so you only spend time on the conversations you actually want to have.
 
